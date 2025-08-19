@@ -1,6 +1,6 @@
 from enum import Enum
 
-RGBA_VALUES = tuple[int, int, int, int]
+RGBA_VALUES = tuple[int, int, int]
 
 
 class RGBAChartLineColours(Enum):
@@ -16,6 +16,12 @@ class RGBAChartLineColours(Enum):
     COLOUR_10_PINK = 229, 102, 183
     COLOUR_11_KHAKI = 71, 71, 0
     COLOUR_12_BLUE = 0, 157, 214
+
+    MAP_COLOUR_1_LIGHT_YELLOW = 240, 249, 232
+    MAP_COLOUR_2_LIGHT_GREEN = 186, 228, 188
+    MAP_COLOUR_3_TURQUOISE = 123, 204, 196
+    MAP_COLOUR_4_BLUE = 67, 162, 202
+    MAP_COLOUR_5_DARK_BLUE = 8, 104, 172
 
     # simplified single line chart colours
     TREND_LINE_POSITIVE = 0, 112, 60

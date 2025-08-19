@@ -5,6 +5,7 @@ from metrics.api.serializers import help_texts
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
+    DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 
@@ -13,7 +14,7 @@ FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg"]
 
 class SubplotPlotSerializer(serializers.Serializer):
     label = serializers.CharField(required=True)
-    colour = serializers.CharField(required=True)
+    line_colour = serializers.CharField(required=True)
 
     age = serializers.CharField(required=False)
     sex = serializers.CharField(required=False)
@@ -43,6 +44,8 @@ class SubplotsSerializer(serializers.ListSerializer):
 
 
 class ChartParametersSerializer(serializers.Serializer):
+    x_axis = serializers.CharField(required=True)
+    y_axis = serializers.CharField(required=True)
     theme = serializers.CharField(required=True)
     sub_theme = serializers.CharField(required=True)
     date_from = serializers.DateField(required=True)
@@ -55,6 +58,10 @@ class ChartParametersSerializer(serializers.Serializer):
         required=False, allow_null=True, allow_blank=True
     )
     geography = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+
+
+SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = dict[str, str]
+SUBPLOT_PARAMETERS = dict[str, str]
 
 
 class SubplotChartRequestSerializer(serializers.Serializer):
@@ -103,9 +110,65 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         max_digits=10,
         decimal_places=1,
     )
+    target_threshold = serializers.DecimalField(
+        required=False,
+        allow_null=True,
+        max_digits=10,
+        decimal_places=2,
+    )
+    target_threshold_label = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
 
     chart_parameters = ChartParametersSerializer()
     subplots = SubplotsSerializer()
 
-    def to_models(self, request: Request):
-        return SubplotChartRequestParameters(**self.validated_data, request=request)
+    def to_models(self, request: Request) -> SubplotChartRequestParameters:
+        """
+        chart_parameters is used to reduce the duplication of data entry for content editors
+        for the chart request its really a part of the `subplot_parameters`. Its the combination
+        of these two objects that when addewd to the `plot` fields make the request.
+        """
+        chart_parameters: SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = (
+            self.validated_data.pop("chart_parameters")
+        )
+
+        if chart_parameters["date_from"]:
+            chart_parameters["date_from"] = chart_parameters["date_from"].isoformat()
+
+        if chart_parameters["date_to"]:
+            chart_parameters["date_to"] = chart_parameters["date_to"].isoformat()
+
+        for subplot in self.validated_data["subplots"]:
+            subplot_parameters = subplot.pop("subplot_parameters")
+            subplot["x_axis"] = chart_parameters["x_axis"]
+            subplot["y_axis"] = chart_parameters["y_axis"]
+
+            for plot in subplot["plots"]:
+                plot.update(
+                    {
+                        **chart_parameters,
+                        **subplot_parameters,
+                    }
+                )
+
+        return SubplotChartRequestParameters(
+            file_format=self.validated_data["file_format"],
+            chart_height=self.validated_data["chart_height"] or DEFAULT_CHART_HEIGHT,
+            chart_width=self.validated_data["chart_width"] or DEFAULT_CHART_WIDTH,
+            x_axis_title=self.validated_data["x_axis_title"],
+            y_axis_title=self.validated_data["y_axis_title"],
+            y_axis_minimum_value=self.validated_data["y_axis_minimum_value"]
+            or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
+            y_axis_maximum_value=self.validated_data["y_axis_maximum_value"],
+            target_threshold=self.validated_data["target_threshold"],
+            target_threshold_label=self.validated_data["target_threshold_label"],
+            subplots=self.validated_data["subplots"],
+            request=request,
+        )
+
+
+class ChartPreviewQueryParamsSerializer(serializers.Serializer):
+    preview = serializers.BooleanField(required=False)

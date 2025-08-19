@@ -235,7 +235,8 @@ class CacheManagement:
         return [CacheKey.create(raw_key=raw_key) for raw_key in all_raw_keys]
 
     def _render_response(self, *, response: Response) -> Response:
-        if response.headers["Content-Type"] == "text/csv":
+        non_json_content_types = ("text/csv", "image/png")
+        if response.headers["Content-Type"] in non_json_content_types:
             return response
 
         return self._render_json_response(response=response)

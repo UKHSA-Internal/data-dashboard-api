@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from unittest import mock
 
 import pytest
@@ -14,11 +15,129 @@ from metrics.domain.models import (
     ChartRequestParams,
 )
 from metrics.domain.common.utils import ChartTypes
+from metrics.domain.models.charts.subplot_charts import (
+    SubplotChartRequestParameters,
+    Subplots,
+)
+from metrics.domain.models.subplot_plots import (
+    SubplotChartGenerationPayload,
+    SubplotGenerationData,
+)
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
+
+
+@pytest.fixture
+def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]:
+    return [
+        {
+            "subplot_title": "6-in-1",
+            "subplot_data": [
+                {
+                    "parameters": {
+                        "metric": "fake-metric",
+                        "topic": "fake-topic",
+                        "geography": "Darlington",
+                    },
+                    "x_axis_values": ["Darlington"],
+                    "y_axis_values": [Decimal("95.4")],
+                },
+                {
+                    "parameters": {
+                        "metric": "fake-metric",
+                        "topic": "fake-topic",
+                        "geography": "Hartlepool",
+                    },
+                    "x_axis_values": ["Hartlepool"],
+                    "y_axis_values": [Decimal("93.4")],
+                },
+            ],
+        },
+        {
+            "subplot_title": "MMR1",
+            "subplot_data": [
+                {
+                    "parameters": {
+                        "metric": "fake-metric-two",
+                        "topic": "fake-topic-two",
+                        "geography": "Darlington",
+                    },
+                    "x_axis_values": ["Darlington"],
+                    "y_axis_values": [Decimal("92.4")],
+                },
+                {
+                    "parameters": {
+                        "metric": "fake-metric-two",
+                        "topic": "fake-topic-two",
+                        "geography": "Hartlepool",
+                    },
+                    "x_axis_values": ["Hartlepool"],
+                    "y_axis_values": [Decimal("91.4")],
+                },
+            ],
+        },
+    ]
+
+
+def create_subplots_data() -> list[Subplots]:
+    subplots: list[Subplots] = []
+    plots: list[PlotParameters] = []
+
+    for i in range(2):
+        plots.append(
+            PlotParameters(
+                chart_type="bar",
+                topic="COVID-19",
+                metric="COVID-19_testing_positivity7DayRolling",
+                stratum="default",
+                date_from="2023-01-01",
+                date_to="2023-12-31",
+                x_axis="date",
+                y_axis="metric",
+            )
+        )
+
+    for i in range(1, 3):
+        subplots.append(
+            Subplots(
+                subplot_title=f"Subplot {i}",
+                x_axis="Geography",
+                y_axis="Metric",
+                plots=plots,
+            )
+        )
+
+    return subplots
+
+
+@pytest.fixture
+def fake_subplot_chart_generation_payload() -> SubplotChartGenerationPayload:
+    return SubplotChartGenerationPayload(
+        subplot_data=[],
+        chart_width=600,
+        chart_height=200,
+        x_axis_title="x axis title",
+        y_axis_title="y axis title",
+        y_axis_minimum_value=0,
+        y_axis_maximum_value=None,
+    )
+
+
+@pytest.fixture
+def fake_subplot_chart_request_params() -> SubplotChartRequestParameters:
+    return SubplotChartRequestParameters(
+        file_format="svg",
+        chart_width=930,
+        chart_height=220,
+        x_axis_title="x axis title",
+        y_axis_title="y axis title",
+        y_axis_minimum_value=0,
+        y_axis_maximum_value=None,
+        subplots=create_subplots_data(),
+    )
 
 
 @pytest.fixture
