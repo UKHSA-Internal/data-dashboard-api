@@ -60,7 +60,7 @@ class SubplotChartsInterface:
                     plots_interface.build_plots_data()
                 )
             except DataNotFoundForAnyPlotError:
-                # If data for a subplot cannot be found
+                # If data for an individual subplot cannot be found
                 # then we can skip and carry on
                 # instead of letting the error bubble up to the surface
                 # which would fail the entire chart
@@ -77,6 +77,11 @@ class SubplotChartsInterface:
                 individual_subplot_data.latest_date
                 for individual_subplot_data in subplot_data
             ]
+
+        if not subplots_data:
+            # In this case we don't have any data to show
+            # so we can raise the error accordingly
+            raise DataNotFoundForAnyPlotError
 
         self.last_updated = str(max(latest_dates, default=None))
 
