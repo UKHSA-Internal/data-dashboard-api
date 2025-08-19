@@ -95,7 +95,7 @@ class TestCacheClient:
         Given a `CacheClient`
         When `list_keys()` is called from the client
         Then the call is delegated
-            to the underlying low level redis client
+            to the underlying low level redis client using SCAN
         """
         # Given
         cache_client = CacheClient()
@@ -106,8 +106,8 @@ class TestCacheClient:
 
         # Then
         low_level_client = spy_cache._cache.get_client.return_value
-        low_level_client.keys.assert_called_once_with(f"*{prefix}*")
-        assert all_keys == low_level_client.keys.return_value
+        low_level_client.scan_iter.assert_called_once_with(match=f"*{prefix}*")
+        assert all_keys == list(low_level_client.scan_iter.return_value)
 
     @mock.patch(f"{MODULE_PATH}.cache")
     def test_copy(self, spy_cache: mock.MagicMock):

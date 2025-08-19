@@ -56,6 +56,9 @@ class CacheClient:
         Notes:
             This is the Django cache <-> Redis implementation
             for listing all the keys in the cache.
+            We have to use the Redis SCAN command via `scan_iter()`
+            to avoid the KEYS command which is disabled
+            on managed Redis e.g. AWS Elasticache
 
         Returns:
             List of bytes where each byte represents a single key
@@ -64,7 +67,7 @@ class CacheClient:
         key_prefix: str = settings.CACHES["default"]["KEY_PREFIX"]
         low_level_client = self._get_low_level_client()
         pattern = f"*{key_prefix}*"
-        return low_level_client.keys(pattern)
+        return list(low_level_client.scan_iter(match=pattern))
 
     def delete_many(self, keys: list[str]) -> None:
         """Deletes all the provided keys in the cache
