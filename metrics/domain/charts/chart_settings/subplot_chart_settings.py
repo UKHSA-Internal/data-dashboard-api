@@ -1,5 +1,4 @@
 import logging
-import math
 
 from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.type_hints import CHART_ARGS
@@ -9,6 +8,30 @@ from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 logger = logging.getLogger(__name__)
 
 DEFAULT_LEGEND_FONT_SIZE = 14
+
+# W: >1100
+DEFAULT_CHART_MULTIPLIER = 2
+DEFAULT_CHART_BASE_Y = 0.1
+
+# W: 515 H: 260
+NARROW_CHART_WIDTH = 515
+NARROW_CHART_MULTIPLIER = 2
+NARROW_CHART_BASE_Y = 0.4
+
+# W: 1100 H: 260
+WIDE_CHART_WIDTH = 1100
+WIDE_CHART_MULTIPLIER = 2
+WIDE_CHART_BASE_Y = 0.3
+
+# W: 650 H: 200
+HALF_CHART_WIDTH = 650
+HALF_CHART_MULTIPLIER = 2
+HALF_CHART_BASE_Y = 0.5
+
+# W: 400 H: 200
+THIRD_CHART_WIDTH = 400
+THIRD_CHART_MULTIPLIER = 2
+THIRD_CHART_BASE_Y = 0.6
 
 
 class SubplotChartSettings(ChartSettings):
@@ -48,9 +71,26 @@ class SubplotChartSettings(ChartSettings):
             "horizontal_spacing": 0.03,
         }
 
+    def _get_legend_size_config(self):
+        """Returns the `base y` and `legend size` used to position the legend
+            of a subplot chart based on the `width` of the chart being generated.
+
+        Returns: list of numbers (int|float) used to position the legend of a
+            subplot chart based on the `width` of the chart being generated.
+        """
+        if self.width <= THIRD_CHART_WIDTH:
+            return [THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER]
+        if self.width <= NARROW_CHART_WIDTH:
+            return [NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER]
+        if self.width <= HALF_CHART_WIDTH:
+            return [HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER]
+        if self.width <= WIDE_CHART_WIDTH:
+            return [WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER]
+
+        return [DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER]
+
     def get_legend_bottom_centre_config(self, number_of_legend_items: int):
-        y_base = 0.2
-        y_multiplier = math.ceil(number_of_legend_items / 4)
+        [y_base, y_multiplier] = self._get_legend_size_config()
 
         return {
             "font": {**self._get_tick_font_config(), "size": DEFAULT_LEGEND_FONT_SIZE},

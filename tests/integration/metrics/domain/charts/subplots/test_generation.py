@@ -8,6 +8,23 @@ import plotly.graph_objects
 from metrics.domain.charts.subplots.generation import generate_chart_figure
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
+from metrics.domain.charts.chart_settings.subplot_chart_settings import (
+    DEFAULT_CHART_BASE_Y,
+    DEFAULT_CHART_MULTIPLIER,
+    THIRD_CHART_WIDTH,
+    THIRD_CHART_BASE_Y,
+    THIRD_CHART_MULTIPLIER,
+    NARROW_CHART_WIDTH,
+    NARROW_CHART_BASE_Y,
+    NARROW_CHART_MULTIPLIER,
+    HALF_CHART_WIDTH,
+    HALF_CHART_BASE_Y,
+    HALF_CHART_MULTIPLIER,
+    WIDE_CHART_WIDTH,
+    WIDE_CHART_BASE_Y,
+    WIDE_CHART_MULTIPLIER,
+)
+
 
 class TestSubplotGeneration:
     @staticmethod
@@ -141,3 +158,39 @@ class TestSubplotGeneration:
         assert expected_xaxis_tickval in chart_image.layout.xaxis.tickvals
         assert len(chart_image.layout.xaxis2.tickvals) == 1
         assert expected_xaxis2_tickval in chart_image.layout.xaxis2.tickvals
+
+    @pytest.mark.parametrize(
+        "chart_width, y_base, y_multiplier",
+        (
+            (THIRD_CHART_WIDTH, THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER),
+            (NARROW_CHART_WIDTH, NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER),
+            (HALF_CHART_WIDTH, HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER),
+            (WIDE_CHART_WIDTH, WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER),
+            (1101, DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER),
+        ),
+    )
+    def test_chart_renders_correct_legend_y_post_based_on_chart_width(
+        self,
+        example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],
+        chart_width: int,
+        y_base: int,
+        y_multiplier: int,
+    ):
+        """
+        Given a valid payload for a `Subplot Chart`
+        When the `generate_chart_figure` method is called
+        Then the plotly `Figure` object's legend position is correct
+            based on the chart width request.
+        """
+        # Given
+        valid_payload = self._setup_chart_plot_data(
+            example_subplot_chart_generation_payload=example_subplot_chart_generation_payload,
+        )
+        valid_payload.chart_width = chart_width
+
+        # When
+        chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
+        expected_y_position = -(y_base * y_multiplier)
+
+        # Then
+        assert expected_y_position == chart_image.layout.legend.y
