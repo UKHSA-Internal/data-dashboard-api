@@ -1,24 +1,43 @@
+import math
+
 import plotly.graph_objects
 from plotly.subplots import make_subplots
 
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.chart_settings.subplot_chart_settings import (
+    SubplotChartSettings,
+)
 from metrics.domain.models.subplot_plots import (
     SubplotChartGenerationPayload,
     SubplotGenerationData,
 )
 
 
+def format_legend_names(
+    figure: plotly.graph_objects.Figure,
+) -> plotly.graph_objects.Figure:
+    plot_labels = set()
+
+    for plot in figure.data:
+        name = plot.name
+        plot.legendgroup = name
+        plot.showlegend = name not in plot_labels
+        plot_labels.add(name)
+
+    return figure
+
+
 def generate_chart_figure(
     *,
     chart_generation_payload: SubplotChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
+    settings = SubplotChartSettings(
+        chart_generation_payload=chart_generation_payload,
+    )
     subplot_data: list[SubplotGenerationData] = chart_generation_payload.subplot_data
 
     figure = make_subplots(
-        rows=1,
-        cols=len(subplot_data),
-        shared_xaxes=True,
-        horizontal_spacing=0,
-        subplot_titles=[subplot.subplot_title for subplot in subplot_data],
+        cols=len(subplot_data), **settings.get_make_subplots_config()
     )
 
     for plot_index, plot_data in enumerate(subplot_data, start=1):
@@ -27,22 +46,44 @@ def generate_chart_figure(
                 plotly.graph_objects.Bar(
                     x=data.x_axis_values,
                     y=data.y_axis_values,
-                    name=getattr(data.parameters, "geography", None),
+                    name=getattr(
+                        data.parameters,
+                        data.parameters.x_axis,
+                        None,
+                    ),
+                    marker={
+                        "color": (
+                            colour_scheme.RGBAChartLineColours.get_colour(
+                                colour=data.parameters.line_colour,
+                            ).stringified,
+                        )
+                    },
                 ),
                 row=1,
                 col=plot_index,
             )
-            if plot_index > 1:
-                figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
+
+        figure.update_xaxes(
+            col=plot_index,
+            ticktext=[plot_data.subplot_title],
+            tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
+        )
+
+    figure.update_layout(**settings.get_subplot_chart_config())
+    figure.update_yaxes(**settings.get_subplot_yaxis_config())
+    figure.update_xaxes(**settings.get_subplot_xaxis_config())
+
+    # Update primary y-axis settings (first subplot)
+    figure.update_yaxes(**settings.get_primary_subplot_yaxis_config())
 
     if chart_generation_payload.target_threshold:
-        add_target_threshold(
+        figure = add_target_threshold(
             figure=figure,
             y_bottom=chart_generation_payload.target_threshold,
             target_threshold_label=chart_generation_payload.target_threshold_label,
         )
 
-    return figure
+    return format_legend_names(figure=figure)
 
 
 def add_target_threshold(
@@ -50,51 +91,68 @@ def add_target_threshold(
     y_bottom: float,
     target_threshold_label: str | None,
     fill_colour: str = "rgba(135, 206, 235, 0.3)",
-):
+) -> plotly.graph_objs.Figure:
     """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
 
     Notes:
-        The bar automatically spans the full width of the chart
-        and extends to the top.
+        The bar automatically spans the full width of the chart and extends to the top.
+        For subplots, we draw a single continuous shape across the full figure width
+        (xref="paper") so there are no gaps between subplots
 
     Args:
         figure: The Plotly figure object to add the threshold bar to
-        y_bottom: Y-coordinate for the bottom of the bar
-            i.e. the threshold value
+        y_bottom: Y-coordinate for the bottom of the bar (threshold value)
         fill_colour: Colour for the filled bar area (with transparency)
         target_threshold_label: Optional label for the threshold indicator
 
     Returns:
-        The modified plotly figure object
-        with the threshold bar added
+        The modified plotly figure object with the threshold bar added
 
     """
     line_color = "blue"
 
-    # In cases where we let plotly figure out scaling
-    # we have to compute the figure and pull the y-axis range from there
-    # to tell us what the `y_top` value will be
-    computed_figure = figure.full_figure_for_development()
+    # In cases where we let plotly figure out scaling, we have to compute the figure
+    # and pull the y-axis range to tell us what the `y_top` value will be.
+    computed_figure = figure.full_figure_for_development(warn=False)
     y_top: float = computed_figure.layout.yaxis.range[1]
     y_bottom = float(y_bottom)
 
     y_top = _round_to_significant_figure(number=y_top, significant_digits=3)
 
-    figure.add_hline(
-        y=y_top,
+    # Solid top line
+    figure.add_shape(
+        type="line",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
+        y0=y_top,
+        y1=y_top,
         line={"color": line_color, "width": 2, "dash": "solid"},
         layer="below",
     )
-    figure.add_hrect(
+    # Draw a single continuous rectangle across the full figure
+    # using paper coords regardless of any breaks between subplots
+    figure.add_shape(
         type="rect",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
         y0=y_bottom,
         y1=y_top,
         fillcolor=fill_colour,
         line={"width": 0},
         layer="below",
     )
-    figure.add_hline(
-        y=y_bottom,
+    figure.add_shape(
+        type="line",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
+        y0=y_bottom,
+        y1=y_bottom,
         line={"color": line_color, "width": 2, "dash": "dash"},
         layer="below",
     )
@@ -135,7 +193,7 @@ def _add_threshold_indicator(
         layer="above",
     )
 
-    label_offset = 0.01
+    label_offset = 0.005
     figure.add_annotation(
         xref="paper",
         x=triangle_x + triangle_half_depth + label_offset,

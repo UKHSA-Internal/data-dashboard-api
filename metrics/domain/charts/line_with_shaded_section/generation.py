@@ -3,7 +3,10 @@ from typing import Any
 
 import plotly
 
-from metrics.domain.charts import chart_settings, colour_scheme
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.chart_settings.single_category import (
+    SingleCategoryChartSettings,
+)
 from metrics.domain.charts.line_with_shaded_section import information
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
@@ -94,7 +97,7 @@ def create_line_chart_with_shaded_section(
         y_axis_title="",
         x_axis_title="",
     )
-    settings = chart_settings.ChartSettings(chart_generation_payload=payload)
+    settings = SingleCategoryChartSettings(chart_generation_payload=payload)
     layout_args = settings.get_line_with_shaded_section_chart_config()
     figure.update_layout(**layout_args)
 
