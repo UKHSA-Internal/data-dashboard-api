@@ -60,6 +60,10 @@ class SubplotChartsInterface:
                     plots_interface.build_plots_data()
                 )
             except DataNotFoundForAnyPlotError:
+                # If data for a subplot cannot be found
+                # then we can skip and carry on
+                # instead of letting the error bubble up to the surface
+                # which would fail the entire chart
                 continue
 
             subplots_data.append(
