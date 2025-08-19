@@ -299,7 +299,9 @@ class TestGetColours:
 
 class TestGetAllTopicNames:
     @mock.patch.object(interface.MetricsAPIInterface, "get_all_unique_topic_names")
-    def test_delegates_call_correctly(self, mocked_get_all_unique_topic_names: mock.MagicMock):
+    def test_delegates_call_correctly(
+        self, mocked_get_all_unique_topic_names: mock.MagicMock
+    ):
         """
         Given an instance of the `MetricsAPIInterface` which returns topic names
         When `get_all_topic_names()` is called
