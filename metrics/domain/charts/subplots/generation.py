@@ -83,7 +83,7 @@ def add_target_threshold(
     figure.add_hline(
         y=y_top,
         line={"color": line_color, "width": 2, "dash": "solid"},
-        layer="below",
+        layer="above",
     )
     figure.add_hrect(
         type="rect",
@@ -91,12 +91,12 @@ def add_target_threshold(
         y1=y_top,
         fillcolor=fill_colour,
         line={"width": 0},
-        layer="below",
+        layer="above",
     )
     figure.add_hline(
         y=y_bottom,
         line={"color": line_color, "width": 2, "dash": "dash"},
-        layer="below",
+        layer="above",
     )
 
     if target_threshold_label:
