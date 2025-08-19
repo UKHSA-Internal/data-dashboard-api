@@ -15,7 +15,11 @@ from metrics.interfaces.charts.common.generation import (
     generate_chart_as_file,
     generate_encoded_chart,
 )
-from metrics.interfaces.plots.access import PlotGenerationData, PlotsInterface
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    PlotGenerationData,
+    PlotsInterface,
+)
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
 
@@ -51,7 +55,13 @@ class SubplotChartsInterface:
 
         for subplot in self.chart_request_params.subplots:
             plots_interface = PlotsInterface(chart_request_params=subplot)
-            subplot_data: list[PlotGenerationData] = plots_interface.build_plots_data()
+            try:
+                subplot_data: list[PlotGenerationData] = (
+                    plots_interface.build_plots_data()
+                )
+            except DataNotFoundForAnyPlotError:
+                continue
+
             subplots_data.append(
                 {
                     "subplot_title": subplot.subplot_title,
