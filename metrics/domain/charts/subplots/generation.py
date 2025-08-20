@@ -162,7 +162,7 @@ def add_target_threshold(
         y0=y_top,
         y1=y_top,
         line={"color": line_color, "width": 2, "dash": "solid"},
-        layer="below",
+        layer="above",
     )
     # Draw a single continuous rectangle across the full figure
     # using paper coords regardless of any breaks between subplots
@@ -176,7 +176,7 @@ def add_target_threshold(
         y1=y_top,
         fillcolor=fill_colour,
         line={"width": 0},
-        layer="below",
+        layer="above",
     )
     figure.add_shape(
         type="line",
@@ -187,7 +187,7 @@ def add_target_threshold(
         y0=y_bottom,
         y1=y_bottom,
         line={"color": line_color, "width": 2, "dash": "dash"},
-        layer="below",
+        layer="above",
     )
 
     if target_threshold_label:

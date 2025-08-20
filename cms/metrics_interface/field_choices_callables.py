@@ -344,7 +344,7 @@ def get_all_topic_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        choices=metrics_interface.get_all_topic_names()
+        choices=metrics_interface.get_all_unique_topic_names()
     )
 
 
