@@ -13,9 +13,38 @@ from metrics.domain.models.subplot_plots import (
 )
 
 
+def format_tick_text(tick_text: str) -> str:
+    """Formats tick text to wrap onto two lines.
+
+    Args:
+        tick_text: The tick text for a subplot's centre tick mark.
+
+    Returns:
+        str: The formatted tick text that includes `<b>` and `<br>`
+        tags based on the number of words in the title.
+
+    """
+    first_line, seperator, last_line = tick_text.partition("(")
+
+    if seperator:
+        return f"<b>{first_line.strip()}</b><br>{seperator}{last_line.strip()}"
+
+    return f"<b>{first_line.strip()}</b>"
+
+
 def format_legend_names(
     figure: plotly.graph_objects.Figure,
 ) -> plotly.graph_objects.Figure:
+    """Updates the Plotly figure legend group to remove duplicate names
+
+    Args:
+        figure: Plotly figure object.
+
+    Returns:
+        Plotly figure object where the legend group
+        has been updated to combine duplicate names
+        into a single legend entry.
+    """
     plot_labels = set()
 
     for plot in figure.data:
@@ -24,7 +53,7 @@ def format_legend_names(
         plot.showlegend = name not in plot_labels
         plot_labels.add(name)
 
-    return figure
+    return [figure, plot_labels]
 
 
 def generate_chart_figure(
@@ -65,11 +94,15 @@ def generate_chart_figure(
 
         figure.update_xaxes(
             col=plot_index,
-            ticktext=[plot_data.subplot_title],
+            ticktext=[format_tick_text(plot_data.subplot_title)],
             tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
         )
 
-    figure.update_layout(**settings.get_subplot_chart_config())
+    [figure, plot_labels] = format_legend_names(figure)
+
+    figure.update_layout(
+        **settings.get_subplot_chart_config(number_of_legend_items=len(plot_labels))
+    )
     figure.update_yaxes(**settings.get_subplot_yaxis_config())
     figure.update_xaxes(**settings.get_subplot_xaxis_config())
 
@@ -83,7 +116,7 @@ def generate_chart_figure(
             target_threshold_label=chart_generation_payload.target_threshold_label,
         )
 
-    return format_legend_names(figure=figure)
+    return figure
 
 
 def add_target_threshold(
