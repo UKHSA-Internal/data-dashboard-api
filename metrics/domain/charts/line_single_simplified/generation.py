@@ -3,7 +3,9 @@ from decimal import Decimal
 
 import plotly.graph_objects
 
-from metrics.domain.charts import chart_settings
+from metrics.domain.charts.chart_settings.single_category import (
+    SingleCategoryChartSettings,
+)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.plots import ChartGenerationPayload
 
@@ -43,7 +45,7 @@ def create_simplified_line_chart(
 
     figure.add_trace(trace=line_plot)
 
-    settings = chart_settings.ChartSettings(
+    settings = SingleCategoryChartSettings(
         chart_generation_payload=chart_generation_payload
     )
 
