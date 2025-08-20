@@ -99,7 +99,10 @@ class SingleCategoryChartSettings(ChartSettings):
         y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
 
         base_y_axis_config["tick0"] = y_min_value
-        base_y_axis_config["range"] = [y_min_value, y_max_value]
+
+        if self.y_axis_maximum_value:
+            base_y_axis_config["range"] = [y_min_value, y_max_value]
+
         base_y_axis_config["rangemode"] = "tozero" if y_min_value == 0 else "normal"
 
         return base_y_axis_config
