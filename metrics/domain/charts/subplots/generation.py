@@ -13,7 +13,7 @@ from metrics.domain.models.subplot_plots import (
 )
 
 
-def format_tick_text(tick_text: str) -> str:
+def format_tick_text(*, tick_text: str) -> str:
     """Formats tick text to wrap onto two lines.
 
     Args:
@@ -94,7 +94,7 @@ def generate_chart_figure(
 
         figure.update_xaxes(
             col=plot_index,
-            ticktext=[format_tick_text(plot_data.subplot_title)],
+            ticktext=[format_tick_text(tick_text=plot_data.subplot_title)],
             tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
         )
 
