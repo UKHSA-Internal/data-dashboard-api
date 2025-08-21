@@ -78,7 +78,8 @@ class TestCacheClient:
         cache_client.delete_many(keys=mocked_keys)
 
         # Then
-        spy_cache.delete_many.assert_called_once_with(keys=mocked_keys)
+        expected_calls = [mock.call(key=key) for key in mocked_keys]
+        spy_cache.delete.assert_has_calls(calls=expected_calls)
 
     @mock.patch.dict(
         in_dict="django.conf.settings.CACHES",

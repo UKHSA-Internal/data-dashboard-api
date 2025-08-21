@@ -72,6 +72,14 @@ class CacheClient:
     def delete_many(self, keys: list[str]) -> None:
         """Deletes all the provided keys in the cache
 
+        Notes:
+            Because we use Elasticache serverless v2 in
+            production, which is a cluster. The keys
+            are distributed across multiple slots
+            based on their hash. So the simplest
+            (but least efficient) approach is to
+            delete the keys 1-by-1.
+
         Args:
             keys: The cache keys to delete
                 within a bulk delete operation
@@ -80,7 +88,8 @@ class CacheClient:
             None
 
         """
-        self._cache.delete_many(keys=keys)
+        for key in keys:
+            self._cache.delete(key=key)
 
     def copy(self, *, source: str, destination: str) -> None:
         """Copies the value stored at the `source_key` to the `destination_key`
