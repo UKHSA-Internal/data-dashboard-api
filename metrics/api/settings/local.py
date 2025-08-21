@@ -2,6 +2,8 @@ import os
 
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 DEBUG = True
 
 DATABASES = {
