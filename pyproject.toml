@@ -111,6 +111,8 @@ target-version = "py312"
 "public_api/views/root_view.py"                               = ["A002"]           # Ignore built-in `format` used in arg to extended
 "public_api/version_02/views/root_view.py"                    = ["A002"]           # Ignore built-in `format` used in arg to extended
                                                                                         # rest framework API view method
+"caching/private_api/client.py"                               = ["SLF001"]         # Ignore access to private member
+                                                                                        # due to low level Redis client being used
 "caching/public_api/crawler.py"                               = ["PERF401"]        # Ignore list comprehension which would reduce readibility
 "caching/common/geographies_crawler.py"                       = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
 "metrics/domain/weather_health_alerts/text_lookups/*"         = ["W291"]           # Ignore trailing whitespace for weather alert text lookups
@@ -173,7 +175,7 @@ omit = [
 skip_covered = true                     # Only list files which do not have 100% test coverage in the report
 show_missing = true                     # Report lines which were not hit
 fail_under = 100.00                     # Test coverage report will fail for total coverage under this threshold value
-exclude_lines = ["__str__"]
+exclude_lines = ["__str__", "__repr__"]
 
 ########################################################################################################################
 # Bandit configuration

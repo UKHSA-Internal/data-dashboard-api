@@ -71,20 +71,22 @@ class PrivateAPICrawler:
     # Class constructors
 
     @classmethod
-    def create_crawler_for_cache_checking_only(cls) -> Self:
-        internal_api_client = InternalAPIClient(cache_check_only=True)
+    def create_crawler_to_force_write_in_non_reserved_namespace(cls) -> Self:
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=False
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod
-    def create_crawler_for_force_cache_refresh(cls) -> Self:
-        internal_api_client = InternalAPIClient(force_refresh=True)
+    def create_crawler_to_force_write_in_reserved_staging_namespace(cls) -> Self:
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=True
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod
     def create_crawler_for_lazy_loading(cls) -> Self:
-        internal_api_client = InternalAPIClient(
-            force_refresh=False, cache_check_only=False
-        )
+        internal_api_client = InternalAPIClient(force_refresh=False)
         return cls(internal_api_client=internal_api_client)
 
     # Process pages for content
