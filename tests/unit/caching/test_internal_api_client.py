@@ -331,6 +331,30 @@ class TestInternalAPIClient:
             calls=[deprecated_api_call, live_api_call], any_order=False
         )
 
+    def test_hit_maps_endpoint_delegates_calls_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_maps_endpoint()` is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        mocked_request_data = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_maps_endpoint(data=mocked_request_data)
+
+        # Then
+        assert response == internal_api_client._client.post.return_value
+        expected_headers = internal_api_client.build_headers()
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.maps_endpoint_path,
+            data=mocked_request_data,
+            headers=expected_headers,
+            format="json",
+        )
+
     def test_hit_pages_list_endpoint_delegates_call_correctly(self):
         """
         Given a client

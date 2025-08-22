@@ -4,6 +4,7 @@ import pytest
 
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
+from cms.dynamic_content.global_filter_deconstruction import GlobalFilterCMSBlockParser
 
 
 class TestDynamicContentBlockCrawlerProcessBlocks:
@@ -315,3 +316,36 @@ class TestCrawlerProcessIndividualBlocks:
         spy_internal_api_client.hit_downloads_endpoint.assert_called_once_with(
             data=expected_data
         )
+
+    def test_process_global_filter(
+        self,
+        example_global_filter: dict,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
+    ):
+        """
+        Given a global filter CMS block
+        When `process_global_filter()` is called from
+            an instance of `DynamicContentBlockCrawler`
+        Then the call is delegated to the `hit_maps_endpoint()`
+            on the `InternalAPIClient` for each of
+            the time period / data filter selection permutations
+        """
+        # Given
+        global_filter = example_global_filter
+        spy_internal_api_client: mock.Mock = (
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
+        )
+
+        # When
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_global_filter(
+            global_filter=global_filter
+        )
+
+        # Then
+        block_parser = GlobalFilterCMSBlockParser(global_filter=global_filter)
+        payloads = block_parser.build_complete_payloads_for_maps_api()
+        expected_calls = [
+            mock.call.hit_maps_endpoint(data=payload) for payload in payloads
+        ]
+
+        spy_internal_api_client.assert_has_calls(calls=expected_calls)
