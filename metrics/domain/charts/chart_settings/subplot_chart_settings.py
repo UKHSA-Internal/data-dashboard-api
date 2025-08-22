@@ -117,18 +117,15 @@ class SubplotChartSettings(ChartSettings):
         return chart_config
 
     def get_subplot_xaxis_config(self) -> CHART_ARGS:
-        yaxis_config = self._get_x_axis_config()
-
-        yaxis_config["row"] = 1
-
-        return yaxis_config
+        x_axis_config = self._get_x_axis_config()
+        x_axis_config["row"] = 1
+        return x_axis_config
 
     def get_subplot_yaxis_config(self) -> CHART_ARGS:
-        yaxis_config = self._get_y_axis_config()
+        y_axis_config = self._get_y_axis_config()
+        y_axis_config["row"] = 1
 
-        yaxis_config["row"] = 1
-
-        return yaxis_config
+        return y_axis_config
 
     def get_primary_subplot_yaxis_config(self) -> CHART_ARGS:
         primary_yaxis_config = self._get_y_axis_config()
@@ -138,4 +135,26 @@ class SubplotChartSettings(ChartSettings):
         primary_yaxis_config["showticklabels"] = True
         primary_yaxis_config["ticklen"] = 5
 
+        primary_yaxis_config["title_text"] = self._chart_generation_payload.y_axis_title
+        primary_yaxis_config["title_font"] = self._get_tick_font_config()
+
         return primary_yaxis_config
+
+    def get_x_axis_title_as_annotation_config(self) -> dict:
+        y_base, _ = self._get_legend_size_config()
+
+        return {
+            "annotations": [
+                {
+                    "text": self._chart_generation_payload.x_axis_title,
+                    "x": 0.5,
+                    "y": -y_base,
+                    "xanchor": "center",
+                    "yanchor": "bottom",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": self._get_tick_font_config(),
+                }
+            ]
+        }
