@@ -487,7 +487,7 @@ def example_trend_number_block() -> dict[str, str]:
 @pytest.fixture
 def timestamp_2_months_from_now() -> datetime.datetime:
     return datetime.datetime.now() + relativedelta(months=2)
-  
+
 
 def cache_management_with_in_memory_cache() -> CacheManagement:
     return CacheManagement(in_memory=True)
