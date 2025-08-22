@@ -3,12 +3,12 @@ import logging
 from decimal import Decimal
 
 from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.charts.utils import (
     return_formatted_max_y_axis_value,
     return_formatted_min_y_axis_value,
 )
-from metrics.domain.common.utils import DEFAULT_CHART_WIDTH
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.plots import ChartGenerationPayload
 
@@ -24,39 +24,14 @@ WEEK_IN_MILLISECONDS = 604800000
 TWO_WEEKS_IN_MILLISECONDS = 1209600000
 
 
-class ChartSettings:
-    narrow_chart_width = DEFAULT_CHART_WIDTH
-
+class SingleCategoryChartSettings(ChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
-        self._chart_generation_payload = chart_generation_payload
+        super().__init__(chart_generation_payload=chart_generation_payload)
         self.plots_data: list[PlotGenerationData] = chart_generation_payload.plots
-
-    @property
-    def width(self) -> int:
-        return self._chart_generation_payload.chart_width
-
-    @property
-    def height(self) -> int:
-        return self._chart_generation_payload.chart_height
-
-    @property
-    def y_axis_minimum_value(self) -> int | Decimal:
-        return self._chart_generation_payload.y_axis_minimum_value
-
-    @property
-    def y_axis_maximum_value(self) -> int | Decimal | None:
-        return self._chart_generation_payload.y_axis_maximum_value
 
     @property
     def is_date_type_x_axis(self) -> bool:
         return isinstance(self.plots_data[0].x_axis_values[0], datetime.date)
-
-    @staticmethod
-    def _get_tick_font_config() -> DICT_OF_STR_ONLY:
-        return {
-            "family": "Arial",
-            "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-        }
 
     def _get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
         tick_font = self._get_tick_font_config()
@@ -129,28 +104,6 @@ class ChartSettings:
 
         return base_y_axis_config
 
-    def _get_base_chart_config(self):
-        return {
-            "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-            "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-            "hoverlabel": {
-                "align": "left",
-                "bgcolor": "white",
-            },
-            "margin": {
-                "l": 0,
-                "r": 0,
-                "b": 0,
-                "t": 0,
-            },
-            "autosize": False,
-            "xaxis": self._get_x_axis_config(),
-            "yaxis": self._get_y_axis_config(),
-            "height": self.height,
-            "width": self.width,
-            "showlegend": True,
-        }
-
     def _get_minimum_and_maximum_y_axis_values(self) -> list[Decimal]:
         """Returns the y-axis minimum and maximum value, which can be either a manual
         value provided in a request or the minimum and maximum value
@@ -190,113 +143,32 @@ class ChartSettings:
 
         return [min_value, max_value]
 
-    def get_line_with_shaded_section_chart_config(self):
-        chart_config = self._get_base_chart_config()
-        chart_config["showlegend"] = False
-
-        return chart_config
-
-    def build_line_single_simplified_y_axis_value_params(
-        self,
-    ) -> dict[str, list[str | int | Decimal]]:
-        """Returns a dictionary containing `y-axis` parameter values
-
-        Returns:
-            A dictionary containing the y-axis parameters than make up the
-            y-axis ticks and tick values.
-        """
-        min_value, max_value = self._get_minimum_and_maximum_y_axis_values()
-
+    @staticmethod
+    def get_x_axis_text_type() -> DICT_OF_STR_ONLY:
         return {
-            "y_axis_tick_values": [min_value, max_value],
-            "y_axis_tick_text": [
-                return_formatted_min_y_axis_value(y_axis_values=[min_value]),
-                return_formatted_max_y_axis_value(y_axis_values=[max_value]),
-            ],
-            "range": [min_value, max_value],
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
         }
 
-    def build_line_single_simplified_axis_params(
-        self,
-    ) -> dict[str, list[str | int | Decimal]]:
-        """Creates the parameters for `get_line_single_simplified_chart_config`
-
-        Returns:
-            dictionary of parameters for charts settings parameters
-        """
-        plot_data = self.plots_data[0]
-
-        y_axis_params = self.build_line_single_simplified_y_axis_value_params()
-
-        return {
-            "x_axis_tick_values": [
-                plot_data.x_axis_values[0],
-                plot_data.x_axis_values[-1],
-            ],
-            "x_axis_tick_text": [
-                plot_data.x_axis_values[0].strftime("%b, %Y"),
-                plot_data.x_axis_values[-1].strftime("%b, %Y"),
-            ],
-            "y_axis_tick_values": y_axis_params["y_axis_tick_values"],
-            "y_axis_tick_text": y_axis_params["y_axis_tick_text"],
-            "range": y_axis_params["range"],
-            "rangemode": (
-                "tozero" if y_axis_params["y_axis_tick_values"][0] == 0 else "normal"
-            ),
+    def _get_legend_top_centre_config(self):
+        legend_config = {
+            "font": self._get_tick_font_config(),
+            "orientation": "h",
+            "y": 1.0,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "bottom",
         }
 
-    def get_line_single_simplified_chart_config(self):
-        axis_params = self.build_line_single_simplified_axis_params()
+        if legend_title := self._chart_generation_payload.legend_title:
+            legend_config["title"] = f"<b>{legend_title}</b>"
 
-        # Chart Config
-        chart_config = self._get_base_chart_config()
-        chart_config["showlegend"] = False
-        chart_config["margin"]["r"] = 35
-        chart_config["margin"]["l"] = 25
-        chart_config["margin"]["pad"] = 25
+        return {
+            "legend": legend_config,
+        }
 
-        # x_axis config
-        chart_config["xaxis"]["showgrid"] = False
-        chart_config["xaxis"]["ticks"] = "outside"
-        chart_config["xaxis"]["tickvals"] = axis_params["x_axis_tick_values"]
-        chart_config["xaxis"]["ticktext"] = axis_params["x_axis_tick_text"]
-        chart_config["xaxis"]["ticklen"] = 0
-        chart_config["xaxis"]["tickfont"][
-            "color"
-        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
-
-        # y_axis config
-        chart_config["yaxis"]["zeroline"] = False
-        chart_config["yaxis"]["ticks"] = "outside"
-        chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]
-        chart_config["yaxis"]["ticktext"] = axis_params["y_axis_tick_text"]
-        chart_config["yaxis"]["ticklen"] = 0
-        chart_config["yaxis"]["tickfont"][
-            "color"
-        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
-        chart_config["yaxis"]["range"] = axis_params["range"]
-        chart_config["yaxis"]["rangemode"] = axis_params["rangemode"]
-
-        return chart_config
-
-    def get_line_multi_coloured_chart_config(self):
-        chart_config = self._get_base_chart_config()
-
-        return {**chart_config, **self._get_legend_top_centre_config()}
-
-    def get_common_chart_config(self):
-        chart_config = self._get_base_chart_config()
-
-        chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_top_centre_config()}
-
-    def _get_date_tick_format(self, *, weekly: bool = False) -> str:
-        if weekly:
-            return "%d %b<br>%Y"
-
-        return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
-
-    def get_min_and_max_x_axis_values(self) -> tuple[str, str]:
+    def _get_min_and_max_x_axis_values(self) -> tuple[str, str]:
         possible_minimums = []
         possible_maximums = []
 
@@ -403,7 +275,7 @@ class ChartSettings:
         ]
 
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
-        min_date, max_date = self.get_min_and_max_x_axis_values()
+        min_date, max_date = self._get_min_and_max_x_axis_values()
 
         number_of_days, number_of_months = get_number_of_days_and_months(
             min_date=min_date, max_date=max_date
@@ -428,30 +300,105 @@ class ChartSettings:
             ),
         }
 
-    @staticmethod
-    def get_x_axis_text_type() -> DICT_OF_STR_ONLY:
-        return {
-            "type": "-",
-            "dtick": None,
-            "tickformat": None,
-        }
+    def _build_line_single_simplified_y_axis_value_params(
+        self,
+    ) -> dict[str, list[str | int | Decimal]]:
+        """Returns a dictionary containing `y-axis` parameter values
 
-    def _get_legend_top_centre_config(self):
-        legend_config = {
-            "font": self._get_tick_font_config(),
-            "orientation": "h",
-            "y": 1.0,
-            "x": 0.5,
-            "xanchor": "center",
-            "yanchor": "bottom",
-        }
-
-        if legend_title := self._chart_generation_payload.legend_title:
-            legend_config["title"] = f"<b>{legend_title}</b>"
+        Returns:
+            A dictionary containing the y-axis parameters than make up the
+            y-axis ticks and tick values.
+        """
+        min_value, max_value = self._get_minimum_and_maximum_y_axis_values()
 
         return {
-            "legend": legend_config,
+            "y_axis_tick_values": [min_value, max_value],
+            "y_axis_tick_text": [
+                return_formatted_min_y_axis_value(y_axis_values=[min_value]),
+                return_formatted_max_y_axis_value(y_axis_values=[max_value]),
+            ],
+            "range": [min_value, max_value],
         }
+
+    def _build_line_single_simplified_axis_params(
+        self,
+    ) -> dict[str, list[str | int | Decimal]]:
+        """Creates the parameters for `get_line_single_simplified_chart_config`
+
+        Returns:
+            dictionary of parameters for charts settings parameters
+        """
+        plot_data = self.plots_data[0]
+
+        y_axis_params = self._build_line_single_simplified_y_axis_value_params()
+
+        return {
+            "x_axis_tick_values": [
+                plot_data.x_axis_values[0],
+                plot_data.x_axis_values[-1],
+            ],
+            "x_axis_tick_text": [
+                plot_data.x_axis_values[0].strftime("%b, %Y"),
+                plot_data.x_axis_values[-1].strftime("%b, %Y"),
+            ],
+            "y_axis_tick_values": y_axis_params["y_axis_tick_values"],
+            "y_axis_tick_text": y_axis_params["y_axis_tick_text"],
+            "range": y_axis_params["range"],
+            "rangemode": (
+                "tozero" if y_axis_params["y_axis_tick_values"][0] == 0 else "normal"
+            ),
+        }
+
+    def get_line_single_simplified_chart_config(self):
+        axis_params = self._build_line_single_simplified_axis_params()
+
+        # Chart Config
+        chart_config = self._get_base_chart_config()
+        chart_config["showlegend"] = False
+        chart_config["margin"]["r"] = 35
+        chart_config["margin"]["l"] = 25
+        chart_config["margin"]["pad"] = 25
+
+        # x_axis config
+        chart_config["xaxis"]["showgrid"] = False
+        chart_config["xaxis"]["ticks"] = "outside"
+        chart_config["xaxis"]["tickvals"] = axis_params["x_axis_tick_values"]
+        chart_config["xaxis"]["ticktext"] = axis_params["x_axis_tick_text"]
+        chart_config["xaxis"]["ticklen"] = 0
+        chart_config["xaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+
+        # y_axis config
+        chart_config["yaxis"]["zeroline"] = False
+        chart_config["yaxis"]["ticks"] = "outside"
+        chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]
+        chart_config["yaxis"]["ticktext"] = axis_params["y_axis_tick_text"]
+        chart_config["yaxis"]["ticklen"] = 0
+        chart_config["yaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+        chart_config["yaxis"]["range"] = axis_params["range"]
+        chart_config["yaxis"]["rangemode"] = axis_params["rangemode"]
+
+        return chart_config
+
+    def get_line_with_shaded_section_chart_config(self):
+        chart_config = self._get_base_chart_config()
+        chart_config["showlegend"] = False
+
+        return chart_config
+
+    def get_line_multi_coloured_chart_config(self):
+        chart_config = self._get_base_chart_config()
+
+        return {**chart_config, **self._get_legend_top_centre_config()}
+
+    def get_common_chart_config(self):
+        chart_config = self._get_base_chart_config()
+
+        chart_config["barmode"] = "group"
+        return {**chart_config, **self._get_legend_top_centre_config()}
 
 
 def get_number_of_days_and_months(

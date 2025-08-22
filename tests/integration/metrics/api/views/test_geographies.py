@@ -4,6 +4,9 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from ingestion.data_transfer_models.validation.geography_code import (
+    UNITED_KINGDOM_GEOGRAPHY_CODE,
+)
 from tests.factories.metrics.geography import GeographyFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
@@ -77,14 +80,17 @@ class TestGeographiesDeprecatedView:
                     {
                         "name": arun.geography.name,
                         "geography_code": arun.geography.geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": bexley.geography.name,
                         "geography_code": bexley.geography.geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": hackney.geography.name,
                         "geography_code": hackney.geography.geography_code,
+                        "relationships": None,
                     },
                 ],
             },
@@ -94,6 +100,13 @@ class TestGeographiesDeprecatedView:
                     {
                         "name": england.geography.name,
                         "geography_code": england.geography.geography_code,
+                        "relationships": [
+                            {
+                                "geography_type": "United Kingdom",
+                                "geography_code": UNITED_KINGDOM_GEOGRAPHY_CODE,
+                                "name": "United Kingdom",
+                            }
+                        ],
                     }
                 ],
             },
@@ -171,14 +184,17 @@ class TestGeographiesView:
                     {
                         "name": arun.geography.name,
                         "geography_code": arun.geography.geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": bexley.geography.name,
                         "geography_code": bexley.geography.geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": hackney.geography.name,
                         "geography_code": hackney.geography.geography_code,
+                        "relationships": None,
                     },
                 ],
             },
@@ -188,6 +204,13 @@ class TestGeographiesView:
                     {
                         "name": england.geography.name,
                         "geography_code": england.geography.geography_code,
+                        "relationships": [
+                            {
+                                "geography_type": "United Kingdom",
+                                "geography_code": UNITED_KINGDOM_GEOGRAPHY_CODE,
+                                "name": "United Kingdom",
+                            }
+                        ],
                     }
                 ],
             },

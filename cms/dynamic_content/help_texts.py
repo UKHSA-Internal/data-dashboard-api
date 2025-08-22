@@ -462,12 +462,12 @@ For a percentage change metric, using prefix `change` and suffix `%` would displ
 
 GLOBAL_FILTERS_THRESHOLD_FILTER: str = """
 The threshold filter is used to configure threshold boundaries that can be used to filter data on the dashboard.
-Eg. over 95% boundary 0.95 -> 1.00
+Eg. over 95% boundary 95 -> 100
 """
 
 GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE: str = """
 The minimum and maximum boundary values are used to set the range for the threshold as a float between
-0.00 and 1.00 Eg. a threshold of over 95% will have a minimum value of 0.95 and a maximum value of 1.0
+0.00 and 100 Eg. a threshold of over 95% will have a minimum value of 95 and a maximum value of 100
 """
 
 GLOBAL_FILTERS_THRESHOLD_COLOR: str = """
@@ -529,4 +529,8 @@ The full title will be structured as follows:
 
 FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD: str = """
 An optional value to draw a target threshold for.
+"""
+
+FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD_LABEL: str = """
+An optional label to add as for the target threshold indicator on the charts.
 """
