@@ -34,7 +34,7 @@ def format_tick_text(*, tick_text: str) -> str:
 
 def format_legend_names(
     figure: plotly.graph_objects.Figure,
-) -> plotly.graph_objects.Figure:
+) -> tuple[plotly.graph_objects.Figure, set[str]]:
     """Updates the Plotly figure legend group to remove duplicate names
 
     Args:
@@ -44,8 +44,10 @@ def format_legend_names(
         Plotly figure object where the legend group
         has been updated to combine duplicate names
         into a single legend entry.
+        Alongside a set of plot labels
+
     """
-    plot_labels = set()
+    plot_labels: set[str] = set()
 
     for plot in figure.data:
         name = plot.name
