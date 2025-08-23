@@ -12,12 +12,13 @@ TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 GEOGRAPHIES_ENDPOINT_PATH_DEPRECATED = f"{API_PREFIX}geographies/v2/"
 GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v3/"
+MAPS_ENDPOINT_PATH = f"{API_PREFIX}maps/v1/"
 GLOBAL_BANNERS_ENDPOINT_PATH = f"{API_PREFIX}global-banners/v1"
 MENUS_ENDPOINT_PATH = f"{API_PREFIX}menus/v1"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
-CACHE_CHECK_HEADER_KEY = "Cache-Check"
+CACHE_RESERVED_NAMESPACE_HEADER_KEY = "Cache-Reserved-Namespace"
 
 
 PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS = (
@@ -41,7 +42,7 @@ class InternalAPIClient:
         *,
         client: APIClient | None = None,
         force_refresh: bool = False,
-        cache_check_only: bool = False,
+        reserved_namespace: bool = False,
     ):
         self._client = client or self.create_api_client()
 
@@ -54,12 +55,13 @@ class InternalAPIClient:
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
         self.geographies_endpoint_path_deprecated = GEOGRAPHIES_ENDPOINT_PATH_DEPRECATED
         self.geographies_endpoint_path = GEOGRAPHIES_ENDPOINT_PATH
+        self.maps_endpoint_path = MAPS_ENDPOINT_PATH
         self.global_banners_endpoint_path = GLOBAL_BANNERS_ENDPOINT_PATH
         self.menus_endpoint_path = MENUS_ENDPOINT_PATH
 
         # Header configurations
         self.force_refresh = force_refresh
-        self.cache_check_only = cache_check_only
+        self.reserved_namespace = reserved_namespace
 
     # API client
 
@@ -78,7 +80,7 @@ class InternalAPIClient:
     def build_headers(self) -> dict[str, bool]:
         return {
             CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
-            CACHE_CHECK_HEADER_KEY: self.cache_check_only,
+            CACHE_RESERVED_NAMESPACE_HEADER_KEY: self.reserved_namespace,
         }
 
     # Query parameters
@@ -189,6 +191,21 @@ class InternalAPIClient:
             headers=headers,
             format="json",
             query_params=query_params,
+        )
+
+    def hit_maps_endpoint(self, *, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `maps/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `maps/` endpoint
+
+        """
+        headers = self.build_headers()
+        return self._client.post(
+            path=self.maps_endpoint_path, data=data, headers=headers, format="json"
         )
 
     def hit_pages_list_endpoint(self) -> Response:

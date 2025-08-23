@@ -5,7 +5,7 @@ from django.core.management import call_command
 MODULE_PATH = "metrics.interfaces.management.commands.hydrate_private_api_cache"
 
 
-class TestGenerateAPITimeSeries:
+class TestHydratePrivateAPICommand:
     @mock.patch(f"{MODULE_PATH}.force_cache_refresh_for_all_pages")
     def test_delegates_call_successfully(
         self, spy_force_cache_refresh_for_all_pages: mock.MagicMock

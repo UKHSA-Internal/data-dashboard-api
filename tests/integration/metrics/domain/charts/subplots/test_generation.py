@@ -73,6 +73,12 @@ class TestSubplotGeneration:
         assert "Hartlepool" in figure.data[4].x
         assert "Stockton-on-Tees" in figure.data[5].x
 
+        x_axis_annotation = figure.layout.annotations[0]
+        assert x_axis_annotation.text == valid_payload.x_axis_title
+
+        target_threshold_annotation = figure.layout.annotations[1]
+        assert target_threshold_annotation.text == valid_payload.target_threshold_label
+
     def test_chart_figure_includes_one_tick_text_for_each_subplot(
         self,
         example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],

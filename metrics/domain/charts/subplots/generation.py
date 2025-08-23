@@ -13,7 +13,7 @@ from metrics.domain.models.subplot_plots import (
 )
 
 
-def format_tick_text(tick_text: str) -> str:
+def format_tick_text(*, tick_text: str) -> str:
     """Formats tick text to wrap onto two lines.
 
     Args:
@@ -34,7 +34,7 @@ def format_tick_text(tick_text: str) -> str:
 
 def format_legend_names(
     figure: plotly.graph_objects.Figure,
-) -> plotly.graph_objects.Figure:
+) -> tuple[plotly.graph_objects.Figure, set[str]]:
     """Updates the Plotly figure legend group to remove duplicate names
 
     Args:
@@ -44,8 +44,10 @@ def format_legend_names(
         Plotly figure object where the legend group
         has been updated to combine duplicate names
         into a single legend entry.
+        Alongside a set of plot labels
+
     """
-    plot_labels = set()
+    plot_labels: set[str] = set()
 
     for plot in figure.data:
         name = plot.name
@@ -94,7 +96,7 @@ def generate_chart_figure(
 
         figure.update_xaxes(
             col=plot_index,
-            ticktext=[format_tick_text(plot_data.subplot_title)],
+            ticktext=[format_tick_text(tick_text=plot_data.subplot_title)],
             tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
         )
 
@@ -108,6 +110,8 @@ def generate_chart_figure(
 
     # Update primary y-axis settings (first subplot)
     figure.update_yaxes(**settings.get_primary_subplot_yaxis_config())
+
+    figure.update_layout(**settings.get_x_axis_title_as_annotation_config())
 
     if chart_generation_payload.target_threshold:
         figure = add_target_threshold(

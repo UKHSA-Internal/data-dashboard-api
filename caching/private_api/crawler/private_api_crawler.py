@@ -71,20 +71,22 @@ class PrivateAPICrawler:
     # Class constructors
 
     @classmethod
-    def create_crawler_for_cache_checking_only(cls) -> Self:
-        internal_api_client = InternalAPIClient(cache_check_only=True)
+    def create_crawler_to_force_write_in_non_reserved_namespace(cls) -> Self:
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=False
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod
-    def create_crawler_for_force_cache_refresh(cls) -> Self:
-        internal_api_client = InternalAPIClient(force_refresh=True)
+    def create_crawler_to_force_write_in_reserved_staging_namespace(cls) -> Self:
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=True
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod
     def create_crawler_for_lazy_loading(cls) -> Self:
-        internal_api_client = InternalAPIClient(
-            force_refresh=False, cache_check_only=False
-        )
+        internal_api_client = InternalAPIClient(force_refresh=False)
         return cls(internal_api_client=internal_api_client)
 
     # Process pages for content
@@ -182,10 +184,23 @@ class PrivateAPICrawler:
                 section=section, geography_data=geography_data
             )
         )
-
         # Process each of the chart blocks which were gathered
         self._dynamic_content_block_crawler.process_all_chart_blocks(
             chart_blocks=chart_blocks
+        )
+
+        # Gather all global filters in this page section.
+        # Generally there should only be 1 on the whole page.
+        # This is for forwards compatibility
+        global_filters = (
+            self._cms_block_parser.get_global_filter_cards_from_page_section(
+                section=section
+            )
+        )
+        # Process the global filters thus processing the various
+        # filter-linked map permutations driven by the global filter
+        self._dynamic_content_block_crawler.process_all_global_filters(
+            global_filters=global_filters
         )
 
     # process downloads

@@ -5,7 +5,7 @@ from django.core.management import call_command
 MODULE_PATH = "metrics.interfaces.management.commands.upload_truncated_test_data"
 
 
-class TestUploadTruncatedTestData:
+class TestUploadTruncatedTestDataCommand:
     @mock.patch(f"{MODULE_PATH}.upload_truncated_test_data")
     def test_delegates_call(self, spy_upload_truncated_test_data: mock.MagicMock):
         """

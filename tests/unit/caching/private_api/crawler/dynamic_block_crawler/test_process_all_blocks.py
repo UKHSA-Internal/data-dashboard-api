@@ -67,3 +67,33 @@ class TestProcessAllBlocks:
         # Then
         expected_calls = [mock.call(chart_block=x) for x in mocked_chart_blocks]
         spy_process_chart_block.assert_has_calls(calls=expected_calls, any_order=True)
+
+    @mock.patch.object(DynamicContentBlockCrawler, "process_global_filter")
+    def test_process_all_global_filters_delegates_call(
+        self, spy_process_global_filter: mock.MagicMock
+    ):
+        """
+        Given a list of mocked chart blocks
+        When `process_all_global_filters()` is called
+            from an instance of the `DynamicContentBlockCrawler`
+        Then the call is delegated to
+            the `process_global_filter()` method
+
+        Patches:
+            spy_process_global_filter: For the main assertion
+
+        """
+        # Given
+        mocked_global_filters = [mock.Mock()] * 3
+        dynamic_content_block_crawler = DynamicContentBlockCrawler(
+            internal_api_client=mock.Mock()
+        )
+
+        # When
+        dynamic_content_block_crawler.process_all_global_filters(
+            global_filters=mocked_global_filters
+        )
+
+        # Then
+        expected_calls = [mock.call(global_filter=x) for x in mocked_global_filters]
+        spy_process_global_filter.assert_has_calls(calls=expected_calls, any_order=True)

@@ -1,5 +1,6 @@
 import hashlib
 import json
+from typing import Self
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
@@ -11,6 +12,55 @@ from caching.private_api.client import CacheClient, InMemoryCacheClient
 class CacheMissError(Exception): ...
 
 
+RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+RESERVED_NAMESPACE_STAGING_KEY_PREFIX = "ns3"
+
+
+class CacheKey:
+    def __init__(self, prefix: str, version: int, key: str):
+        self._key = key
+        self._prefix = prefix
+        self._version = version
+
+    def __repr__(self) -> str:
+        return self.full_key
+
+    def __str__(self) -> str:
+        return self.standalone_key
+
+    @classmethod
+    def create(cls, raw_key: bytes | str) -> Self:
+        raw_key = str(raw_key)
+        raw_key = raw_key.strip("b'\"")
+        prefix, version, key = raw_key.split(":")
+        return cls(prefix=prefix, version=version, key=key)
+
+    @property
+    def full_key(self) -> str:
+        return f"{self._prefix}:{self._version}:{self._key}"
+
+    @property
+    def standalone_key(self) -> str:
+        return self._key
+
+    @property
+    def is_reserved_namespace(self) -> bool:
+        return self._key.startswith(RESERVED_NAMESPACE_KEY_PREFIX)
+
+    @property
+    def is_reserved_staging_namespace(self):
+        return self._key.startswith(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+
+    def output_to_reserved_namespace(self) -> Self:
+        key = self._key
+        _, main_key = key.split(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+        return CacheKey(
+            key=f"{RESERVED_NAMESPACE_KEY_PREFIX}{main_key}",
+            prefix=self._prefix,
+            version=self._version,
+        )
+
+
 class CacheManagement:
     """This is the abstraction used to save and retrieve items in the cache
 
@@ -20,8 +70,15 @@ class CacheManagement:
 
     """
 
-    def __init__(self, *, in_memory: bool, client: CacheClient | None = None):
+    def __init__(
+        self,
+        *,
+        in_memory: bool,
+        client: CacheClient | None = None,
+        reserved_namespace_key_prefix: str = RESERVED_NAMESPACE_KEY_PREFIX,
+    ):
         self._client = client or self._create_cache_client(in_memory=in_memory)
+        self._reserved_namespace_key_prefix = reserved_namespace_key_prefix
 
     @staticmethod
     def _create_cache_client(*, in_memory: bool) -> CacheClient:
@@ -88,14 +145,94 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item, timeout=timeout)
         return item
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
+    def clear_non_reserved_keys(self):
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
 
         Returns:
             None
 
         """
-        self._client.clear()
+        non_reserved_keys: list[str] = self._get_non_reserved_keys()
+        self._client.delete_many(keys=non_reserved_keys)
+
+    def delete_many(self, keys: list[str]) -> None:
+        """Deletes the given `keys` from the cache within 1 trip to the cache
+
+        Returns:
+            None
+
+        """
+        self._client.delete_many(keys=keys)
+
+    def get_reserved_staging_keys(self) -> list[CacheKey]:
+        """Fetches all the keys in the reserved staging namespace of the cache
+
+        Returns:
+            List of reserved staging keys objects
+
+        """
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            cache_key
+            for cache_key in all_cache_keys
+            if cache_key.is_reserved_staging_namespace
+        ]
+
+    def move_all_reserved_staging_keys_into_reserved_namespace(self) -> None:
+        """Moves any keys in the reserved staging area into the reserved namespace of the cache
+
+        Notes:
+            This will overwrite the existing key if a clash is detected
+            in the destination reserved namespace
+            This will also clear out the reserved staging namespace upon completion
+
+        """
+        reserved_staging_keys: list[CacheKey] = self.get_reserved_staging_keys()
+        for source_key in reserved_staging_keys:
+            destination_key = source_key.output_to_reserved_namespace()
+            self._client.copy(
+                source=source_key.full_key, destination=destination_key.full_key
+            )
+
+        obsolete_keys = [key.standalone_key for key in reserved_staging_keys]
+        self._client.delete_many(keys=obsolete_keys)
+
+    def get_reserved_keys(self) -> list[str]:
+        """Fetches all the keys in the reserved namespace of the cache
+
+        Returns:
+            List of reserved keys as strings.
+            Note that only the key part is included in the string.
+            This excludes the prefix and the version:
+            full key representation = "ukhsa:1:ns2-abc123"
+            returned key representation = "ns2-abc123"
+
+        """
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            cache_key.standalone_key
+            for cache_key in all_cache_keys
+            if cache_key.is_reserved_namespace
+        ]
+
+    def _get_non_reserved_keys(self) -> list[str]:
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            cache_key.standalone_key
+            for cache_key in all_cache_keys
+            if not cache_key.is_reserved_namespace
+        ]
+
+    def _get_all_cache_keys(self) -> list[CacheKey]:
+        all_raw_keys: list[bytes] = self._client.list_keys()
+        return [CacheKey.create(raw_key=raw_key) for raw_key in all_raw_keys]
 
     def _render_response(self, *, response: Response) -> Response:
         non_json_content_types = ("text/csv", "image/png")
@@ -112,7 +249,59 @@ class CacheManagement:
         response.render()
         return response
 
-    def build_cache_entry_key_for_data(
+    # Cache key construction
+
+    def build_cache_entry_key_for_request(
+        self,
+        *,
+        request: Request,
+        is_reserved_staging_namespace: bool,
+        is_reserved_namespace: bool,
+    ) -> str:
+        """Builds a hashed cache entry key for a request
+
+        Args:
+            request: The incoming request which is to be hashed
+            is_reserved_staging_namespace: Boolean switch to store the data
+                in the reserved / long-lived staging namespace within the cache.
+            is_reserved_namespace: Boolean switch to store the data
+                directly in the reserved / long-lived namespace within the cache.
+
+        Returns:
+            A hashed string representation
+            of the given request taking its path
+            and request body or query parameters into account
+            depending on if it is a POST or GET request
+            as well as whether the data sits
+            in the reserved namespace or not.
+
+        Raises:
+            `ValueError`: If the request is not an HTTP GET or POST request
+
+        """
+        cache_key: str = self._build_standalone_key_for_request(request=request)
+        if is_reserved_staging_namespace:
+            return f"{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-{cache_key}"
+
+        if is_reserved_namespace:
+            return f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
+
+        return cache_key
+
+    def _build_standalone_key_for_request(self, *, request: Request) -> str:
+        match request.method:
+            case "POST":
+                data = request.data
+            case "GET":
+                data = request.query_params.dict()
+            case _:
+                raise ValueError
+
+        return self._build_cache_entry_key_for_data(
+            endpoint_path=request.path, data=data
+        )
+
+    def _build_cache_entry_key_for_data(
         self, *, endpoint_path: str, data: dict[str, str]
     ) -> str:
         """Builds a hashed cache entry key for the given `endpoint_path` and `data`
@@ -135,34 +324,6 @@ class CacheManagement:
         data = dict(sorted(data.items()))
         data["endpoint_path"] = endpoint_path
         return data
-
-    def build_cache_entry_key_for_request(self, *, request: Request) -> str:
-        """Builds a hashed cache entry key for a request
-
-        Args:
-            request: The incoming request which is to be hashed
-
-        Returns:
-            A hashed string representation
-            of the given request taking its path
-            and request body or query parameters into account
-            depending on if it is a POST or GET request.
-
-        Raises:
-            `ValueError`: If the request is not an HTTP GET or POST request
-
-        """
-        match request.method:
-            case "POST":
-                data = request.data
-            case "GET":
-                data = request.query_params.dict()
-            case _:
-                raise ValueError
-
-        return self.build_cache_entry_key_for_data(
-            endpoint_path=request.path, data=data
-        )
 
     @staticmethod
     def create_hash_for_data(*, data: dict) -> str:
