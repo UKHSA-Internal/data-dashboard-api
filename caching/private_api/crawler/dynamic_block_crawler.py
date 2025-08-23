@@ -159,8 +159,14 @@ class DynamicContentBlockCrawler:
         payloads = self._extract_maps_payloads_for_global_filter(
             global_filter=global_filter
         )
+        payloads_count = len(payloads)
         for index, payload in enumerate(iterable=payloads, start=1):
-            logger.info("Hitting maps API with payload number %s:\n %s", index, payload)
+            logger.info(
+                "Hitting maps API with payload number %s of %s:\n %s",
+                index,
+                payloads_count,
+                payload,
+            )
             self._internal_api_client.hit_maps_endpoint(data=payload)
 
     @classmethod
