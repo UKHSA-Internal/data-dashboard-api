@@ -1,7 +1,11 @@
+import logging
+
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 from cms.dynamic_content.global_filter_deconstruction import GlobalFilterCMSBlockParser
+
+logger = logging.getLogger(__name__)
 
 
 class DynamicContentBlockCrawler:
@@ -155,7 +159,8 @@ class DynamicContentBlockCrawler:
         payloads = self._extract_maps_payloads_for_global_filter(
             global_filter=global_filter
         )
-        for payload in payloads:
+        for index, payload in enumerate(iterable=payloads, start=1):
+            logger.info("Hitting maps API with payload number %s:\n %s", index, payload)
             self._internal_api_client.hit_maps_endpoint(data=payload)
 
     @classmethod
