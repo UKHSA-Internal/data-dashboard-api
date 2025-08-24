@@ -99,8 +99,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         q_objects = Q()
         for metric_value_range in metric_value_ranges:
-            start = metric_value_range["start"]
-            end = metric_value_range["end"]
+            start, end = metric_value_range
             q_objects |= Q(metric_value__gte=start, metric_value__lte=end)
 
         return queryset.filter(q_objects)
@@ -171,7 +170,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        metric_value_ranges: list[str | float | int] | None = None,
+        metric_value_ranges: list[tuple[str | float | int]] | None = None,
         restrict_to_public: bool = True,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.

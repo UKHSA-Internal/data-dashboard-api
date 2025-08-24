@@ -16,7 +16,6 @@ class Subplots(BaseModel):
     y_axis: str
     plots: list[PlotParameters]
     request: Request | None = None
-    metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
 
     class Config:
         arbitrary_types_allowed = True

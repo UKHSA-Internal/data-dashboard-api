@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 from rest_framework.request import Request
 
@@ -149,17 +151,16 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         if chart_parameters["date_to"]:
             chart_parameters["date_to"] = chart_parameters["date_to"].isoformat()
 
-        provided_metric_value_ranges = chart_parameters.get("metric_value_ranges", [])
-        metric_value_ranges = [
-            (value_range["start"], value_range["end"])
-            for value_range in provided_metric_value_ranges
+        provided_metric_value_ranges = chart_parameters.pop("metric_value_ranges", [])
+        metric_value_ranges: list[tuple[Decimal, Decimal]] = [
+            (metric_value_range.get("start"), metric_value_range.get("end"))
+            for metric_value_range in provided_metric_value_ranges
         ]
 
         for subplot in self.validated_data["subplots"]:
             subplot_parameters = subplot.pop("subplot_parameters")
             subplot["x_axis"] = chart_parameters["x_axis"]
             subplot["y_axis"] = chart_parameters["y_axis"]
-            subplot["metric_value_ranges"] = metric_value_ranges
 
             for plot in subplot["plots"]:
                 plot.update(
@@ -168,6 +169,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
                         **subplot_parameters,
                     }
                 )
+                plot["metric_value_ranges"] = metric_value_ranges
 
         return SubplotChartRequestParameters(
             file_format=self.validated_data["file_format"],
