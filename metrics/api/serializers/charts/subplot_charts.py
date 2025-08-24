@@ -43,6 +43,11 @@ class SubplotsSerializer(serializers.ListSerializer):
     child = SubplotSerializer()
 
 
+class MetricRangeSerializer(serializers.Serializer):
+    start = serializers.DecimalField(max_digits=10, decimal_places=2)
+    end = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
 class ChartParametersSerializer(serializers.Serializer):
     x_axis = serializers.CharField(required=True)
     y_axis = serializers.CharField(required=True)
@@ -58,6 +63,9 @@ class ChartParametersSerializer(serializers.Serializer):
         required=False, allow_null=True, allow_blank=True
     )
     geography = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    metric_value_ranges = MetricRangeSerializer(
+        many=True, allow_null=True, required=False
+    )
 
 
 SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = dict[str, str]
@@ -129,7 +137,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         """
         chart_parameters is used to reduce the duplication of data entry for content editors
         for the chart request its really a part of the `subplot_parameters`. Its the combination
-        of these two objects that when addewd to the `plot` fields make the request.
+        of these two objects that when added to the `plot` fields make the request.
         """
         chart_parameters: SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = (
             self.validated_data.pop("chart_parameters")
@@ -141,10 +149,17 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         if chart_parameters["date_to"]:
             chart_parameters["date_to"] = chart_parameters["date_to"].isoformat()
 
+        provided_metric_value_ranges = chart_parameters.get("metric_value_ranges", [])
+        metric_value_ranges = [
+            (value_range["start"], value_range["end"])
+            for value_range in provided_metric_value_ranges
+        ]
+
         for subplot in self.validated_data["subplots"]:
             subplot_parameters = subplot.pop("subplot_parameters")
             subplot["x_axis"] = chart_parameters["x_axis"]
             subplot["y_axis"] = chart_parameters["y_axis"]
+            subplot["metric_value_ranges"] = metric_value_ranges
 
             for plot in subplot["plots"]:
                 plot.update(

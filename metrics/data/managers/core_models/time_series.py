@@ -99,7 +99,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         q_objects = Q()
         for metric_value_range in metric_value_ranges:
-            start, end = metric_value_range
+            start = metric_value_range["start"]
+            end = metric_value_range["end"]
             q_objects |= Q(metric_value__gte=start, metric_value__lte=end)
 
         return queryset.filter(q_objects)
