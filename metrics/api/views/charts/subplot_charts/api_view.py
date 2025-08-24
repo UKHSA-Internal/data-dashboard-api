@@ -44,7 +44,7 @@ class SubplotChartsView(APIView):
             )
         ],
     )
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> FileResponse | Response:
         chart_preview_serializer = ChartPreviewQueryParamsSerializer(
             data=request.query_params
         )
@@ -56,7 +56,9 @@ class SubplotChartsView(APIView):
         return self._process_post_request_as_encoded_svg(request, *args, **kwargs)
 
     @cache_response(timeout=0)
-    def _process_post_request_as_preview(self, request, *args, **kwargs):
+    def _process_post_request_as_preview(
+        self, request, *args, **kwargs
+    ) -> FileResponse:
         """Handles the inbound request as `preview=true` in this case we don't use the cache
 
         Notes:
@@ -80,7 +82,9 @@ class SubplotChartsView(APIView):
         )
 
     @cache_response()
-    def _process_post_request_as_encoded_svg(self, request, *args, **kwargs):
+    def _process_post_request_as_encoded_svg(
+        self, request, *args, **kwargs
+    ) -> Response:
         """Handles the inbound request as `preview=false` in this case we use the cache
 
         Returns:
@@ -119,7 +123,7 @@ class SubplotChartsView(APIView):
     @classmethod
     def _handle_chart_as_file(
         cls, subplot_chart_parameters: SubplotChartRequestParameters
-    ) -> Response:
+    ) -> FileResponse:
         try:
             chart_result: bytes = access.generate_sub_plot_chart_image(
                 chart_request_params=subplot_chart_parameters,
