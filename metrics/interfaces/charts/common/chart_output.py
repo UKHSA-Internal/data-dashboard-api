@@ -10,6 +10,7 @@ class ChartOutput:
     figure: plotly.graph_objects.Figure
     description: str
     is_headline: bool
+    is_subplot: bool = False
 
     @property
     def interactive_chart_figure_output(self) -> dict:
@@ -72,6 +73,9 @@ class ChartOutput:
 
         if self.is_headline:
             hover_template = "%{y:,} (%{x})<extra></extra>"
+
+        if self.is_subplot:
+            hover_template = "%{y} %{fullData.name}<extra></extra>"
 
         for plot in self.figure.data:
             plot.hovertemplate = hover_template
