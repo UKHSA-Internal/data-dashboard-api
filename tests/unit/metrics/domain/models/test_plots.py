@@ -132,6 +132,7 @@ class TestPlotParameters:
             "age": fake_chart_plot_parameters.age,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "date_to": fake_chart_plot_parameters.date_to_value,
+            "metric_value_ranges": [],
         }
         # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
         assert dict_used_for_query == expected_dict_used_for_query
@@ -162,6 +163,7 @@ class TestPlotParameters:
         fake_chart_plot_parameters.age = age
         fake_chart_plot_parameters.date_from = None
         fake_chart_plot_parameters.date_to = None
+        fake_chart_plot_parameters.metric_value_ranges = []
 
         # When
         dict_used_for_query: dict[str, str] = (
@@ -181,6 +183,7 @@ class TestPlotParameters:
             "geography_type": fake_chart_plot_parameters.geography_type,
             "sex": fake_chart_plot_parameters.sex,
             "age": fake_chart_plot_parameters.age,
+            "metric_value_ranges": fake_chart_plot_parameters.metric_value_ranges,
         }
         # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
         assert dict_used_for_query == expected_dict_used_for_query

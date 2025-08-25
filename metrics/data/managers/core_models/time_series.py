@@ -170,7 +170,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        metric_value_ranges: list[str | float | int] | None = None,
+        metric_value_ranges: list[tuple[str | float | int]] | None = None,
         restrict_to_public: bool = True,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
