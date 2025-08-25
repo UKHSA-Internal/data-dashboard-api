@@ -734,3 +734,44 @@ class TestCoreTimeSeriesManager:
         # Then
         assert public_record in core_time_series_queryset
         assert non_public_record not in core_time_series_queryset
+
+    @pytest.mark.django_db
+    def test_query_for_data_excludes_out_of_range_record(self):
+        """
+        Given 3 CoreTimeSeries` records which are within range
+        And 1 `CoreTimeSeries` which sits outside the given range
+        When `query_for_data()` is called from the `CoreTimeSeriesManager`
+        Then the out of range record is excluded
+        """
+        # Given
+        in_range_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-01", metric_value=1, is_public=True
+        )
+        second_in_range_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-02", metric_value=2, is_public=True
+        )
+        third_in_range_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-02", metric_value=7, is_public=True
+        )
+        out_of_range_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-03", metric_value=11, is_public=True
+        )
+
+        # When
+        core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
+            theme=in_range_record.metric.topic.sub_theme.theme.name,
+            sub_theme=in_range_record.metric.topic.sub_theme.name,
+            topic=in_range_record.metric.topic.name,
+            metric=in_range_record.metric.name,
+            geography=in_range_record.geography.name,
+            geography_type=in_range_record.geography.geography_type.name,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+            metric_value_ranges=[(0, 5), (6, 9)],
+        )
+
+        # Then
+        assert in_range_record in core_time_series_queryset
+        assert second_in_range_record in core_time_series_queryset
+        assert third_in_range_record in core_time_series_queryset
+        assert out_of_range_record not in core_time_series_queryset

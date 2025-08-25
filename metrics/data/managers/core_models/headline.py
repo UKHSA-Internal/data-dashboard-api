@@ -334,6 +334,7 @@ class CoreHeadlineManager(models.Manager):
         theme: str = "",
         sub_theme: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
+        **kwargs,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 

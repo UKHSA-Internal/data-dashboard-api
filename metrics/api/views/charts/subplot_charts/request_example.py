@@ -17,7 +17,8 @@ REQUEST_PAYLOAD_EXAMPLE = {
         "date_to": "2021-12-31",
         "age": "all",
         "sex": "all",
-        "stratum": "test",
+        "stratum": "default",
+        "metric_value_ranges": [{"start": 0, "end": 80}, {"start": 80, "end": 100}],
     },
     "subplots": [
         {

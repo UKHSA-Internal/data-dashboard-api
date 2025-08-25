@@ -1,4 +1,5 @@
 import datetime
+from collections.abc import Iterable
 from decimal import Decimal
 from typing import Self
 
@@ -36,6 +37,7 @@ class PlotParameters(BaseModel):
     override_y_axis_choice_to_none: bool = False
     use_smooth_lines: bool = True
     use_markers: bool = False
+    metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
 
     @property
     def metric_group(self) -> str:
@@ -99,6 +101,7 @@ class PlotParameters(BaseModel):
             "geography_type": self.geography_type or "",
             "sex": self.sex or "",
             "age": self.age or "",
+            "metric_value_ranges": self.metric_value_ranges or [],
         }
 
         if self.is_timeseries_data:
