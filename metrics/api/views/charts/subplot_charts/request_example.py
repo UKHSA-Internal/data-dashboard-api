@@ -24,7 +24,7 @@ REQUEST_PAYLOAD_EXAMPLE = {
             {"start": 85.0001, "end": 90},
             {"start": 90.0001, "end": 95},
             {"start": 95.0001, "end": 100},
-        ]
+        ],
     },
     "subplots": [
         {
