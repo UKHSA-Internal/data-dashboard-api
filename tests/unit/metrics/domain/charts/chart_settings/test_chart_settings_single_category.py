@@ -155,7 +155,6 @@ class TestSingleCategoryChartSettings:
         """
         # Given
         chart_settings = fake_chart_settings
-        fake_y_axis_range = [0, max(chart_settings.plots_data[0].y_axis_values)]
 
         # When
         y_axis_config = chart_settings._get_y_axis_config()
@@ -177,7 +176,6 @@ class TestSingleCategoryChartSettings:
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings._get_tick_font_config(),
             "tick0": 0,
-            "range": fake_y_axis_range,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.y_axis_title,
@@ -511,10 +509,6 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_chart_config = chart_settings._get_base_chart_config()
         expected_chart_config["yaxis"]["tick0"] = 0
-        expected_chart_config["yaxis"]["range"] = [
-            0,
-            max(chart_settings.plots_data[0].y_axis_values),
-        ]
         expected_chart_config["yaxis"]["rangemode"] = "tozero"
         expected_chart_config["showlegend"] = False
 
@@ -523,7 +517,6 @@ class TestSingleCategoryChartSettings:
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
-            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
             [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
             [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
             [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
@@ -563,6 +556,35 @@ class TestSingleCategoryChartSettings:
             line_with_shaded_section_chart_config["yaxis"]["tick0"]
             == expected_y_axis_min
         )
+
+    @pytest.mark.parametrize(
+        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
+        (
+            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
+            [0, None, 10, 40000, [10000, 20000, 30000, 40000]],
+        ),
+    )
+    def test_get_line_with_shaded_section_chart_config_excludes_range_when_max_is_none(
+        self,
+        fake_chart_settings: ChartSettings,
+        y_axis_min: int,
+        y_axis_max: int,
+        expected_y_axis_min: int,
+        expected_y_axis_max: int,
+        y_axis_values: list[int],
+    ):
+        # Given
+        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
+        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
+        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
+
+        # When
+        line_with_shaded_section_chart_config = (
+            fake_chart_settings.get_line_with_shaded_section_chart_config()
+        )
+
+        # Then
+        assert line_with_shaded_section_chart_config["yaxis"].get("range") is None
 
     def test_build_line_single_simplified_y_axis_vaue_params_with_zero_min_value(
         self,
@@ -885,7 +907,6 @@ class TestSingleCategoryChartSettings:
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
-            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
             [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
             [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
             [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],

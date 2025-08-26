@@ -148,6 +148,7 @@ class SubplotChartsInterface:
             figure=figure,
             description=self.build_chart_description(plots_data=plots_data),
             is_headline=False,
+            is_subplot=True,
         )
 
     @classmethod
