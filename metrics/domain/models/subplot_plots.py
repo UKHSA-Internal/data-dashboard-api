@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from decimal import Decimal
 
 from pydantic import BaseModel
@@ -22,3 +23,4 @@ class SubplotChartGenerationPayload(BaseModel):
     y_axis_maximum_value: Decimal | None = None
     target_threshold: Decimal | None = None
     target_threshold_label: str | None = ""
+    metric_value_ranges: Iterable[tuple[float, float]] | None = None

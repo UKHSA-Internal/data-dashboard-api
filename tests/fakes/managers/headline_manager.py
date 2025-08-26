@@ -25,7 +25,8 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        rbac_permissions: list[FakeRBACPermission] = None
+        rbac_permissions: list[FakeRBACPermission] = None,
+        metric_value_ranges: list[tuple] | None = None,
     ) -> tuple[float, datetime.date] | None:
         filtered_headlines = [
             core_headline
