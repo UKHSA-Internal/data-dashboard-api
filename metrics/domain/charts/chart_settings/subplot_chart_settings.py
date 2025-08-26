@@ -8,6 +8,7 @@ from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 logger = logging.getLogger(__name__)
 
 DEFAULT_LEGEND_FONT_SIZE = 14
+DEFAULT_ANNOTATION_FONT_SIZE = 14
 
 # W: >1100
 DEFAULT_CHART_MULTIPLIER = 2
@@ -154,7 +155,10 @@ class SubplotChartSettings(ChartSettings):
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": self._get_tick_font_config(),
+                    "font": {
+                        **self._get_tick_font_config(),
+                        "size": DEFAULT_ANNOTATION_FONT_SIZE,
+                    },
                 }
             ]
         }
