@@ -46,8 +46,8 @@ class SubplotsSerializer(serializers.ListSerializer):
 
 
 class MetricRangeSerializer(serializers.Serializer):
-    start = serializers.DecimalField(max_digits=10, decimal_places=2)
-    end = serializers.DecimalField(max_digits=10, decimal_places=2)
+    start = serializers.DecimalField(max_digits=20, decimal_places=5)
+    end = serializers.DecimalField(max_digits=20, decimal_places=5)
 
 
 class ChartParametersSerializer(serializers.Serializer):
