@@ -1,4 +1,5 @@
 import logging
+import time
 
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.request import Request
@@ -33,10 +34,17 @@ class MapsView(APIView):
     )
     @cache_response(is_reserved_namespace=True)
     def post(cls, request: Request) -> Response:
+        start_time = time.time()
+
         serializer = MapsRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         maps_parameters = serializer.to_models(request=request)
         maps_output: MapOutput = get_maps_output(maps_parameters=maps_parameters)
+        response_data = maps_output.output()
 
-        return Response(data=maps_output.output())
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 2)
+        logger.info("Fulfilled maps request in: %s seconds", elapsed_time)
+
+        return Response(data=response_data)
