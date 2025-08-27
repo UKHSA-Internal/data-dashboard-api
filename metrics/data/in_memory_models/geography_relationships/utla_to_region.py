@@ -60,8 +60,8 @@ UTLA_TO_REGION_LOOKUP: dict[str, str] = {
     "E06000062": "East Midlands",                   # West Northamptonshire
     "E06000063": "North West",                      # Cumberland
     "E06000064": "North West",                      # Westmorland and Furness
-    "E06000065": "Yorkshire and The Humber",        # North Yorkshire
-    "E06000066": "South West",                      # Somerset
+    "E10000023": "Yorkshire and The Humber",        # North Yorkshire
+    "E10000027": "South West",                      # Somerset
     "E08000001": "North West",                      # Bolton
     "E08000002": "North West",                      # Bury
     "E08000003": "North West",                      # Manchester
@@ -145,10 +145,8 @@ UTLA_TO_REGION_LOOKUP: dict[str, str] = {
     "E10000018": "East Midlands",                   # Leicestershire
     "E10000019": "East Midlands",                   # Lincolnshire
     "E10000020": "East of England",                 # Norfolk
-    "E10000023": "Yorkshire and The Humber",        # N/A
     "E10000024": "East Midlands",                   # Nottinghamshire
     "E10000025": "South East",                      # Oxfordshire
-    "E10000027": "South West",                      # N/A
     "E10000028": "West Midlands",                   # Staffordshire
     "E10000029": "East of England",                 # Suffolk
     "E10000030": "South East",                      # Surrey
