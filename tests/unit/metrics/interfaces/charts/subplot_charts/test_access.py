@@ -65,6 +65,35 @@ class TestChartsInterface:
             fake_subplot_chart_request_params.subplots
         )
 
+    @mock.patch.object(PlotsInterface, "build_plots_data")
+    def test_build_plots_data_passes_over_incorrect_individual_plots(
+        self,
+        spy_build_plots_data: mock.MagicMock,
+        fake_subplot_chart_request_params,
+    ):
+        """
+        Given request params which contain an invalid plot
+        When `_build_plots_data` is called
+        Then a call is made to `PlotsInterface.build_plots_data`
+            for each valid `subplots_data` model
+            skipping over the invalid one
+        """
+        # Given
+        invalid_plot = fake_subplot_chart_request_params.subplots[0].plots[0].model_copy()
+        invalid_plot.topic = "Invalid Topic"
+        fake_subplot_chart_request_params.subplots[0].plots[0] = invalid_plot
+
+        charts_interface = SubplotChartsInterface(
+            chart_request_params=fake_subplot_chart_request_params
+        )
+
+        # When
+        charts_interface._build_plots_data()
+
+        # Then
+        all_but_one: int = len(fake_subplot_chart_request_params.subplots) - 1
+        assert spy_build_plots_data.call_count == all_but_one
+
     @mock.patch.object(SubplotChartsInterface, "_build_plots_data")
     def test_build_chart_generation_payload_delegates_call_to_build_plots_data(
         self,
