@@ -1,4 +1,5 @@
 import datetime
+import logging
 from collections import defaultdict
 from decimal import Decimal
 from typing import Any
@@ -24,6 +25,8 @@ from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_TOPIC_MANAGER = Topic.objects
+
+logger = logging.getLogger(__name__)
 
 
 class DataNotFoundForPlotError(Exception):
@@ -91,6 +94,7 @@ class PlotsInterface:
                 MetricDoesNotSupportTopicError,
                 DatesNotInChronologicalOrderError,
             ) as error:
+                logger.warning(error)
                 raise InvalidPlotParametersError from error
 
     def get_queryset_result_for_plot_parameters(
