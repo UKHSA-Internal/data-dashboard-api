@@ -79,7 +79,9 @@ class TestChartsInterface:
             skipping over the invalid one
         """
         # Given
-        invalid_plot = fake_subplot_chart_request_params.subplots[0].plots[0].model_copy()
+        invalid_plot = (
+            fake_subplot_chart_request_params.subplots[0].plots[0].model_copy()
+        )
         invalid_plot.topic = "Invalid Topic"
         fake_subplot_chart_request_params.subplots[0].plots[0] = invalid_plot
 
