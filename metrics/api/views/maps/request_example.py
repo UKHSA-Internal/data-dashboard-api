@@ -20,6 +20,9 @@ REQUEST_PAYLOAD_EXAMPLE = {
             "label_suffix": "%",
             "parameters": {
                 "metric": "6-in-1_coverage_oneYearChange"
+                # This configuration will extend the `parameters`
+                # object and inject the corresponding `metric`
+                # in place of the original metric
             },
         },
         {
