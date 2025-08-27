@@ -54,6 +54,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         sex: str | None = None,
         age: str | None = None,
         rbac_permissions: Iterable[FakeRBACPermission] | None = None,
+        metric_value_ranges: list[tuple] | None = None,
     ) -> FakeQuerySet:
         date_from = _convert_string_to_date(date_string=date_from)
 

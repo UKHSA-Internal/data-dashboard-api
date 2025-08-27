@@ -10,12 +10,15 @@ from collections.abc import Iterable
 from typing import Self
 
 from django.db import models
+from django.db.models.query_utils import Q
 from django.utils import timezone
 
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
 from metrics.data.models import RBACPermission
+
+ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
@@ -84,6 +87,23 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return queryset
 
+    @classmethod
+    def _filter_for_metric_value_ranges(
+        cls,
+        *,
+        queryset,
+        metric_value_ranges: list[ALLOWABLE_METRIC_VALUE_RANGE_TYPE] | None,
+    ):
+        if not metric_value_ranges:
+            return queryset
+
+        q_objects = Q()
+        for metric_value_range in metric_value_ranges:
+            start, end = metric_value_range
+            q_objects |= Q(metric_value__gte=start, metric_value__lte=end)
+
+        return queryset.filter(q_objects)
+
     def filter_for_audit_list_view(
         self,
         *,
@@ -150,6 +170,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        metric_value_ranges: list[tuple[str | float | int]] | None = None,
         restrict_to_public: bool = True,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
@@ -190,6 +211,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            metric_value_ranges: List of tuples whereby each
+                tuple represents a permissible metric value range.
+                i.e. to filter for all record with values
+                between 0 -> 80 AND 90 -> 100,
+                this can be provided as `[(0, 80), (90, 100)]`.
             restrict_to_public: Boolean switch to restrict the query
                 to only return public records.
                 If False, then non-public records will be included.
@@ -218,10 +244,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
+
         if restrict_to_public:
             queryset = queryset.filter(is_public=True)
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
+        queryset = self._filter_for_metric_value_ranges(
+            queryset=queryset, metric_value_ranges=metric_value_ranges
+        )
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
         queryset = self._ascending_order(
             queryset=queryset,
@@ -495,6 +525,7 @@ class CoreTimeSeriesManager(models.Manager):
         age: str | None = None,
         theme: str = "",
         sub_theme: str = "",
+        metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
@@ -537,6 +568,11 @@ class CoreTimeSeriesManager(models.Manager):
             sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
+            metric_value_ranges: List of tuples whereby each
+                tuple represents a permissible metric value range.
+                i.e. to filter for all record with values
+                between 0 -> 80 AND 90 -> 100,
+                this can be provided as `[(0, 80), (90, 100)]`.
             rbac_permissions: The RBAC permissions available
                 to the given request. This dictates whether the given
                 request is permitted access to non-public data or not.
@@ -592,6 +628,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum=stratum,
             sex=sex,
             age=age,
+            metric_value_ranges=metric_value_ranges,
             restrict_to_public=not has_access_to_non_public_data,
         )
 
