@@ -212,7 +212,7 @@ def _add_threshold_indicator(
     y_bottom: float,
     target_threshold_label: str,
 ):
-    triangle_half_depth = 0.02
+    triangle_half_depth = 0.01
     triangle_half_height = y_top * triangle_half_depth
     triangle_x = 1
 
@@ -220,8 +220,8 @@ def _add_threshold_indicator(
         type="path",
         path=(
             f"M {triangle_x} {y_bottom} "
-            f"L {triangle_x + triangle_half_depth} {y_bottom + triangle_half_height} "
-            f"L {triangle_x + triangle_half_depth} {y_bottom - triangle_half_height} Z"
+            f"L {triangle_x + triangle_half_depth} {y_bottom + (triangle_half_height * 2)} "
+            f"L {triangle_x + triangle_half_depth} {y_bottom - (triangle_half_height * 2)} Z"
         ),
         xref="paper",
         yref="y",
@@ -230,7 +230,7 @@ def _add_threshold_indicator(
         layer="above",
     )
 
-    label_offset = 0.005
+    label_offset = 0.0025
     figure.add_annotation(
         xref="paper",
         x=triangle_x + triangle_half_depth + label_offset,
