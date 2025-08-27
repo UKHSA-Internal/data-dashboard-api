@@ -79,7 +79,7 @@ class TestMapsRequestSerializer:
         )
         assert (
             serialized_accompanying_point.parameters.metric
-            == payload["parameters"]["metric"]
+            == payload["accompanying_points"][0]["parameters"]["metric"]
         )
         assert (
             serialized_accompanying_point.parameters.stratum
@@ -93,7 +93,7 @@ class TestMapsRequestSerializer:
         )
         assert (
             serialized_accompanying_point.parameters.geography_type
-            == payload["accompanying_points"][0]["parameters"]["geography_type"]
+            == payload["parameters"]["geography_type"]
         )
         assert serialized_accompanying_point.parameters.geography is None
 
@@ -147,5 +147,58 @@ class TestMapsRequestSerializer:
         assert (
             serialized_accompanying_point.parameters.geography_type
             == payload["accompanying_points"][1]["parameters"]["geography_type"]
+        )
+        assert serialized_accompanying_point.parameters.geography is None
+
+    def test_to_models_serializes_third_accompanying_point_correctly(self):
+        """
+        Given a valid payload
+        When `to_models()` is called
+            from an instance of the `MapsRequestSerializer`
+        Then the returned `MapsParameters` holds
+            the correct parameters for the 3rd accompanying point
+        """
+        # Given
+        payload = REQUEST_PAYLOAD_EXAMPLE
+        fake_request = Request(request=HttpRequest())
+        serializer = MapsRequestSerializer(data=payload)
+
+        # When
+        serializer.is_valid(raise_exception=True)
+        maps_parameters: MapsParameters = serializer.to_models(request=fake_request)
+
+        # Then
+        serialized_accompanying_point = maps_parameters.accompanying_points[2]
+        # The fields have been copied successfully from the main parameters
+        # to fill the 'gaps' in the accompanying point data
+        assert (
+            serialized_accompanying_point.parameters.theme
+            == payload["parameters"]["theme"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.sub_theme
+            == payload["parameters"]["sub_theme"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.topic
+            == payload["parameters"]["topic"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.metric
+            == payload["parameters"]["metric"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.stratum
+            == payload["parameters"]["stratum"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.age == payload["parameters"]["age"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.sex == payload["parameters"]["sex"]
+        )
+        assert (
+            serialized_accompanying_point.parameters.geography_type
+            == payload["accompanying_points"][2]["parameters"]["geography_type"]
         )
         assert serialized_accompanying_point.parameters.geography is None

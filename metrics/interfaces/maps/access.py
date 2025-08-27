@@ -142,14 +142,26 @@ class MapsInterface:
         main_geography_type: str = self.maps_parameters.parameters.geography_type
 
         # If the geography has been explicitly defined
-        # or the geography type has not been given,
-        # then we fall back to the selected geography
-        # for this accompanying point
-        if not selected_geography_type:
-            return main_geography
+        # then we can simply use this
         if selected_geography:
             return selected_geography
 
+        # If the geography has not been defined
+        # but the geography type on the accompanying point
+        # matches the geography on the main params
+        # then use the selected geography on the main params
+        if selected_geography_type == main_geography_type:
+            return main_geography
+
+        # If we have no selected geography type or geography
+        # then use the selected geography on the main params
+        if not selected_geography_type:
+            return main_geography
+
+        # In this case we have the main geography from the main params
+        # and a different geography type on the accompanying point
+        # i.e. we are asking for the related geography in the other
+        # geography type
         return self._fetch_related_geography_by_type(
             geography=main_geography,
             main_geography_type=main_geography_type,

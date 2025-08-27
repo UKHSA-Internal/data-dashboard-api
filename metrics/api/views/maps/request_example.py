@@ -16,6 +16,16 @@ REQUEST_PAYLOAD_EXAMPLE = {
     },
     "accompanying_points": [
         {
+            "label_prefix": "Change: ",
+            "label_suffix": "%",
+            "parameters": {
+                "metric": "6-in-1_coverage_oneYearChange"
+                # This configuration will extend the `parameters`
+                # object and inject the corresponding `metric`
+                # in place of the original metric
+            },
+        },
+        {
             "label_prefix": "Country level of coverage: ",
             "label_suffix": "%",
             "parameters": {
