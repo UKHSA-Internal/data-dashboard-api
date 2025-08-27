@@ -307,7 +307,6 @@ class MapsInterface:
                 )
             )
         except GeographyNotFoundForAccompanyingPointError:
-            breakpoint()
             return None
 
         accompanying_point_record = self.core_time_series_manager.query_for_data(
