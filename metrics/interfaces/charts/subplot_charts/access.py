@@ -17,6 +17,7 @@ from metrics.interfaces.charts.common.generation import (
 )
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
     PlotGenerationData,
     PlotsInterface,
 )
@@ -54,7 +55,13 @@ class SubplotChartsInterface:
         latest_dates: list[datetime.date] = []
 
         for subplot in self.chart_request_params.subplots:
-            plots_interface = PlotsInterface(chart_request_params=subplot)
+            try:
+                plots_interface = PlotsInterface(chart_request_params=subplot)
+            except InvalidPlotParametersError:
+                # If the plot parameters are not valid
+                # then move onto the next plot
+                continue
+
             try:
                 subplot_data: list[PlotGenerationData] = (
                     plots_interface.build_plots_data()
