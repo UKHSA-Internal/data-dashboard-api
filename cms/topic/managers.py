@@ -21,7 +21,7 @@ class TopicPageQuerySet(PageQuerySet):
                 Examples:
                     `<TopicPageQuerySet [<TopicPage: COVID-19>, <TopicPage: Influenza>, ...]>`
         """
-        return self.filter(live=True)
+        return self.filter(live=True).order_by("last_published_at")
 
 
 class TopicPageManager(PageManager):
