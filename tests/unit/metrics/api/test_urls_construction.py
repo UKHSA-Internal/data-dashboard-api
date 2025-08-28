@@ -17,7 +17,6 @@ MODULE_PATH = "metrics.api.urls_construction"
 HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
 
 PRIVATE_API_ENDPOINT_PATHS = [
-    "api/charts/v3",
     "api/downloads/v2",
     "api/headlines/v3",
     "api/bulkdownloads/v1",
