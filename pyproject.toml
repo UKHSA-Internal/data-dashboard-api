@@ -105,6 +105,7 @@ target-version = "py312"
                                                                                         # This infringement is due to
                                                                                         # swagger-facing docstrings/documentation
 "metrics/api/views/charts.py"                                 = ["SIM115"]         # Ignore context handler for opening file
+"metrics/domain/charts/chart_settings/single_category.py"     = ["SIM108"]         # Ignore requirement of ternary operator
 "**/help_texts.py"                                            = ["W291"]           # Ignore trailing whitespace for help texts
 "**/build_cms_site.py"                                        = ["W605"]           # Ignore escape sequences used in regex calls
 "ingestion/file_ingestion.py"                                 = ["BLE001"]         # Ignore blind exception catch for file ingestion function

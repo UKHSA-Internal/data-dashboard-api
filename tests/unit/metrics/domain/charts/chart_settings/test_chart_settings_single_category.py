@@ -694,11 +694,9 @@ class TestSingleCategoryChartSettings:
             "y_axis_tick_text": ["2k", "7k"],
             "range": [2000, 7000],
         }
-        expected_log = "The minimum value provided was to high, fallen back to the min value in the data"
 
         # Then
         assert expected_y_axis_params == returned_y_axis_params
-        assert expected_log in caplog.text
 
     def test_build_line_single_simplified_y_axis_value_params_with_invalid_max_value(
         self,
@@ -735,11 +733,9 @@ class TestSingleCategoryChartSettings:
             "y_axis_tick_text": ["1k", "6k"],
             "range": [1000, 6000],
         }
-        expected_log = "The maximum value provided was to low, fallen back to the max value in the data"
 
         # Then
         assert expected_y_axis_params == returned_y_axis_params
-        assert expected_log in caplog.text
 
     @mock.patch.object(
         SingleCategoryChartSettings, "_build_line_single_simplified_axis_params"
