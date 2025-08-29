@@ -130,9 +130,6 @@ class SingleCategoryChartSettings(ChartSettings):
             min_value = self.y_axis_minimum_value
         else:
             min_value = min(y_axis_range)
-            logger.info(
-                "The minimum value provided was to high, fallen back to the min value in the data"
-            )
 
         if self.y_axis_maximum_value and (
             self.y_axis_maximum_value > max(y_axis_range)
@@ -140,9 +137,6 @@ class SingleCategoryChartSettings(ChartSettings):
             max_value = self.y_axis_maximum_value
         else:
             max_value = max(y_axis_range)
-            logger.info(
-                "The maximum value provided was to low, fallen back to the max value in the data"
-            )
 
         return [min_value, max_value]
 
