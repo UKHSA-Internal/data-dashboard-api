@@ -1,11 +1,8 @@
-import logging
 from typing import Any
 
 from django.core.cache import cache
 
 from metrics.api import settings
-
-logger = logging.getLogger(__name__)
 
 
 class CacheClient:
