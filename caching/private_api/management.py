@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 from typing import Self
 
 from rest_framework.renderers import JSONRenderer
@@ -11,6 +12,8 @@ from caching.private_api.client import CacheClient, InMemoryCacheClient
 
 class CacheMissError(Exception): ...
 
+
+logger = logging.getLogger(__name__)
 
 RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
 RESERVED_NAMESPACE_STAGING_KEY_PREFIX = "ns3"
@@ -217,18 +220,20 @@ class CacheManagement:
         """
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [
-            cache_key.standalone_key
+            cache_key.full_key
             for cache_key in all_cache_keys
             if cache_key.is_reserved_namespace
         ]
 
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
-        return [
-            cache_key.standalone_key
+        all_keys = [
+            cache_key.full_key
             for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]
+        logger.info("all non reserved keys: %s", all_keys)
+        return all_keys
 
     def _get_all_cache_keys(self) -> list[CacheKey]:
         all_raw_keys: list[bytes] = self._client.list_keys()

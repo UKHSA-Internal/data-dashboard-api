@@ -1,8 +1,11 @@
+import logging
 from typing import Any
 
 from django.core.cache import cache
 
 from metrics.api import settings
+
+logger = logging.getLogger(__name__)
 
 
 class CacheClient:
@@ -88,8 +91,15 @@ class CacheClient:
             None
 
         """
+        low_level_client = self._get_low_level_client()
         for key in keys:
-            self._cache.delete(key=key)
+            is_deleted: bool = bool(self._cache.delete(key))
+            logger.info(
+                "Deleted key using normal client abs `%s` -- %s", key, is_deleted
+            )
+
+            is_deleted: bool = bool(low_level_client.delete(key))
+            logger.info("Deleted key using low level `%s` -- %s", key, is_deleted)
 
     def copy(self, *, source: str, destination: str) -> None:
         """Copies the value stored at the `source_key` to the `destination_key`
@@ -108,7 +118,10 @@ class CacheClient:
 
         """
         low_level_client = self._get_low_level_client()
-        low_level_client.copy(source=source, destination=destination, replace=True)
+        is_copied: bool = bool(
+            low_level_client.copy(source=source, destination=destination, replace=True)
+        )
+        logger.info("Copied key (%s) from %s to %s", is_copied, source, destination)
 
 
 class InMemoryCacheClient(CacheClient):
