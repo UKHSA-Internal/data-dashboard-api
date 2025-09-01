@@ -227,6 +227,7 @@ class CacheManagement:
 
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        logger.info(f"got all non reserved keys: {all_cache_keys}")
         all_keys = [
             cache_key.full_key
             for cache_key in all_cache_keys
@@ -237,6 +238,7 @@ class CacheManagement:
 
     def _get_all_cache_keys(self) -> list[CacheKey]:
         all_raw_keys: list[bytes] = self._client.list_keys()
+        logger.info("listing all raw keys")
         return [CacheKey.create(raw_key=raw_key) for raw_key in all_raw_keys]
 
     def _render_response(self, *, response: Response) -> Response:
