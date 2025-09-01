@@ -227,12 +227,11 @@ class CacheManagement:
 
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
-        all_keys = [
+        return [
             cache_key.full_key
             for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]
-        return all_keys
 
     def _get_all_cache_keys(self) -> list[CacheKey]:
         all_raw_keys: list[bytes] = self._client.list_keys()
