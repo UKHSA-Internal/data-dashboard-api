@@ -204,7 +204,7 @@ class CacheManagement:
                 source=source_key.full_key, destination=destination_key.full_key
             )
 
-        obsolete_keys = [key.standalone_key for key in reserved_staging_keys]
+        obsolete_keys = [key.full_key for key in reserved_staging_keys]
         self._client.delete_many(keys=obsolete_keys)
 
     def get_reserved_keys(self) -> list[str]:
@@ -227,13 +227,11 @@ class CacheManagement:
 
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
-        logger.info(f"got all non reserved keys: {all_cache_keys}")
         all_keys = [
             cache_key.full_key
             for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]
-        logger.info("all non reserved keys: %s", all_keys)
         return all_keys
 
     def _get_all_cache_keys(self) -> list[CacheKey]:

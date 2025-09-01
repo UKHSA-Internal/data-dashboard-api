@@ -87,7 +87,6 @@ def force_cache_refresh_for_all_pages(
     cache_management = cache_management or CacheManagement(in_memory=False)
     logger.info("Clearing all non reserved keys")
     cache_management.clear_non_reserved_keys()
-    logger.info("Deleted all non reserved keys")
 
     private_api_crawler = (
         private_api_crawler
