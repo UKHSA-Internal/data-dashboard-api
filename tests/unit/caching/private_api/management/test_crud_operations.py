@@ -452,5 +452,5 @@ class TestCacheManagementCRUDOperations:
             destination=f"ukhsa:1:{RESERVED_NAMESPACE_KEY_PREFIX}-test-key",
         )
         spy_cache_client.delete_many.assert_called_once_with(
-            keys=[reserved_staging_standalone_key]
+            keys=[reserved_staging_raw_key]
         )
