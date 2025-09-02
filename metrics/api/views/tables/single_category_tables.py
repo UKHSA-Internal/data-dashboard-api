@@ -1,4 +1,3 @@
-import logging
 from http import HTTPStatus
 
 from drf_spectacular.utils import extend_schema
@@ -14,8 +13,6 @@ from metrics.interfaces.plots.access import (
     InvalidPlotParametersError,
 )
 from metrics.interfaces.tables import access
-
-logger = logging.getLogger(__name__)
 
 
 class TablesView(APIView):
