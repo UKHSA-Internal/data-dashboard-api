@@ -691,7 +691,8 @@
                             "title_prefix": "Vaccination coverage statistics",
                             "legend_title": "Coverage (%)",
                             "target_threshold": 95,
-                            "target_threshold_label": "95% target"
+                            "target_threshold_label": "95% target",
+                            "about": ""
                         },
                         "id": "ef3a544a-f335-44a8-9259-ee323b60e0fa"
                     }
@@ -708,7 +709,8 @@
                         "type": "filter_linked_time_series_chart_template",
                         "value": {
                             "title_prefix": "Annual vaccination coverage",
-                            "legend_title": "Level of coverage (%)"
+                            "legend_title": "Level of coverage (%)",
+                            "about": ""
                         },
                         "id": "7bfe0836-6a2c-4596-909f-974426123536"
                     }
