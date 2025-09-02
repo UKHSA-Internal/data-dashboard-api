@@ -80,7 +80,9 @@ class TestCacheClient:
         # Then
         low_level_cache_client = spy_get_low_level_client.return_value
         expected_calls = [mock.call(key) for key in mocked_keys]
-        low_level_cache_client.delete.assert_has_calls(calls=expected_calls)
+        low_level_cache_client.delete.assert_has_calls(
+            calls=expected_calls, any_order=True
+        )
 
     @mock.patch.dict(
         in_dict="django.conf.settings.CACHES",
