@@ -274,8 +274,7 @@ class TestCacheManagementCRUDOperations:
         cache_management.clear_non_reserved_keys()
 
         # Then
-        non_reserved_keys = [key.split(":")[-1] for key in non_reserved_complete_keys]
-        spy_client.delete_many.assert_called_once_with(keys=non_reserved_keys)
+        spy_client.delete_many.assert_called_once_with(keys=non_reserved_complete_keys)
 
     def test_delete_many(self):
         """
@@ -349,9 +348,9 @@ class TestCacheManagementCRUDOperations:
         reserved_keys: list[str] = cache_management.get_reserved_keys()
 
         # Then
-        assert "abc" not in reserved_keys
-        assert "def456" not in reserved_keys
-        assert "ns2-test-key" in reserved_keys
+        assert "ukhsa:1:abc" not in reserved_keys
+        assert "ukhsa:1:def456" not in reserved_keys
+        assert "ukhsa:1:ns2-test-key" in reserved_keys
 
     def test_get_non_reserved_keys(self):
         """
@@ -377,9 +376,9 @@ class TestCacheManagementCRUDOperations:
         non_reserved_keys: list[str] = cache_management._get_non_reserved_keys()
 
         # Then
-        assert "abc" in non_reserved_keys
-        assert "def456" in non_reserved_keys
-        assert "ns2-test-key" not in non_reserved_keys
+        assert "ukhsa:1:abc" in non_reserved_keys
+        assert "ukhsa:1:def456" in non_reserved_keys
+        assert "ukhsa:1:ns2-test-key" not in non_reserved_keys
 
     def test_get_reserved_staging_keys(self):
         """
@@ -453,5 +452,5 @@ class TestCacheManagementCRUDOperations:
             destination=f"ukhsa:1:{RESERVED_NAMESPACE_KEY_PREFIX}-test-key",
         )
         spy_cache_client.delete_many.assert_called_once_with(
-            keys=[reserved_staging_standalone_key]
+            keys=[reserved_staging_raw_key]
         )

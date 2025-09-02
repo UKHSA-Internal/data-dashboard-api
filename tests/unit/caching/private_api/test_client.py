@@ -63,8 +63,8 @@ class TestCacheClient:
             key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
 
-    @mock.patch(f"{MODULE_PATH}.cache")
-    def test_delete_many_delegates_call(self, spy_cache: mock.MagicMock):
+    @mock.patch.object(CacheClient, "_get_low_level_client")
+    def test_delete_many_delegates_call(self, spy_get_low_level_client: mock.MagicMock):
         """
         Given an instance of the `CacheClient`
         When `delete_many()` is called from the client
@@ -78,8 +78,11 @@ class TestCacheClient:
         cache_client.delete_many(keys=mocked_keys)
 
         # Then
-        expected_calls = [mock.call(key=key) for key in mocked_keys]
-        spy_cache.delete.assert_has_calls(calls=expected_calls)
+        low_level_cache_client = spy_get_low_level_client.return_value
+        expected_calls = [mock.call(key) for key in mocked_keys]
+        low_level_cache_client.delete.assert_has_calls(
+            calls=expected_calls, any_order=True
+        )
 
     @mock.patch.dict(
         in_dict="django.conf.settings.CACHES",
