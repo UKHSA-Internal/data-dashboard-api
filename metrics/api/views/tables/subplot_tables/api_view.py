@@ -5,10 +5,10 @@ from rest_framework.views import APIView
 from caching.private_api.decorators import cache_response
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.charts.subplot_charts import SubplotChartRequestSerializer
+from metrics.api.views.tables.single_category_tables import TABLES_API_TAG, logger
 from metrics.api.views.tables.subplot_tables.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
-from metrics.api.views.tables.single_category_tables import TABLES_API_TAG, logger
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 
 
