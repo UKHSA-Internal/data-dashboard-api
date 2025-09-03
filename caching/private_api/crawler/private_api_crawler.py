@@ -86,7 +86,7 @@ class PrivateAPICrawler:
 
     @classmethod
     def create_crawler_for_lazy_loading(cls) -> Self:
-        internal_api_client = InternalAPIClient(force_refresh=False)
+        internal_api_client = InternalAPIClient()
         return cls(internal_api_client=internal_api_client)
 
     # Process pages for content
