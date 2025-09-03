@@ -2,11 +2,8 @@ from http import HTTPMethod
 from unittest import mock
 
 import pytest
-from caching.private_api.management import (
-    CacheManagement,
-    RESERVED_NAMESPACE_KEY_PREFIX,
-    RESERVED_NAMESPACE_STAGING_KEY_PREFIX,
-)
+from caching.private_api.management import CacheManagement
+from caching.private_api.client import RESERVED_NAMESPACE_KEY_PREFIX
 
 
 class TestCacheManagementBuildCacheKeyEntryForRequest:

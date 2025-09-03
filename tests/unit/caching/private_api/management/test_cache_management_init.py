@@ -76,7 +76,9 @@ class TestCacheManagementInit:
 
         # Then
         assert cache_management._client == spy_create_cache_client.return_value
-        spy_create_cache_client.assert_called_once_with(in_memory=in_memory)
+        spy_create_cache_client.assert_called_once_with(
+            in_memory=in_memory, is_reserved_namespace=is_reserved_namespace
+        )
 
     @pytest.mark.parametrize(
         "in_memory, expected_client_class",
