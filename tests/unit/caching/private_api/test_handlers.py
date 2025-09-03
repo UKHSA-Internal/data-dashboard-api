@@ -210,9 +210,7 @@ class TestForceCacheRefreshForAllPages:
 
 
 class TestForceCacheRefreshForReservedNamespace:
-    @mock.patch.object(
-        PrivateAPICrawler, "create_crawler_for_reserved_cache"
-    )
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     def test_manages_reserved_keys_cache_operations_in_correct_order(
