@@ -233,48 +233,26 @@ class TestCacheManagementCRUDOperations:
         )
         assert retrieved_response == mocked_item
 
-    @mock.patch.dict(
-        in_dict="django.conf.settings.CACHES",
-        values={
-            "default": {
-                "KEY_PREFIX": "app",
-                "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            }
-        },
-    )
-    def test_clear_non_reserved_keys(self):
+    def test_clear(self):
         """
         Given an instance of `CacheManagement`
-        When `clear_non_reserved_keys()` is called from the object
+        When `clear()` is called from the object
         Then the call is delegated to the underlying client
         """
         # Given
-        cache_prefix = "app"
-        reserved_namespace_key_prefix = "ns2"
-        non_reserved_complete_keys = [
-            f"{cache_prefix}:1:abc123",
-            f"{cache_prefix}:1:def456",
-            f"{cache_prefix}:1:abc123456",
-        ]
-        reserved_complete_keys = [
-            f"{cache_prefix}:1:{reserved_namespace_key_prefix}-abc123",
-            f"{cache_prefix}:1:{reserved_namespace_key_prefix}-qwerty",
-        ]
-        all_keys = non_reserved_complete_keys + reserved_complete_keys
         spy_client = mock.Mock()
-        spy_client.list_keys.return_value = all_keys
 
         cache_management = CacheManagement(
             in_memory=True,
             client=spy_client,
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+            reserved_namespace_key_prefix="ns2",
         )
 
         # When
-        cache_management.clear_non_reserved_keys()
+        cache_management.clear()
 
         # Then
-        spy_client.delete_many.assert_called_once_with(keys=non_reserved_complete_keys)
+        spy_client.clear.assert_called_once()
 
     def test_delete_many(self):
         """

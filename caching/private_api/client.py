@@ -96,6 +96,27 @@ class CacheClient:
             is_deleted = bool(low_level_client.delete(key))
             logger.info("Deleted key `%s` in cache. Status: `%s`", key, is_deleted)
 
+    def clear(self):
+        """Deletes all the keys in the cache - this is a wrapper around the FLUSHDB redis command
+
+        Notes:
+            Because we use Elasticache serverless v2 in
+            production, which is a cluster. Listing all
+            the keys and deleting them 1-by-1 doesn't work
+            because AWS will only give you the keys on the
+            shard the client is currently connected to.
+            But the FLUSHDB command is distributed
+            across every shard in the cluster.
+            So this is the safer route to emptying the cache.
+
+            The alternative would have been making application
+            code cluster-aware i.e. iterating through each node
+            and performing operations on each one.
+
+        """
+        is_cleared: bool = self._cache.clear()
+        logger.info("FLUSHDB command was executed in cache. Status: `%s`", is_cleared)
+
     def copy(self, *, source: str, destination: str) -> None:
         """Copies the value stored at the `source_key` to the `destination_key`
 

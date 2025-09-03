@@ -137,6 +137,23 @@ class TestCacheClient:
             replace=True,
         )
 
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_clear(self, spy_cache: mock.MagicMock):
+        """
+        Given a `CacheClient`
+        When `clear()` is called from the client
+        Then the call is delegated
+            to the underlying client
+        """
+        # Given
+        cache_client = CacheClient()
+
+        # When
+        cache_client.clear()
+
+        # Then
+        spy_cache.clear.assert_called_once()
+
 
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):
