@@ -42,9 +42,6 @@ class CacheClient:
             return caches[RESERVED_CACHE_NAME]
         return caches[DEFAULT_CACHE_NAME]
 
-    def _get_low_level_client(self):
-        return self._cache._cache.get_client()
-
     def get(self, *, cache_entry_key: str) -> Any | None:
         """Retrieves the cache entry associated with the given `cache_entry_key`
 
