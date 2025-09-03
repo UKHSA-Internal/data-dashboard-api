@@ -17,17 +17,15 @@ class TestPrivateAPICrawlerCreate:
         # Then
         assert not crawler._internal_api_client.reserved_namespace
 
-    def test_create_crawler_to_force_write_in_reserved_staging_namespace(self):
+    def test_create_crawler_for_reserved_cache(self):
         """
         Given no pre-existing `InternalAPIClient`
-        When the `create_crawler_to_force_write_in_reserved_staging_namespace`
+        When the `create_crawler_for_reserved_cache`
             class method is called from the `PrivateAPICrawler` class
         Then the correct object is returned
         """
         # Given / When
-        crawler = (
-            PrivateAPICrawler.create_crawler_to_force_write_in_reserved_staging_namespace()
-        )
+        crawler = PrivateAPICrawler.create_crawler_for_reserved_cache()
 
         # Then
         assert crawler._internal_api_client.reserved_namespace

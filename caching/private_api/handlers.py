@@ -134,8 +134,7 @@ def force_cache_refresh_for_reserved_namespace(
     """
     cache_management = cache_management or CacheManagement(in_memory=False)
     private_api_crawler = (
-        private_api_crawler
-        or PrivateAPICrawler.create_crawler_to_force_write_in_reserved_staging_namespace()
+        private_api_crawler or PrivateAPICrawler.create_crawler_for_reserved_cache()
     )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler

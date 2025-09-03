@@ -278,12 +278,10 @@ class TestForceCacheRefreshForReservedNamespace:
 
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
-    @mock.patch.object(
-        PrivateAPICrawler, "create_crawler_to_force_write_in_reserved_staging_namespace"
-    )
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
     def test_delegates_calls_successfully(
         self,
-        spy_create_crawler_to_force_write_in_reserved_staging_namespace: mock.MagicMock,
+        spy_create_crawler_for_reserved_cache: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
     ):
@@ -293,7 +291,7 @@ class TestForceCacheRefreshForReservedNamespace:
         Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
-            `spy_create_crawler_to_force_write_in_reserved_staging_namespace`: To assert
+            `spy_create_crawler_for_reserved_cache`: To assert
                 that the correct crawler is initialized i.e. the one
                 which can be used to forcibly refresh the reserved namespace cache
             `spy_crawl_all_pages`: For the main assertion
@@ -310,10 +308,8 @@ class TestForceCacheRefreshForReservedNamespace:
         )
 
         # Then
-        spy_create_crawler_to_force_write_in_reserved_staging_namespace.assert_called_once()
-        expected_crawler = (
-            spy_create_crawler_to_force_write_in_reserved_staging_namespace.return_value
-        )
+        spy_create_crawler_for_reserved_cache.assert_called_once()
+        expected_crawler = spy_create_crawler_for_reserved_cache.return_value
         spy_crawl_all_pages.assert_called_once_with(
             private_api_crawler=expected_crawler,
             area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
