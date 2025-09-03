@@ -188,10 +188,7 @@ class TestForceCacheRefreshForAllPages:
         """
         # Given
         spy_manager = mock.Mock()
-        spy_manager.attach_mock(
-            spy_cache_management_clear,
-            "cache_management_clear"
-        )
+        spy_manager.attach_mock(spy_cache_management_clear, "cache_management_clear")
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
         # When
@@ -203,7 +200,7 @@ class TestForceCacheRefreshForAllPages:
 
         # The cache should flushed before crawling the pages
         expected_calls = [
-            mock.call.clear(),
+            mock.call.cache_management_clear(),
             mock.call.crawl_all_pages(
                 private_api_crawler=mocked_create_crawler_to_force_write_in_non_reserved_namespace.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
