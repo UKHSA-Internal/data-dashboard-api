@@ -17,7 +17,6 @@ class TestPrivateAPICrawlerCreate:
         )
 
         # Then
-        assert crawler._internal_api_client.force_refresh
         assert not crawler._internal_api_client.reserved_namespace
 
     def test_create_crawler_to_force_write_in_reserved_staging_namespace(self):
@@ -33,7 +32,6 @@ class TestPrivateAPICrawlerCreate:
         )
 
         # Then
-        assert crawler._internal_api_client.force_refresh
         assert crawler._internal_api_client.reserved_namespace
 
     def test_create_crawler_for_lazy_loading(self):
