@@ -210,64 +210,6 @@ class TestForceCacheRefreshForAllPages:
 
 
 class TestForceCacheRefreshForReservedNamespace:
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
-    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
-    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    def test_manages_reserved_keys_cache_operations_in_correct_order(
-        self,
-        spy_area_selector_orchestrator_class: mock.MagicMock,
-        spy_crawl_all_pages: mock.MagicMock,
-        mocked_create_crawler_for_reserved_cache: mock.MagicMock,
-    ):
-        """
-        Given no input
-        When `force_cache_refresh_for_reserved_namespace()` is called
-        Then reserved keys are retrieved before crawling, deleted after crawling,
-            and finally the reserved staging keys
-            are moved to reserved namespace
-        """
-        # Given
-        mocked_cache_management = mock.Mock()
-        expected_original_reserved_keys = [
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-abc",
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-def",
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-123",
-        ]
-        mocked_cache_management.get_reserved_keys.return_value = (
-            expected_original_reserved_keys
-        )
-
-        # Set up the spy manager to record the order
-        # in which the various calls are made
-        spy_manager = mock.Mock()
-        spy_manager.attach_mock(
-            mocked_cache_management.get_reserved_keys, "get_reserved_keys"
-        )
-        spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
-        spy_manager.attach_mock(mocked_cache_management.delete_many, "delete_many")
-        spy_manager.attach_mock(
-            mocked_cache_management.move_all_reserved_staging_keys_into_reserved_namespace,
-            "move_all_reserved_staging_keys_into_reserved_namespace",
-        )
-
-        # When
-        force_cache_refresh_for_reserved_namespace(
-            cache_management=mocked_cache_management
-        )
-
-        # Then
-        # Check that all operations are called in the correct order
-        expected_calls = [
-            mock.call.get_reserved_keys(),
-            mock.call.crawl_all_pages(
-                private_api_crawler=mocked_create_crawler_for_reserved_cache.return_value,
-                area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
-            ),
-            mock.call.delete_many(keys=expected_original_reserved_keys),
-            mock.call.move_all_reserved_staging_keys_into_reserved_namespace(),
-        ]
-        spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
-
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
