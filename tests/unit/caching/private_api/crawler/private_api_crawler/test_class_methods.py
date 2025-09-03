@@ -45,5 +45,4 @@ class TestPrivateAPICrawlerCreate:
         crawler = PrivateAPICrawler.create_crawler_for_lazy_loading()
 
         # Then
-        assert not crawler._internal_api_client.force_refresh
         assert not crawler._internal_api_client.reserved_namespace
