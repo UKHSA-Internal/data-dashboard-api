@@ -1,8 +1,10 @@
 import logging
-from typing import Any, Self
+from typing import Any
 
 from django.core.cache import caches
 from django.core.cache.backends.redis import RedisCache
+
+from metrics.api import settings
 
 logger = logging.getLogger(__name__)
 
