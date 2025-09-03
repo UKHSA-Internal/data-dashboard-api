@@ -62,16 +62,29 @@ class TestCacheClientForDefaultCache:
             key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
 
-    @mock.patch.object(CacheClient, "_get_low_level_client")
-    def test_delete_many_delegates_call(self, spy_get_low_level_client: mock.MagicMock):
+    @mock.patch(f"{MODULE_PATH}.caches")
+    def test_clear_for_default_cache(self, mocked_caches: mock.MagicMock):
         """
-        Given an instance of the `CacheClient`
-        When `delete_many()` is called from the client
-        Then the call is delegated to the underlying cache
+        Given a `CacheClient` for the default cache
+        When `clear()` is called from the client
+        Then the call is delegated
+            to the underlying default cache
         """
         # Given
-        cache_client = CacheClient()
-        mocked_keys = [mock.Mock()] * 3
+        spy_default_cache = mock.Mock()
+        spy_reserved_cache = mock.Mock()
+
+        caches = {"default": spy_default_cache, "reserved": spy_reserved_cache}
+        mocked_caches.__getitem__.side_effect = caches.__getitem__
+
+        cache_client = CacheClient(is_reserved_namespace=False)
+
+        # When
+        cache_client.clear()
+
+        # Then
+        spy_default_cache.clear.assert_called_once()
+        spy_reserved_cache.clear.assert_not_called()
 
 
 class TestCacheClientForReservedCache:
@@ -130,6 +143,30 @@ class TestCacheClientForReservedCache:
         spy_reserved_cache.set.assert_called_once_with(
             key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
+
+    @mock.patch(f"{MODULE_PATH}.caches")
+    def test_clear_for_reserved_cache(self, mocked_caches: mock.MagicMock):
+        """
+        Given a `CacheClient` for the reserved cache
+        When `clear()` is called from the client
+        Then the call is delegated
+            to the underlying reserved cache
+        """
+        # Given
+        spy_default_cache = mock.Mock()
+        spy_reserved_cache = mock.Mock()
+
+        caches = {"default": spy_default_cache, "reserved": spy_reserved_cache}
+        mocked_caches.__getitem__.side_effect = caches.__getitem__
+
+        cache_client = CacheClient(is_reserved_namespace=True)
+
+        # When
+        cache_client.clear()
+
+        # Then
+        spy_default_cache.clear.assert_not_called()
+        spy_reserved_cache.clear.assert_called_once()
 
 
 class TestInMemoryCacheClient:
@@ -195,55 +232,3 @@ class TestInMemoryCacheClient:
 
         # Then
         assert retrieved_value == mocked_value
-
-    def test_delete_many_clears_select_keys_only(self):
-        """
-        Given a number of cache keys
-        When `delete_many()` is called
-            from an instance of the `InMemoryCacheClient`
-        Then only the given keys are deleted
-        """
-        # Given
-        reserved_namespace_key_prefix = "reserved-ns"
-        non_reserved_cache_key = "abc"
-        reserved_cache_key = f"{reserved_namespace_key_prefix}-abc"
-
-        in_memory_cache_client = InMemoryCacheClient()
-        in_memory_cache_client._cache = {
-            reserved_cache_key: mock.Mock(),
-            non_reserved_cache_key: mock.Mock(),
-        }
-
-        # When
-        in_memory_cache_client.delete_many(
-            keys=[non_reserved_cache_key],
-        )
-
-        # Then
-        assert non_reserved_cache_key not in in_memory_cache_client._cache
-        assert reserved_cache_key in in_memory_cache_client._cache
-
-    def test_copy(self):
-        """
-        Given a source and a destination key
-        When `copy()` is called
-            from an instance of the `InMemoryCacheClient`
-        Then the data in the source key is
-            copied across to the destination key
-        """
-        # Given
-        value = mock.Mock()
-        source = "ukhsa:1:ns3-abc123"
-        destination = "ukhsa:1:ns2-abc123"
-
-        in_memory_cache_client = InMemoryCacheClient()
-        in_memory_cache_client._cache = {source: value}
-
-        # When
-        in_memory_cache_client.copy(
-            source=source,
-            destination=destination,
-        )
-
-        # Then
-        assert in_memory_cache_client.get(cache_entry_key=destination) == value
