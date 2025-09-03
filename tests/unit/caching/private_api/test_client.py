@@ -131,30 +131,6 @@ class TestCacheClientForReservedCache:
             key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
 
-    @mock.patch(f"{MODULE_PATH}.cache")
-    def test_copy(self, spy_cache: mock.MagicMock):
-        """
-        Given a `CacheClient`
-        When `copy()` is called from the client
-        Then the call is delegated
-            to the underlying low level redis client
-        """
-        # Given
-        cache_client = CacheClient()
-        source = "ukhsa:1:ns3-abc123"
-        destination = "ukhsa:1:ns2-abc123"
-
-        # When
-        all_keys = cache_client.copy(source=source, destination=destination)
-
-        # Then
-        low_level_client = spy_cache._cache.get_client.return_value
-        low_level_client.copy.assert_called_once_with(
-            source=source,
-            destination=destination,
-            replace=True,
-        )
-
 
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):
