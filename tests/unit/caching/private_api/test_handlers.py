@@ -172,10 +172,10 @@ class TestForceCacheRefreshForAllPages:
     )
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    @mock.patch.object(CacheManagement, "clear_non_reserved_keys")
-    def test_clears_non_reserved_keys_cache_prior_to_crawler(
+    @mock.patch.object(CacheManagement, "clear")
+    def test_clears_cache_prior_to_crawler(
         self,
-        spy_cache_management_clear_non_reserved_keys: mock.MagicMock,
+        spy_cache_management_clear: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
         mocked_create_crawler_to_force_write_in_non_reserved_namespace: mock.MagicMock,
@@ -189,8 +189,8 @@ class TestForceCacheRefreshForAllPages:
         # Given
         spy_manager = mock.Mock()
         spy_manager.attach_mock(
-            spy_cache_management_clear_non_reserved_keys,
-            "cache_management_clear_non_reserved_keys",
+            spy_cache_management_clear,
+            "cache_management_clear"
         )
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
@@ -198,8 +198,8 @@ class TestForceCacheRefreshForAllPages:
         force_cache_refresh_for_all_pages()
 
         # Then
-        # `clear_non_reserved_keys()` should only have been called once from the CacheManagement object
-        spy_cache_management_clear_non_reserved_keys.assert_called_once()
+        # `clear()` should only have been called once from the CacheManagement object
+        spy_cache_management_clear.assert_called_once()
 
         # The cache should flushed before crawling the pages
         expected_calls = [
