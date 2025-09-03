@@ -47,6 +47,16 @@ class TestCacheManagementInit:
             cache_management._reserved_namespace_key_prefix
             == reserved_namespace_key_prefix
         )
+
+    @pytest.mark.parametrize(
+        "in_memory, is_reserved_namespace",
+        (
+            [True, True],
+            [True, False],
+            [False, True],
+            [False, False],
+        ),
+    )
     @mock.patch.object(CacheManagement, "_create_cache_client")
     def test_create_cache_client_is_delegated_to_during_init_when_client_not_provided(
         self,
