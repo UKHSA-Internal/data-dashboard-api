@@ -56,7 +56,10 @@ class CacheClient:
             The value associated with the cache entry or None if not found
 
         """
-        return self._cache.get(key=cache_entry_key, default=None)
+        selected_cache: RedisCache = self._select_cache_for_key(
+            cache_entry_key=cache_entry_key
+        )
+        return selected_cache.get(key=cache_entry_key, default=None)
 
     def put(self, *, cache_entry_key: str, value: Any, timeout: int | None) -> None:
         """Persists the entry within the cache
@@ -73,7 +76,10 @@ class CacheClient:
             None
 
         """
-        self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
+        selected_cache: RedisCache = self._select_cache_for_key(
+            cache_entry_key=cache_entry_key
+        )
+        selected_cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
     def list_keys(self) -> list[bytes]:
         """Lists all the application-level keys in the cache
