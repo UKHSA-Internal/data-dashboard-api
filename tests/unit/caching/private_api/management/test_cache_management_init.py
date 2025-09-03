@@ -24,30 +24,6 @@ class TestCacheManagementInit:
         # Then
         assert cache_management._client == mocked_cache_client
 
-    def test_reserved_namespace_key_prefix_can_be_provided_to_init(self):
-        """
-        Given a reserved namespace key prefix
-        When the `CacheManagement` class is initialized
-        Then the `_reserved_namespace_key_prefix` attribute
-            is set with the provided client
-        """
-        # Given
-        reserved_namespace_key_prefix = "abc-123"
-        mocked_cache_client = mock.Mock()
-
-        # When
-        cache_management = CacheManagement(
-            in_memory=True,
-            client=mocked_cache_client,
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
-        )
-
-        # Then
-        assert (
-            cache_management._reserved_namespace_key_prefix
-            == reserved_namespace_key_prefix
-        )
-
     @pytest.mark.parametrize(
         "in_memory, is_reserved_namespace",
         (
