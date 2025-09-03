@@ -183,7 +183,7 @@ class TestForceCacheRefreshForAllPages:
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then `clear_non_reserved_keys()` is called from a `CacheManagement` object
+        Then `clear()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
         # Given
@@ -203,7 +203,7 @@ class TestForceCacheRefreshForAllPages:
 
         # The cache should flushed before crawling the pages
         expected_calls = [
-            mock.call.cache_management_clear_non_reserved_keys(),
+            mock.call.clear(),
             mock.call.crawl_all_pages(
                 private_api_crawler=mocked_create_crawler_to_force_write_in_non_reserved_namespace.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
