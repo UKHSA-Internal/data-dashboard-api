@@ -16,6 +16,51 @@ RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
 RESERVED_NAMESPACE_STAGING_KEY_PREFIX = "ns3"
 
 
+class CacheKey:
+    def __init__(self, prefix: str, version: int, key: str):
+        self._key = key
+        self._prefix = prefix
+        self._version = version
+
+    def __repr__(self) -> str:
+        return self.full_key
+
+    def __str__(self) -> str:
+        return self.standalone_key
+
+    @classmethod
+    def create(cls, raw_key: bytes | str) -> Self:
+        raw_key = str(raw_key)
+        raw_key = raw_key.strip("b'\"")
+        prefix, version, key = raw_key.split(":")
+        return cls(prefix=prefix, version=version, key=key)
+
+    @property
+    def full_key(self) -> str:
+        return f"{self._prefix}:{self._version}:{self._key}"
+
+    @property
+    def standalone_key(self) -> str:
+        return self._key
+
+    @property
+    def is_reserved_namespace(self) -> bool:
+        return self._key.startswith(RESERVED_NAMESPACE_KEY_PREFIX)
+
+    @property
+    def is_reserved_staging_namespace(self):
+        return self._key.startswith(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+
+    def output_to_reserved_namespace(self) -> Self:
+        key = self._key
+        _, main_key = key.split(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+        return CacheKey(
+            key=f"{RESERVED_NAMESPACE_KEY_PREFIX}{main_key}",
+            prefix=self._prefix,
+            version=self._version,
+        )
+
+
 class CacheManagement:
     """This is the abstraction used to save and retrieve items in the cache
 
