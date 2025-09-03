@@ -211,7 +211,7 @@ class TestForceCacheRefreshForAllPages:
 
 class TestForceCacheRefreshForReservedNamespace:
     @mock.patch.object(
-        PrivateAPICrawler, "create_crawler_to_force_write_in_reserved_staging_namespace"
+        PrivateAPICrawler, "create_crawler_for_reserved_cache"
     )
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
@@ -219,7 +219,7 @@ class TestForceCacheRefreshForReservedNamespace:
         self,
         spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
-        mocked_create_crawler_to_force_write_in_reserved_staging_namespace: mock.MagicMock,
+        mocked_create_crawler_for_reserved_cache: mock.MagicMock,
     ):
         """
         Given no input
@@ -262,7 +262,7 @@ class TestForceCacheRefreshForReservedNamespace:
         expected_calls = [
             mock.call.get_reserved_keys(),
             mock.call.crawl_all_pages(
-                private_api_crawler=mocked_create_crawler_to_force_write_in_reserved_staging_namespace.return_value,
+                private_api_crawler=mocked_create_crawler_for_reserved_cache.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
             ),
             mock.call.delete_many(keys=expected_original_reserved_keys),
