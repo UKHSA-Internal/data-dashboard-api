@@ -1,24 +1,46 @@
 import logging
-from typing import Any
+from typing import Any, Self
 
-from django.core.cache import cache
-
-from metrics.api import settings
+from django.core.cache import caches
+from django.core.cache.backends.redis import RedisCache
 
 logger = logging.getLogger(__name__)
 
 
+RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+RESERVED_CACHE_NAME = "reserved"
+DEFAULT_CACHE_NAME = "default"
+
+
 class CacheClient:
+    _reserved_namespace_key_prefix = RESERVED_NAMESPACE_KEY_PREFIX
     """The client abstraction used to interact with the cache as set by the main Django application
 
     Notes:
         This should be used as the primary client for production.
         This provides an abstraction between our application and the caching implementation.
 
+        The `is_reserved_namespace` arg dictates which cache to connect to.
+        If True, this class will connect to the cache dedicated to long-lived / reserved data
+        If False, the connection will be made to the cache designated for more ephemeral / normal data
+        Defaults to False
+
     """
 
-    def __init__(self):
-        self._cache = cache
+    def __init__(self, *, is_reserved_namespace: bool = False):
+        self._preselect_cache(is_reserved_namespace=is_reserved_namespace)
+
+    def _preselect_cache(self, *, is_reserved_namespace: bool):
+        if is_reserved_namespace:
+            self.pre_selected_cache_name = RESERVED_CACHE_NAME
+        else:
+            self.pre_selected_cache_name = DEFAULT_CACHE_NAME
+        self.pre_selected_cache: RedisCache = caches[self.pre_selected_cache_name]
+
+    def _select_cache_for_key(self, *, cache_entry_key: str) -> RedisCache:
+        if cache_entry_key.startswith(self._reserved_namespace_key_prefix):
+            return caches[RESERVED_CACHE_NAME]
+        return caches[DEFAULT_CACHE_NAME]
 
     def _get_low_level_client(self):
         return self._cache._cache.get_client()
@@ -137,7 +159,9 @@ class InMemoryCacheClient(CacheClient):
     """
 
     def __init__(self):
-        super().__init__()
+        super().__init__(
+            is_reserved_namespace=False,
+        )
         self._cache = {}
 
     def get(self, *, cache_entry_key: str) -> Any:
