@@ -105,12 +105,12 @@ def refresh_default_cache(
     )
 
 
-def force_cache_refresh_for_reserved_namespace(
+def refresh_reserved_cache(
     *,
     cache_management: CacheManagement | None = None,
     private_api_crawler: PrivateAPICrawler | None = None,
 ) -> None:
-    """Forcibly refresh the cache for the reserved namespace only.
+    """Refresh the reserved cache for all live pages
 
     Args:
         `cache_management`: A `CacheManagement` object
