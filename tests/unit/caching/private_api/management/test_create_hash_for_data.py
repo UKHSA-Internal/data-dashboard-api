@@ -1,16 +1,4 @@
-from http import HTTPMethod
-from unittest import mock
-
-import pytest
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-
-from caching.private_api.client import CacheClient, InMemoryCacheClient
-from caching.private_api.management import (
-    CacheManagement,
-    CacheMissError,
-    RESERVED_NAMESPACE_KEY_PREFIX,
-)
+from caching.private_api.management import CacheManagement
 
 
 class TestCacheManagementCreateHashForData:

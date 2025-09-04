@@ -4,7 +4,6 @@ import pytest
 from rest_framework.test import APIClient
 
 from caching.internal_api_client import (
-    CACHE_FORCE_REFRESH_HEADER_KEY,
     PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS,
     InternalAPIClient,
     CACHE_RESERVED_NAMESPACE_HEADER_KEY,
@@ -101,17 +100,12 @@ class TestInternalAPIClient:
     # Header construction tests
 
     @pytest.mark.parametrize(
-        "force_refresh, reserved_namespace",
-        (
-            [True, True],
-            [True, True],
-            [False, True],
-            [False, True],
-        ),
+        "reserved_namespace",
+        (True, False),
     )
-    def test_build_headers(self, force_refresh: bool, reserved_namespace: bool):
+    def test_build_headers(self, reserved_namespace: bool):
         """
-        Given provided `force_refresh` & `reserved_namespace` values
+        Given provided `reserved_namespace` values
         When `build_headers()` is called
             from an instance of `InternalAPIClient`
         Then the correct dict representing the headers is returned

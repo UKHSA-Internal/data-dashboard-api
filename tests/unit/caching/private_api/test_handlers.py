@@ -2,6 +2,7 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
+from caching.private_api.client import RESERVED_NAMESPACE_KEY_PREFIX
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
     crawl_all_pages,
@@ -11,7 +12,6 @@ from caching.private_api.handlers import (
 )
 from caching.private_api.management import (
     CacheManagement,
-    RESERVED_NAMESPACE_KEY_PREFIX,
 )
 
 MODULE_PATH = "caching.private_api.handlers"
@@ -166,10 +166,10 @@ class TestForceCacheRefreshForAllPages:
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    @mock.patch.object(CacheManagement, "clear_non_reserved_keys")
-    def test_clears_non_reserved_keys_cache_prior_to_crawler(
+    @mock.patch.object(CacheManagement, "clear")
+    def test_clears_keys_prior_to_crawler(
         self,
-        spy_cache_management_clear_non_reserved_keys: mock.MagicMock,
+        spy_cache_management_clear: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
         mocked_create_crawler_for_default_cache: mock.MagicMock,
@@ -177,14 +177,14 @@ class TestForceCacheRefreshForAllPages:
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then `clear_non_reserved_keys()` is called from a `CacheManagement` object
+        Then `clear()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
         # Given
         spy_manager = mock.Mock()
         spy_manager.attach_mock(
-            spy_cache_management_clear_non_reserved_keys,
-            "cache_management_clear_non_reserved_keys",
+            spy_cache_management_clear,
+            "cache_management_clear",
         )
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
@@ -192,12 +192,12 @@ class TestForceCacheRefreshForAllPages:
         force_cache_refresh_for_all_pages()
 
         # Then
-        # `clear_non_reserved_keys()` should only have been called once from the CacheManagement object
-        spy_cache_management_clear_non_reserved_keys.assert_called_once()
+        # `clear()` should only have been called once from the CacheManagement object
+        spy_cache_management_clear.assert_called_once()
 
         # The cache should flushed before crawling the pages
         expected_calls = [
-            mock.call.cache_management_clear_non_reserved_keys(),
+            mock.call.cache_management_clear(),
             mock.call.crawl_all_pages(
                 private_api_crawler=mocked_create_crawler_for_default_cache.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
@@ -210,64 +210,6 @@ class TestForceCacheRefreshForAllPages:
 
 
 class TestForceCacheRefreshForReservedNamespace:
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
-    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
-    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    def test_manages_reserved_keys_cache_operations_in_correct_order(
-        self,
-        spy_area_selector_orchestrator_class: mock.MagicMock,
-        spy_crawl_all_pages: mock.MagicMock,
-        mocked_create_crawler_for_reserved_cache: mock.MagicMock,
-    ):
-        """
-        Given no input
-        When `force_cache_refresh_for_reserved_namespace()` is called
-        Then reserved keys are retrieved before crawling, deleted after crawling,
-            and finally the reserved staging keys
-            are moved to reserved namespace
-        """
-        # Given
-        mocked_cache_management = mock.Mock()
-        expected_original_reserved_keys = [
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-abc",
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-def",
-            f"{RESERVED_NAMESPACE_KEY_PREFIX}-123",
-        ]
-        mocked_cache_management.get_reserved_keys.return_value = (
-            expected_original_reserved_keys
-        )
-
-        # Set up the spy manager to record the order
-        # in which the various calls are made
-        spy_manager = mock.Mock()
-        spy_manager.attach_mock(
-            mocked_cache_management.get_reserved_keys, "get_reserved_keys"
-        )
-        spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
-        spy_manager.attach_mock(mocked_cache_management.delete_many, "delete_many")
-        spy_manager.attach_mock(
-            mocked_cache_management.move_all_reserved_staging_keys_into_reserved_namespace,
-            "move_all_reserved_staging_keys_into_reserved_namespace",
-        )
-
-        # When
-        force_cache_refresh_for_reserved_namespace(
-            cache_management=mocked_cache_management
-        )
-
-        # Then
-        # Check that all operations are called in the correct order
-        expected_calls = [
-            mock.call.get_reserved_keys(),
-            mock.call.crawl_all_pages(
-                private_api_crawler=mocked_create_crawler_for_reserved_cache.return_value,
-                area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
-            ),
-            mock.call.delete_many(keys=expected_original_reserved_keys),
-            mock.call.move_all_reserved_staging_keys_into_reserved_namespace(),
-        ]
-        spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
-
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
@@ -309,6 +251,51 @@ class TestForceCacheRefreshForReservedNamespace:
         spy_area_selector_orchestrator_class.assert_called_once_with(
             geographies_api_crawler=expected_crawler.geography_api_crawler
         )
+
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
+    @mock.patch.object(CacheManagement, "clear")
+    def test_clears_keys_prior_to_crawler(
+        self,
+        spy_cache_management_clear: mock.MagicMock,
+        spy_area_selector_orchestrator_class: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+        mocked_create_crawler_for_reserved_cache: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `force_cache_refresh_for_reserved_namespace()` is called
+        Then `clear()` is called from a `CacheManagement` object
+            before the call is made to `crawl_all_pages()`
+        """
+        # Given
+        spy_manager = mock.Mock()
+        spy_manager.attach_mock(
+            spy_cache_management_clear,
+            "cache_management_clear",
+        )
+        spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
+
+        # When
+        force_cache_refresh_for_reserved_namespace()
+
+        # Then
+        # `clear()` should only have been called once from the CacheManagement object
+        spy_cache_management_clear.assert_called_once()
+
+        # The cache should flushed before crawling the pages
+        expected_calls = [
+            mock.call.cache_management_clear(),
+            mock.call.crawl_all_pages(
+                private_api_crawler=mocked_create_crawler_for_reserved_cache.return_value,
+                area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
+            ),
+        ]
+        spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
+
+        # `crawl_all_pages()` should only have been called once
+        spy_crawl_all_pages.assert_called_once()
 
 
 class TestGetAllDownloads:
