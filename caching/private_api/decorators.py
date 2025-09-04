@@ -4,10 +4,6 @@ from functools import wraps
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from caching.internal_api_client import (
-    CACHE_FORCE_REFRESH_HEADER_KEY,
-    CACHE_RESERVED_NAMESPACE_HEADER_KEY,
-)
 from caching.private_api.management import CacheManagement, CacheMissError
 
 
@@ -68,16 +64,6 @@ def _retrieve_response_from_cache_or_calculate(
     """Gets the response from the cache, otherwise recalculates from the view
 
     Notes:
-        If the "Cache-Force-Refresh" header is set to True,
-        then the response will be recalculated from the server
-        and this will overwrite the corresponding entry in the cache
-        To target the reserved namespace, the `is_reserved_namespace`
-        arg must be given as True and the `Cache-Reserved-Namespace`
-        header must be included.
-        To target the non-reserved namespace, the `is_reserved_namespace`
-        arg should be given as false and the `Cache-Reserved-Namespace`
-        header should be omitted from the request.
-
         If the `CACHING_V2_ENABLED` env variable is set to "true",
         then the response will always be recalculated from the server
         and no caching will take place.
@@ -87,8 +73,7 @@ def _retrieve_response_from_cache_or_calculate(
         timeout: The number of seconds after which the response is expired
             and evicted from the cache
         is_reserved_namespace: Boolean switch to store the data
-            in the reserved / long-lived namespace within the cache.
-            Defaults to `False`.
+            in the reserved / long-lived namespace within the cache
         *args: args provided by the rest framework middleware
         **kwargs: kwargs provided by the rest framework middleware
             Note that `cache_management` can be injected in through the kwargs
@@ -102,27 +87,13 @@ def _retrieve_response_from_cache_or_calculate(
     if is_caching_v2_enabled():
         return _calculate_response_from_view(view_function, *args, **kwargs)
 
-    cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=False))
-
-    should_force_write: bool = _check_force_write_should_happen_for_target_namespace(
-        request=request, is_reserved_namespace=is_reserved_namespace
+    cache_management = kwargs.pop(
+        "cache_management",
+        CacheManagement(in_memory=False, is_reserved_namespace=is_reserved_namespace),
     )
+    # It doesn't matter which cache the `CacheManagement` is initially pointed at
+    # When we get or save items the `CacheClient` will figure out which cache it needs to go
 
-    if should_force_write:
-        # In this case if we are writing to the reserved namespace
-        # then we actually want to write to the reserved staging namespace
-        # So that we can copy all the staging keys into the reserved namespace
-        # when all the keys are ready
-        cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
-            request=request,
-            is_reserved_namespace=False,
-        )
-        return _calculate_response_and_save_in_cache(
-            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
-        )
-
-    # In this case, we have a lazy-load request.
-    # So we want to fetch the key associated with the non-reserved or reserved namespaces only.
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
         request=request,
         is_reserved_namespace=is_reserved_namespace,
@@ -138,22 +109,6 @@ def _retrieve_response_from_cache_or_calculate(
         return _calculate_response_and_save_in_cache(
             view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
         )
-
-
-def _check_force_write_should_happen_for_target_namespace(
-    *, request: Request, is_reserved_namespace: bool
-) -> bool:
-    force_refresh_has_been_asked_for: bool = request.headers.get(
-        CACHE_FORCE_REFRESH_HEADER_KEY, False
-    )
-    if not force_refresh_has_been_asked_for:
-        return False
-
-    is_header_targeting_reserved_namespace: bool = request.headers.get(
-        CACHE_RESERVED_NAMESPACE_HEADER_KEY, False
-    )
-
-    return is_header_targeting_reserved_namespace == is_reserved_namespace
 
 
 def _calculate_response_and_save_in_cache(
