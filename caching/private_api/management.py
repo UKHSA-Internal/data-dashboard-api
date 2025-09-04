@@ -145,22 +145,14 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item, timeout=timeout)
         return item
 
-    def clear_non_reserved_keys(self):
-        """Deletes all keys in the cache which are not within the reserved namespace
-
-        Notes:
-            This allows us to keep hold of
-            expensive, infrequently changing data in the cache
-            like maps data, whilst still allowing the
-            cheaper more frequently changing data types like
-            tables and charts to be cleared.
+    def clear(self):
+        """Deletes all keys in the current cache
 
         Returns:
             None
 
         """
-        non_reserved_keys: list[str] = self._get_non_reserved_keys()
-        self._client.delete_many(keys=non_reserved_keys)
+        self._client.clear()
 
     def delete_many(self, keys: list[str]) -> None:
         """Deletes the given `keys` from the cache within 1 trip to the cache

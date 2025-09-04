@@ -18,8 +18,13 @@ MODULE_PATH = "caching.private_api.handlers"
 
 
 class TestCrawlAllPages:
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
+    def test_delegates_calls_successfully(
+        self,
+        spy_collect_all_pages: mock.MagicMock,
+        spy_get_childhood_vaccinations_page: mock.MagicMock,
+    ):
         """
         Given a mocked `Crawler` object
         When `crawl_all_pages()` is called
@@ -43,15 +48,26 @@ class TestCrawlAllPages:
         spy_collect_all_pages.assert_called_once()
         collected_pages = spy_collect_all_pages.return_value
 
-        # And then those pages are passed to be processed
-        spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
+        spy_get_childhood_vaccinations_page.assert_called_once()
+        collected_cover_pages = spy_get_childhood_vaccinations_page.return_value
 
+        # And then those pages are passed to be processed
+        expected_calls = [
+            mock.call(pages=collected_pages),
+            mock.call(pages=collected_cover_pages),
+        ]
+        spy_crawler.process_pages.assert_has_calls(
+            calls=expected_calls, any_order=False
+        )
+
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.extract_area_selectable_pages")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully_for_area_selector_orchestrator(
         self,
         spy_collect_all_pages: mock.MagicMock,
         spy_extract_area_selectable_pages: mock.MagicMock,
+        mocked_get_childhood_vaccinations_page: mock.MagicMock,
     ):
         """
         Given a mocked `Crawler` object
@@ -82,10 +98,6 @@ class TestCrawlAllPages:
         # Check that all pages are collected
         spy_collect_all_pages.assert_called_once()
         all_collected_pages = spy_collect_all_pages.return_value
-        # And then those pages are passed to be processed
-        spy_private_api_crawler.process_pages.assert_called_once_with(
-            pages=all_collected_pages
-        )
 
         # Check that the topic pages are extracted
         spy_extract_area_selectable_pages.assert_called_once_with(
@@ -96,10 +108,12 @@ class TestCrawlAllPages:
             pages=spy_extract_area_selectable_pages.return_value
         )
 
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_correct_logs_are_made(
         self,
         mocked_collect_all_pages: mock.MagicMock,
+        mocked_get_childhood_vaccinations_page: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
@@ -172,10 +186,10 @@ class TestForceCacheRefreshForAllPages:
     )
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    @mock.patch.object(CacheManagement, "clear_non_reserved_keys")
-    def test_clears_non_reserved_keys_cache_prior_to_crawler(
+    @mock.patch.object(CacheManagement, "clear")
+    def test_clears_cache_prior_to_crawler(
         self,
-        spy_cache_management_clear_non_reserved_keys: mock.MagicMock,
+        spy_cache_management_clear: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
         mocked_create_crawler_to_force_write_in_non_reserved_namespace: mock.MagicMock,
@@ -183,27 +197,24 @@ class TestForceCacheRefreshForAllPages:
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then `clear_non_reserved_keys()` is called from a `CacheManagement` object
+        Then `clear()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
         # Given
         spy_manager = mock.Mock()
-        spy_manager.attach_mock(
-            spy_cache_management_clear_non_reserved_keys,
-            "cache_management_clear_non_reserved_keys",
-        )
+        spy_manager.attach_mock(spy_cache_management_clear, "cache_management_clear")
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
         # When
         force_cache_refresh_for_all_pages()
 
         # Then
-        # `clear_non_reserved_keys()` should only have been called once from the CacheManagement object
-        spy_cache_management_clear_non_reserved_keys.assert_called_once()
+        # `clear()` should only have been called once from the CacheManagement object
+        spy_cache_management_clear.assert_called_once()
 
         # The cache should flushed before crawling the pages
         expected_calls = [
-            mock.call.cache_management_clear_non_reserved_keys(),
+            mock.call.cache_management_clear(),
             mock.call.crawl_all_pages(
                 private_api_crawler=mocked_create_crawler_to_force_write_in_non_reserved_namespace.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
