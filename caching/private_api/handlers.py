@@ -87,6 +87,9 @@ def force_cache_refresh_for_all_pages(
     cache_management = cache_management or CacheManagement(in_memory=False)
     logger.info("Clearing all non reserved keys")
     cache_management.clear_non_reserved_keys()
+    cache_management = cache_management or CacheManagement(
+        in_memory=False, is_reserved_namespace=False
+    )
 
     private_api_crawler = (
         private_api_crawler or PrivateAPICrawler.create_crawler_for_default_cache()
@@ -133,6 +136,9 @@ def force_cache_refresh_for_reserved_namespace(
 
     """
     cache_management = cache_management or CacheManagement(in_memory=False)
+    cache_management = cache_management or CacheManagement(
+        in_memory=False, is_reserved_namespace=True
+    )
     private_api_crawler = (
         private_api_crawler or PrivateAPICrawler.create_crawler_for_reserved_cache()
     )
