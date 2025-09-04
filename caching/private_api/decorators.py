@@ -115,7 +115,6 @@ def _retrieve_response_from_cache_or_calculate(
         # when all the keys are ready
         cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
             request=request,
-            is_reserved_staging_namespace=is_reserved_namespace,
             is_reserved_namespace=False,
         )
         return _calculate_response_and_save_in_cache(
@@ -126,7 +125,6 @@ def _retrieve_response_from_cache_or_calculate(
     # So we want to fetch the key associated with the non-reserved or reserved namespaces only.
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
         request=request,
-        is_reserved_staging_namespace=False,
         is_reserved_namespace=is_reserved_namespace,
     )
 
