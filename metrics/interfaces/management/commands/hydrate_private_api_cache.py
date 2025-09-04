@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
 
-from caching.private_api.handlers import force_cache_refresh_for_all_pages
+from caching.private_api.handlers import refresh_default_cache
 
 
 class Command(BaseCommand):
     @classmethod
     def handle(cls, *args, **options) -> None:
-        force_cache_refresh_for_all_pages()
+        refresh_default_cache()

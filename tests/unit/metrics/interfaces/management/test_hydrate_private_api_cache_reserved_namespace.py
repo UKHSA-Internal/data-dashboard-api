@@ -6,20 +6,20 @@ MODULE_PATH = "metrics.interfaces.management.commands.hydrate_private_api_cache_
 
 
 class TestHydratePrivateAPIReservedNamespaceCommand:
-    @mock.patch(f"{MODULE_PATH}.force_cache_refresh_for_reserved_namespace")
+    @mock.patch(f"{MODULE_PATH}.refresh_reserved_cache")
     def test_delegates_call_successfully(
-        self, spy_force_cache_refresh_for_reserved_namespace: mock.MagicMock
+        self, spy_refresh_reserved_cache: mock.MagicMock
     ):
         """
         Given an instance of the app
         When a call is made to the custom management command `hydrate_private_api_cache`
-        Then the call is delegated to the `force_cache_refresh_for_reserved_namespace()` function
+        Then the call is delegated to the `refresh_reserved_cache()` function
 
         Patches:
-            `spy_force_cache_refresh_for_reserved_namespace`: For the main assertion
+            `spy_refresh_reserved_cache`: For the main assertion
         """
         # Given / When
         call_command("hydrate_private_api_cache_reserved_namespace")
 
         # Then
-        spy_force_cache_refresh_for_reserved_namespace.assert_called_once()
+        spy_refresh_reserved_cache.assert_called_once()

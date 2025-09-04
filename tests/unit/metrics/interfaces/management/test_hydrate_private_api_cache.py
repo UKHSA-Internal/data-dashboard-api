@@ -6,20 +6,20 @@ MODULE_PATH = "metrics.interfaces.management.commands.hydrate_private_api_cache"
 
 
 class TestHydratePrivateAPICommand:
-    @mock.patch(f"{MODULE_PATH}.force_cache_refresh_for_all_pages")
+    @mock.patch(f"{MODULE_PATH}.refresh_default_cache")
     def test_delegates_call_successfully(
-        self, spy_force_cache_refresh_for_all_pages: mock.MagicMock
+        self, spy_refresh_default_cache: mock.MagicMock
     ):
         """
         Given an instance of the app
         When a call is made to the custom management command `hydrate_private_api_cache`
-        Then the call is delegated to the `force_cache_refresh_for_all_pages()` function
+        Then the call is delegated to the `refresh_default_cache()` function
 
         Patches:
-            `spy_force_cache_refresh_for_all_pages`: For the main assertion
+            `spy_refresh_default_cache`: For the main assertion
         """
         # Given / When
         call_command("hydrate_private_api_cache")
 
         # Then
-        spy_force_cache_refresh_for_all_pages.assert_called_once()
+        spy_refresh_default_cache.assert_called_once()

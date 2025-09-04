@@ -2,13 +2,12 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.private_api.client import RESERVED_NAMESPACE_KEY_PREFIX
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
     crawl_all_pages,
-    force_cache_refresh_for_all_pages,
+    refresh_default_cache,
     get_all_downloads,
-    force_cache_refresh_for_reserved_namespace,
+    refresh_reserved_cache,
 )
 from caching.private_api.management import (
     CacheManagement,
@@ -125,7 +124,7 @@ class TestCrawlAllPages:
         assert "Finished refreshing of cache" in caplog.text
 
 
-class TestForceCacheRefreshForAllPages:
+class TestRefreshDefaultCache:
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
@@ -137,7 +136,7 @@ class TestForceCacheRefreshForAllPages:
     ):
         """
         Given no input
-        When `force_cache_refresh_for_all_pages()` is called
+        When `refresh_default_cache()` is called
         Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
@@ -153,7 +152,7 @@ class TestForceCacheRefreshForAllPages:
         mocked_cache_management = mock.Mock()
 
         # When
-        force_cache_refresh_for_all_pages(cache_management=mocked_cache_management)
+        refresh_default_cache(cache_management=mocked_cache_management)
 
         # Then
         spy_create_crawler_for_default_cache.assert_called_once()
@@ -176,7 +175,7 @@ class TestForceCacheRefreshForAllPages:
     ):
         """
         Given no input
-        When `force_cache_refresh_for_all_pages()` is called
+        When `refresh_default_cache()` is called
         Then `clear()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
@@ -189,7 +188,7 @@ class TestForceCacheRefreshForAllPages:
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
         # When
-        force_cache_refresh_for_all_pages()
+        refresh_default_cache()
 
         # Then
         # `clear()` should only have been called once from the CacheManagement object
@@ -209,7 +208,7 @@ class TestForceCacheRefreshForAllPages:
         spy_crawl_all_pages.assert_called_once()
 
 
-class TestForceCacheRefreshForReservedNamespace:
+class TestRefreshReservedCache:
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
@@ -221,7 +220,7 @@ class TestForceCacheRefreshForReservedNamespace:
     ):
         """
         Given no input
-        When `force_cache_refresh_for_reserved_namespace()` is called
+        When `refresh_reserved_cache()` is called
         Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
@@ -237,9 +236,7 @@ class TestForceCacheRefreshForReservedNamespace:
         mocked_cache_management = mock.Mock()
 
         # When
-        force_cache_refresh_for_reserved_namespace(
-            cache_management=mocked_cache_management
-        )
+        refresh_reserved_cache(cache_management=mocked_cache_management)
 
         # Then
         spy_create_crawler_for_reserved_cache.assert_called_once()
@@ -265,7 +262,7 @@ class TestForceCacheRefreshForReservedNamespace:
     ):
         """
         Given no input
-        When `force_cache_refresh_for_reserved_namespace()` is called
+        When `refresh_reserved_cache()` is called
         Then `clear()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
@@ -278,7 +275,7 @@ class TestForceCacheRefreshForReservedNamespace:
         spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
 
         # When
-        force_cache_refresh_for_reserved_namespace()
+        refresh_reserved_cache()
 
         # Then
         # `clear()` should only have been called once from the CacheManagement object
