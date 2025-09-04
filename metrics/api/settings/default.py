@@ -136,7 +136,12 @@ CACHE_TTL = None
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    }
+        "KEY_PREFIX": "ukhsa",
+    },
+    "reserved": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "KEY_PREFIX": "reserved",
+    },
 }
 
 
