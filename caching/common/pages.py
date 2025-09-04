@@ -50,7 +50,7 @@ def collect_all_pages(
 
 def get_childhood_vaccinations_page():
     pages = []
-    results = DEFAULT_TOPIC_PAGE_MANAGER.filter(slug="childhood-vaccinations")
+    results = DEFAULT_TOPIC_PAGE_MANAGER.objects.filter(slug="childhood-vaccinations")
     pages += results
     return pages
 
