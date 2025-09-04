@@ -7,13 +7,12 @@ from rest_framework.views import APIView
 from caching.private_api.decorators import cache_response
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
+from metrics.api.views.tables.common import TABLES_API_TAG
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
 )
 from metrics.interfaces.tables import access
-
-TABLES_API_TAG = "tables"
 
 
 class TablesView(APIView):
