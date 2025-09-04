@@ -7,7 +7,6 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
@@ -466,9 +465,7 @@ class TestIngestion:
     ) -> dict[str, int | float]:
         path = "/api/headlines/v3/"
         client = APIClient()
-        response: Response = client.get(
-            path=path, data=payload, headers={CACHE_FORCE_REFRESH_HEADER_KEY: True}
-        )
+        response: Response = client.get(path=path, data=payload)
         return response.data
 
     @staticmethod
