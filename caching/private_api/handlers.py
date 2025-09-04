@@ -53,12 +53,12 @@ def crawl_all_pages(
     logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
-def force_cache_refresh_for_all_pages(
+def refresh_default_cache(
     *,
     cache_management: CacheManagement | None = None,
     private_api_crawler: PrivateAPICrawler | None = None,
 ) -> None:
-    """Forcibly refresh the cache for all pages
+    """Refresh the default cache for all live pages
 
     Args:
         `cache_management`: A `CacheManagement` object
