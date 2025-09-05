@@ -80,21 +80,6 @@ class TestInternalAPIClient:
         spy_create_api_client.assert_called_once()
         assert internal_api_client._client == spy_create_api_client.return_value
 
-    def test_force_refresh_attribute_defaults_to_false(self):
-        """
-        Given no provided argument for `force_refresh`
-        When the `InternalAPIClient` class is initialized
-        Then the `force_refresh` attribute is set to False
-        """
-        # Given
-        mocked_client = mock.Mock()
-
-        # When
-        internal_api_client = InternalAPIClient(client=mocked_client)
-
-        # Then
-        assert not internal_api_client.force_refresh
-
     # API key manager & API client tests
 
     def test_create_api_client_returns_api_client(self):
@@ -135,16 +120,14 @@ class TestInternalAPIClient:
         mocked_client = mock.Mock()
         internal_api_client = InternalAPIClient(
             client=mocked_client,
-            force_refresh=force_refresh,
             reserved_namespace=reserved_namespace,
         )
 
         # When
-        headers = internal_api_client.build_headers()
+        headers: dict = internal_api_client.build_headers()
 
         # Then
         expected_headers = {
-            CACHE_FORCE_REFRESH_HEADER_KEY: force_refresh,
             CACHE_RESERVED_NAMESPACE_HEADER_KEY: reserved_namespace,
         }
         assert headers == expected_headers
