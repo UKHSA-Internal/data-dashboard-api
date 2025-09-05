@@ -1,4 +1,5 @@
 from metrics.domain.models import ChartRequestParams
+from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
@@ -7,8 +8,12 @@ from metrics.interfaces.tables.access import generate_table_for_full_plots
 
 
 def generate_subplot_table(
-    *, request_params_per_group: list[ChartRequestParams]
+    *, subplot_chart_parameters: SubplotChartRequestParameters
 ) -> list[dict]:
+    request_params_per_group: list[ChartRequestParams] = (
+        subplot_chart_parameters.output_payload_for_tables()
+    )
+
     result: list[dict] = []
 
     for request_params in request_params_per_group:

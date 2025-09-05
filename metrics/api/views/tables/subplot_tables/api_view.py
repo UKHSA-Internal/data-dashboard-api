@@ -12,7 +12,6 @@ from metrics.api.views.tables.single_category_tables import TABLES_API_TAG
 from metrics.api.views.tables.subplot_tables.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
-from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
@@ -45,13 +44,10 @@ class TablesSubplotView(APIView):
         subplot_chart_parameters: SubplotChartRequestParameters = serializer.to_models(
             request=request
         )
-        request_params_per_group: list[ChartRequestParams] = (
-            subplot_chart_parameters.output_payload_for_tables()
-        )
 
         try:
             tabular_data: list[dict] = access.generate_subplot_table(
-                request_params_per_group=request_params_per_group
+                subplot_chart_parameters=subplot_chart_parameters
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
