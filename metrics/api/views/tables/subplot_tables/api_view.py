@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
@@ -11,7 +12,13 @@ from metrics.api.views.tables.single_category_tables import TABLES_API_TAG
 from metrics.api.views.tables.subplot_tables.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
+from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
+from metrics.interfaces.tables.subplot_tables import access
 
 logger = logging.getLogger(__name__)
 
@@ -38,178 +45,17 @@ class TablesSubplotView(APIView):
         subplot_chart_parameters: SubplotChartRequestParameters = serializer.to_models(
             request=request
         )
-
-        logger.info(
-            "Subplot chart parameters: %s", subplot_chart_parameters.model_dump()
+        request_params_per_group: list[ChartRequestParams] = (
+            subplot_chart_parameters.output_payload_for_tables()
         )
-        logger.info("This endpoint is incomplete, returning fake data")
 
-        tabular_data = [
-            {
-                "reference": "England",
-                "values": [
-                    {
-                        "label": "6-in-1 (12 months)",
-                        "value": "87.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Rota (12 months)",
-                        "value": "85.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB (12 months)",
-                        "value": "82.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "6-in-1 (24 months)",
-                        "value": "84.0000",
-                        "in_reporting_delay_period": True,
-                    },
-                    {
-                        "label": "PCV booster (24 months)",
-                        "value": "88.0000",
-                        "in_reporting_delay_period": True,
-                    },
-                    {
-                        "label": "MMR1 (24 months)",
-                        "value": "86.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Hib/MenC (24 months)",
-                        "value": "89.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB booster (24 months)",
-                        "value": "85.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "5-in-1 (5 years)",
-                        "value": "83.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "4-in-1 (5 years)",
-                        "value": "90.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                ],
-            },
-            {
-                "reference": "East Midlands",
-                "values": [
-                    {
-                        "label": "6-in-1 (12 months)",
-                        "value": "89.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Rota (12 months)",
-                        "value": "88.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB (12 months)",
-                        "value": "85.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "6-in-1 (24 months)",
-                        "value": "87.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "PCV booster (24 months)",
-                        "value": "90.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MMR1 (24 months)",
-                        "value": "89.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Hib/MenC (24 months)",
-                        "value": "91.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB booster (24 months)",
-                        "value": "88.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "5-in-1 (5 years)",
-                        "value": "86.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "4-in-1 (5 years)",
-                        "value": "92.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                ],
-            },
-            {
-                "reference": "Nottingham",
-                "values": [
-                    {
-                        "label": "6-in-1 (12 months)",
-                        "value": "72.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Rota (12 months)",
-                        "value": "69.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB (12 months)",
-                        "value": "67.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "6-in-1 (24 months)",
-                        "value": "68.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "PCV booster (24 months)",
-                        "value": "73.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MMR1 (24 months)",
-                        "value": None,
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "Hib/MenC (24 months)",
-                        "value": "74.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "MenB booster (24 months)",
-                        "value": None,
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "5-in-1 (5 years)",
-                        "value": "66.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "4-in-1 (5 years)",
-                        "value": None,
-                        "in_reporting_delay_period": False,
-                    },
-                ],
-            },
-        ]
+        try:
+            tabular_data: list[dict] = access.generate_subplot_table(
+                request_params_per_group=request_params_per_group
+            )
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
 
         return Response(tabular_data)
