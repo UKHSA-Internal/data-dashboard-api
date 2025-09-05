@@ -102,7 +102,7 @@ class SubplotChartRequestParameters(BaseModel):
             if not grouped_plots:
                 continue
 
-            grouped__subplot = ChartRequestParams(
+            grouped_subplot = ChartRequestParams(
                 plots=grouped_plots,
                 file_format=self.file_format,
                 chart_height=self.chart_height,
@@ -116,6 +116,6 @@ class SubplotChartRequestParameters(BaseModel):
                 request=self.request,
             )
 
-            overall_payload.append(grouped__subplot)
+            overall_payload.append(grouped_subplot)
 
         return overall_payload
