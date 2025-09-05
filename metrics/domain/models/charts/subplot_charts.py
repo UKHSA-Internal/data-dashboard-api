@@ -65,9 +65,6 @@ class SubplotChartRequestParameters(BaseModel):
         """
         overall_payload: list[ChartRequestParams] = []
 
-        if not self.subplots:
-            return overall_payload
-
         # Determine the attribute to group by from the first subplot's x_axis
         attribute_to_group_subplots_by: str = self.subplots[0].x_axis
 
