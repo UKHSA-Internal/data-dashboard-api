@@ -48,6 +48,33 @@ class SubplotChartRequestParameters(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+    def _extract_all_distinct_group_values(
+        self, attribute_to_group_by: str
+    ) -> list[str]:
+        group_values: list[str] = []
+        for subplot in self.subplots:
+            for plot in subplot.plots:
+                # Note this currently does not work for `x_axis = "date"`
+                value = getattr(plot, attribute_to_group_by, None)
+                if value and value not in group_values:
+                    group_values.append(value)
+        return group_values
+
+    @classmethod
+    def _get_matching_plot_for_group(
+        cls, subplot: Subplots, attribute_to_group_by: str, group_value: str
+    ) -> PlotParameters:
+        # Find the plot in this subplot matching the current group value
+        matching_plot_for_group_value = next(
+            plot
+            for plot in subplot.plots
+            if getattr(plot, attribute_to_group_by, None) == group_value
+        )
+
+        return matching_plot_for_group_value.model_copy(
+            update={"label": subplot.subplot_title}
+        )
+
     def output_payload_for_tables(self) -> list[ChartRequestParams]:
         """Flip subplot structure into groups of `ChartRequestParams` as dictated by the `x_axis` value
 
@@ -69,35 +96,27 @@ class SubplotChartRequestParameters(BaseModel):
         attribute_to_group_subplots_by: str = self.subplots[0].x_axis
 
         # Collect distinct group values in a stable order across all subplots
-        group_values: list[str] = []
-        for subplot in self.subplots:
-            for plot in subplot.plots:
-                # Note this currently does not work for `x_axis = "date"`
-                value = getattr(plot, attribute_to_group_subplots_by, None)
-                if value and value not in group_values:
-                    group_values.append(value)
+        distinct_group_values: list[str] = self._extract_all_distinct_group_values(
+            attribute_to_group_by=attribute_to_group_subplots_by
+        )
 
         # Build a ChartRequestParams per group value
-        for group_value in group_values:
+        # So if we've selected `x_axis` of `"geography"`
+        # Then we'll expect 1 group value per distinct geography
+        for group_value in distinct_group_values:
             grouped_plots: list[PlotParameters] = []
 
             for subplot in self.subplots:
-                # Find the plot in this subplot matching the current group value
                 try:
-                    matching_plot_for_group_value = next(
-                        plot
-                        for plot in subplot.plots
-                        if getattr(plot, attribute_to_group_subplots_by, None)
-                        == group_value
+                    matched_plot: PlotParameters = self._get_matching_plot_for_group(
+                        subplot=subplot,
+                        attribute_to_group_by=attribute_to_group_subplots_by,
+                        group_value=group_value,
                     )
                 except StopIteration:
                     continue
 
-                # For the table output we want the value labels to be the subplot titles
-                updated_plot: PlotParameters = matching_plot_for_group_value.model_copy(
-                    update={"label": subplot.subplot_title}
-                )
-                grouped_plots.append(updated_plot)
+                grouped_plots.append(matched_plot)
 
             if not grouped_plots:
                 continue
