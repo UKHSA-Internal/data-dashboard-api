@@ -48,10 +48,21 @@ class TestCacheManagementInit:
             == reserved_namespace_key_prefix
         )
 
-    @pytest.mark.parametrize("in_memory", [True, False])
+    @pytest.mark.parametrize(
+        "in_memory, is_reserved_namespace",
+        (
+            [True, True],
+            [True, False],
+            [False, True],
+            [False, False],
+        ),
+    )
     @mock.patch.object(CacheManagement, "_create_cache_client")
     def test_create_cache_client_is_delegated_to_during_init_when_client_not_provided(
-        self, spy_create_cache_client: mock.MagicMock, in_memory: bool
+        self,
+        spy_create_cache_client: mock.MagicMock,
+        in_memory: bool,
+        is_reserved_namespace: bool,
     ):
         """
         Given no pre-existing cache client
@@ -59,7 +70,9 @@ class TestCacheManagementInit:
         Then the call is delegated to the `_create_cache_client()` method
         """
         # Given / When
-        cache_management = CacheManagement(in_memory=in_memory)
+        cache_management = CacheManagement(
+            in_memory=in_memory, is_reserved_namespace=is_reserved_namespace
+        )
 
         # Then
         assert cache_management._client == spy_create_cache_client.return_value

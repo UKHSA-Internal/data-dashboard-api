@@ -74,6 +74,7 @@ class CacheManagement:
         self,
         *,
         in_memory: bool,
+        is_reserved_namespace: bool = True,
         client: CacheClient | None = None,
         reserved_namespace_key_prefix: str = RESERVED_NAMESPACE_KEY_PREFIX,
     ):
