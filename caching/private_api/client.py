@@ -31,6 +31,17 @@ class CacheClient:
         self._preselect_cache(is_reserved_namespace=is_reserved_namespace)
 
     def _preselect_cache(self, *, is_reserved_namespace: bool):
+        """Preselects the cache to connect to based on the given `is_reserved_namespace` boolean
+
+        Notes:
+            The preselected cache does not impact individual `get` and `put` operations.
+            The preselected cache is provided to the `clear()` method only.
+            So if you want to clear the default cache,
+            Initialize this with is_reserved_namespace=False and call `clear()`
+            If you wanted to clear the reserved cache, then you should
+            initialize this with is_reserved_namespace=True and then call `clear()`
+
+        """
         if is_reserved_namespace:
             self.pre_selected_cache_name = RESERVED_CACHE_NAME
         else:
@@ -38,12 +49,18 @@ class CacheClient:
         self.pre_selected_cache: RedisCache = caches[self.pre_selected_cache_name]
 
     def _select_cache_for_key(self, *, cache_entry_key: str) -> RedisCache:
-        if cache_entry_key.startswith(self._reserved_namespace_key_prefix):
+        if cache_entry_key.startswith(f"{self._reserved_namespace_key_prefix}-"):
             return caches[RESERVED_CACHE_NAME]
         return caches[DEFAULT_CACHE_NAME]
 
     def get(self, *, cache_entry_key: str) -> Any | None:
         """Retrieves the cache entry associated with the given `cache_entry_key`
+
+        Notes:
+            This will fetch the entry from the relevant cache.
+            i.e. if the given key begins with `ns2-`
+            then the item will be fetched from the reserved cache.
+            Otherwise, it will be fetched from the default cache
 
         Args:
             cache_entry_key: The string which acts as the
@@ -60,6 +77,12 @@ class CacheClient:
 
     def put(self, *, cache_entry_key: str, value: Any, timeout: int | None) -> None:
         """Persists the entry within the cache
+
+        Notes:
+            This will place the entry within the relevant cache.
+            i.e. if the given key begins with `ns2-`
+            then the item will be placed in the reserved cache.
+            Otherwise, it will be placed in the default cache
 
         Args:
             cache_entry_key: The string which acts as the
