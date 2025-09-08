@@ -21,4 +21,4 @@ pytest-cov==6.2.1
 pytest-django==4.11.1
 pytest-random-order==1.2.0
 ruff==0.12.10
-stevedore==5.4.1
+stevedore==5.5.0
