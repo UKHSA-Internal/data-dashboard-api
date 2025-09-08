@@ -1,0 +1,2 @@
+from .single_category_downloads import DownloadsView
+from .bulk_downloads import BulkDownloadsView
