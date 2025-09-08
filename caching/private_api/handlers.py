@@ -166,5 +166,5 @@ def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
 
     """
     pages = collect_all_pages()
-    crawler = PrivateAPICrawler.create_crawler_for_lazy_loading()
+    crawler = PrivateAPICrawler.create_crawler_for_default_cache()
     return crawler.get_all_downloads(pages=pages, file_format=file_format)
