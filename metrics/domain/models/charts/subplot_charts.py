@@ -101,7 +101,7 @@ class SubplotChartRequestParameters(BaseModel):
         )
 
         # Build a ChartRequestParams per group value
-        # So if we've selected `x_axis` of `"geography"`
+        # E.g. if we've selected the `x_axis` as `"geography"`
         # Then we'll expect 1 group value per distinct geography
         for group_value in distinct_group_values:
             grouped_plots: list[PlotParameters] = []
@@ -117,9 +117,6 @@ class SubplotChartRequestParameters(BaseModel):
                     continue
 
                 grouped_plots.append(matched_plot)
-
-            if not grouped_plots:
-                continue
 
             grouped_subplot = ChartRequestParams(
                 plots=grouped_plots,
