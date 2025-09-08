@@ -4,7 +4,7 @@ from django import forms
 from django.db import models
 from wagtail import blocks
 from wagtail.blocks.struct_block import StructBlockAdapter
-from wagtail.telepath import register
+from wagtail.admin.telepath import register
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
