@@ -37,7 +37,7 @@ iniconfig==2.1.0
 itypes==1.2.0
 Jinja2==3.1.6
 jsonschema==4.25.1
-kaleido==0.2.1
+kaleido==1.0.0
 l18n==2021.3
 lockfile==0.12.2
 Markdown==3.9
@@ -56,7 +56,7 @@ pathspec==0.12.1
 pbr==6.1.1
 Pillow==11.3.0
 platformdirs==4.3.8
-plotly==6.2.0
+plotly==6.3.0
 pluggy==1.6.0
 pyparsing==3.2.3
 pyrsistent==0.20.0
