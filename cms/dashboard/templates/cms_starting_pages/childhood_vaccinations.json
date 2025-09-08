@@ -672,7 +672,8 @@
                     {
                         "type": "filter_linked_map",
                         "value": {
-                            "title_prefix": "Vaccination coverage statistics"
+                            "title_prefix": "Vaccination coverage statistics",
+                            "about": ""
                         },
                         "id": "c5720a34-4f6e-4132-b82b-c8982b9f4551"
                     }
