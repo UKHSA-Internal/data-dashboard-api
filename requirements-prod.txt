@@ -87,7 +87,7 @@ urllib3==2.5.0
 virtualenv==20.34.0
 wagtail==7.1.1
 wagtail_trash==3.1.0
-wagtail_modeladmin==2.1.0
+wagtail_modeladmin==2.2.0
 webencodings==0.5.1
 Willow==1.11.0
 zipp==3.23.0
