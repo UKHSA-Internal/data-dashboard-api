@@ -1,6 +1,4 @@
 import copy
-import csv
-import io
 from http import HTTPStatus
 
 import pytest
@@ -10,104 +8,12 @@ from rest_framework.test import APIClient
 from metrics.api.views.downloads.subplot_downloads.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
-from tests.factories.metrics.time_series import CoreTimeSeriesFactory
+from tests.integration.metrics.api.views.downloads.subplot_downloads.common import (
+    create_example_core_timeseries,
+)
 
 
 class TestDownloadsSubplotView:
-    @classmethod
-    def _create_example_core_timeseries(cls) -> None:
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="12m",
-            date="2021-03-31",
-            geography_name="Darlington",
-            geography_type_name="Upper Tier Local Authority",
-            metric_value=90,
-        )
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="12m",
-            date="2021-03-31",
-            geography_name="North East",
-            geography_type_name="Region",
-            metric_value=97,
-        )
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="12m",
-            date="2021-03-31",
-            geography_name="England",
-            geography_type_name="Nation",
-            metric_value=88,
-        )
-
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="24m",
-            date="2021-03-31",
-            geography_name="Darlington",
-            geography_type_name="Upper Tier Local Authority",
-            metric_value=87,
-        )
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="24m",
-            date="2021-03-31",
-            geography_name="North East",
-            geography_type_name="Region",
-            metric_value=89,
-        )
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
-            stratum_name="24m",
-            date="2021-03-31",
-            geography_name="England",
-            geography_type_name="Nation",
-            metric_value=78,
-        )
-
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="MMR1",
-            metric_name="MMR1_coverage_coverageByYear",
-            stratum_name="24m",
-            date="2021-03-31",
-            geography_name="Darlington",
-            geography_type_name="Upper Tier Local Authority",
-            metric_value=93,
-        )
-        CoreTimeSeriesFactory.create_record(
-            theme_name="immunisation",
-            sub_theme_name="childhood-vaccines",
-            topic_name="MMR1",
-            metric_name="MMR1_coverage_coverageByYear",
-            stratum_name="24m",
-            date="2021-03-31",
-            geography_name="North East",
-            geography_type_name="Region",
-            metric_value=84,
-        )
-        # There is intentionally no corresponding record for England / MMR1 / 24m
-
     @property
     def path(self) -> str:
         return "/api/downloads/subplot/v1/"
@@ -122,7 +28,7 @@ class TestDownloadsSubplotView:
         # Given
         client = APIClient()
         valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
-        self._create_example_core_timeseries()
+        create_example_core_timeseries()
 
         # When
         response: Response = client.post(
@@ -282,7 +188,7 @@ class TestDownloadsSubplotView:
             # We're asking for 1 boundary, excluding anything under 90
             {"start": 90, "end": 100}
         ]
-        self._create_example_core_timeseries()
+        create_example_core_timeseries()
 
         # When
         response: Response = client.post(
@@ -362,7 +268,7 @@ class TestDownloadsSubplotView:
         client = APIClient()
         valid_payload = REQUEST_PAYLOAD_EXAMPLE
         path = "/api/downloads/subplot/v1"
-        self._create_example_core_timeseries()
+        create_example_core_timeseries()
 
         # When
         response: Response = client.post(
@@ -372,180 +278,3 @@ class TestDownloadsSubplotView:
         )
 
         assert response.status_code == HTTPStatus.OK
-
-    @pytest.mark.django_db
-    def test_returns_correct_data_for_csv_download(self):
-        """
-        Given a valid payload to create a JSON subplot download
-        When a POST request is made to `/api/downloads/subplot/v1/`
-        Then the correct data is returned in the response
-        """
-        # Given
-        client = APIClient()
-        valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
-        valid_payload["file_format"] = "csv"
-        self._create_example_core_timeseries()
-
-        # When
-        response: Response = client.post(
-            path=self.path, data=valid_payload, format="json"
-        )
-
-        # Then
-        csv_reader = csv.DictReader(io.StringIO(response.text))
-        rows = list(csv_reader)
-
-        expected_rows = [
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Nation",
-                "geography": "England",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "88.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Nation",
-                "geography": "England",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "78.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "",
-                "sub_theme": "",
-                "topic": "",
-                "geography_type": "",
-                "geography": "",
-                "metric": "",
-                "sex": "",
-                "age": "",
-                "stratum": "",
-                "year": "",
-                "date": "",
-                "metric_value": "",
-                "in_reporting_delay_period": "",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "97.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "89.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "MMR1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "MMR1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "84.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "",
-                "sub_theme": "",
-                "topic": "",
-                "geography_type": "",
-                "geography": "",
-                "metric": "",
-                "sex": "",
-                "age": "",
-                "stratum": "",
-                "year": "",
-                "date": "",
-                "metric_value": "",
-                "in_reporting_delay_period": "",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "90.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "87.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "MMR1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "MMR1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "93.0000",
-                "in_reporting_delay_period": "False",
-            },
-        ]
-
-        assert len(rows) == len(expected_rows)
