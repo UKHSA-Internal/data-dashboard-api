@@ -86,9 +86,12 @@ class SubplotDownloadsView(DownloadsView):
         response["Content-Disposition"] = 'attachment; filename="charts-download.csv"'
 
         for index, charts_request_param in enumerate(charts_request_param_models, 1):
-            queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
-                chart_plots=charts_request_param
-            )
+            try:
+                queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
+                    chart_plots=charts_request_param
+                )
+            except DataNotFoundForAnyPlotError:
+                continue
             metric_group: str = charts_request_param.metric_group
 
             headers = [""] * 12 if index > 1 else None

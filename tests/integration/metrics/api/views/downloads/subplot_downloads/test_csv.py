@@ -21,9 +21,10 @@ class TestDownloadsSubplotView:
         return "/api/downloads/subplot/v1/"
 
     @pytest.mark.django_db
-    def test_csv_download_for_timeseries_data(self):
+    def test_csv_download_for_timeseries_data_with_filtered_metric_value_ranges(self):
         """
         Given a valid payload to create a JSON subplot download
+            which filters for a particular `metric_value_range`
         When a POST request is made to `/api/downloads/subplot/v1/`
         Then the correct data is returned in the response
         """
@@ -31,6 +32,10 @@ class TestDownloadsSubplotView:
         client = APIClient()
         valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         valid_payload["file_format"] = "csv"
+        valid_payload["chart_parameters"]["metric_value_ranges"] = [
+            # We're asking for 1 boundary, excluding anything under 90
+            {"start": 90, "end": 100}
+        ]
         create_example_core_timeseries()
 
         # When
@@ -47,51 +52,6 @@ class TestDownloadsSubplotView:
                 "theme": "immunisation",
                 "sub_theme": "childhood-vaccines",
                 "topic": "6-in-1",
-                "geography_type": "Nation",
-                "geography": "England",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "88.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Nation",
-                "geography": "England",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "78.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "",
-                "sub_theme": "",
-                "topic": "",
-                "geography_type": "",
-                "geography": "",
-                "metric": "",
-                "sex": "",
-                "age": "",
-                "stratum": "",
-                "year": "",
-                "date": "",
-                "metric_value": "",
-                "in_reporting_delay_period": "",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
                 "geography_type": "Region",
                 "geography": "North East",
                 "metric": "6-in-1_coverage_coverageByYear",
@@ -101,36 +61,6 @@ class TestDownloadsSubplotView:
                 "year": "2023",
                 "date": "2021-03-31",
                 "metric_value": "97.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "89.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "MMR1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "MMR1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "84.0000",
                 "in_reporting_delay_period": "False",
             },
             {
@@ -161,21 +91,6 @@ class TestDownloadsSubplotView:
                 "year": "2023",
                 "date": "2021-03-31",
                 "metric_value": "90.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "87.0000",
                 "in_reporting_delay_period": "False",
             },
             {
