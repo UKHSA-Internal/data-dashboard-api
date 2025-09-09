@@ -65,7 +65,6 @@ class TestWriteDataToCSV:
         csv_file: io.StringIO = write_data_to_csv(
             file=file,
             core_time_series_queryset=queryset,
-            headers=None,
         )
         # Go back to the beginning of stream
         csv_file.seek(0)

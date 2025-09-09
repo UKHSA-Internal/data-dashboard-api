@@ -38,7 +38,7 @@ def write_data_to_csv(
     *,
     file: io.StringIO,
     core_time_series_queryset,
-    headers: list[str] | None,
+    headers: list[str] | None = None,
 ) -> io.StringIO:
     headers = headers or FIELDS.keys()
     rows = core_time_series_queryset

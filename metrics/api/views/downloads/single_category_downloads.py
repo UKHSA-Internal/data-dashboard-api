@@ -87,11 +87,11 @@ class DownloadsView(APIView):
 
         if DataSourceFileType[metric_group].is_headline:
             return write_headline_data_to_csv(
-                file=response, core_headline_data=serializer.data, headers=None
+                file=response, core_headline_data=serializer.data
             )
 
         return write_data_to_csv(
-            file=response, core_time_series_queryset=queryset, headers=None
+            file=response, core_time_series_queryset=queryset
         )
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
