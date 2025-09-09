@@ -27,13 +27,13 @@ from metrics.api.views import (
     HeadlinesView,
     HealthView,
     HeatAlertViewSet,
+    SubplotDownloadsView,
     TablesSubplotView,
     TablesView,
     TrendsView,
 )
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.charts.subplot_charts import SubplotChartsView
-from metrics.api.views.downloads.subplot_downloads import SubplotDownloadsView
 from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
