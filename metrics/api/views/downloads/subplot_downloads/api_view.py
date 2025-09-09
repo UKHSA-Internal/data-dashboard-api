@@ -40,7 +40,6 @@ class SubplotDownloadsView(DownloadsView):
         request_serializer = SubplotChartRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         file_format: str = request_serializer.data["file_format"]
-        request.data["file_format"] = "svg"
 
         subplot_chart_parameters: SubplotChartRequestParameters = (
             request_serializer.to_models(request=request)
