@@ -7,7 +7,7 @@ from rest_framework.request import Request
 
 
 class BaseChartRequestParams(BaseModel):
-    file_format: Literal["png", "svg", "jpg", "jpeg"]
+    file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
     chart_height: int
     x_axis: str

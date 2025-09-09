@@ -32,7 +32,7 @@ This collection of models are the model definitions for a `Request` for a subplo
 
 
 class SubplotChartRequestParameters(BaseModel):
-    file_format: Literal["png", "svg", "jpg", "jpeg"]
+    file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
     chart_height: int
     x_axis_title: OPTIONAL_STRING = ""
@@ -119,6 +119,7 @@ class SubplotChartRequestParameters(BaseModel):
                 grouped_plots.append(matched_plot)
 
             grouped_subplot = ChartRequestParams(
+                metric_group=grouped_plots[0].metric_group,
                 plots=grouped_plots,
                 file_format=self.file_format,
                 chart_height=self.chart_height,
