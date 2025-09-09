@@ -234,7 +234,7 @@ class TestDownloadsSubplotView:
                     "subplot_parameters": {
                         "topic": "COVID-19",
                         "metric": "COVID-19_headline_tests_7DayTotal",
-                        "stratum": "default"
+                        "stratum": "default",
                     },
                     "plots": [
                         {

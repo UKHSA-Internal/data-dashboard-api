@@ -10,6 +10,7 @@ from metrics.api.views.downloads.single_category_downloads import DownloadsView
 from metrics.api.views.downloads.subplot_downloads.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
+from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.domain.common.utils import DataSourceFileType
 from metrics.domain.exports.csv_output import (
@@ -91,16 +92,31 @@ class SubplotDownloadsView(DownloadsView):
             metric_group: str = charts_request_param.metric_group
 
             headers = [""] * 12 if index > 1 else None
-
-            if DataSourceFileType[metric_group].is_headline:
-                serializer = self._get_serializer_class(
-                    queryset=queryset, metric_group=metric_group
-                )
-                return write_headline_data_to_csv(
-                    file=response, headers=headers, core_headline_data=serializer.data
-                )
-            write_data_to_csv(
-                file=response, headers=headers, core_time_series_queryset=queryset
+            self._write_headline_to_csv(
+                metric_group=metric_group,
+                queryset=queryset,
+                response=response,
+                headers=headers,
             )
 
         return response
+
+    def _write_headline_to_csv(
+        self,
+        *,
+        metric_group: str,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
+        response: HttpResponse,
+        headers: list[str] | None
+    ) -> None:
+        if DataSourceFileType[metric_group].is_headline:
+            serializer = self._get_serializer_class(
+                queryset=queryset, metric_group=metric_group
+            )
+            write_headline_data_to_csv(
+                file=response, headers=headers, core_headline_data=serializer.data
+            )
+        else:
+            write_data_to_csv(
+                file=response, headers=headers, core_time_series_queryset=queryset
+            )
