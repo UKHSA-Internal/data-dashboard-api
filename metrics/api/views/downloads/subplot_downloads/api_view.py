@@ -7,7 +7,7 @@ from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.charts.subplot_charts import SubplotChartRequestSerializer
 from metrics.api.views.downloads.common import DOWNLOADS_API_TAG
 from metrics.api.views.downloads.single_category_downloads import DownloadsView
-from metrics.api.views.tables.subplot_tables.request_example import (
+from metrics.api.views.downloads.subplot_downloads.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
