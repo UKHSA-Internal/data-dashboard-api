@@ -41,9 +41,7 @@ class TestTablesInterface:
         Then an instance of the `PlotsInterface` is created with the correct args
         """
         # Given
-        fake_chart_request_params.plots[0].chart_type = (
-            ChartTypes.line_with_shaded_section.value
-        )
+        fake_chart_request_params.plots[0].chart_type = ChartTypes.bar.value
         mocked_core_time_series_manager = mock.Mock()
 
         # When
@@ -72,9 +70,7 @@ class TestTablesInterface:
             and the `core_model_manager` is set to `CoreHeadline` manager
         """
         # Given
-        fake_chart_request_params.plots[0].chart_type = (
-            ChartTypes.line_with_shaded_section.value
-        )
+        fake_chart_request_params.plots[0].chart_type = ChartTypes.bar.value
         fake_chart_request_params.plots[0].metric = "COVID-19_headline_tests_7DayChange"
 
         # When

@@ -86,7 +86,7 @@ class ChartsView(APIView):
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
         | `metric`         | The name of the metric being queried for                                   | COVID-19_deaths_ONSByDay | Yes       |
-        | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
+        | `chart_type`     | The type of chart to use for the individual plot                           | bar                      | Yes       |
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
@@ -238,7 +238,7 @@ class EncodedChartsView(APIView):
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
         | `metric`         | The name of the metric being queried for                                   | COVID-19_deaths_ONSByDay | Yes       |
-        | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
+        | `chart_type`     | The type of chart to use for the individual plot                           | bar                      | Yes       |
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |

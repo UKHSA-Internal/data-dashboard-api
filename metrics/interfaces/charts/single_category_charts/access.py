@@ -10,7 +10,6 @@ from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
     common_charts,
     line_single_simplified,
-    line_with_shaded_section,
 )
 from metrics.domain.common.utils import (
     ChartTypes,
@@ -166,15 +165,9 @@ class ChartsInterface:
                 chart_generation_payload=chart_generation_payload,
             )
 
-        match self.chart_type:
-            case ChartTypes.line_single_simplified.value:
-                return self.generate_line_single_simplified(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case _:
-                return self.generate_line_with_shaded_section_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
+        return self.generate_line_single_simplified(
+            chart_generation_payload=chart_generation_payload
+        )
 
     @classmethod
     def build_chart_description(cls, *, plots_data: list[PlotGenerationData]) -> str:
@@ -216,36 +209,6 @@ class ChartsInterface:
         return common_charts.generate_chart_figure(
             chart_generation_payload=chart_generation_payload
         )
-
-    def generate_line_with_shaded_section_chart(
-        self,
-        *,
-        chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
-        """Creates a line chart with shaded section figure for the requested chart plot
-
-        Notes:
-            Currently on the first requested chart plot is used,
-            the remaining plots are not applied to the figure.
-
-        Args:
-            chart_generation_payload: An enriched `ChartGenerationPayload` model
-                which holds all the parameters like colour and plot labels
-                 along with the corresponding x and y values
-                 which are needed to be able to generate the chart in full.
-
-        Returns:
-            A plotly `Figure` object for the created line chart with shaded section
-
-        Raises:
-            `DataNotFoundForAnyPlotError`: If no plots
-                returned any data from the underlying queries
-
-        """
-        params = self.param_builder_for_line_with_shaded_section(
-            plots_data=chart_generation_payload.plots
-        )
-        return line_with_shaded_section.generate_chart_figure(**params)
 
     @classmethod
     def generate_line_single_simplified(
@@ -342,36 +305,6 @@ class ChartsInterface:
             return
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
-
-    def param_builder_for_line_with_shaded_section(
-        self, *, plots_data: list[PlotGenerationData]
-    ):
-        plot_data = plots_data[0]
-        chart_height = self.chart_request_params.chart_height
-        chart_width = self.chart_request_params.chart_width
-        x_axis_values = plot_data.x_axis_values
-        y_axis_values = plot_data.y_axis_values
-        y_axis_minimum_value = self.chart_request_params.y_axis_minimum_value
-        y_axis_maximum_value = self.chart_request_params.y_axis_maximum_value
-        metric: str = plot_data.parameters.metric
-
-        return {
-            "plots_data": plots_data,
-            "chart_height": chart_height,
-            "chart_width": chart_width,
-            "x_axis_values": x_axis_values,
-            "y_axis_values": y_axis_values,
-            "y_axis_minimum_value": y_axis_minimum_value,
-            "y_axis_maximum_value": y_axis_maximum_value,
-            "metric_name": metric,
-            "change_in_metric_value": self.calculate_change_in_metric_value(
-                values=y_axis_values,
-                metric_name=metric,
-            ),
-            "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
-                metric_name=metric
-            ),
-        }
 
     def param_builder_for_line_single_simplified(
         self, *, plots_data: list[PlotGenerationData]
