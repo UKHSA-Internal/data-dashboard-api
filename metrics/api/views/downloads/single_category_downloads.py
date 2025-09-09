@@ -90,9 +90,7 @@ class DownloadsView(APIView):
                 file=response, core_headline_data=serializer.data
             )
 
-        return write_data_to_csv(
-            file=response, core_time_series_queryset=queryset
-        )
+        return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
