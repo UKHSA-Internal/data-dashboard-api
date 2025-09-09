@@ -57,7 +57,7 @@ class SubplotDownloadsView(DownloadsView):
             charts_request_param_models=charts_request_param_models
         )
 
-    def _handle_json(self, charts_request_param_models: list[ChartRequestParams]):
+    def _handle_json(self, *, charts_request_param_models: list[ChartRequestParams]):
         data = []
         for charts_request_param in charts_request_param_models:
             try:
@@ -77,7 +77,7 @@ class SubplotDownloadsView(DownloadsView):
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
 
-    def _handle_csv(self, charts_request_param_models: list[ChartRequestParams]):
+    def _handle_csv(self, *, charts_request_param_models: list[ChartRequestParams]):
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="charts-download.csv"'
 
