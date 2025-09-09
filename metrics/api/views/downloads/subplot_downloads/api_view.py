@@ -114,7 +114,10 @@ class SubplotDownloadsView(DownloadsView):
                 queryset=queryset, metric_group=metric_group
             )
             write_headline_data_to_csv(
-                file=response, headers=headers, core_headline_data=serializer.data
+                file=response,
+                headers=headers,
+                core_headline_data=serializer.data,
+                use_csv_dict_writer=False,
             )
         else:
             write_data_to_csv(
