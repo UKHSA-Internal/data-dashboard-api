@@ -65,14 +65,4 @@ def write_headline_data_to_csv(
 ) -> io.StringIO:
     headers = headers or list(HEADLINE_FIELDS.keys())
     rows = core_headline_data
-    return _write_headline_to_csv_file(file=file, headers=headers, rows=rows)
-
-
-def _write_headline_to_csv_file(
-    *, file: io.StringIO, headers: list[str], rows: Iterable
-) -> io.StringIO:
-    writer = csv.DictWriter(file, fieldnames=headers)
-    writer.writeheader()
-    writer.writerows(rows)
-
-    return file
+    return _write_to_csv_file(file=file, headers=headers, rows=rows)
