@@ -19,7 +19,7 @@ from metrics.domain.exports.csv_output import (
 )
 from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
-from metrics.interfaces.downloads import access
+from metrics.interfaces.downloads.subplot_downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 
 DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
@@ -85,22 +85,18 @@ class SubplotDownloadsView(DownloadsView):
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="charts-download.csv"'
 
-        for index, charts_request_param in enumerate(charts_request_param_models, 1):
-            try:
-                queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
-                    chart_plots=charts_request_param
-                )
-            except DataNotFoundForAnyPlotError:
-                continue
-            metric_group: str = charts_request_param.metric_group
-
-            headers = [""] * 12 if index > 1 else None
-            self._write_headline_to_csv(
-                metric_group=metric_group,
-                queryset=queryset,
-                response=response,
-                headers=headers,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet = (
+            access.get_subplot_downloads_data(
+                charts_request_param_models=charts_request_param_models
             )
+        )
+
+        self._write_headline_to_csv(
+            metric_group=charts_request_param_models[0].metric_group,
+            queryset=queryset,
+            response=response,
+            headers=None,
+        )
 
         return response
 
