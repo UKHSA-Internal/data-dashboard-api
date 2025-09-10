@@ -101,7 +101,7 @@ class CacheClient:
         )
         selected_cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
-    def clear(self) -> None:
+    def clear(self):
         """Deletes all the keys in the cache - this is a wrapper around the FLUSHDB redis command
 
         Notes:
@@ -109,7 +109,7 @@ class CacheClient:
             production, which is a cluster. Listing all
             the keys and deleting them 1-by-1 doesn't work
             because AWS will only give you the keys on the
-            shard which the client is currently connected to.
+            shard the client is currently connected to.
             But the FLUSHDB command is distributed
             across every shard in the cluster.
             So this is the safer route to emptying the cache.
@@ -117,9 +117,6 @@ class CacheClient:
             The alternative would have been making application
             code cluster-aware i.e. iterating through each node
             and performing operations on each one.
-
-        Returns:
-            None
 
         """
         is_cleared: bool = self.pre_selected_cache.clear()

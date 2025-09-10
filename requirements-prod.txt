@@ -40,7 +40,7 @@ jsonschema==4.25.1
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.8.2
+Markdown==3.9
 markdown-it-py==2.2.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
@@ -67,7 +67,7 @@ PyYAML==6.0.2
 redis==6.3.0
 requests==2.32.5
 rich==14.1.0
-ruamel.yaml==0.18.14
+ruamel.yaml==0.18.15
 ruamel.yaml.clib==0.2.12
 SQLAlchemy==2.0.42
 scour==0.38.2
@@ -75,7 +75,7 @@ setuptools==80.9.0
 simplejson==3.20.1
 six==1.17.0
 sortedcontainers==2.4.0
-soupsieve==2.7
+soupsieve==2.8
 sqlparams==6.2.0
 telepath==0.3.1
 tenacity==9.1.2

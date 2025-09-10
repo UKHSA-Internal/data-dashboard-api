@@ -48,6 +48,13 @@ def collect_all_pages(
     return pages
 
 
+def get_childhood_vaccinations_page():
+    pages = []
+    results = DEFAULT_TOPIC_PAGE_MANAGER.filter(slug="childhood-vaccinations")
+    pages += results
+    return pages
+
+
 def extract_area_selectable_pages(*, all_pages: ALL_PAGE_TYPES) -> list[TopicPage]:
     """Builds a new list containing only the pages which are deemed suitable for the area selector
 
