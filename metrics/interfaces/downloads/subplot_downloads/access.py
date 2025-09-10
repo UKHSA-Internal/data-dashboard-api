@@ -23,6 +23,20 @@ class SubplotDownloadsInterface:
         return queryset_class().none()
 
     def get_combined_subplot_data(self):
+        """Get a single combined queryset for all the data for the request param models
+
+        Notes:
+            This calls out to the `get_downloads_data()` function
+            which is used for single category downloads to fetch
+            data for that particular request param model / subplot group.
+
+        Returns:
+            A single queryset containing all the records for each
+            subplot group.
+            The type of queryset is dictated by the `metric_group`
+            of the 1st chart request param model.
+
+        """
         combined_queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet = (
             self._get_starting_point_queryset()
         )
