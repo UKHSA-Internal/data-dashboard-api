@@ -23,8 +23,10 @@ class SubplotTablesInterface:
         result: list[dict] = []
 
         for request_params in request_params_per_group:
-            tabular_data_for_sub_plot = self._generate_complete_tabular_data_for_subplot(
-                request_params=request_params
+            tabular_data_for_sub_plot = (
+                self._generate_complete_tabular_data_for_subplot(
+                    request_params=request_params
+                )
             )
             result += tabular_data_for_sub_plot
 
@@ -33,7 +35,9 @@ class SubplotTablesInterface:
 
         return result
 
-    def _generate_complete_tabular_data_for_subplot(self, *, request_params: ChartRequestParams) -> list[dict]:
+    def _generate_complete_tabular_data_for_subplot(
+        self, *, request_params: ChartRequestParams
+    ) -> list[dict]:
         """Builds the complete tabular data for the subplot associated with the given `request_params` model
 
         Args:
