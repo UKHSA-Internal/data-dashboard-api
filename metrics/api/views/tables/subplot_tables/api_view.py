@@ -1,5 +1,4 @@
 import logging
-from http import HTTPStatus
 
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
@@ -13,10 +12,6 @@ from metrics.api.views.tables.subplot_tables.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
-from metrics.interfaces.plots.access import (
-    DataNotFoundForAnyPlotError,
-    InvalidPlotParametersError,
-)
 from metrics.interfaces.tables.subplot_tables import access
 
 logger = logging.getLogger(__name__)
@@ -45,13 +40,8 @@ class TablesSubplotView(APIView):
             request=request
         )
 
-        try:
-            tabular_data: list[dict] = access.generate_subplot_table(
-                subplot_chart_parameters=subplot_chart_parameters
-            )
-        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+        tabular_data: list[dict] = access.generate_subplot_table(
+            subplot_chart_parameters=subplot_chart_parameters
+        )
 
         return Response(tabular_data)
