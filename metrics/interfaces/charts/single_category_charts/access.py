@@ -387,17 +387,6 @@ class ChartsInterface:
         file.seek(0)
         return file.getvalue()
 
-    @staticmethod
-    def calculate_change_in_metric_value(*, values, metric_name) -> int | float:
-        rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
-            metric_name=metric_name
-        )
-        preceding_slice: int = rolling_period_slice * 2
-
-        values = values[-preceding_slice:]
-
-        return calculations.change_between_each_half(values=values)
-
     def get_encoded_chart(self, *, chart_output: ChartOutput) -> dict[str, str | dict]:
         """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
 
