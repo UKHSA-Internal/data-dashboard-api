@@ -17,8 +17,13 @@ MODULE_PATH = "caching.private_api.handlers"
 
 
 class TestCrawlAllPages:
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
+    def test_delegates_calls_successfully(
+        self,
+        spy_collect_all_pages: mock.MagicMock,
+        spy_get_childhood_vaccinations_page: mock.MagicMock,
+    ):
         """
         Given a mocked `Crawler` object
         When `crawl_all_pages()` is called
@@ -42,15 +47,26 @@ class TestCrawlAllPages:
         spy_collect_all_pages.assert_called_once()
         collected_pages = spy_collect_all_pages.return_value
 
-        # And then those pages are passed to be processed
-        spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
+        spy_get_childhood_vaccinations_page.assert_called_once()
+        collected_cover_pages = spy_get_childhood_vaccinations_page.return_value
 
+        # And then those pages are passed to be processed
+        expected_calls = [
+            mock.call(pages=collected_pages),
+            mock.call(pages=collected_cover_pages),
+        ]
+        spy_crawler.process_pages.assert_has_calls(
+            calls=expected_calls, any_order=False
+        )
+
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.extract_area_selectable_pages")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully_for_area_selector_orchestrator(
         self,
         spy_collect_all_pages: mock.MagicMock,
         spy_extract_area_selectable_pages: mock.MagicMock,
+        mocked_get_childhood_vaccinations_page: mock.MagicMock,
     ):
         """
         Given a mocked `Crawler` object
@@ -81,10 +97,6 @@ class TestCrawlAllPages:
         # Check that all pages are collected
         spy_collect_all_pages.assert_called_once()
         all_collected_pages = spy_collect_all_pages.return_value
-        # And then those pages are passed to be processed
-        spy_private_api_crawler.process_pages.assert_called_once_with(
-            pages=all_collected_pages
-        )
 
         # Check that the topic pages are extracted
         spy_extract_area_selectable_pages.assert_called_once_with(
@@ -95,10 +107,12 @@ class TestCrawlAllPages:
             pages=spy_extract_area_selectable_pages.return_value
         )
 
+    @mock.patch(f"{MODULE_PATH}.get_childhood_vaccinations_page")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_correct_logs_are_made(
         self,
         mocked_collect_all_pages: mock.MagicMock,
+        mocked_get_childhood_vaccinations_page: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
