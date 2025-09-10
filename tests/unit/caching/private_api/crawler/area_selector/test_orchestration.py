@@ -103,12 +103,10 @@ class TestAreaSelectorOrchestrator:
         )
 
     @mock.patch.object(TopicPage, "objects")
-    @mock.patch.object(
-        PrivateAPICrawler, "create_crawler_to_force_write_in_non_reserved_namespace"
-    )
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_reserved_cache")
     def test_process_geography_page_combination(
         self,
-        mocked_create_crawler_to_force_write_in_non_reserved_namespace: mock.MagicMock,
+        mocked_create_crawler_for_reserved_cache: mock.MagicMock,
         spy_topic_page_manager: mock.MagicMock,
     ):
         """
@@ -123,7 +121,7 @@ class TestAreaSelectorOrchestrator:
         Patches:
             `spy_topic_page_manager`: To check the page ID
                 is used to retrieve the `TopicPage` model
-            `mocked_create_crawler_to_force_write_in_non_reserved_namespace`: To
+            `mocked_create_crawler_for_reserved_cache`: To
                 isolate the `PrivateAPICrawler` so that the
                 returned mock object can be spied on further
                 i.e. to check the main `process_all_sections_in_page()` call
@@ -144,9 +142,7 @@ class TestAreaSelectorOrchestrator:
         spy_topic_page_manager.get.assert_called_once_with(id=page_id)
         page_model = spy_topic_page_manager.get.return_value
 
-        spy_private_api_crawler = (
-            mocked_create_crawler_to_force_write_in_non_reserved_namespace.return_value
-        )
+        spy_private_api_crawler = mocked_create_crawler_for_reserved_cache.return_value
         spy_private_api_crawler.process_all_sections_in_page(
             page=page_model, geography_data=geography_data
         )

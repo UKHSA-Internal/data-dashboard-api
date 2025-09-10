@@ -58,12 +58,12 @@ def crawl_all_pages(
     logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
-def force_cache_refresh_for_all_pages(
+def refresh_default_cache(
     *,
     cache_management: CacheManagement | None = None,
     private_api_crawler: PrivateAPICrawler | None = None,
 ) -> None:
-    """Forcibly refresh the cache for all pages
+    """Refresh the default cache for all live pages
 
     Args:
         `cache_management`: A `CacheManagement` object
@@ -89,13 +89,17 @@ def force_cache_refresh_for_all_pages(
         None
 
     """
-    cache_management = cache_management or CacheManagement(in_memory=False)
-    logger.info("Clearing all keys in cache")
+    cache_management = cache_management or CacheManagement(
+        in_memory=False, is_reserved_namespace=False
+    )
+    logger.info("Clearing all keys in default cache")
+    # By pointing the `CacheManagement` at the normal namespace
+    # this flush command will empty the normal/ephemeral data cache
+    # i.e. it will leave the reserved/long-lived data cache untouched
     cache_management.clear()
 
     private_api_crawler = (
-        private_api_crawler
-        or PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
+        private_api_crawler or PrivateAPICrawler.create_crawler_for_default_cache()
     )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler
@@ -106,12 +110,12 @@ def force_cache_refresh_for_all_pages(
     )
 
 
-def force_cache_refresh_for_reserved_namespace(
+def refresh_reserved_cache(
     *,
     cache_management: CacheManagement | None = None,
     private_api_crawler: PrivateAPICrawler | None = None,
 ) -> None:
-    """Forcibly refresh the cache for the reserved namespace only.
+    """Refresh the reserved cache for all live pages
 
     Args:
         `cache_management`: A `CacheManagement` object
@@ -138,22 +142,25 @@ def force_cache_refresh_for_reserved_namespace(
         None
 
     """
-    cache_management = cache_management or CacheManagement(in_memory=False)
+    cache_management = cache_management or CacheManagement(
+        in_memory=False, is_reserved_namespace=True
+    )
+    # By pointing the `CacheManagement` at the reserved namespace
+    # this flush command will empty the reserved/long-lived data cache
+    # i.e. it will leave the normal/ephemeral data cache untouched
+    logger.info("Clearing all keys in reserved cache")
+    cache_management.clear()
     private_api_crawler = (
-        private_api_crawler
-        or PrivateAPICrawler.create_crawler_to_force_write_in_reserved_staging_namespace()
+        private_api_crawler or PrivateAPICrawler.create_crawler_for_reserved_cache()
     )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler
     )
 
-    original_reserved_keys: list[str] = cache_management.get_reserved_keys()
     crawl_all_pages(
         private_api_crawler=private_api_crawler,
         area_selector_orchestrator=area_selector_orchestrator,
     )
-    cache_management.delete_many(keys=original_reserved_keys)
-    cache_management.move_all_reserved_staging_keys_into_reserved_namespace()
 
 
 def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
@@ -173,5 +180,5 @@ def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
 
     """
     pages = collect_all_pages()
-    crawler = PrivateAPICrawler.create_crawler_for_lazy_loading()
+    crawler = PrivateAPICrawler.create_crawler_for_default_cache()
     return crawler.get_all_downloads(pages=pages, file_format=file_format)
