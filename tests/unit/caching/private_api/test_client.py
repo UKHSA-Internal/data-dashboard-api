@@ -144,7 +144,6 @@ class TestCacheClientForReservedCache:
             key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
 
-<<<<<<< HEAD
     @mock.patch(f"{MODULE_PATH}.caches")
     def test_clear_for_reserved_cache(self, mocked_caches: mock.MagicMock):
         """
@@ -161,29 +160,13 @@ class TestCacheClientForReservedCache:
         mocked_caches.__getitem__.side_effect = caches.__getitem__
 
         cache_client = CacheClient(is_reserved_namespace=True)
-=======
-    @mock.patch(f"{MODULE_PATH}.cache")
-    def test_clear(self, spy_cache: mock.MagicMock):
-        """
-        Given a `CacheClient`
-        When `clear()` is called from the client
-        Then the call is delegated
-            to the underlying client
-        """
-        # Given
-        cache_client = CacheClient()
->>>>>>> main
 
         # When
         cache_client.clear()
 
         # Then
-<<<<<<< HEAD
         spy_default_cache.clear.assert_not_called()
         spy_reserved_cache.clear.assert_called_once()
-=======
-        spy_cache.clear.assert_called_once()
->>>>>>> main
 
 
 class TestInMemoryCacheClient:
