@@ -105,6 +105,7 @@ class TestTablesSubplotView:
             metric_value=84,
         )
         # There is intentionally no corresponding record for England / MMR1 / 24m
+        # There are also no records at all for MMR1 / 5 years across any of the geographies
 
     @property
     def path(self) -> str:
