@@ -22,7 +22,6 @@ from metrics.domain.models import (
 )
 from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts.common.chart_output import ChartOutput
-from metrics.interfaces.charts.single_category_charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
