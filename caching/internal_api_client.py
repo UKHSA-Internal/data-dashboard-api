@@ -41,7 +41,6 @@ class InternalAPIClient:
         self,
         *,
         client: APIClient | None = None,
-        force_refresh: bool = False,
         reserved_namespace: bool = False,
     ):
         self._client = client or self.create_api_client()
@@ -60,7 +59,6 @@ class InternalAPIClient:
         self.menus_endpoint_path = MENUS_ENDPOINT_PATH
 
         # Header configurations
-        self.force_refresh = force_refresh
         self.reserved_namespace = reserved_namespace
 
     # API client
@@ -79,7 +77,6 @@ class InternalAPIClient:
 
     def build_headers(self) -> dict[str, bool]:
         return {
-            CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
             CACHE_RESERVED_NAMESPACE_HEADER_KEY: self.reserved_namespace,
         }
 

@@ -2,11 +2,8 @@ from http import HTTPMethod
 from unittest import mock
 
 import pytest
-from caching.private_api.management import (
-    CacheManagement,
-    RESERVED_NAMESPACE_KEY_PREFIX,
-    RESERVED_NAMESPACE_STAGING_KEY_PREFIX,
-)
+from caching.private_api.management import CacheManagement
+from caching.private_api.client import RESERVED_NAMESPACE_KEY_PREFIX
 
 
 class TestCacheManagementBuildCacheKeyEntryForRequest:
@@ -88,7 +85,6 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
             request=mocked_request,
             is_reserved_namespace=False,
-            is_reserved_staging_namespace=False,
         )
 
         # Then
@@ -117,7 +113,6 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
             request=mocked_request,
             is_reserved_namespace=False,
-            is_reserved_staging_namespace=False,
         )
 
         # Then
@@ -146,40 +141,11 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
                 request=mocked_request,
                 is_reserved_namespace=True,
-                is_reserved_staging_namespace=False,
             )
         )
 
         # Then
         assert cache_key == f"{RESERVED_NAMESPACE_KEY_PREFIX}-some-key"
-
-    @mock.patch.object(CacheManagement, "_build_standalone_key_for_request")
-    def test_build_cache_entry_key_for_reserved_staging_namespace_entry(
-        self,
-        mocked_build_standalone_key_for_request: mock.MagicMock,
-        cache_management_with_in_memory_cache: CacheManagement,
-    ):
-        """
-        Given a mocked POST request in the reserved staging namespace
-        When `build_cache_entry_key_for_request()` is called
-            from an instance of `CacheManagement`
-        Then cache key is returned with the reserved staging namespace prefix
-        """
-        # Given
-        mocked_build_standalone_key_for_request.return_value = "some-key"
-        mocked_request = mock.Mock(method="POST")
-
-        # When
-        cache_key: str = (
-            cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-                request=mocked_request,
-                is_reserved_namespace=False,
-                is_reserved_staging_namespace=True,
-            )
-        )
-
-        # Then
-        assert cache_key == f"{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-some-key"
 
     @pytest.mark.parametrize(
         "invalid_http_method",
@@ -210,5 +176,4 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
                 request=mocked_request,
                 is_reserved_namespace=False,
-                is_reserved_staging_namespace=False,
             )
