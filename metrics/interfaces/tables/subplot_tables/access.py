@@ -20,32 +20,47 @@ class SubplotTablesInterface:
         request_params_per_group: list[ChartRequestParams] = (
             self.request_params.output_payload_for_tables()
         )
-
         result: list[dict] = []
 
         for request_params in request_params_per_group:
-            try:
-                tabular_data_for_sub_plot: list[dict[str, str]] = (
-                    generate_table_for_full_plots(request_params=request_params)
-                )
-            except (InvalidPlotParametersError, DataNotFoundForAnyPlotError):
-                tabular_data_for_sub_plot = (
-                    self._get_placeholder_for_sub_plot_with_no_tabular_data(
-                        request_params=request_params
-                    )
-                )
-
-            tabular_data_for_sub_plot = self._inject_null_values_for_any_missing_plots(
-                tabular_data_for_sub_plot=tabular_data_for_sub_plot,
-                request_params=request_params,
+            tabular_data_for_sub_plot = self._generate_complete_tabular_data_for_subplot(
+                request_params=request_params
             )
-
             result += tabular_data_for_sub_plot
 
         if not result:
             raise DataNotFoundForAnyPlotError
 
         return result
+
+    def _generate_complete_tabular_data_for_subplot(self, *, request_params: ChartRequestParams) -> list[dict]:
+        """Builds the complete tabular data for the subplot associated with the given `request_params` model
+
+        Args:
+            request_params: The `ChartRequestParams` model for this group,
+                whose plots define the required order and labels.
+
+        Returns:
+            List of 1 dict, which represents the tabular data output
+            as to be returned from the API layer for this subplot group.
+            Missing entries are covered as null case placeholders
+
+        """
+        try:
+            tabular_data_for_sub_plot: list[dict[str, str]] = (
+                generate_table_for_full_plots(request_params=request_params)
+            )
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError):
+            tabular_data_for_sub_plot = (
+                self._get_placeholder_for_sub_plot_with_no_tabular_data(
+                    request_params=request_params
+                )
+            )
+
+        return self._inject_null_values_for_any_missing_plots(
+            tabular_data_for_sub_plot=tabular_data_for_sub_plot,
+            request_params=request_params,
+        )
 
     @classmethod
     def _inject_null_values_for_any_missing_plots(
