@@ -30,9 +30,6 @@ class SubplotTablesInterface:
             )
             result += tabular_data_for_sub_plot
 
-        if not result:
-            raise DataNotFoundForAnyPlotError
-
         return result
 
     def _generate_complete_tabular_data_for_subplot(
