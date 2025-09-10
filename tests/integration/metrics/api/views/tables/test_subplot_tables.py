@@ -18,7 +18,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="Darlington",
@@ -29,7 +29,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="North East",
@@ -40,7 +40,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="England",
@@ -52,7 +52,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="Darlington",
@@ -63,7 +63,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="North East",
@@ -74,7 +74,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="England",
@@ -145,6 +145,11 @@ class TestTablesSubplotView:
                         "in_reporting_delay_period": False,
                         "label": "6-in-1 (24 months)",
                         "value": "78.0000",
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
                     },
                     # Since there is no England / MMR1 / 24m record then
                     # nothing is returned in its place
@@ -224,7 +229,28 @@ class TestTablesSubplotView:
         # which in this case is `geography`
         expected_response_data = [
             # Since all the `England` record were under the `metric_value` of 90
-            # then they `England` gets excluded entirely
+            # then they are all returned as null values
+            {
+                "reference": "North East",
+                "values": [
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (12 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
+                    },
+                    # The North East only had the 1 record with a high enough `metric_value
+                ],
+            },
             {
                 "reference": "North East",
                 "values": [
@@ -232,6 +258,16 @@ class TestTablesSubplotView:
                         "in_reporting_delay_period": False,
                         "label": "6-in-1 (12 months)",
                         "value": "97.0000",
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
                     },
                     # The North East only had the 1 record with a high enough `metric_value
                 ],
@@ -244,7 +280,12 @@ class TestTablesSubplotView:
                         "label": "6-in-1 (12 months)",
                         "value": "90.0000",
                     },
-                    # Darlington will be given back excluding 1 of its records
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
+                    # Darlington will be given back with null for 1 of its records
                     # since that fell outside the permissible `metric_value_ranges`
                     {
                         "in_reporting_delay_period": False,
