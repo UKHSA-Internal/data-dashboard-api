@@ -19,7 +19,32 @@ COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 RUN apt-get update \
     # Update the database of available packages
     && apt-get -y install libpq-dev gcc \
-    # Install toolchain needed for C libraries like `psycopg2`
+    # Install toolchain needed for C libraries like `psycopg2` \
+    chromium \
+        # Chromium browser for Kaleido
+        chromium-driver \
+        # ChromeDriver for browser automation
+        # Additional dependencies that Chromium might need in a headless environment
+        libnss3 \
+        libnspr4 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libdbus-1-3 \
+        libatspi2.0-0 \
+        libx11-6 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxrandr2 \
+        libgbm1 \
+        libxcb1 \
+        libxkbcommon0 \
+        libpango-1.0-0 \
+        libcairo2 \
+        libasound2 \
     && python3 -m venv /venv \
     # Create the python virtual environment
     && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
