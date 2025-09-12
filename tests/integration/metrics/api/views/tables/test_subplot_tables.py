@@ -18,7 +18,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="Darlington",
@@ -29,7 +29,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="North East",
@@ -40,7 +40,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="12m",
             date="2021-03-31",
             geography_name="England",
@@ -52,7 +52,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="Darlington",
@@ -63,7 +63,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="North East",
@@ -74,7 +74,7 @@ class TestTablesSubplotView:
             theme_name="immunisation",
             sub_theme_name="childhood-vaccines",
             topic_name="6-in-1",
-            metric_name=f"6-in-1_coverage_coverageByYear",
+            metric_name="6-in-1_coverage_coverageByYear",
             stratum_name="24m",
             date="2021-03-31",
             geography_name="England",
@@ -105,6 +105,7 @@ class TestTablesSubplotView:
             metric_value=84,
         )
         # There is intentionally no corresponding record for England / MMR1 / 24m
+        # There are also no records at all for MMR1 / 5 years across any of the geographies
 
     @property
     def path(self) -> str:
@@ -146,8 +147,21 @@ class TestTablesSubplotView:
                         "label": "6-in-1 (24 months)",
                         "value": "78.0000",
                     },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
+                    },
                     # Since there is no England / MMR1 / 24m record then
-                    # nothing is returned in its place
+                    # a null case value is returned in its place
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
+                    },
+                    # There is no MMR1 / 5 years data
+                    # so we expect to see a null case placeholder
+                    # for every subplot group
                 ],
             },
             {
@@ -168,6 +182,14 @@ class TestTablesSubplotView:
                         "label": "MMR1 (24 months)",
                         "value": "84.0000",
                     },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
+                    },
+                    # There is no MMR1 / 5 years data
+                    # so we expect to see a null case placeholder
+                    # for every subplot group
                 ],
             },
             {
@@ -188,6 +210,14 @@ class TestTablesSubplotView:
                         "label": "MMR1 (24 months)",
                         "value": "93.0000",
                     },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
+                    },
+                    # There is no MMR1 / 5 years data
+                    # so we expect to see a null case placeholder
+                    # for every subplot group
                 ],
             },
         ]
@@ -224,7 +254,33 @@ class TestTablesSubplotView:
         # which in this case is `geography`
         expected_response_data = [
             # Since all the `England` record were under the `metric_value` of 90
-            # then they `England` gets excluded entirely
+            # or missing altogether as was the case of MMR1 / 5 years
+            # then they are all returned as null values
+            {
+                "reference": "England",
+                "values": [
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (12 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
+                    },
+                ],
+            },
             {
                 "reference": "North East",
                 "values": [
@@ -233,7 +289,22 @@ class TestTablesSubplotView:
                         "label": "6-in-1 (12 months)",
                         "value": "97.0000",
                     },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (24 months)",
+                        "value": None,
+                    },
                     # The North East only had the 1 record with a high enough `metric_value
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
+                    },
                 ],
             },
             {
@@ -244,12 +315,20 @@ class TestTablesSubplotView:
                         "label": "6-in-1 (12 months)",
                         "value": "90.0000",
                     },
-                    # Darlington will be given back excluding 1 of its records
-                    # since that fell outside the permissible `metric_value_ranges`
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "6-in-1 (24 months)",
+                        "value": None,
+                    },
                     {
                         "in_reporting_delay_period": False,
                         "label": "MMR1 (24 months)",
                         "value": "93.0000",
+                    },
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": "MMR1 (5 years)",
+                        "value": None,
                     },
                 ],
             },
@@ -280,7 +359,7 @@ class TestTablesSubplotView:
         assert response.status_code == HTTPStatus.OK
 
     @pytest.mark.django_db
-    def test_returns_400_when_data_not_available(self):
+    def test_returns_null_case_values_when_data_not_available(self):
         """
         Given a valid payload to create a table
             but no data available for that payload
@@ -298,4 +377,30 @@ class TestTablesSubplotView:
             format="json",
         )
 
-        assert response.status_code == HTTPStatus.BAD_REQUEST != HTTPStatus.OK
+        assert response.status_code == HTTPStatus.OK
+        expected_response_data = []
+        geographies = ["England", "North East", "Darlington"]
+        labels = [
+            "6-in-1 (12 months)",
+            "6-in-1 (24 months)",
+            "MMR1 (24 months)",
+            "MMR1 (5 years)",
+        ]
+
+        for geography in geographies:
+            values: list[dict] = []
+            for label in labels:
+                values.append(
+                    {
+                        "in_reporting_delay_period": False,
+                        "label": label,
+                        "value": None,
+                    }
+                )
+                # Since there is no data we'll return
+                # the null case placeholder for every result
+
+            result_for_geography = {"reference": geography, "values": values}
+            expected_response_data.append(result_for_geography)
+
+        assert response.data == expected_response_data

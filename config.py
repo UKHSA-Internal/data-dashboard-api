@@ -48,6 +48,12 @@ if not REDIS_HOST:
     logger.info("No REDIS_HOST given, falling back to localhost")
     REDIS_HOST = "redis://127.0.0.1:6379"
 
+# The endpoint of the reserved Redis cache
+REDIS_RESERVED_HOST = os.environ.get("REDIS_RESERVED_HOST", "")
+if not REDIS_RESERVED_HOST:
+    logger.info("No REDIS_RESERVED_HOST given, falling back to localhost")
+    REDIS_RESERVED_HOST = "redis://127.0.0.1:6379"
+
 # The name of the s3 bucket used for ingestion
 INGESTION_BUCKET_NAME = os.environ.get("INGESTION_BUCKET_NAME")
 # The name of the s3 bucket used for archiving files which have been successfully ingested
