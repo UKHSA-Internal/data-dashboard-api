@@ -5,7 +5,6 @@ from caching.common.pages import (
     ALL_PAGE_TYPES,
     collect_all_pages,
     extract_area_selectable_pages,
-    get_childhood_vaccinations_page,
 )
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.area_selector.orchestration import (
@@ -49,10 +48,6 @@ def crawl_all_pages(
 
     topic_pages: list[TopicPage] = extract_area_selectable_pages(all_pages=all_pages)
     area_selector_orchestrator.process_pages(pages=topic_pages)
-
-    # Temporary hack to process the biggest page i.e. cover topic page last
-    cover_pages = get_childhood_vaccinations_page()
-    private_api_crawler.process_pages(pages=cover_pages)
 
     duration: float = default_timer() - start
     logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
