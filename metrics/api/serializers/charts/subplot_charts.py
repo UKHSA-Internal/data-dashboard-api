@@ -11,7 +11,7 @@ from metrics.domain.common.utils import (
 )
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 
-FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg"]
+FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg", "json", "csv"]
 
 
 class SubplotPlotSerializer(serializers.Serializer):

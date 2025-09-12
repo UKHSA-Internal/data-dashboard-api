@@ -156,35 +156,59 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
 
     @classmethod
     def get_theme(cls, obj) -> str:
-        return obj.metric__topic__sub_theme__theme__name
+        try:
+            return obj.metric__topic__sub_theme__theme__name
+        except AttributeError:
+            return obj.metric.topic.sub_theme.theme.name
 
     @classmethod
     def get_sub_theme(cls, obj) -> str:
-        return obj.metric__topic__sub_theme__name
+        try:
+            return obj.metric__topic__sub_theme__name
+        except AttributeError:
+            return obj.metric.topic.sub_theme.name
 
     @classmethod
     def get_topic(cls, obj) -> str:
-        return obj.metric__topic__name
+        try:
+            return obj.metric__topic__name
+        except AttributeError:
+            return obj.metric.topic.name
 
     @classmethod
     def get_geography_type(cls, obj) -> str:
-        return obj.geography__geography_type__name
+        try:
+            return obj.geography__geography_type__name
+        except AttributeError:
+            return obj.geography.geography_type.name
 
     @classmethod
     def get_geography(cls, obj) -> str:
-        return obj.geography__name
+        try:
+            return obj.geography__name
+        except AttributeError:
+            return obj.geography.name
 
     @classmethod
     def get_metric(cls, obj) -> str:
-        return obj.metric__name
+        try:
+            return obj.metric__name
+        except AttributeError:
+            return obj.metric.name
 
     @classmethod
     def get_age(cls, obj) -> str:
-        return obj.age__name
+        try:
+            return obj.age__name
+        except AttributeError:
+            return obj.age.name
 
     @classmethod
     def get_stratum(cls, obj) -> str:
-        return obj.stratum__name
+        try:
+            return obj.stratum__name
+        except AttributeError:
+            return obj.stratum.name
 
     @classmethod
     def get_period_start(cls, obj) -> str:
