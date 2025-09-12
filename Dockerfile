@@ -88,6 +88,12 @@ RUN apt-get update \
     && chmod +x entrypoint.sh
     # Add execution permission for the entrypoint shell script
 
+
+# Set environment variables for Chromium to run in headless mode
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-gpu --disable-dev-shm-usage"
+
+
 # Opens a shell on the entrypoint.
 # This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
 ENTRYPOINT ["/bin/bash"]
