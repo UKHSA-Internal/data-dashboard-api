@@ -294,7 +294,7 @@ def plot_serializer_payload_and_model_managers() -> (
     data: DATA_PAYLOAD_HINT = {
         "topic": fake_topic.name,
         "metric": fake_metric.name,
-        "chart_type": ChartTypes.line_with_shaded_section.value,
+        "chart_type": ChartTypes.bar.value,
     }
 
     return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])

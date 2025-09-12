@@ -151,7 +151,7 @@ def get_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of chart_types.
         Examples:
-            [("line_with_shaded_section", "line_with_shaded_section"), ...]
+            [("bar", "bar"), ...]
 
     """
     return MetricsAPIInterface.get_chart_types()

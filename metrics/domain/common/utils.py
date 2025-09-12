@@ -16,7 +16,6 @@ def _check_for_substring_match(
 
 class ChartTypes(Enum):
     # Single category charts
-    line_with_shaded_section = "line_with_shaded_section"
     bar = "bar"
     line_multi_coloured = "line_multi_coloured"
     line_single_simplified = "line_single_simplified"
@@ -36,13 +35,12 @@ class ChartTypes(Enum):
         Returns:
             Nested tuples of 2 item tuples as expected by the form blocks.
             Examples:
-                (("line_with_shaded_section", "line_with_shaded_section"), ...)
+                (("line_multi_coloured", "line_multi_coloured"), ("bar", "bar"),...)
 
         """
         selectable = (
             cls.line_multi_coloured,
             cls.bar,
-            cls.line_with_shaded_section,
             cls.line_single_simplified,
         )
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
@@ -100,9 +98,9 @@ class ChartTypes(Enum):
         Returns:
             A list of `uncommon` chart types as strings.
             Examples:
-                ["line_with_shaded_section", "line_single_simplified"]
+                ["line_single_simplified"]
         """
-        selectable = (cls.line_single_simplified, cls.line_with_shaded_section)
+        selectable = (cls.line_single_simplified,)
         return [chart_type.value for chart_type in selectable]
 
     @classmethod

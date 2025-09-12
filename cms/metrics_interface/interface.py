@@ -94,7 +94,7 @@ class MetricsAPIInterface:
         Returns:
             Nested tuples of 2 item tuples as expected by the form blocks.
             Examples:
-                (("line_with_shaded_section", "line_with_shaded_section"), ...)
+                (("bar", "bar"), ...)
 
         """
         return ChartTypes.selectable_choices()

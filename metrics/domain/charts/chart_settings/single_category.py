@@ -380,12 +380,6 @@ class SingleCategoryChartSettings(ChartSettings):
 
         return chart_config
 
-    def get_line_with_shaded_section_chart_config(self):
-        chart_config = self._get_base_chart_config()
-        chart_config["showlegend"] = False
-
-        return chart_config
-
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
 

@@ -345,8 +345,6 @@ class PlotsText:
                 return "bar"
             case ChartTypes.line_multi_coloured.value:
                 return "line"
-            case ChartTypes.line_with_shaded_section.value:
-                return "line"
             case ChartTypes.line_single_simplified.value:
                 return "line"
 

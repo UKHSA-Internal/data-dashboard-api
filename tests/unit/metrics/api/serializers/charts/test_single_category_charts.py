@@ -578,7 +578,7 @@ class TestChartsSerializer:
                 "geography": "",
                 "geography_type": "",
                 "date_from": "",
-                "chart_type": "line_with_shaded_section",
+                "chart_type": "line_multi_coloured",
             }
         ]
         valid_data_payload = {
@@ -616,7 +616,7 @@ class TestChartsSerializer:
                 "geography": "",
                 "geography_type": "",
                 "date_from": "",
-                "chart_type": "line_with_shaded_section",
+                "chart_type": "line_multi_coloured",
             }
         ]
         valid_data_payload = {
