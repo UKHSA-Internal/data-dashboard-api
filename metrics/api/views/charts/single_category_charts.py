@@ -23,6 +23,9 @@ from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
 )
+import kaleido
+
+kaleido.get_chrome_sync()
 
 CHARTS_API_TAG = "charts"
 
@@ -191,6 +194,7 @@ class ChartsView(APIView):
         the highest value from the dataset will be used.
 
         """
+
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 

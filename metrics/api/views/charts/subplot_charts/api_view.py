@@ -31,6 +31,11 @@ SUBPLOT_CHARTS_API_TAG = "charts"
 logger = logging.getLogger(__name__)
 
 
+import kaleido
+
+kaleido.get_chrome_sync()
+
+
 @extend_schema(tags=[SUBPLOT_CHARTS_API_TAG])
 class SubplotChartsView(APIView):
     permission_classes = []
