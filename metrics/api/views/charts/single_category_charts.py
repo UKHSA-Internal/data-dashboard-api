@@ -23,9 +23,6 @@ from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
 )
-import kaleido
-
-kaleido.get_chrome_sync()
 
 CHARTS_API_TAG = "charts"
 

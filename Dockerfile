@@ -52,11 +52,39 @@ ENV PATH=/venv/bin:$PATH
 # This also assumes TCP.
 EXPOSE 8000
 
-# Reinstall system libraries required for PostgreSQL drivers
+# Install runtime dependencies including Chromium for Kaleido
 RUN apt-get update \
     # Update the database of available packages
-    && apt-get -y install libpq-dev \
-    # Reinstall the C library needed for `psycopg2`
+    && apt-get -y install \
+        libpq-dev \
+        # C library needed for `psycopg2`
+        chromium \
+        # Chromium browser for Kaleido
+        chromium-driver \
+        # ChromeDriver for browser automation
+        # Additional dependencies that Chromium might need in a headless environment
+        libnss3 \
+        libnspr4 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libdbus-1-3 \
+        libatspi2.0-0 \
+        libx11-6 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxrandr2 \
+        libgbm1 \
+        libxcb1 \
+        libxkbcommon0 \
+        libpango-1.0-0 \
+        libcairo2 \
+        libasound2 \
+    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
+    # Clean up apt cache to reduce image size
     && chmod +x entrypoint.sh
     # Add execution permission for the entrypoint shell script
 
