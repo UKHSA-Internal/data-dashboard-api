@@ -81,7 +81,7 @@ telepath==0.3.1
 tenacity==9.1.2
 toml==0.10.2
 tomli==2.2.1
-typing_extensions==4.14.1
+typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.5.0
 virtualenv==20.34.0
