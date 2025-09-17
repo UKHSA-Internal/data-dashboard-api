@@ -71,7 +71,7 @@ class TestPlotsText:
         """
         # Given
         label = "COVID-19 deaths in London"
-        fake_plot_data.parameters.chart_type = ChartTypes.line_with_shaded_section.value
+        fake_plot_data.parameters.chart_type = ChartTypes.line_multi_coloured.value
         fake_plot_data.parameters.label = label
         plots_text = PlotsText(plots_data=[fake_plot_data])
 
@@ -111,7 +111,7 @@ class TestPlotsText:
         fake_plot_data.parameters.line_colour = ""
         fake_plot_data.parameters.line_type = ""
 
-        fake_plot_data.parameters.chart_type = ChartTypes.line_with_shaded_section.value
+        fake_plot_data.parameters.chart_type = ChartTypes.line_multi_coloured.value
         plots_text = PlotsText(plots_data=[fake_plot_data])
 
         # When
