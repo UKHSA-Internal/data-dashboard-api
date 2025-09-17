@@ -1,7 +1,7 @@
 from .alerts import HeatAlertViewSet, ColdAlertViewSet
 from .charts import ChartsView, EncodedChartsView, DualCategoryChartsView
 from .headlines import HeadlinesView
-from .downloads import DownloadsView, BulkDownloadsView
+from .downloads import DownloadsView, BulkDownloadsView, SubplotDownloadsView
 from .health import HealthView
 from .tables import TablesView, TablesSubplotView
 from .trends import TrendsView

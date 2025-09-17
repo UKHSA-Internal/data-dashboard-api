@@ -27,6 +27,7 @@ from metrics.api.views import (
     HeadlinesView,
     HealthView,
     HeatAlertViewSet,
+    SubplotDownloadsView,
     TablesSubplotView,
     TablesView,
     TrendsView,
@@ -144,6 +145,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}downloads/subplot/v1", SubplotDownloadsView.as_view()),
     re_path(
         f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)",
         GeographiesViewDeprecated.as_view(),

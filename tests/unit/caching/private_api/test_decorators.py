@@ -23,9 +23,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         Then the expected response is returned
         """
         # Given
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
-        )
+        mocked_request = mock.MagicMock(method="POST")
         mocked_cache_management = mock.Mock()
 
         # When
@@ -57,9 +55,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         Patches:
             `spy_calculate_response_and_save_in_cache`: For the main assertion
         """
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
-        )
+        mocked_request = mock.MagicMock(method="POST")
         mocked_cache_management = mock.Mock()
 
         # When
@@ -91,9 +87,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             `spy_calculate_response_and_save_in_cache`: For the main assertion
         """
         # Given
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
-        )
+        mocked_request = mock.MagicMock(method="POST")
         mocked_view_function = mock.Mock()
         mocked_cache_management = mock.Mock()
         mocked_args = [mock.Mock(), mocked_request, mock.Mock()]
@@ -165,243 +159,6 @@ class TestRetrieveResponseFromCacheOrCalculate:
         spy_calculate_response_and_save_in_cache.assert_not_called()
         spy_calculate_response_from_view.assert_called_once()
         assert retrieved_response == spy_calculate_response_from_view.return_value
-
-
-class TestForceCacheRefreshHeader:
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_response_is_recalculated_for_reserved_namespace_with_reserved_header(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request for a key in the reserved namespace
-            and a `CacheManagement` object
-        And the `Cache-Force-Refresh` & `Cache-Reserved-Namespace` headers are included
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is recalculated and saved regardless
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST",
-            headers={
-                CACHE_FORCE_REFRESH_HEADER_KEY: True,
-                CACHE_RESERVED_NAMESPACE_HEADER_KEY: True,
-            },
-        )
-        spy_cache_management = mock.Mock()
-        is_reserved_namespace = True
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            is_reserved_namespace,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=spy_cache_management,
-        )
-
-        # Then
-        assert (
-            retrieved_response
-            == spy_calculate_response_and_save_in_cache.return_value
-            != spy_cache_management.retrieve_item_from_cache.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_response_is_recalculated_for_non_reserved_namespace_without_reserved_header(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request for a key in the reserved namespace
-            and a `CacheManagement` object
-        And only the `Cache-Force-Refresh` header is included
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is recalculated and saved regardless
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST",
-            headers={CACHE_FORCE_REFRESH_HEADER_KEY: True},
-        )
-        spy_cache_management = mock.Mock()
-        is_reserved_namespace = False
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            is_reserved_namespace,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=spy_cache_management,
-        )
-
-        # Then
-        assert (
-            retrieved_response
-            == spy_calculate_response_and_save_in_cache.return_value
-            != spy_cache_management.retrieve_item_from_cache.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_response_is_not_recalculated_for_reserved_namespace_without_reserved_header(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request for a key in the reserved namespace
-            and a `CacheManagement` object
-        And only the `Cache-Force-Refresh` header is included
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is fetched from the cache, not recalculated
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: True}
-        )
-        spy_cache_management = mock.Mock()
-        is_reserved_namespace = True
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            is_reserved_namespace,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=spy_cache_management,
-        )
-
-        # Then
-        assert (
-            retrieved_response
-            == spy_cache_management.retrieve_item_from_cache.return_value
-            != spy_calculate_response_and_save_in_cache.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test__response_is_not_recalculated_for_non_reserved_namespace_with_reserved_header(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request for a key in the non-reserved namespace
-            and a `CacheManagement` object
-        And the `Cache-Force-Refresh` & `Cache-Reserved-Namespace` headers are included
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is fetched from the cache, not recalculated
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST",
-            headers={
-                CACHE_FORCE_REFRESH_HEADER_KEY: True,
-                CACHE_RESERVED_NAMESPACE_HEADER_KEY: True,
-            },
-        )
-        spy_cache_management = mock.Mock()
-        is_reserved_namespace = False
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            is_reserved_namespace,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=spy_cache_management,
-        )
-
-        # Then
-        assert (
-            retrieved_response
-            == spy_cache_management.retrieve_item_from_cache.return_value
-            != spy_calculate_response_and_save_in_cache.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_means_response_is_recalculated_and_saved_if_already_available(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request and a `CacheManagement` object
-            which will return a valid pre-calculated response
-        And only the `Cache-Force-Refresh` header is included
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is recalculated and saved regardless
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: True}
-        )
-        mocked_cache_management = mock.Mock()
-        mocked_cache_management.retrieve_item_from_cache = mock.Mock()
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            False,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=mocked_cache_management,
-        )
-
-        # Then
-        assert (
-            retrieved_response
-            == spy_calculate_response_and_save_in_cache.return_value
-            != mocked_cache_management.retrieve_item_from_cache.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_means_response_is_recalculated_and_saved_if_not_available(
-        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
-    ):
-        """
-        Given a mocked request and a `CacheManagement` object
-            which will not return a valid pre-calculated response
-        When `_retrieve_response_from_cache_or_calculate()` is called
-        Then the response is recalculated and saved
-
-        Patches:
-            `spy_calculate_response_and_save_in_cache`: For the main assertion
-        """
-        # Given
-        mocked_request = mock.MagicMock(
-            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: True}
-        )
-        mocked_cache_management = mock.Mock()
-        mocked_cache_management.retrieve_item_from_cache.side_effect = [CacheMissError]
-
-        # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            False,  # is_reserved_namespace
-            mock.Mock(),
-            mocked_request,
-            cache_management=mocked_cache_management,
-        )
-
-        # Then
-        spy_calculate_response_and_save_in_cache.assert_called_once()
-        assert (
-            retrieved_response == spy_calculate_response_and_save_in_cache.return_value
-        )
 
 
 class TestCalculateResponseAndSaveInCache:

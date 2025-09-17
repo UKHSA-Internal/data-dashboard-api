@@ -21,7 +21,7 @@ class TopicPageQuerySet(PageQuerySet):
                 Examples:
                     `<TopicPageQuerySet [<TopicPage: COVID-19>, <TopicPage: Influenza>, ...]>`
         """
-        return self.filter(live=True).exclude(slug="childhood-vaccinations")
+        return self.filter(live=True)
 
 
 class TopicPageManager(PageManager):

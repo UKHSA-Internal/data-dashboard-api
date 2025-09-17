@@ -4,7 +4,6 @@ import freezegun
 import pytest
 from rest_framework.test import APIClient
 
-from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
 from ingestion.file_ingestion import data_ingester
 
 EXPECTED_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -280,5 +279,5 @@ class TestIngestion:
     ) -> dict[str, str | int | datetime.datetime]:
         path = f"/api/alerts/v1/cold/{geography_code}"
         client = APIClient()
-        response = client.get(path=path, headers={CACHE_FORCE_REFRESH_HEADER_KEY: True})
+        response = client.get(path=path)
         return response.data
