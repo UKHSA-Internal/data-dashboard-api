@@ -139,7 +139,6 @@ class TestChartTypes:
 
         # Then
         _choices = (
-            "line_with_shaded_section",
             "bar",
             "line_multi_coloured",
             "line_single_simplified",
@@ -151,7 +150,7 @@ class TestChartTypes:
     @pytest.mark.parametrize(
         "expected_choice",
         (
-            "line_with_shaded_section",
+            "line_single_simplified",
             "bar",
             "line_multi_coloured",
         ),
@@ -212,7 +211,6 @@ class TestChartTypes:
 
         # Then
         expected_values = [
-            "line_with_shaded_section",
             "bar",
             "line_multi_coloured",
             "line_single_simplified",

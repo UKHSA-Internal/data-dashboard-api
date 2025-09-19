@@ -113,8 +113,6 @@ target-version = "py312"
 "public_api/views/root_view.py"                               = ["A002"]           # Ignore built-in `format` used in arg to extended
 "public_api/version_02/views/root_view.py"                    = ["A002"]           # Ignore built-in `format` used in arg to extended
                                                                                         # rest framework API view method
-"caching/private_api/client.py"                               = ["SLF001"]         # Ignore access to private member
-                                                                                        # due to low level Redis client being used
 "caching/public_api/crawler.py"                               = ["PERF401"]        # Ignore list comprehension which would reduce readibility
 "caching/common/geographies_crawler.py"                       = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
 "metrics/domain/weather_health_alerts/text_lookups/*"         = ["W291"]           # Ignore trailing whitespace for weather alert text lookups
