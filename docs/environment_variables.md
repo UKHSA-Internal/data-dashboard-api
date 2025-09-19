@@ -11,6 +11,8 @@ This document lists and describes all the available environment variables across
 #### `CACHING_V2_ENABLED`
 
 This configures the app to bypass the redis cache and always recalculate from the server.
+In conjunction with this same variable being provided to the frontend, would mean that we offload
+caching responsibilities to Next.js's in-built caching system.
 
 #### `APIENV`
 

@@ -10,30 +10,33 @@ The CMS is built on top of [Wagtail](https://docs.wagtail.org/en/stable/).
 
 ## Structure
 
-There are 7 main `wagtail` apps within the project.
+There are a number of main `wagtail` apps within the project.
 
 - `dashboard` - this is the main wagtail app to which the others connect into.
-
 - `common` - this is the wagtail app which handles the non-topic pages e.g. the `About` page.
+- `composite` - this is the wagtail app which handles non-topic pages that require more customisation e.g. `access-our-data` pages.
+- `forms` - this is the wagtail app which handles form-based pages e.g. the `Feedback` page.
 - `home` - this is the wagtail app for the landing page.
-- `topic` - this is the wagtail app for the topic pages e.g. the `COVID-19` or the `Influenza` detail pages.
-- `composite` - this is the wagtail app which handles non-topic pages that require more customisation e.g `access-our-data` pages.
-- `snippets` - this is the wagtail app for non-page type models including `internal` and `external` buttons. e.g. `bulk_download button` 
-- `whats_new` - this is the wagtail app for `whats new` section of the dashboard, including both `parent` and `child` page types.
 - `metrics_documentation` - this is the wagtail app for `metrics documentation` pages of the dashboard, including `parent` and `child` page types.
+- `snippets` - this is the wagtail app for non-page type models including `internal` and `external` buttons. e.g. `bulk_download button` 
+- `topic` - this is the wagtail app for the topic pages e.g. the `COVID-19` or the `Influenza` detail pages.
+- `whats_new` - this is the wagtail app for `whats new` section of the dashboard, including both `parent` and `child` page types.
 it also includes data migrations for each metric documentation child page.
 ---
 
 ## Data model
 
 The data model is split according to the page types.
-There are currently 6 main page types:
+There are currently the following main page types:
 
 - `CommonPage`
-- `TopicPage`
 - `CompositePage`
+- `LandingPage`
 - `MetricsDocumentationParentPage`
+- `MetricsDocumentationChildPage`
+- `TopicPage`
 - `WhatsNewParentPage`
+- `WhatsNewChildEntry`
 
 For each type of page there will also be a foreign key 1-to-many relationship out to 
 a corresponding related links type model:
@@ -70,7 +73,8 @@ This in the form of a viewset -> `cms/dashboard/viewsets.py`.
 Note that the `PagesAPIViewSet` class has been extended to place an API key in front of the CMS endpoints.
 
 This API provides the frontend with all the neccessary parameters required for subsequent calls to the private API.
-Note that it is the private API (`charts`, `headlines`, `trends`) which provides the actual page content.
+Note that it is the private API (`charts`, `tables`, `downloads`, `maps`, `headlines`, `trends`) 
+which provides the actual page content.
 
 Consider the response returned by the CMS API to be a cookbook of recipes of content items which the content creator
 wants to be shown on each page.
@@ -79,7 +83,6 @@ wants to be shown on each page.
 
 ## Design
 
-No conversations have been had with UKHSA around the design of the CMS view.
 The colour scheme can be overriden and modified by changing the `cms/dashboard/static/css/theme.css` file.
 
 This file is currently being injected into the wagtail app by virtue of the `global_admin_css` hook.

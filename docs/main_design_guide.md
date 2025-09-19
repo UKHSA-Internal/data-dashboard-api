@@ -18,7 +18,7 @@ This system comprises the following:
 - Content Management System (CMS) to provide the means of serving content to the dashboard.
 - Relational database to store data associated with health threat insights & text-based content for the site.
 - Redis cache for the read-heavy Private API workload
-- Feedback API to send emails to a designated email address for user feedback.
+- Feedback API to send user feedback to a designated UKHSA email inbox.
 - Ingestion module used to ingest incoming data and populate the relational database.
 
 ---
@@ -51,10 +51,12 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
         crawler.py              # The class used to send requests to the designated frontend URLs.
         handlers.py             # Handler used by the interface i.e. the Django management command.
         urls.py                 # Holds the class used to construct all the required URLs.
+        ...
     |- private_api/             # Contains the private API crawler and all of its associated components.
         client.py               # Abstraction used to interact with the cache itself. Mainly for adding & getting items.
         decorators.py           # Decorator used to wrap endpoints which are to be cached with the lazy-loading method.
         management.py           # The class used to interact with the cache and handle hashing of item keys.
+        ...
     |- public_api/              # Contains the public API crawler and all of its associated components.
     |- client.py                # Abstraction used to interact with the cache itself. Mainly for adding & getting items.
     |- internal_api_client.py   # The class used to hit the internal endpoints. Mainly used by the crawler.
@@ -64,6 +66,7 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- composite/               # The wagtail app for non-topic pages that supports a sortable layout and codeblocks. 
     |- dashboard/               # This is the *main/primary* wagtail app.
     |- dynamic_content/         # Contains the primary customised blocks and components used for dynamic content 
+    |- forms/                   # The wagtail app for form-based pages like the feedback page.
     |- home/                    # The wagtail app for the landing page.
     |- metrics_documentation/   # The wagtail app for metrics documentation section of the dashboard. 
     |- metrics_interface/       # Contains the funnel abstractions which links the cms <- metrics modules
