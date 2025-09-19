@@ -58,7 +58,7 @@ Pillow==11.3.0
 platformdirs==4.4.0
 plotly==6.2.0
 pluggy==1.6.0
-pyparsing==3.2.3
+pyparsing==3.2.4
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
