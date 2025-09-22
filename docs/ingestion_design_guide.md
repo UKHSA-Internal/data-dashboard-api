@@ -13,6 +13,7 @@ These source data files can be:
 
 - headline      # headline type
 - cases         # timeseries type
+- coverage      # timeseries type
 - deaths        # timeseries type
 - healthcare    # timeseries type
 - testing       # timeseries type

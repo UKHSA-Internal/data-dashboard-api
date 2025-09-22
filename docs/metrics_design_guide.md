@@ -44,18 +44,10 @@ This includes:
 - Waffle charts
 - Bar charts
 
-As of Oct 2024, the following charts can be generated from this project:
+As of Sep 2025, the following charts can be generated:
 
-- Line graphs (with shaded region)
 - Line graphs with customizable colour and type (dash/solid)
-- Simple line graphs 
 - Bar charts
-
----
-
-## Current limitations
-
-### Chart API
-
-Currently multiple plots can be applied for either bar charts or line charts.
-Bar and line plots can be used on the same chart.
+- Combination of bar and line types on the same chart
+- Simple line graphs 
+- Sub plot bar charts
