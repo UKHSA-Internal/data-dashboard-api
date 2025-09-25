@@ -31,3 +31,23 @@ It is recommended that you extract the validation functionality from the `ingest
 its own 1st class module. 
 This way you can then share that module with both data ingestion and the `cms/` so that you can bolt on 
 CMS input validation for free.
+
+### Specifying complete parameters in CMS inputs
+
+In the CMS, we have a number of components such as charts & headline numbers.
+Generally, they ask for the following parameters:
+
+- `topic`
+- `metric`
+- `geography`
+- `geography_type`
+- `sex`
+- `age`
+- `stratum`
+
+However, `topic` **names are not unique** as we can now have the same `topic` appear under multiple `sub_themes`.
+At the time of writing (September 2025) this is only the case with the `topic` of `"E-Coli"`, 
+which appears under the `sub_themes` of `"bloodstream_infection"` and `"antimicrobial_resistance""`.
+
+As such, you will need to enforce `theme` and `sub_theme` to be provided by the CMS content author.
+With those 2 additional fields, the parameters as a whole become entirely explicit and granular.
