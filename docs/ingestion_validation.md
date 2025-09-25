@@ -186,3 +186,23 @@ class _RespiratoryTopic(Enum):
 ```
 
 **Note**: These changes need to be made to the codebase before any metrics for `Measles` could be ingested.
+
+## How to add new geography types
+
+Although an individual `Geography` is not validated against any strict enum, 
+the corresponding `GeographyType` will be validated against a strict enum. 
+
+This is declared on the `IncomingBaseDataModel` pydantic model as:
+```python
+class IncomingBaseDataModel(BaseModel):
+    ...
+    geography_type: enums.GeographyType
+```
+Which can be found at `ingestion/data_transfer_models/base.py`.
+
+To add a new `GeographyType` we must:
+
+1. Declare the new geography type on the `GeographyType` enum
+which can be found at `ingestion/utils/enums/geographies_enums.py`.
+2. Expand the `validate_geography_code()` handler at `ingestion/data_transfer_models/validation/geography_code.py`
+to include validation for the `geography_code` associated with the new `GeographyType` which is being added.
