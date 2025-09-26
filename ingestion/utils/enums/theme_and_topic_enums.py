@@ -50,6 +50,7 @@ class _VaccinePreventableTopic(Enum):
 
 class _ContactTopic(Enum):
     MPOX_CLADE_1B = "mpox-clade-1b"
+    MPOX_CLADE_2B = "mpox-clade-2b"
 
 
 class _ChildhoodIllnessTopic(Enum):

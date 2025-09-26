@@ -132,4 +132,11 @@ VALID_PARAMETERS = [
         "rotavirus_coverage_coverageByYear",
         "coverage",
     ),
+    (
+        "infectious_disease",
+        "contact",
+        "mpox-clade-2b",
+        "mpox-clade-2b_cases_countByMonth",
+        "cases",
+    ),
 ]

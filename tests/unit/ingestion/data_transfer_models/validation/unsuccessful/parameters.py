@@ -62,4 +62,11 @@ INVALID_PARAMETERS = [
         "heat-or-sunburn_syndromic_emergencyDepartment_averageRolling7Day",
         "syndromic",
     ),  # Invalid topic name
+    (
+        "infectious_disease",
+        "chemical_exposure",
+        "mpox-clade-2b",
+        "mpox-clade-2b_cases_countByMonth",
+        "cases",
+    ),  # Invalid child_theme
 ]
