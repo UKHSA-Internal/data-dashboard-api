@@ -17,6 +17,8 @@ requires Chromium to be bundled into the application.
 To be able to upgrade the version of `kaleido`, you will need to include Chromium into the build of the application.
 And then you can safely bump `kaleido` and consequently `Python` itself.
 
+> Until then do not bump `kaleido` until the next major version has been properly tested in a live environment.
+
 ### Maps API endpoint optimization
 
 The maps API endpoint was completed under the last major release (COVER) and this endpoint is hugely inefficient. 
@@ -51,3 +53,28 @@ which appears under the `sub_themes` of `"bloodstream_infection"` and `"antimicr
 
 As such, you will need to enforce `theme` and `sub_theme` to be provided by the CMS content author.
 With those 2 additional fields, the parameters as a whole become entirely explicit and granular.
+
+### Duplication across charts
+
+At the time of writing (September 2025) there are multiple types of charts:
+
+- Single category - seen predominantly across the dashboard
+- Dual category - development on this was paused in August 2025 to accommodate the COVER deliverable
+- Sub plots - can be seen as the bar charts on the COVER topic page
+
+There is duplication across these modules, particularly across serializers, models and interfaces.
+We've now reached the point where it makes sense to implement shared components across these modules.
+So this should be resolved when the engineering team have more time and runway to do so.
+
+### Restrict CMS input for selectable maps colours 
+
+The filter linked map in the CMS currently allows any colours for the colours to be applied to threshold filters.
+However, the frontend only allows the 5 designated maps colours (as well 4 other deprecated colours)
+As such, the selectable colours on the `colour` `ChoiceBlock` of the `ThresholdFilterElement` should 
+be restricted to just the 5 designated maps colours:
+
+- `"MAP_COLOUR_1_LIGHT_YELLOW"`
+- `"MAP_COLOUR_2_LIGHT_GREEN"`
+- `"MAP_COLOUR_3_TURQUOISE"`
+- `"MAP_COLOUR_4_BLUE"`
+- `"MAP_COLOUR_5_DARK_BLUE"`
