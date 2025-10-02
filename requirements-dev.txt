@@ -9,7 +9,7 @@ Faker==37.8.0
 gitdb==4.0.12
 GitPython==3.1.45
 import-linter==2.5
-isort==6.0.1
+isort==6.1.0
 pip-api==0.0.34
 pip_audit==2.9.0
 pip-requirements-parser==32.0.1
