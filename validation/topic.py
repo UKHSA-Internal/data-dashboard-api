@@ -1,4 +1,4 @@
-from ingestion.utils import enums
+from validation import enums
 from validation.shared import format_child_and_parent_theme_name
 
 
