@@ -1,4 +1,4 @@
-from ingestion.utils import enums
+from validation import enums
 
 UNITED_KINGDOM_GEOGRAPHY_CODE = "K02000001"
 NATION_GEOGRAPHY_CODES = {
