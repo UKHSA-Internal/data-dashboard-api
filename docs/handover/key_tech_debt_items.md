@@ -25,14 +25,13 @@ The maps API endpoint was completed under the last major release (COVER) and thi
 This will need optimizing moving forward, particularly as more topic pages make use of the global filter linked maps. 
 See [CDD-2808](https://ukhsa.atlassian.net/browse/CDD-2808) for more information on this.
 
-### Extraction of validation & applying to CMS module
+### Application of ingestion validation to CMS module
 
 Currently, we have a layer of validation at the point of data ingestion.
-This can be found primarily at `ingestion/data_transfer_models/`.
-It is recommended that you extract the validation functionality from the `ingestion` module and make the validation
-its own 1st class module. 
-This way you can then share that module with both data ingestion and the `cms/` so that you can bolt on 
-CMS input validation for free.
+This can be found in the top-level `validation` module.
+The code in this module used to exist only in the ingestion module but with its extraction and move to a top-level
+module it can be shared with the `cms` code, allowing for input validation in the CMS which is consistent with the
+ingestion pipeline.
 
 ### Specifying complete parameters in CMS inputs
 
