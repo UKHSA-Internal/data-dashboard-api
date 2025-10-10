@@ -4,9 +4,7 @@ import pytest
 
 from rest_framework.exceptions import ValidationError
 
-from ingestion.data_transfer_models.validation.geography_code import (
-    UNITED_KINGDOM_GEOGRAPHY_CODE,
-)
+from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 from metrics.api.serializers.geographies import (
     GeographiesForTopicSerializer,
     _serialize_queryset,

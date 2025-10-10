@@ -4,11 +4,9 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from ingestion.data_transfer_models.validation.geography_code import (
-    UNITED_KINGDOM_GEOGRAPHY_CODE,
-)
 from tests.factories.metrics.geography import GeographyFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
+from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 
 
 class TestGeographiesDeprecatedView:

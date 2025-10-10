@@ -1,8 +1,6 @@
 import pytest
 
-from ingestion.data_transfer_models.validation.deprecated_geographies import (
-    validate_deprecated_geographies,
-)
+from validation.deprecated_geographies import validate_deprecated_geographies
 
 
 class TestDeprecatedGeographies:

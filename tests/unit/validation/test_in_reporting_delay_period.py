@@ -1,6 +1,6 @@
 import pytest
 
-from ingestion.data_transfer_models.validation import validate_in_reporting_delay_period
+from validation import validate_in_reporting_delay_period
 
 
 class TestValidateInReportingDelayPeriod:
