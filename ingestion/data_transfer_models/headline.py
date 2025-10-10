@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from pydantic.functional_validators import field_validator, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
-from ingestion.data_transfer_models import validation
+import validation
 from ingestion.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,

@@ -1,7 +1,5 @@
-from ingestion.data_transfer_models.validation.shared import (
-    format_child_and_parent_theme_name,
-)
 from ingestion.utils import enums
+from validation.shared import format_child_and_parent_theme_name
 
 
 def validate_topic(*, topic: str, child_theme: str) -> None:
