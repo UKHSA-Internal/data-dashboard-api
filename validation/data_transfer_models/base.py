@@ -11,8 +11,8 @@ from pydantic import (
 from pydantic_core.core_schema import ValidationInfo
 
 import validation
-from ingestion.metrics_interface.interface import MetricsAPIInterface
 from validation import enums
+from validation.metrics_interface.interface import MetricsAPIInterface
 
 
 class NonPublicDataSentToPublicIngestionError(ValueError):

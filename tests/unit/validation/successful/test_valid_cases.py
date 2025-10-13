@@ -1,7 +1,7 @@
 import pytest
 
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
 from tests.unit.validation.successful.parameters import VALID_PARAMETERS
+from validation.data_transfer_models.base import IncomingBaseDataModel
 from validation.enums import GeographyType
 
 

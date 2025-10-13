@@ -1,7 +1,7 @@
 import pytest
 
-from ingestion.metrics_interface.interface import DataSourceFileType
 from validation import enums
+from validation.metrics_interface.interface import DataSourceFileType
 
 
 @pytest.fixture

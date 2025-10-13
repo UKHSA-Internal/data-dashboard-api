@@ -1,11 +1,11 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from tests.unit.ingestion.data_transfer_models.base.test_validate_geography_type import (
+from tests.unit.validation.data_transfer_models.base.test_validate_geography_type import (
     VALID_REGION_CODE,
 )
 from validation import enums
+from validation.data_transfer_models.base import IncomingBaseDataModel
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 
 VALID_ENGLAND_NATION_CODE = "E92000001"

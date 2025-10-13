@@ -6,12 +6,12 @@ from pydantic.functional_validators import field_validator, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
 import validation
-from ingestion.data_transfer_models.base import (
+from ingestion.utils import type_hints
+from metrics.api.settings.auth import AUTH_ENABLED
+from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,
 )
-from ingestion.utils import type_hints
-from metrics.api.settings.auth import AUTH_ENABLED
 
 
 class InboundHeadlineSpecificFields(BaseModel):

@@ -1,8 +1,8 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
 from tests.unit.validation.unsuccessful.parameters import INVALID_PARAMETERS
+from validation.data_transfer_models.base import IncomingBaseDataModel
 from validation.enums import GeographyType
 
 
