@@ -1,1 +1,1 @@
-INCOMING_DATA_TYPE = dict[str, str | list[dict[str, str | float]]]
+type INCOMING_DATA_TYPE = dict[str, str | list[dict[str, str | float]]]
