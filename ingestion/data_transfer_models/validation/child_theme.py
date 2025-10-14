@@ -25,4 +25,5 @@ def validate_child_theme(*, child_theme: str, parent_theme: str) -> None:
             format_child_and_parent_theme_name(parent_theme)
         ].return_list()
     ):
-        raise ValueError
+        error_message = f"The `child_theme` of '{child_theme}' is not valid for the `parent_theme` of '{parent_theme}'"
+        raise ValueError(error_message)

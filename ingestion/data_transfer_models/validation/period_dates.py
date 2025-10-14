@@ -1,5 +1,10 @@
 import datetime
 
+PERIOD_END_NOT_GIVEN_ERROR_MESSAGE = "The 'period_start' was given as null"
+PERIOD_DATES_INVALID_MESSAGE = (
+    "The `period_start` and `period_end` were not given in chronological order"
+)
+
 
 def validate_period_end(
     *, period_start: datetime.datetime, period_end: datetime.datetime
@@ -26,7 +31,7 @@ def validate_period_end(
 
     """
     if period_start is None:
-        raise ValueError
+        raise ValueError(PERIOD_END_NOT_GIVEN_ERROR_MESSAGE)
 
     return _validate_period_dates_in_correct_order(
         period_start=period_start, period_end=period_end
@@ -40,4 +45,4 @@ def _validate_period_dates_in_correct_order(
 ) -> datetime.date:
     if period_end >= period_start:
         return period_end
-    raise ValueError
+    raise ValueError(PERIOD_DATES_INVALID_MESSAGE)

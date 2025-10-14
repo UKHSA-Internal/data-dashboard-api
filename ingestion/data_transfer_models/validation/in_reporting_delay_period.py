@@ -1,3 +1,8 @@
+INVALID_REPORTING_DELAY_PERIOD_ERROR_MESSAGE = (
+    "The reporting delay period has not been given as a continuous trailing block."
+)
+
+
 def validate_in_reporting_delay_period(
     *, in_reporting_delay_period_values: list[bool]
 ) -> None:
@@ -26,4 +31,4 @@ def validate_in_reporting_delay_period(
     if is_valid:
         return
 
-    raise ValueError
+    raise ValueError(INVALID_REPORTING_DELAY_PERIOD_ERROR_MESSAGE)
