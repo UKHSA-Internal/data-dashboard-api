@@ -30,7 +30,7 @@ grimp==3.12
 gunicorn==23.0.0
 html5lib==1.1
 identify==2.6.15
-idna==3.10
+idna==3.11
 importlib-metadata==8.7.0
 inflection==0.5.1
 iniconfig==2.1.0
