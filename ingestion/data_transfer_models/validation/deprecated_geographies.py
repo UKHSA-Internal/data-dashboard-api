@@ -1,3 +1,6 @@
+DEPRECATED_GEOGRAPHY_COMBINATION_ERROR_MESSAGE = "The given `geography`, `geography_type` and `geography_code` combination is deprecated."
+
+
 def validate_deprecated_geographies(
     *, geography_name: str, geography_code: str, geography_type: str
 ) -> None:
@@ -41,7 +44,8 @@ def _validate_st_helens_trust(*, geography_name: str, geography_type: str) -> No
         geography_name == "St Helens and Knowsley Teaching Hospitals NHS Trust"
         and geography_type == "NHS Trust"
     ):
-        raise ValueError
+        error_message = f"The given `geography` of '{geography_name}' under the `geography_type` of '{geography_type}' is deprecated"
+        raise ValueError(error_message)
 
 
 def _deprecated_geography(
@@ -53,4 +57,5 @@ def _deprecated_geography(
         geography_code,
     ) in DEPRECATED_GEOGRAPHIES
     if is_deprecated:
-        raise ValueError
+        error_message = f"The given `geography` of '{geography_name}' under the `geography_type` of '{geography_type}' with the `geography_code` of '{geography_code}' is deprecated"
+        raise ValueError(error_message)

@@ -86,7 +86,8 @@ def _validate_nation_geography_code(*, geography_code: str, geography: str) -> s
         raise ValueError(error_message) from error
 
     if geography_code != extracted_geography_code:
-        raise ValueError
+        error_message = f"The given `geography_code` of '{geography_code}' does not match the expected code of '{extracted_geography_code}' for the `geography` of '{geography}'"
+        raise ValueError(error_message)
 
     return geography_code
 
@@ -98,7 +99,8 @@ def _validate_lower_tier_local_authority_geography_code(*, geography_code: str) 
     ):
         return geography_code
 
-    raise ValueError
+    error_message = f"The given `geography_code` of '{geography_code}' for an LTLA should start with one of {LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES}"
+    raise ValueError(error_message)
 
 
 def _validate_upper_tier_local_authority_geography_code(*, geography_code: str) -> str:
@@ -108,34 +110,43 @@ def _validate_upper_tier_local_authority_geography_code(*, geography_code: str) 
     ):
         return geography_code
 
-    raise ValueError
+    error_message = f"The given `geography_code` of '{geography_code}' for a UTLA should begin with one of '{UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES}'"
+    raise ValueError(error_message)
 
 
 def _validate_ukhsa_region_geography_code(*, geography_code: str) -> str:
     if geography_code.startswith(UKHSA_REGION_GEOGRAPHY_CODE_PREFIX):
         return geography_code
-    raise ValueError
+
+    error_message = f"The given `geography_code` of '{geography_code}' for a 'UKHSA Region' should begin with '{UKHSA_REGION_GEOGRAPHY_CODE_PREFIX}'"
+    raise ValueError(error_message)
 
 
 def _validate_nhs_region_geography_code(*, geography_code: str) -> str:
     if geography_code.startswith(NHS_REGION_GEOGRAPHY_CODE_PREFIX):
         return geography_code
-    raise ValueError
+
+    error_message = f"The given `geography_code` of '{geography_code}' for an 'NHS Region' should begin with '{NHS_REGION_GEOGRAPHY_CODE_PREFIX}'"
+    raise ValueError(error_message)
 
 
 def _validate_region_geography_code(*, geography_code: str) -> str:
     if geography_code.startswith(REGION_GEOGRAPHY_CODE_PREFIX):
         return geography_code
-    raise ValueError
+
+    error_message = f"The given `geography_code` of '{geography_code}' for a 'Region' should begin with '{REGION_GEOGRAPHY_CODE_PREFIX}'"
+    raise ValueError(error_message)
 
 
 def _validate_nhs_trust_geography_code(*, geography_code: str) -> str:
     allowable_nhs_trust_code_lengths = (3, 5)
     if len(geography_code) not in allowable_nhs_trust_code_lengths:
-        raise ValueError
+        error_message = "An 'NHS Trust' geography type should be 3 or 5 characters long"
+        raise ValueError(error_message)
 
     if not geography_code.isalnum():
-        raise ValueError
+        error_message = f"The given `geography_code` of '{geography_code}' can only contain letters or numbers."
+        raise ValueError(error_message)
 
     return geography_code
 
@@ -144,15 +155,18 @@ def _validate_integrated_care_board_geography_code(
     *, geography_code: str, allowable_length: int = 3
 ) -> str:
     if len(geography_code) != allowable_length:
-        raise ValueError
+        error_message = f"An 'Integrated Care Board' geography type should be {allowable_length} characters long"
+        raise ValueError(error_message)
 
     first_character = geography_code[0]
     if not first_character.isalpha():
-        raise ValueError
+        error_message = f"The first character of the given `geography_code` should be a letter, not '{first_character}'"
+        raise ValueError(error_message)
 
     remaining_characters = geography_code[1:]
     if not remaining_characters.isalnum():
-        raise ValueError
+        error_message = f"The remaining characters of the given `geography_code` should be letters or numbers, not '{remaining_characters}'"
+        raise ValueError(error_message)
 
     return geography_code
 
@@ -161,7 +175,8 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
     small_code_allowance = 3
     large_code_allowance = 5
     if len(geography_code) not in {small_code_allowance, large_code_allowance}:
-        raise ValueError
+        error_message = f"A 'Sub Integrated Care Board' geography type should be {small_code_allowance} or {large_code_allowance} characters long"
+        raise ValueError(error_message)
 
     if len(geography_code) == large_code_allowance:
         return _validate_integrated_care_board_geography_code(
@@ -171,11 +186,13 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
 
     first_character = geography_code[0]
     if not first_character.isdigit():
-        raise ValueError
+        error_message = f"The first character of the given `geography_code` of '{geography_code}' for a 'Sub Integrated Care Board' should be a number"
+        raise ValueError(error_message)
 
     remaining_characters = geography_code[1:]
     if not remaining_characters.isalnum():
-        raise ValueError
+        error_message = f"The remaining characters of the given `geography_code` of '{geography_code}' for a 'Sub Integrated Care Board' should be letters or numbers"
+        raise ValueError(error_message)
 
     return geography_code
 
@@ -183,23 +200,28 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
 def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
     ukhsa_super_region_code_length = 6
     if len(geography_code) != ukhsa_super_region_code_length:
-        raise ValueError
+        error_message = f"The given `geography_code` of {geography_code} should be {ukhsa_super_region_code_length} characters long"
+        raise ValueError(error_message)
 
     first_five_characters = geography_code[:5]
     if first_five_characters != UKHSA_SUPER_REGION_PREFIX:
-        raise ValueError
+        error_message = f"The given `geography_code` for a 'UKHSA Super Region' should start with {UKHSA_SUPER_REGION_PREFIX}"
+        raise ValueError(error_message)
 
     if not geography_code[-1].isdigit():
-        raise ValueError
+        error_message = f"The final character of the given `geography_code` of '{geography_code}' for a 'UKHSA Super Region' should be a number"
+        raise ValueError(error_message)
 
     return geography_code
 
 
 def _validate_united_kingdom_geography_code(*, geography: str, geography_code: str):
     if geography_code != UNITED_KINGDOM_GEOGRAPHY_CODE:
-        raise ValueError
+        error_message = f"The only permissible `geography_code` for the UK is '{UNITED_KINGDOM_GEOGRAPHY_CODE}'"
+        raise ValueError(error_message)
 
     if geography != "United Kingdom":
-        raise ValueError
+        error_message = "The only permissible geography name here is 'United Kingdom'"
+        raise ValueError(error_message)
 
     return geography_code

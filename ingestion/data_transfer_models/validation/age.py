@@ -6,6 +6,19 @@ EXPECTED_AGE_ALL_VALUE = "all"
 EXPECTED_DOUBLE_DIGIT_LENGTH = 2
 
 
+INVALID_AGE_PARAMETER_ERROR_MESSAGE = (
+    "The given age parameter does not conform to an expected structure."
+)
+INVALID_AGE_RANGE_LENGTH_ERROR_MESSAGE = "An age range must be 5 characters long."
+INVALID_AGE_NUMBER_ERROR_MESSAGE = "An age number must be given as a 2 digit number."
+INVALID_AGE_RANGE_CHRONOLOGICAL_ORDER_ERROR_MESSAGE = (
+    "The age banding must be given with the smaller number on the left hand side"
+)
+INVALID_AGE_GREATER_THAN_ERROR_MESSAGE = (
+    "This age type should be given as a 2 digit number, ending with a + sign."
+)
+
+
 def validate_age(*, age: str) -> str:
     """Validates the `age` value to check it conforms to an allowable structure
 
@@ -38,21 +51,25 @@ def validate_age(*, age: str) -> str:
     if AGE_GREATER_THAN_OPERATOR in age:
         return _validate_age_older_than(age=age)
 
-    raise ValueError
+    raise ValueError(INVALID_AGE_PARAMETER_ERROR_MESSAGE)
 
 
 def _validate_age_is_all_value(*, age: str) -> str:
     if age == EXPECTED_AGE_ALL_VALUE:
         return age
-    raise ValueError
+    error_message = (
+        f"'{EXPECTED_AGE_ALL_VALUE}' is the only string allowed for the age field."
+    )
+    raise ValueError(error_message)
 
 
 def _validate_age_banding(*, age: str) -> str:
     if len(age) != EXPECTED_AGE_BANDING_LENGTH:
-        raise ValueError
+        raise ValueError(INVALID_AGE_RANGE_LENGTH_ERROR_MESSAGE)
 
     if age[2] != AGE_BANDING_DELIMITER:
-        raise ValueError
+        error_message = f"The seperator of an age range must be the '{AGE_BANDING_DELIMITER}' character."
+        raise ValueError(error_message)
 
     first_number, second_number = age.split(AGE_BANDING_DELIMITER)
 
@@ -75,14 +92,14 @@ def _validate_age_older_than(*, age: str) -> str:
 def _validate_number_is_double_digit(*, number: str) -> str:
     if number.isdigit() and len(number) == EXPECTED_DOUBLE_DIGIT_LENGTH:
         return number
-    raise ValueError
+    raise ValueError(INVALID_AGE_NUMBER_ERROR_MESSAGE)
 
 
 def _validate_age_banding_is_in_correct_order(
     *, left_side_number: int, right_side_number: int
 ) -> None:
     if left_side_number >= right_side_number:
-        raise ValueError
+        raise ValueError(INVALID_AGE_RANGE_CHRONOLOGICAL_ORDER_ERROR_MESSAGE)
 
 
 def _validate_age_older_than_ends_with_plus_operator(*, age: str) -> str:
@@ -91,4 +108,4 @@ def _validate_age_older_than_ends_with_plus_operator(*, age: str) -> str:
         and len(age) == EXPECTED_AGE_GREATER_THAN_LENGTH
     ):
         return age
-    raise ValueError
+    raise ValueError(INVALID_AGE_GREATER_THAN_ERROR_MESSAGE)

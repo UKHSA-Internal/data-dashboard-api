@@ -25,4 +25,5 @@ def validate_topic(*, topic: str, child_theme: str) -> None:
             format_child_and_parent_theme_name(child_theme)
         ].return_list()
     ):
-        raise ValueError
+        error_message = f"The `topic` of '{topic}' is not valid for the `child_theme` of '{child_theme}'"
+        raise ValueError(error_message)
