@@ -139,4 +139,11 @@ VALID_PARAMETERS = [
         "mpox-clade-2b_cases_countByMonth",
         "cases",
     ),
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Hepatitis-B",
+        "hepatitis-b_vaccinations_coverageOf3DosesTargetWHO",
+        "vaccinations",
+    ),
 ]

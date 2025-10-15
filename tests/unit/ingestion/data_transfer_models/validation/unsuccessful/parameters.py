@@ -69,4 +69,11 @@ INVALID_PARAMETERS = [
         "mpox-clade-2b_cases_countByMonth",
         "cases",
     ),  # Invalid child_theme
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Hepatitis-C",
+        "hepatitis-b_vaccinations_coverageOf3DosesTargetWHO",
+        "vaccinations",
+    ),  # Invalid topic of `Hepatitis-C` instead of `Hepatitis-B`
 ]
