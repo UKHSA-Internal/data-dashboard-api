@@ -1,4 +1,4 @@
-from ingestion.metrics_interface.interface import MetricsAPIInterface
+from validation.metrics_interface.interface import MetricsAPIInterface
 
 
 def validate_metric_frequency(*, metric_frequency: str) -> str:

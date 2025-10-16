@@ -1,6 +1,4 @@
-from ingestion.data_transfer_models.validation.geography_code import (
-    UNITED_KINGDOM_GEOGRAPHY_CODE,
-)
+from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )

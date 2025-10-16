@@ -109,7 +109,7 @@ target-version = "py312"
 "**/help_texts.py"                                            = ["W291"]           # Ignore trailing whitespace for help texts
 "**/build_cms_site.py"                                        = ["W605"]           # Ignore escape sequences used in regex calls
 "ingestion/file_ingestion.py"                                 = ["BLE001"]         # Ignore blind exception catch for file ingestion function
-"ingestion/data_transfer_models/validation/geography_code.py" = ["C901"]           # Ignore complexity assessment - due to switch case
+"validation/geography_code.py"                                = ["C901"]           # Ignore complexity assessment - due to switch case
 "public_api/views/root_view.py"                               = ["A002"]           # Ignore built-in `format` used in arg to extended
 "public_api/version_02/views/root_view.py"                    = ["A002"]           # Ignore built-in `format` used in arg to extended
                                                                                         # rest framework API view method
@@ -195,6 +195,7 @@ root_packages = [
     "feedback",
     "ingestion",
     "tests",
+    "validation",
 ]
 include_external_packages = true
 
@@ -274,6 +275,7 @@ forbidden_modules = [
     "cms",
     "ingestion",
     "feedback",
+    "validation",
 ]
 ignore_imports = [
     "public_api.metrics_interface.interface -> metrics.data.models.api_models",
@@ -291,6 +293,7 @@ source_modules = [
     "cms",
     "ingestion",
     "feedback",
+    "validation",
 ]
 forbidden_modules = [
     "metrics.public_api",
@@ -313,6 +316,7 @@ forbidden_modules = [
     "cms",
     "feedback",
     "public_api",
+    "validation.metric_interface",
 ]
 ignore_imports = [
     "ingestion.metrics_interface.interface -> metrics.data.models.core_models",
@@ -322,6 +326,29 @@ ignore_imports = [
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
     "ingestion.data_transfer_models.headline -> metrics.api.settings.auth",             # Allowance for `AUTH_ENABLED` setting
     "ingestion.data_transfer_models.time_series -> metrics.api.settings.auth",          # Allowance for `AUTH_ENABLED` setting
+    "ingestion.data_transfer_models.* -> validation.data_transfer_models.base",
+    "ingestion.data_transfer_models.* -> validation",
+]
+#----------------------------------------------- Validation contracts -------------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "The Validation module only depends on the core models & associated components via the designated interface"
+type = "forbidden"
+source_modules = [
+    "validation",
+]
+forbidden_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.domain",
+    "metrics.interfaces",
+    "cms",
+    "feedback",
+    "public_api",
+    "ingestion",
+]
+ignore_imports = [
+    "validation.metrics_interface.interface -> metrics.domain.common.utils",
+    "validation.metrics_interface.interface -> metrics.data.enums",
 ]
 #------------------------------------------ Metrics Domain library contracts ------------------------------------------#
 [[tool.importlinter.contracts]]
@@ -338,6 +365,7 @@ forbidden_modules = [
     "ingestion",
     "feedback",
     "public_api",
+    "validation",
 ]
 
 [[tool.importlinter.contracts]]
@@ -354,6 +382,7 @@ forbidden_modules = [
     "ingestion",
     "feedback",
     "public_api",
+    "validation",
 ]
 #------------------------------------------- Feedback module contracts ------------------------------------------------#
 [[tool.importlinter.contracts]]
@@ -367,6 +396,7 @@ forbidden_modules = [
     "metrics",
     "public_api",
     "ingestion",
+    "validation",
 ]
 ignore_imports = [
     "feedback.cms_interface.interface -> cms.forms.models",
@@ -380,6 +410,7 @@ source_modules = [
     "metrics",
     "public_api",
     "ingestion",
+    "validation",
 ]
 forbidden_modules = [
     "feedback",
@@ -397,6 +428,7 @@ source_modules = [
     "public_api",
     "ingestion",
     "feedback",
+    "validation",
 ]
 forbidden_modules = [
     "tests",

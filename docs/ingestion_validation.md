@@ -31,7 +31,7 @@ The age property can be any of the following:
 ## Parent Theme
 
 The `Parent theme` is validated against an enum, which can be found
-at the following location `ingestion/utils/enums/theme_and_topic_enums.py`
+at the following location `validation/enums/theme_and_topic_enums.py`
 
 Please see **How to add new parent theme, child theme and topics** in the guides section for details on how
 to add new parent themes.
@@ -39,7 +39,7 @@ to add new parent themes.
 ## Child theme
 
 The `Child theme` is validated against an enum, which can be found
-at the following location `ingestion/utils/enums/theme_and_topic_enums.py`
+at the following location `validation/enums/theme_and_topic_enums.py`
 
 A Child theme must also be validated against the `Parent theme`. Eg: a child theme
 of `respiratory` will only be valid if the parent theme is `infectious_disease`. This
@@ -51,7 +51,7 @@ to add new child themes.
 ## Topic
 
 The `Topic` is validated against a topic enum, which can be found in the
-following location `ingestion/utils/enums/theme_and_topic_enums.py`.
+following location `validation/enums/theme_and_topic_enums.py`.
 
 A topic must also be validated against both the `Parent theme` and `Child theme`. Eg:
 a topic of `influenza` is only valid when the `Parent theme` is `infectious_disease` and the
@@ -198,11 +198,11 @@ class IncomingBaseDataModel(BaseModel):
     ...
     geography_type: enums.GeographyType
 ```
-Which can be found at `ingestion/data_transfer_models/base.py`.
+Which can be found at `validation/data_transfer_models/base.py`.
 
 To add a new `GeographyType` we must:
 
 1. Declare the new geography type on the `GeographyType` enum
-which can be found at `ingestion/utils/enums/geographies_enums.py`.
-2. Expand the `validate_geography_code()` handler at `ingestion/data_transfer_models/validation/geography_code.py`
+which can be found at `validation/enums/geographies_enums.py`.
+2. Expand the `validate_geography_code()` handler at `validation/data_transfer_models/geography_code.py`
 to include validation for the `geography_code` associated with the new `GeographyType` which is being added.

@@ -4,13 +4,13 @@ from typing import Self
 from pydantic import BaseModel, field_validator, model_validator
 from pydantic.fields import Field
 
-from ingestion.data_transfer_models import validation
-from ingestion.data_transfer_models.base import (
+import validation
+from ingestion.utils import type_hints
+from metrics.api.settings.auth import AUTH_ENABLED
+from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,
 )
-from ingestion.utils import type_hints
-from metrics.api.settings.auth import AUTH_ENABLED
 
 
 class InboundTimeSeriesSpecificFields(BaseModel):

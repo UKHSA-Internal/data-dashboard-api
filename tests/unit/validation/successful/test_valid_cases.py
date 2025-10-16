@@ -1,10 +1,8 @@
 import pytest
 
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.utils.enums import GeographyType
-from tests.unit.ingestion.data_transfer_models.validation.successful.parameters import (
-    VALID_PARAMETERS,
-)
+from tests.unit.validation.successful.parameters import VALID_PARAMETERS
+from validation.data_transfer_models.base import IncomingBaseDataModel
+from validation.enums import GeographyType
 
 
 @pytest.mark.parametrize("valid_input_parameters", VALID_PARAMETERS)

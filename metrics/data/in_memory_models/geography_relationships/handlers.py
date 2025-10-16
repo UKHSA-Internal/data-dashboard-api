@@ -1,7 +1,3 @@
-from ingestion.data_transfer_models.validation.geography_code import (
-    UNITED_KINGDOM_GEOGRAPHY_CODE,
-)
-from ingestion.utils.enums import GeographyType
 from metrics.data.in_memory_models.geography_relationships.nation_geography_codes import (
     NATION_LOOKUP,
 )
@@ -14,6 +10,8 @@ from metrics.data.in_memory_models.geography_relationships.region_to_nation impo
 from metrics.data.in_memory_models.geography_relationships.utla_to_region import (
     UTLA_TO_REGION_LOOKUP,
 )
+from validation.enums import GeographyType
+from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 
 
 class RelationshipsForGeographyTypeNotSupportedError(Exception): ...
