@@ -3,6 +3,6 @@ boto3==1.34.68
 botocore==1.34.109
 Django==5.2.7
 psycopg2-binary==2.9.10
-pydantic==2.12.2
+pydantic==2.12.3
 python-dotenv==1.1.1
 sqlparse==0.5.3
