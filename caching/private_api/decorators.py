@@ -84,7 +84,7 @@ def _retrieve_response_from_cache_or_calculate(
     """
     request: Request = args[1]
 
-    if is_caching_v2_enabled():
+    if is_caching_v2_enabled() and not is_reserved_namespace:
         return _calculate_response_from_view(view_function, *args, **kwargs)
 
     cache_management = kwargs.pop(
