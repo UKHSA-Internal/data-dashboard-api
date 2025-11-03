@@ -89,6 +89,6 @@ wagtail==7.1.2
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.2.0
 webencodings==0.5.1
-Willow==1.11.0
+Willow==1.12.0
 zipp==3.23.0
 -r requirements-prod-ingestion.txt
