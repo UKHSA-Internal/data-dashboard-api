@@ -36,7 +36,6 @@ class TestWhaButtonChooser:
         fake_snippet_data = {
             "text": "view map",
             "button_type": "Heat",
-            "geography_code": "E12000001",
         }
         snippet_instance = FakeWhaButtonSnippet(**fake_snippet_data)
         wha_button_chooser_block = WhaButtonChooserBlock(
