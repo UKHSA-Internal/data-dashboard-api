@@ -37,7 +37,7 @@ iniconfig==2.3.0
 itypes==1.2.0
 Jinja2==3.1.6
 jsonschema==4.26.0
-kaleido==0.2.1
+kaleido==1.2.0
 l18n==2021.3
 lockfile==0.12.2
 Markdown==3.10
