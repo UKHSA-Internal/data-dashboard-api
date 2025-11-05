@@ -120,7 +120,6 @@ class WhaButtonChooserBlock(SnippetChooserBlock):
             return {
                 "text": value.text,
                 "button_type": value.button_type,
-                "geography_code": value.geography_code,
             }
         return None
 
