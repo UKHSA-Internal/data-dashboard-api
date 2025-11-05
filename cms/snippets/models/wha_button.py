@@ -3,10 +3,6 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.snippets.models import register_snippet
 
-from cms.metrics_interface.field_choices_callables import (
-    get_all_geography_names_and_codes_for_alerts,
-)
-
 
 class WeatherAlertButtonTypes(models.Choices):
     """Enum for weather alert button type"""
@@ -23,11 +19,6 @@ class WeatherAlertButton(models.Model):
         choices=WeatherAlertButtonTypes.choices,
         default=WeatherAlertButtonTypes.HEAT.value,
         blank=False,
-    )
-    geography_code = models.CharField(
-        max_length=9,
-        choices=get_all_geography_names_and_codes_for_alerts,
-        blank=True,
     )
 
     panels = [
