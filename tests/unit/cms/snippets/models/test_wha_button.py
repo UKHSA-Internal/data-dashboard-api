@@ -6,23 +6,19 @@ class TestWeatherAlertButton:
         """
         Given a text, button_type and geography_code
         When an `WeatherAlertButton` instance is created
-        Then the text, button_type an geography_code fields
+        Then the text and button_type fields
             on the `WeatherAlertButton` are created.
         """
         # Given
         text = "view map on weather health alerts"
         button_type = "Heat"
-        geography_code = "North West"
 
         # When
-        weather_alert_button = WeatherAlertButton(
-            text=text, button_type=button_type, geography_code=geography_code
-        )
+        weather_alert_button = WeatherAlertButton(text=text, button_type=button_type)
 
         # Then
         assert weather_alert_button.text == text
         assert weather_alert_button.button_type == button_type
-        assert weather_alert_button.geography_code == geography_code
 
     def test_panels(self):
         """
@@ -33,12 +29,9 @@ class TestWeatherAlertButton:
         # Given
         text = "view map on weather health alerts"
         button_type = "Heat"
-        geography_code = "North West"
 
         # When
-        weather_alert_button = WeatherAlertButton(
-            text=text, button_type=button_type, geography_code=geography_code
-        )
+        weather_alert_button = WeatherAlertButton(text=text, button_type=button_type)
 
         # Then
         panels = weather_alert_button.panels
@@ -63,12 +56,9 @@ class TestWeatherAlertButton:
         # Given
         text = "view map on weather health alerts"
         button_type = "Heat"
-        geography_code = "North West"
 
         # When
-        weather_alert_button = WeatherAlertButton(
-            text=text, button_type=button_type, geography_code=geography_code
-        )
+        weather_alert_button = WeatherAlertButton(text=text, button_type=button_type)
 
         # Then
         assert (
