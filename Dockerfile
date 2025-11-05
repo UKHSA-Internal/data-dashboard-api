@@ -54,8 +54,10 @@ EXPOSE 8000
 
 # Reinstall system libraries required for PostgreSQL drivers
 RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev \
+    # Install google chrome which is needed for plotly/kaleido (charts)
+    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_arm64.deb \
+    # Update the database of available packages \
+    && apt-get -y install libpq-dev ./google-chrome-stable_current_arm64.deb \
     # Reinstall the C library needed for `psycopg2`
     && chmod +x entrypoint.sh
     # Add execution permission for the entrypoint shell script
