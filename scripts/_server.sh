@@ -47,7 +47,7 @@ function _server_run_production() {
 
 function _server_setup_all() {
     uhd django migrate
-    _setup_static_files
+    _server_setup_static_files
 }
 
 function _server_setup_static_files() {
