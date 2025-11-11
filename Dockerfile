@@ -57,10 +57,23 @@ RUN apt-get update \
     # Install google chrome which is needed for plotly/kaleido (charts)
     && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_arm64.deb \
     # Update the database of available packages \
-    && apt-get -y install libpq-dev ./google-chrome-stable_current_arm64.deb \
-    # Reinstall the C library needed for `psycopg2`
-    && chmod +x entrypoint.sh
+    && apt-get -y install \
+    ./google-chrome-stable_current_arm64.deb \
+    libpq-dev \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libxkbcommon0 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libasound2 \
     # Add execution permission for the entrypoint shell script
+    && chmod +x entrypoint.sh
 
 # Opens a shell on the entrypoint.
 # This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
