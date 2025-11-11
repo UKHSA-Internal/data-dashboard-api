@@ -77,3 +77,14 @@ be restricted to just the 5 designated maps colours:
 - `"MAP_COLOUR_3_TURQUOISE"`
 - `"MAP_COLOUR_4_BLUE"`
 - `"MAP_COLOUR_5_DARK_BLUE"`
+
+### Concurrency methodology in area selector private API crawler
+
+At the time of writing (November 2025), we use the `call_with_star_map_multiprocessing()` handler 
+for processing geography combinations in the `AreaSelectorOrchestrator` when crawling the private API.
+
+Moving forward, this could easily be switched to using multi-threading instead as the 
+`process_geography_page_combination()` method which is passed to the `call_with_star_map_multiprocessing()` handler.
+
+Once this is done at the infra level we will be able to switch to the `worker` ECS job instead of the `utility-worker`.
+This will help save costs and resources which are allocated to the cache flush jobs.

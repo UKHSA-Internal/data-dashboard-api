@@ -32,7 +32,7 @@ class HealthProbeManagement:
         Notes:
             For example, the `PRIVATE_API` app mode
             depends on both the database and the cache.
-            Whereas, the `FEEDBACK_API` app mode requires neither:
+            Whereas the `CMS_ADMIN` app mode only needs the database:
 
             |   App mode   | Needs db | Needs cache |
             |---------------------------------------|
