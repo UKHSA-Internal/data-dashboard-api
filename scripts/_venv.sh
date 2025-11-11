@@ -49,6 +49,7 @@ function _venv_create() {
     python${python_version} -m venv --upgrade-deps .venv
     _venv_activate
     pip install -r requirements.txt
+    python manage.py get_chrome
 }
 
 
