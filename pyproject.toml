@@ -216,6 +216,7 @@ ignore_imports = [
     "metrics.api.urls_construction -> cms.dashboard.views",
     "metrics.api.urls_construction -> cms.snippets.views",
     "metrics.api.urls_construction -> feedback.api.urls",
+    "cms.dynamic_content.elements -> validation.data_transfer_models.base",
 ]
 
 [[tool.importlinter.contracts]]
