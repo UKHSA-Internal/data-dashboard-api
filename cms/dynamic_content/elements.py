@@ -1,6 +1,11 @@
+import re
+
+import pydantic
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
+from cms.metrics_interface import MetricsAPIInterface
 from cms.metrics_interface.field_choices_callables import (
     get_all_age_names,
     get_all_geography_names,
@@ -17,6 +22,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_headline_chart_types,
     get_simplified_chart_types,
 )
+from validation.data_transfer_models.base import IncomingBaseDataModel
 
 DEFAULT_GEOGRAPHY = "England"
 DEFAULT_GEOGRAPHY_TYPE = "Nation"
@@ -68,6 +74,76 @@ class BaseMetricsElement(blocks.StructBlock):
         default=DEFAULT_STRATUM,
         help_text=help_texts.STRATUM_FIELD,
     )
+
+    def clean(self, value):
+        # call the super version first to get the basics handled. This ensures that all
+        # the fields meet their base requirements before we then do further validations
+        # thus avoiding, for example, flagging required fields as invalid according to a
+        # deeper check, when they are just missing
+        result = super().clean(value=value)
+        self._validate_data_inputs(value=result)
+        return result
+
+    @classmethod
+    def _validate_data_inputs(cls, *, value: blocks.StructValue) -> None:
+        """
+        Validates the block value against the shared IncomingBaseDataModel which is used
+        for ingestion validation as well. This allows us to catch issues such as invalid
+        metric combinations and flag them to CMS users.
+
+        If issues are found, a StrutBlockValidationError is raised, otherwise nothing
+        happens and this function will simply return.
+
+        Args:
+            value: the block value to validate
+
+        Raises:
+            StructBlockValidationError if any problems are found
+        """
+        # extract the metric group from the selected metric using a regex
+        reg = re.compile(r".+?_(?P<metric_group>.+)_.+")
+        if (match := reg.match(value["metric"])) is not None:
+            metric_group = match.group("metric_group")
+        else:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "metric": ValidationError("Invalid metric, could not extract group")
+                }
+            )
+
+        # look up the geography code for the selected geography and geography type
+        try:
+            geography_code = MetricsAPIInterface().get_geography_code_for_geography(
+                geography=value["geography"], geography_type=value["geography_type"]
+            )
+        except ObjectDoesNotExist as e:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "geography_type": ValidationError(
+                        "Geography type does not match geography"
+                    )
+                }
+            ) from e
+
+        try:
+            IncomingBaseDataModel(
+                **value,
+                geography_code=geography_code,
+                metric_group=metric_group,
+            )
+        except pydantic.ValidationError as validation_error:
+            # these fields aren't used here but the IncomingBaseDataModel expects them,
+            # so we need to ignore errors relating to these fields
+            ignore_attrs = {"refresh_date", "parent_theme", "child_theme"}
+            block_errors = {
+                error["loc"][0]: ValidationError(error["msg"])
+                for error in validation_error.errors()
+                if error["loc"][0] not in ignore_attrs
+            }
+            if block_errors:
+                raise blocks.StructBlockValidationError(
+                    block_errors=block_errors
+                ) from validation_error
 
 
 class ChartPlotElement(BaseMetricsElement):
