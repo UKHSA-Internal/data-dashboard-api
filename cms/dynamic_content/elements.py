@@ -1,4 +1,3 @@
-import re
 
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -100,16 +99,15 @@ class BaseMetricsElement(blocks.StructBlock):
         Raises:
             StructBlockValidationError if any problems are found
         """
-        # extract the metric group from the selected metric using a regex
-        reg = re.compile(r".+?_(?P<metric_group>.+)_.+")
-        if (match := reg.match(value["metric"])) is not None:
-            metric_group = match.group("metric_group")
-        else:
+        # try to extract the metric group from the selected metric
+        try:
+            metric_group = value["metric"].split("_")[1]
+        except IndexError as e:
             raise blocks.StructBlockValidationError(
                 block_errors={
                     "metric": ValidationError("Invalid metric, could not extract group")
                 }
-            )
+            ) from e
 
         # look up the geography code for the selected geography and geography type
         try:
