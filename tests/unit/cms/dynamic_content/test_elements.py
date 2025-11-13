@@ -100,7 +100,7 @@ class TestBaseMetricsElementClean:
         """
         # given
         # override the metric with an invalid one
-        payload = {**self.valid_payload, "metric": "covid-19_the-group"}
+        payload = {**self.valid_payload, "metric": "not-a-the-group"}
         block = BaseMetricsElement()
         value: StructValue = block.to_python(value=payload)
         mocked_super_clean.return_value = value
