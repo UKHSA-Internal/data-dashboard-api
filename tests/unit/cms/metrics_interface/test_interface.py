@@ -488,3 +488,34 @@ class TestMetricsAPIInterface:
 
         # Then
         assert all_age_names == spy_age_manager.get_all_names.return_value
+
+    def test_get_geography_code_for_geography_delegates_call_correctly(
+        self,
+    ):
+        """
+        Given a `GeographyManager` from the Metrics API app
+        When `get_geography_code_for_geography()` is called from an instance of the
+        `MetricsAPIInterface`
+        Then the call is delegated to the correct method on the `GeographyManager`
+        """
+        # given
+        spy_geography_manager = mock.MagicMock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            geography_manager=spy_geography_manager,
+        )
+        mock_geography = mock.Mock()
+        mock_geography_type = mock.Mock()
+
+        # when
+        geography_code = metrics_api_interface.get_geography_code_for_geography(
+            geography=mock_geography, geography_type=mock_geography_type
+        )
+
+        # then
+        assert (
+            geography_code
+            == spy_geography_manager.get_geography_code_for_geography.return_value
+        )
+        spy_geography_manager.get_geography_code_for_geography.assert_called_once_with(
+            geography=mock_geography, geography_type=mock_geography_type
+        )
