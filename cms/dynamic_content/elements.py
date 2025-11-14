@@ -1,4 +1,3 @@
-
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from wagtail import blocks
