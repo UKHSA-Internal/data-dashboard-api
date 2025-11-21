@@ -41,6 +41,15 @@ class FormField(AbstractFormField):
         choices=form_field_choices,
     )
 
+    def save(self, *args, **kwargs) -> None:
+        """
+        Since we don't track form submissions in the CMS.
+        We override the default behaviour to always update the clean name.
+        Regardless of whether the field is new or is being updated in place.
+        """
+        self.clean_name = self.get_field_clean_name()
+        super().save(*args, **kwargs)
+
 
 class FormPage(AbstractFormUKHSAPage):
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES, blank=True)
