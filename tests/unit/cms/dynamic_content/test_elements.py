@@ -1,5 +1,3 @@
-from functools import wraps
-from typing import Callable
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -11,27 +9,101 @@ from cms.dynamic_content.elements import BaseMetricsElement
 from cms.metrics_interface import MetricsAPIInterface
 
 
-def with_geography_code(code: str = "E92000001") -> Callable:
-    """
-    Decorator which patches the MetricsAPIInterface's get_geography_code_for_geography
-    method to a specific value for the duration of the wrapped function.
+class TestValidateMetricGroup:
 
-    Args:
-        code: The geography code to return when the interface method is called
-    """
+    def test_successful_extraction(self):
+        """
+        Given a valid metric value in a block
+        When `_validate_metric_group()` is called
+        Then no errors are produced and the group is returned
+        """
+        # given
+        block = BaseMetricsElement()
+        value: StructValue = block.to_python(value={"metric": "covid-19_testing_count"})
 
-    def run_with_patch(func: Callable) -> Callable:
-        @wraps(func)
-        def run(*args, **kwargs):
-            with patch.object(
-                MetricsAPIInterface, "get_geography_code_for_geography"
-            ) as mocked_get_geography_code_for_geography:
-                mocked_get_geography_code_for_geography.return_value = code
-                func(*args, **kwargs)
+        # when
+        group = BaseMetricsElement._validate_metric_group(value=value)
 
-        return run
+        # then
+        assert group == "testing"
 
-    return run_with_patch
+    def test_unsuccessful_extraction(self):
+        """
+        Given an invalid metric value in a block
+        When `_validate_metric_group()` is called
+        Then a StructBlockValidationError error is raised
+        """
+        # given
+        block = BaseMetricsElement()
+        value: StructValue = block.to_python(value={"metric": "covid-19-testing-count"})
+
+        # when
+        with pytest.raises(StructBlockValidationError) as exc_info:
+            BaseMetricsElement._validate_metric_group(value=value)
+
+        # then
+        block_errors = exc_info.value.block_errors
+        assert (
+            block_errors["metric"].message == "Invalid metric, could not extract group"
+        )
+
+
+class TestValidateGeographyCode:
+
+    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
+    def test_valid_combination(
+        self, mocked_get_geography_code_for_geography: MagicMock
+    ):
+        """
+        Given a valid geography and geography_type combination in a block
+        When `_validate_geography_code()` is called
+        Then no errors are produced and the geography code is returned
+        """
+        # given
+        mocked_get_geography_code_for_geography.return_value = "E92000001"
+        block = BaseMetricsElement()
+        value: StructValue = block.to_python(
+            value={
+                "geography": "England",
+                "geography_type": "Nation",
+            }
+        )
+
+        # when
+        code = BaseMetricsElement._validate_geography_code(value=value)
+
+        # then
+        assert code == "E92000001"
+
+    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
+    def test_invalid_combination(
+        self, mocked_get_geography_code_for_geography: MagicMock
+    ):
+        """
+        Given an invalid geography and geography_type combination in a block value
+        When `_validate_geography_code()` is called
+        Then a StructBlockValidationError error is raised
+        """
+        # given
+        mocked_get_geography_code_for_geography.side_effect = ObjectDoesNotExist()
+        block = BaseMetricsElement()
+        value: StructValue = block.to_python(
+            value={
+                "geography": "England",
+                "geography_type": "Lower Tier Local Authority",
+            }
+        )
+
+        # when
+        with pytest.raises(StructBlockValidationError) as exc_info:
+            BaseMetricsElement._validate_geography_code(value=value)
+
+        # then
+        block_errors = exc_info.value.block_errors
+        assert (
+            block_errors["geography_type"].message
+            == "Geography type does not match geography"
+        )
 
 
 class TestBaseMetricsElementClean:
@@ -52,21 +124,25 @@ class TestBaseMetricsElementClean:
         }
 
     @patch.object(StructBlock, "clean")
-    @with_geography_code()
-    def test_valid_struct(self, mocked_super_clean: MagicMock):
+    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
+    def test_valid_struct(
+        self,
+        mocked_get_geography_code_for_geography: MagicMock,
+        mocked_super_clean: MagicMock,
+    ):
         """
         Given a valid combination of field values
         When `clean()` is called
         Then no errors are produced and the super clean method is called
 
         Patches:
-            `get_geography_code_for_geography` via `with_geography_code` to produce a
-            valid geography code
+            `mocked_get_geography_code_for_geography` to produce a valid geography code
             `mocked_super_clean` patches the StructBlock's clean method so that we don't
             have to use the database and seed it with data that would allow the base
             field's checks to pass
         """
         # given
+        mocked_get_geography_code_for_geography.return_value = "E92000001"
         # use a subclass of the base block to test a real scenario and ensure the
         # underlying IncomingBaseDataModel correctly handles additional parameters it
         # isn't expecting (e.g. the body field value in this example)
@@ -82,55 +158,25 @@ class TestBaseMetricsElementClean:
 
         # then
         mocked_super_clean.assert_called_once_with(value=value)
-
-    @patch.object(StructBlock, "clean")
-    @with_geography_code()
-    def test_metric_group_extraction_failure(self, mocked_super_clean: MagicMock):
-        """
-        Given an invalid metric name
-        When `clean()` is called
-        Then an error is produced indicating the metric group couldn't be extracted
-
-        Patches:
-            `get_geography_code_for_geography` via `with_geography_code` to produce a
-            valid geography code
-            `mocked_super_clean` patches the StructBlock's clean method so that we don't
-            have to use the database and seed it with data that would allow the base
-            field's checks to pass
-        """
-        # given
-        # override the metric with an invalid one
-        payload = {**self.valid_payload, "metric": "not-a-the-group"}
-        block = BaseMetricsElement()
-        value: StructValue = block.to_python(value=payload)
-        mocked_super_clean.return_value = value
-
-        # when
-        with pytest.raises(StructBlockValidationError) as exc_info:
-            block.clean(value=value)
-
-        # then
-        mocked_super_clean.assert_called_once()
-        block_errors = exc_info.value.block_errors
-        assert (
-            block_errors["metric"].message == "Invalid metric, could not extract group"
-        )
+        mocked_get_geography_code_for_geography.assert_called_once()
 
     @patch.object(StructBlock, "clean")
     @patch("cms.dynamic_content.elements.IncomingBaseDataModel")
-    @with_geography_code()
-    def test_metric_group_passed_correctly(
-        self, mocked_incoming_base_data_model: MagicMock, mocked_super_clean: MagicMock
+    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
+    def test_metric_group_and_geography_code_passed_correctly(
+        self,
+        mocked_get_geography_code_for_geography: MagicMock,
+        mocked_incoming_base_data_model: MagicMock,
+        mocked_super_clean: MagicMock,
     ):
         """
         Given a valid metric name
         When `clean()` is called
         Then the metric group extracted from the metric name is passed to the
-        IncomingBaseDataModel correctly
+        IncomingBaseDataModel correctly as is the geography code
 
         Patches:
-            `get_geography_code_for_geography` via `with_geography_code` to produce a
-            valid geography code
+            `mocked_get_geography_code_for_geography` to produce a valid geography code
             `mocked_super_clean` patches the StructBlock's clean method so that we don't
             have to use the database and seed it with data that would allow the base
             field's checks to pass
@@ -138,17 +184,10 @@ class TestBaseMetricsElementClean:
             we can sniff the parameters passed to it
         """
         # given
+        mocked_get_geography_code_for_geography.return_value = "E92000001"
         block = BaseMetricsElement()
         value: StructValue = block.to_python(value=self.valid_payload)
         mocked_super_clean.return_value = value
-        # use the patched get_geography_code_for_geography method to get the expected
-        # geography code - we're not really testing this, just need this value to make
-        # our call assertion at the end neater
-        expected_geography_code = (
-            MetricsAPIInterface().get_geography_code_for_geography(
-                self.valid_payload["geography"], self.valid_payload["geography_type"]
-            )
-        )
 
         # when
         block.clean(value=value)
@@ -156,26 +195,30 @@ class TestBaseMetricsElementClean:
         # then
         mocked_incoming_base_data_model.assert_called_once_with(
             **self.valid_payload,
-            geography_code=expected_geography_code,
+            geography_code="E92000001",
             metric_group="testing",
         )
 
     @patch.object(StructBlock, "clean")
-    @with_geography_code()
-    def test_error_messages(self, mocked_super_clean: MagicMock):
+    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
+    def test_error_messages(
+        self,
+        mocked_get_geography_code_for_geography: MagicMock,
+        mocked_super_clean: MagicMock,
+    ):
         """
         Given an invalid block value
         When `clean()` is called
         Then the correct errors are produced
 
         Patches:
-            `get_geography_code_for_geography` via `with_geography_code` to produce a
-            valid geography code
+            `mocked_get_geography_code_for_geography` to produce a valid geography code
             `mocked_super_clean` patches the StructBlock's clean method so that we don't
             have to use the database and seed it with data that would allow the base
             field's checks to pass
         """
         # given
+        mocked_get_geography_code_for_geography.return_value = "E92000001"
         invalid_payload = {
             **self.valid_payload,
             # replace the topic and the age with invalid values
@@ -198,41 +241,3 @@ class TestBaseMetricsElementClean:
         # validation is done on the metric field in the model
         assert "metric" in block_errors
         assert "age" in block_errors
-
-    @patch.object(StructBlock, "clean")
-    @patch.object(MetricsAPIInterface, "get_geography_code_for_geography")
-    def test_error_messages_geography(
-        self,
-        mocked_get_geography_code_for_geography: MagicMock,
-        mocked_super_clean: MagicMock,
-    ):
-        """
-        Given an invalid geography combination
-        When `clean()` is called
-        Then an error is produced
-
-        Patches:
-            `mocked_get_geography_code_for_geography` patches the interface's
-            `get_geography_code_for_geography` method allowing us to return an error
-            `mocked_super_clean` patches the StructBlock's clean method so that we don't
-            have to use the database and seed it with data that would allow the base
-            field's checks to pass
-        """
-        # given
-        mocked_get_geography_code_for_geography.side_effect = ObjectDoesNotExist
-        block = BaseMetricsElement()
-        value: StructValue = block.to_python(value=self.valid_payload)
-        mocked_super_clean.return_value = value
-
-        # when
-        with pytest.raises(StructBlockValidationError) as exc_info:
-            block.clean(value=value)
-
-        # then
-        block_errors = exc_info.value.block_errors
-        # check no other errors come through other than the ones we expect
-        assert len(block_errors) == 1
-        assert (
-            block_errors["geography_type"].message
-            == "Geography type does not match geography"
-        )
