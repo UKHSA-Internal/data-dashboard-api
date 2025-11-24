@@ -146,6 +146,9 @@ class BaseMetricsElement(blocks.StructBlock):
         Args:
             value: the block value to validate
 
+        Returns:
+            the metric group extracted from the metric field
+
         Raises:
             StructBlockValidationError on the metric if a group was not extractable
         """
@@ -172,6 +175,9 @@ class BaseMetricsElement(blocks.StructBlock):
 
         Args:
             value: the block value to validate
+
+        Returns:
+            the geography code for the given geography and geography type fields
 
         Raises:
             StructBlockValidationError on the geography_type if a code isn't findable
