@@ -73,11 +73,26 @@ class BaseMetricsElement(blocks.StructBlock):
         help_text=help_texts.STRATUM_FIELD,
     )
 
-    def clean(self, value):
-        # call the super version first to get the basics handled. This ensures that all
-        # the fields meet their base requirements before we then do further validations
-        # thus avoiding, for example, flagging required fields as invalid according to a
-        # deeper check, when they are just missing
+    def clean(self, value) -> blocks.StructValue:
+        """
+        Validate the block value, convert it to a StructValue, and return it.
+
+        This method prioritises the basic validation checks defined on the block
+        attributes before then completing deeper validation of the values. This ensures
+        that, for example, errors raised for missing required attributes are raised
+        before deeper, more complex errors.
+
+        Args:
+            value: the block value to validate and convert
+
+        Returns:
+            a new, validated StructValue object
+
+        Raises:
+            StructBlockValidationError if validation errors are found
+        """
+        # call the super version first to do the basic input validation, then do our
+        # deeper validation after
         result = super().clean(value=value)
         self._validate_data_inputs(value=result)
         return result
@@ -85,12 +100,13 @@ class BaseMetricsElement(blocks.StructBlock):
     @classmethod
     def _validate_data_inputs(cls, *, value: blocks.StructValue) -> None:
         """
-        Validates the block value against the shared IncomingBaseDataModel which is used
-        for ingestion validation as well. This allows us to catch issues such as invalid
-        metric combinations and flag them to CMS users.
+        Validates the block value against our metric validations to check the
+        combinations of values that have been selected are valid according to our
+        logical model.
 
-        If issues are found, a StrutBlockValidationError is raised, otherwise nothing
-        happens and this function will simply return.
+        This uses the IncomingBaseDataModel which is used for ingestion validation as
+        well to ensure consistency. If issues are found, a StrutBlockValidationError is
+        raised, otherwise nothing happens and this function will simply return.
 
         Args:
             value: the block value to validate
@@ -98,29 +114,9 @@ class BaseMetricsElement(blocks.StructBlock):
         Raises:
             StructBlockValidationError if any problems are found
         """
-        # try to extract the metric group from the selected metric
-        try:
-            metric_group = value["metric"].split("_")[1]
-        except IndexError as e:
-            raise blocks.StructBlockValidationError(
-                block_errors={
-                    "metric": ValidationError("Invalid metric, could not extract group")
-                }
-            ) from e
-
-        # look up the geography code for the selected geography and geography type
-        try:
-            geography_code = MetricsAPIInterface().get_geography_code_for_geography(
-                geography=value["geography"], geography_type=value["geography_type"]
-            )
-        except ObjectDoesNotExist as e:
-            raise blocks.StructBlockValidationError(
-                block_errors={
-                    "geography_type": ValidationError(
-                        "Geography type does not match geography"
-                    )
-                }
-            ) from e
+        # validate and extract these values
+        metric_group = cls._validate_metric_group(value=value)
+        geography_code = cls._validate_geography_code(value=value)
 
         try:
             IncomingBaseDataModel(
@@ -141,6 +137,57 @@ class BaseMetricsElement(blocks.StructBlock):
                 raise blocks.StructBlockValidationError(
                     block_errors=block_errors
                 ) from validation_error
+
+    @classmethod
+    def _validate_metric_group(cls, *, value: blocks.StructValue) -> str:
+        """
+        Ensures that a metric group is extractable from the block value and returns it.
+
+        Args:
+            value: the block value to validate
+
+        Raises:
+            StructBlockValidationError on the metric if a group was not extractable
+        """
+        try:
+            return value["metric"].split("_")[1]
+        except IndexError as e:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "metric": ValidationError("Invalid metric, could not extract group")
+                }
+            ) from e
+
+    @classmethod
+    def _validate_geography_code(cls, *, value: blocks.StructValue) -> str:
+        """
+        Ensures that a geography code exists for the selected geography and
+        geography_type combination, and returns it.
+
+        This function errors on the geography_type rather than the geography as the user
+        selects it after the geography in the UI. We present the error to the user as a
+        problem with the geography type not matching the geography rather than the other
+        way around and don't mention the code at all as it is an implementational detail
+        they don't have any control over.
+
+        Args:
+            value: the block value to validate
+
+        Raises:
+            StructBlockValidationError on the geography_type if a code isn't findable
+        """
+        try:
+            return MetricsAPIInterface().get_geography_code_for_geography(
+                geography=value["geography"], geography_type=value["geography_type"]
+            )
+        except ObjectDoesNotExist as e:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "geography_type": ValidationError(
+                        "Geography type does not match geography"
+                    )
+                }
+            ) from e
 
 
 class ChartPlotElement(BaseMetricsElement):
