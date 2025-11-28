@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 
 from botocore.exceptions import ParamValidationError
@@ -13,6 +14,7 @@ from feedback.api.serializers.questions import (
 from feedback.email_server import send_email
 
 SUGGESTIONS_API_TAG = "suggestions"
+logger = logging.getLogger(__name__)
 
 
 class SuggestionsV2View(APIView):
@@ -32,11 +34,15 @@ class SuggestionsV2View(APIView):
         **Hitting this endpoint in all other environments will not send any emails**
 
         """
+        logger.info("Email request: %s", request.data)
+
         serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
+            logger.info("sending mail from view")
             send_email(suggestions=serializer.validated_data)
         except ParamValidationError:
+            logger.info("ParamValidationError", exc_info=True)
             return Response(status=HTTPStatus.BAD_REQUEST)
         return HttpResponse(HTTPStatus.OK.value)
