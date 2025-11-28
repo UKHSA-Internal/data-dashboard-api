@@ -34,7 +34,7 @@ class SuggestionsV2View(APIView):
         **Hitting this endpoint in all other environments will not send any emails**
 
         """
-        logger.info("Email request: %s", request.data)
+        logger.info("Email request received")
 
         serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
