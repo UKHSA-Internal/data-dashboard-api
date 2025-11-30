@@ -42,6 +42,7 @@ class _ChemicalExposureTopic(Enum):
 class _SeasonalEnvironmentalTopic(Enum):
     HEAT_OR_SUNSTROKE = "heat-or-sunstroke"
     HEAT_OR_SUNBURN = "heat-or-sunburn"
+    IMPACT_OF_COLD = "impact-of-cold"
 
 
 class _VaccinePreventableTopic(Enum):
