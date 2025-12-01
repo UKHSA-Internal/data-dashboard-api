@@ -76,4 +76,12 @@ INVALID_PARAMETERS = [
         "hepatitis-b_vaccinations_coverageOf3DosesTargetWHO",
         "vaccinations",
     ),  # Invalid topic of `Hepatitis-C` instead of `Hepatitis-B`
+    (
+        "climate_and_environment",
+        "respiratory",
+        "Scarlet-fever",
+        "impact-of-cold",
+        "impact-of-cold_syndromic_emergencyDepartment_averageRolling7Day",
+        "syndromic",
+    ),  # Invalid child_theme
 ]

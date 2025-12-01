@@ -146,4 +146,11 @@ VALID_PARAMETERS = [
         "hepatitis-b_vaccinations_coverageOf3DosesTargetWHO",
         "vaccinations",
     ),
+    (
+        "climate_and_environment",
+        "seasonal_environmental",
+        "impact-of-cold",
+        "impact-of-cold_syndromic_emergencyDepartment_averageRolling7Day",
+        "syndromic",
+    ),
 ]
