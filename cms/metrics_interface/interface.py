@@ -380,3 +380,20 @@ class MetricsAPIInterface:
 
         """
         return self.age_manager.get_all_names()
+
+    def get_geography_code_for_geography(
+        self, geography: str, geography_type: str
+    ) -> str:
+        """
+        Given a geography and geography type, retrieves the associated geography code.
+
+        Returns:
+            the geography code as a str
+
+        Raises:
+            DoesNotExist if no record is found with the given geography and geography
+            type combination, DoesNotExist is raised
+        """
+        return self.geography_manager.get_geography_code_for_geography(
+            geography=geography, geography_type=geography_type
+        )
