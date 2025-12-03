@@ -11,7 +11,7 @@ GitPython==3.1.45
 import-linter==2.7
 isort==6.1.0
 pip-api==0.0.34
-pip_audit==2.9.0
+pip_audit==2.10.0
 pip-requirements-parser==32.0.1
 pre-commit==4.5.0
 pylint==3.3.9
