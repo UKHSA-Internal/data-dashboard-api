@@ -15,7 +15,7 @@ distlib==0.4.0
 django-cors-headers==4.8.0
 django-db-connection-pool==1.2.5
 django-filter==24.3
-django-modelcluster==6.4
+django-modelcluster==6.4.1
 django-permissionedforms==0.1
 django-taggit==5.0.0
 django-treebeard==4.8.0
