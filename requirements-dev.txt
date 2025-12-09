@@ -8,7 +8,7 @@ freezegun==1.5.5
 Faker==38.2.0
 gitdb==4.0.12
 GitPython==3.1.45
-import-linter==2.7
+import-linter==2.8
 isort==6.1.0
 pip-api==0.0.34
 pip_audit==2.10.0
