@@ -69,7 +69,7 @@ requests==2.32.5
 rich==14.2.0
 ruamel.yaml==0.18.16
 ruamel.yaml.clib==0.2.15
-SQLAlchemy==2.0.44
+SQLAlchemy==2.0.45
 scour==0.38.2
 setuptools==80.9.0
 simplejson==3.20.2
