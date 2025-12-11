@@ -354,6 +354,7 @@ class SingleCategoryChartSettings(ChartSettings):
         chart_config["showlegend"] = False
         chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
+        chart_config["margin"]["t"] = 12
         chart_config["margin"]["pad"] = 25
 
         # x_axis config

@@ -685,6 +685,7 @@ class TestSingleCategoryChartSettings:
         expected_chart_config["showlegend"] = False
         expected_chart_config["margin"]["r"] = 35
         expected_chart_config["margin"]["l"] = 25
+        expected_chart_config["margin"]["t"] = 12
         expected_chart_config["margin"]["pad"] = 25
 
         # x_axis settings
