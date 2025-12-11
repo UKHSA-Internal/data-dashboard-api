@@ -87,7 +87,7 @@ And finally, the entire project dependencies will be installed within the virtua
 
 5. Apply the database migrations and ensure Django collects all required static files.
 ```bash
-uhd server setup-all
+uhd server bootstrap all
 ```
 
 6. Run a development server:
