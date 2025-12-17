@@ -102,7 +102,8 @@ def upload_truncated_test_data(*, multiprocessing_enabled: bool = True) -> None:
     """
     clear_metrics_tables()
 
-    test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths()
+    test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths(
+    )
 
     if multiprocessing_enabled:
         run_with_multiple_processes(

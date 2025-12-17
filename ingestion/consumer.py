@@ -407,7 +407,7 @@ class Consumer:
                 period_end=headline_data.period_end,
                 upper_confidence=headline_data.upper_confidence,
                 metric_value=headline_data.metric_value,
-                lower_confidence=headline_data.lower_confidence
+                lower_confidence=headline_data.lower_confidence,
                 is_public=headline_data.is_public,
             )
             for headline_data in self.dto.data
