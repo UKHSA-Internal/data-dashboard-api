@@ -49,6 +49,16 @@ class CoreHeadline(models.Model):
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
+    upper_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        null=True,
+    )
+    lower_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        null=True,
+    )
     force_write = models.BooleanField(default=False)
 
     is_public = models.BooleanField(default=True, null=False)
