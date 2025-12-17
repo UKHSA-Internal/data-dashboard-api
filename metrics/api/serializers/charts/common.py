@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
@@ -85,4 +86,11 @@ class BaseChartsSerializer(serializers.Serializer):
         default=False,
         allow_null=True,
         help_text=help_texts.CHART_LEGEND_TITLE,  # TODO add help text
+    )
+    confidence_colour = serializers.ChoiceField(
+        choices=RGBAChartLineColours.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
     )

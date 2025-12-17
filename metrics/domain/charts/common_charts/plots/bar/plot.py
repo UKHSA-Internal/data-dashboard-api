@@ -36,11 +36,17 @@ def create_bar_plot(
             plot_data.y_axis_values,
             plot_data.additional_values["lower_confidence"]
         )]
+        confidence_color: colour_scheme.RGBAChartLineColours = (
+            colour_scheme.RGBAChartLineColours.get_colour(
+                colour=plot_data.parameters.confidence_colour
+            )
+        )
+        error_bar_colour: str = confidence_color.stringified
         error_y = dict(
             type='data',
             array=upper_error,
             arrayminus=lower_error,
-            color='green',  # TODO - pass color in from request as per confidence_intervals
+            color=error_bar_colour,
             thickness=1.5,
             width=3,
         )

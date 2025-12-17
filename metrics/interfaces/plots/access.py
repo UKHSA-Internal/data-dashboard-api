@@ -215,6 +215,7 @@ class PlotsInterface:
         # Set each plot with the selected chart-level x and y-axis choices
         plot_parameters.x_axis = self.chart_request_params.x_axis
         plot_parameters.y_axis = self.chart_request_params.y_axis
+        plot_parameters.confidence_colour = self.chart_request_params.confidence_colour
 
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
             plot_parameters=plot_parameters,
