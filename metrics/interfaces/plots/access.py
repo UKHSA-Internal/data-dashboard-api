@@ -222,7 +222,6 @@ class PlotsInterface:
             parameters=plot_parameters,
             aggregated_results=aggregated_results,
             latest_date=queryset_result.latest_date,
-            lower_confidence_values=plot_parameters.lower_confidence
         )
 
     def build_plots_data_for_full_queryset(self) -> list[CompletePlotData]:

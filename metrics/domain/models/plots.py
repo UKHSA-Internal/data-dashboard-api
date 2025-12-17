@@ -155,10 +155,11 @@ class PlotGenerationData(BaseModel):
     additional_values: dict[str, Any] | None = None
     latest_date: Any = None  # noqa: UP007
     lower_confidence_values: Any
+    upper_confidence_values: Any
 
     @classmethod
     def create_from_parameters(
-        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str, lower_confidence_values: Any
+        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str,
     ) -> Self:
         keys_to_exclude = [parameters.x_axis_value, parameters.y_axis_value]
         additional_values = {
@@ -172,7 +173,8 @@ class PlotGenerationData(BaseModel):
             y_axis_values=aggregated_results[parameters.y_axis_value],
             additional_values=additional_values,
             latest_date=latest_date,
-            lower_confidence_values=lower_confidence_values
+            lower_confidence_values=aggregated_results["lower_confidence"],
+            upper_confidence_values=aggregated_results["upper_confidence"],
         )
 
     @property

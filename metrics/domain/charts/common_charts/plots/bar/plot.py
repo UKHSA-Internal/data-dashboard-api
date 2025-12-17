@@ -37,7 +37,7 @@ def create_bar_plot(
                 "width": 1,
             },
         },
-        error_y={"type": "data", "array": plot_data.lower_confidence_values},
+        error_y={"type": "data", "arrayminus": plot_data.lower_confidence_values, "array": plot_data.upper_confidence_values},
         name=legend,
         showlegend=bool(legend),
     )
