@@ -11,14 +11,11 @@ from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
-    ChartRequestParams,
-    PlotGenerationData,
-    PlotParameters,
+    ChartRequestParams, PlotGenerationData, PlotParameters,
 )
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.validation import (
-    DatesNotInChronologicalOrderError,
-    MetricDoesNotSupportTopicError,
+    DatesNotInChronologicalOrderError, MetricDoesNotSupportTopicError,
     PlotValidation,
 )
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
@@ -225,6 +222,7 @@ class PlotsInterface:
             parameters=plot_parameters,
             aggregated_results=aggregated_results,
             latest_date=queryset_result.latest_date,
+            lower_confidence_values=plot_parameters.lower_confidence
         )
 
     def build_plots_data_for_full_queryset(self) -> list[CompletePlotData]:

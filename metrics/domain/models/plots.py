@@ -8,9 +8,7 @@ from pydantic.main import Any, BaseModel
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
-    ChartAxisFields,
-    ChartTypes,
-    DataSourceFileType,
+    ChartAxisFields, ChartTypes, DataSourceFileType,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models.charts.common import BaseChartRequestParams
@@ -38,6 +36,8 @@ class PlotParameters(BaseModel):
     use_smooth_lines: bool = True
     use_markers: bool = False
     metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
+    lower_confidence: float | None = None
+    upper_confidence: float | None = None
 
     @property
     def metric_group(self) -> str:
@@ -93,7 +93,7 @@ class PlotParameters(BaseModel):
 
         """
         params = {
-            "fields_to_export": [self.x_axis_value, self.y_axis_value],
+            "fields_to_export": [self.x_axis_value, self.y_axis_value, "upper_confidence", "lower_confidence"],
             "metric": self.metric or "",
             "topic": self.topic or "",
             "stratum": self.stratum or "",
@@ -102,6 +102,8 @@ class PlotParameters(BaseModel):
             "sex": self.sex or "",
             "age": self.age or "",
             "metric_value_ranges": self.metric_value_ranges or [],
+            "lower_confidence": self.lower_confidence or None,
+            "upper_confidence": self.upper_confidence or None,
         }
 
         if self.is_timeseries_data:
@@ -152,10 +154,11 @@ class PlotGenerationData(BaseModel):
     y_axis_values: Any
     additional_values: dict[str, Any] | None = None
     latest_date: Any = None  # noqa: UP007
+    lower_confidence_values: Any
 
     @classmethod
     def create_from_parameters(
-        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str
+        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str, lower_confidence_values: Any
     ) -> Self:
         keys_to_exclude = [parameters.x_axis_value, parameters.y_axis_value]
         additional_values = {
@@ -169,6 +172,7 @@ class PlotGenerationData(BaseModel):
             y_axis_values=aggregated_results[parameters.y_axis_value],
             additional_values=additional_values,
             latest_date=latest_date,
+            lower_confidence_values=lower_confidence_values
         )
 
     @property
