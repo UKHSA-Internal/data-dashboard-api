@@ -15,6 +15,7 @@ class _InfectiousDiseaseChildTheme(Enum):
 
 class _ExtremeEventChildTheme(Enum):
     WEATHER_ALERT = "weather_alert"
+    MORTALITY_REPORT = "mortality-report"
 
 
 class _ImmunisationChildTheme(Enum):
@@ -66,6 +67,10 @@ class _BloodbourneTopic(Enum):
 class _WeatherAlertTopic(Enum):
     HEAT_ALERT = "Heat-alert"
     COLD_ALERT = "Cold-alert"
+
+
+class _MortalityAlertTopic(Enum):
+    MORTALITY_REPORT = "Heat-mortality"
 
 
 class _ChildhoodVaccinesTopic(Enum):
@@ -159,3 +164,4 @@ class Topic(BaseEnum):
     CHEMICAL_EXPOSURE = _ChemicalExposureTopic
     SEASONAL_ENVIRONMENTAL = _SeasonalEnvironmentalTopic
     CHILDHOOD_VACCINES = _ChildhoodVaccinesTopic
+    MORTALITY_REPORT = _MortalityAlertTopic
