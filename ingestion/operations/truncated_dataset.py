@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def _gather_test_data_source_file_paths() -> list[Path]:
-    path_to_test_source_data = f"{ROOT_LEVEL_BASE_DIR}/source_data"
+    path_to_test_source_data = f"{ROOT_LEVEL_BASE_DIR}/heatmap_source_data"
     source_file_names = next(os.walk(path_to_test_source_data))[2]
     return [
         Path(f"{path_to_test_source_data}/{source_file_name}")
