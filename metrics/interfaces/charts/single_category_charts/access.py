@@ -251,6 +251,7 @@ class ChartsInterface:
             y_axis_minimum_value=self.chart_request_params.y_axis_minimum_value,
             y_axis_maximum_value=self.chart_request_params.y_axis_maximum_value,
             legend_title=self.chart_request_params.legend_title,
+            confidence_intervals=self.chart_request_params.confidence_intervals,
         )
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:

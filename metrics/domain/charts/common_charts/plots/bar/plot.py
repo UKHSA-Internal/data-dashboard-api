@@ -27,9 +27,30 @@ def create_bar_plot(
     bar_colour: str = selected_color.stringified
     legend: str = plot_data.parameters.label
 
+    if "upper_confidence" in plot_data.additional_values:
+        upper_error = [x-y for x, y in zip(
+            plot_data.additional_values["upper_confidence"],
+            plot_data.y_axis_values
+        )]
+        lower_error = [x-y for x, y in zip(
+            plot_data.y_axis_values,
+            plot_data.additional_values["lower_confidence"]
+        )]
+        error_y = dict(
+            type='data',
+            array=upper_error,
+            arrayminus=lower_error,
+            color='green',  # TODO - pass color in from request as per confidence_intervals
+            thickness=1.5,
+            width=3,
+        )
+    else:
+        error_y = None
+
     bar = plotly.graph_objects.Bar(
         x=plot_data.x_axis_values,
         y=plot_data.y_axis_values,
+        error_y=error_y,
         marker={
             "color": bar_colour,
             "line": {
