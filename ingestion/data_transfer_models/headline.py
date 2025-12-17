@@ -22,6 +22,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
     upper_confidence: float
+    lower_confidence: float
     is_public: bool = True
 
     @field_validator("embargo")
@@ -157,6 +158,7 @@ def _build_enriched_headline_specific_fields(
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
             is_public=individual_time_series.get("is_public", True),
+            lower_confidence=individual_time_series["lower_confidence"],
             upper_confidence=individual_time_series["upper_confidence"],
         )
         for individual_time_series in source_data["data"]
