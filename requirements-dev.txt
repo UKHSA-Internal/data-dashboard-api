@@ -13,7 +13,7 @@ isort==6.1.0
 pip-api==0.0.34
 pip_audit==2.10.0
 pip-requirements-parser==32.0.1
-pre-commit==4.5.0
+pre-commit==4.5.1
 pylint==3.3.9
 pylint-django==2.6.1
 pytest==9.0.2
