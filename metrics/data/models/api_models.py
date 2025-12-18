@@ -67,6 +67,7 @@ class APITimeSeries(models.Model):
                     "date",
                     "metric_value",
                     "in_reporting_delay_period",
+                    "embargo",
                 ),
                 name="The `APITimeSeries` record should be unique if `force_write` is False",
                 condition=Q(force_write=False),

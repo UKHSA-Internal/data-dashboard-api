@@ -67,6 +67,7 @@ class CoreHeadline(models.Model):
                     "period_start",
                     "period_end",
                     "metric_value",
+                    "embargo",
                 ),
                 name="The `CoreHeadline` record should be unique if `force_write` is False",
                 condition=Q(force_write=False),
