@@ -64,6 +64,19 @@ class CoreTimeSeries(models.Model):
 
     is_public = models.BooleanField(default=True, null=False)
 
+    upper_confidence = models.DecimalField(
+        null=True,
+        default=None,
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+    )
+    lower_confidence = models.DecimalField(
+        null=True,
+        default=None,
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+    )
+
     objects = CoreTimeSeriesManager()
 
     class Meta:
