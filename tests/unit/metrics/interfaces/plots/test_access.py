@@ -535,12 +535,7 @@ class TestPlotsInterface:
         # Then
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
-            fields_to_export=[
-                mocked_x_axis,
-                mocked_y_axis,
-                "lower_confidence",
-                "upper_confidence",
-            ],
+            fields_to_export=[mocked_x_axis, mocked_y_axis],
             topic=mocked_topic,
             metric=mocked_metric,
             geography=mocked_geography,
@@ -600,12 +595,7 @@ class TestPlotsInterface:
         # Then
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
-            fields_to_export=[
-                mocked_x_axis,
-                mocked_y_axis,
-                "lower_confidence",
-                "upper_confidence",
-            ],
+            fields_to_export=[mocked_x_axis, mocked_y_axis],
             topic=fake_metric.topic.name,
             metric=fake_metric.name,
             geography=mocked_geography,
@@ -674,8 +664,6 @@ class TestPlotsInterface:
                 mocked_x_axis,
                 mocked_y_axis,
                 "in_reporting_delay_period",
-                "lower_confidence",
-                "upper_confidence",
             ],
             field_to_order_by=mocked_x_axis,
             topic=mocked_topic,
