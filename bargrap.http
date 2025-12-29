@@ -1,6 +1,7 @@
-GET
+POST http://localhost:8000/api/charts/v2
 Content-Type: application/json
 Cookie: csrftoken=EFb4ZxbxgxQCjbSywgvqgluYXRbzGBnj; sessionid=kindq9yb2jia86d1ip0ejz2mcmqja2xf; __next_hmr_refresh_hash__=62150d5cd9fe9b22949d9084088e5fea4ed2ba09f0649e4b
+X-CSRFTOKEN: kf4VhboSYy6GE01Qtd7ynNnnIcGRICt0OK5P6ypf4VM8N1JePjsOtYHbvTHge3G9
 
 {
   "file_format": "png",
@@ -17,6 +18,38 @@ Cookie: csrftoken=EFb4ZxbxgxQCjbSywgvqgluYXRbzGBnj; sessionid=kindq9yb2jia86d1ip
       "topic": "Heat-mortality",
       "metric": "heat-mortality_headline_heatMortalityRateEpisodeSex",
       "stratum": "Episode 1",
+      "age": "all",
+      "geography": "England",
+      "geography_type": "Nation",
+      "sex": "f",
+      "date_from": null,
+      "date_to": null,
+      "chart_type": "bar",
+      "label": "",
+      "line_colour": "TREND_LINE_NEUTRAL",
+      "line_type": "SOLID",
+      "use_smooth_lines": "false"
+    },
+    {
+      "topic": "Heat-mortality",
+      "metric": "heat-mortality_headline_heatMortalityRateEpisodeSex",
+      "stratum": "Episode 2",
+      "age": "all",
+      "geography": "England",
+      "geography_type": "Nation",
+      "sex": "f",
+      "date_from": null,
+      "date_to": null,
+      "chart_type": "bar",
+      "label": "",
+      "line_colour": "TREND_LINE_NEUTRAL",
+      "line_type": "SOLID",
+      "use_smooth_lines": "false"
+    },
+    {
+      "topic": "Heat-mortality",
+      "metric": "heat-mortality_headline_heatMortalityRateEpisodeSex",
+      "stratum": "Episode 3",
       "age": "all",
       "geography": "England",
       "geography_type": "Nation",
