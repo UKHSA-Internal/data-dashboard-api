@@ -263,6 +263,17 @@ class HeadlineChartPlotElement(BaseMetricsElement):
         default=get_colours()[0],
         help_text=help_texts.LINE_COLOUR_FIELD,
     )
+    confidence_intervals = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text=help_texts.CONFIDENCE_INTERVAL,
+    )
+    confidence_colour = blocks.ChoiceBlock(
+        required=False,
+        choices=get_colours,
+        default=get_colours()[0],
+        help_text=help_texts.CONFIDENCE_COLOUR,
+    )
     label = blocks.TextBlock(
         required=False,
         help_text=help_texts.LABEL_FIELD,
