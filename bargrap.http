@@ -1,0 +1,33 @@
+GET
+Content-Type: application/json
+Cookie: csrftoken=EFb4ZxbxgxQCjbSywgvqgluYXRbzGBnj; sessionid=kindq9yb2jia86d1ip0ejz2mcmqja2xf; __next_hmr_refresh_hash__=62150d5cd9fe9b22949d9084088e5fea4ed2ba09f0649e4b
+
+{
+  "file_format": "png",
+  "chart_height": 300,
+  "chart_width": 900,
+  "x_axis": "stratum",
+  "y_axis": "metric",
+  "x_axis_title": "",
+  "y_axis_title": "",
+  "y_axis_minimum_value": 0,
+  "y_axis_maximum_value": "",
+  "plots": [
+    {
+      "topic": "Heat-mortality",
+      "metric": "heat-mortality_headline_heatMortalityRateEpisodeSex",
+      "stratum": "Episode 1",
+      "age": "all",
+      "geography": "England",
+      "geography_type": "Nation",
+      "sex": "f",
+      "date_from": null,
+      "date_to": null,
+      "chart_type": "bar",
+      "label": "",
+      "line_colour": "TREND_LINE_NEUTRAL",
+      "line_type": "SOLID",
+      "use_smooth_lines": "false"
+    }
+  ]
+}
