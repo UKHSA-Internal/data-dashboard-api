@@ -126,3 +126,7 @@ CHART_USE_SMOOTH_LINES: str = """
 Boolean switch to decide whether to draw splines on individual data points.
 If set to false, linear point-to-point lines will be drawn between points.
 """
+
+CONFIDENCE_INTERVALS: str = """
+Boolean switch to decide whether to draw confidence intervals if provided
+"""
