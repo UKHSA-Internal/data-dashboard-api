@@ -8,3 +8,4 @@ from .child_theme import validate_child_theme
 from .topic import validate_topic
 from .in_reporting_delay_period import validate_in_reporting_delay_period
 from .deprecated_geographies import validate_deprecated_geographies
+from .confidence_intervals import validate_confidence_intervals
