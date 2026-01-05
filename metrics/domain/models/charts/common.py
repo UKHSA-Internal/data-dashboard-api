@@ -18,6 +18,8 @@ class BaseChartRequestParams(BaseModel):
     y_axis_maximum_value: Decimal | int | None = None
     legend_title: str | None = ""
     request: Request | None = None
+    confidence_intervals: bool | None = False
+    confidence_colour: str | None = ""
 
     class Config:
         arbitrary_types_allowed = True
