@@ -30,6 +30,8 @@ class PlotParameters(BaseModel):
     date_from: str | None = ""
     date_to: str | None = ""
     label: str | None = ""
+    confidence_intervals: str | None = ""
+    confidence_colour: str | None = ""
     line_colour: str | None = ""
     line_type: str | None = ""
     x_axis: str | None = ""
@@ -219,6 +221,8 @@ class ChartGenerationPayload(BaseModel):
     y_axis_minimum_value: Decimal = 0
     y_axis_maximum_value: Decimal | None = None
     legend_title: str | None = ""
+    confidence_intervals: bool | None = False
+    confidence_colour: str | None = ""
 
 
 class CompletePlotData(BaseModel):
