@@ -19,7 +19,9 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     epiweek: int = Field(ge=1, le=53)
     date: datetime.date
     embargo: datetime.datetime | None
+    upper_confidence: float | None = None
     metric_value: float
+    lower_confidence: float | None = None
     in_reporting_delay_period: bool = False
     force_write: bool = False
     is_public: bool = True
@@ -123,7 +125,9 @@ def _build_enriched_time_series_specific_fields(
             epiweek=individual_time_series["epiweek"],
             date=individual_time_series["date"],
             embargo=individual_time_series["embargo"],
+            upper_confidence=individual_time_series.get("upper_confidence", None),
             metric_value=individual_time_series["metric_value"],
+            lower_confidence=individual_time_series.get("lower_confidence", None),
             in_reporting_delay_period=individual_time_series.get(
                 "in_reporting_delay_period", False
             ),

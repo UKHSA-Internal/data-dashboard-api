@@ -245,8 +245,6 @@ class TestHeadlineDTO:
             sex=source_data["sex"],
             stratum=source_data["stratum"],
             refresh_date=source_data["refresh_date"],
-            upper_confidence=source_data["upper_confidence"],
-            lower_confidence=source_data["lower_confidence"],
             data=lower_level_fields,
         )
 
