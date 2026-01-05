@@ -36,7 +36,9 @@ class FakeCoreHeadlineFactory(factory.Factory):
         cls,
         topic: str,
         metric: str,
+        upper_confidence: float = None,
         metric_value: int = None,
+        lower_confidence: float = None,
         geography: str | None = None,
         geography_type: str | None = None,
         geography_code: str | None = None,
@@ -63,11 +65,15 @@ class FakeCoreHeadlineFactory(factory.Factory):
             topic_name=topic,
         )
         metric_value: int = metric_value or cls._pick_random_positive_metric_value()
+        upper_confidence: float = upper_confidence or None
+        lower_confidence: float = lower_confidence or None
 
         return cls.build(
             sex=sex,
             metric_value=metric_value,
+            upper_confidence=upper_confidence,
             metric=metric,
+            lower_confidence=lower_confidence,
             geography=geography,
             stratum=stratum,
             age=age,

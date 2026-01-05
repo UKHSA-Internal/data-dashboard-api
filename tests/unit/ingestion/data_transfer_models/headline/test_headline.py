@@ -245,10 +245,67 @@ class TestHeadlineDTO:
             sex=source_data["sex"],
             stratum=source_data["stratum"],
             refresh_date=source_data["refresh_date"],
-            upper_confidence=source_data["upper_confidence"],
-            lower_confidence=source_data["lower_confidence"],
             data=lower_level_fields,
         )
 
         # Then
         headline_dto.model_validate(headline_dto)
+
+    def test_validates_confidence_intervals(self):
+        """
+        Given a payload containing an invalid confidence interval
+        When the model is initialized
+        Then a ValidationError is thrown
+        """
+        # Given
+        fake_period_start = "2023-11-20"
+        fake_period_end = VALID_DATETIME
+
+        headline_dto = None
+        with pytest.raises(ValidationError):
+            # Upper lower than metric value
+            headline_dto = InboundHeadlineSpecificFields(
+                period_start=fake_period_start,
+                period_end=fake_period_end,
+                upper_confidence=120,
+                metric_value=123,
+                lower_confidence=80,
+                embargo=None,
+            )
+        assert headline_dto is None
+
+        with pytest.raises(ValidationError):
+            # Upper but not Lower present
+            headline_dto = InboundHeadlineSpecificFields(
+                period_start=fake_period_start,
+                period_end=fake_period_end,
+                upper_confidence=120,
+                metric_value=123,
+                lower_confidence=None,
+                embargo=None,
+            )
+        assert headline_dto is None
+
+        with pytest.raises(ValidationError):
+            # Upper confidence lower than lower confidence
+            headline_dto = InboundHeadlineSpecificFields(
+                period_start=fake_period_start,
+                period_end=fake_period_end,
+                upper_confidence=125,
+                metric_value=123,
+                lower_confidence=126,
+                embargo=None,
+            )
+        assert headline_dto is None
+
+        with pytest.raises(ValidationError):
+            # lower confidence higher than metric value
+            headline_dto = InboundHeadlineSpecificFields(
+                period_start=fake_period_start,
+                period_end=fake_period_end,
+                upper_confidence=125,
+                metric_value=123,
+                lower_confidence=124,
+                embargo=None,
+            )
+        assert headline_dto is None

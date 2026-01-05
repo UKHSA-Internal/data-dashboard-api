@@ -19,8 +19,10 @@ class InboundHeadlineSpecificFields(BaseModel):
 
     period_start: datetime.datetime
     period_end: datetime.datetime
+    upper_confidence: float | None = None
     embargo: datetime.datetime | None
     metric_value: float
+    lower_confidence: float | None = None
     is_public: bool = True
 
     @field_validator("embargo")
@@ -111,6 +113,28 @@ class InboundHeadlineSpecificFields(BaseModel):
         )
 
     @model_validator(mode="after")
+    def validate_upper_confidence(self) -> Self:
+        """Checks that the rules for upper_confidence are followed
+
+        Args:
+           self: the model to be validated
+
+        Returns:
+             The input unchanged if it has passed the validation
+             checks.
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        validation.validate_upper_confidence(
+            upper_confidence=self.upper_confidence,
+            lower_confidence=self.lower_confidence,
+            metric_value=self.metric_value,
+        )
+        return self
+
+    @model_validator(mode="after")
     def invalidate_non_public_data_for_public_ingestion(self) -> Self:
         """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
         if not AUTH_ENABLED and not self.is_public:
@@ -133,7 +157,9 @@ def _build_headline_dto(
         child_theme=source_data["child_theme"],
         topic=source_data["topic"],
         metric_group=source_data["metric_group"],
+        upper_confidence=source_data.get("upper_confidence"),
         metric=source_data["metric"],
+        lower_confidence=source_data.get("lower_confidence"),
         geography_type=source_data["geography_type"],
         geography=source_data["geography"],
         geography_code=source_data["geography_code"],
@@ -154,7 +180,9 @@ def _build_enriched_headline_specific_fields(
             period_start=individual_time_series["period_start"],
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
+            upper_confidence=individual_time_series.get("upper_confidence", None),
             metric_value=individual_time_series["metric_value"],
+            lower_confidence=individual_time_series.get("lower_confidence", None),
             is_public=individual_time_series.get("is_public", True),
         )
         for individual_time_series in source_data["data"]
