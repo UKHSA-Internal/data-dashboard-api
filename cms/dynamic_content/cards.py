@@ -24,6 +24,7 @@ from cms.dynamic_content.components import (
 from cms.metrics_interface.field_choices_callables import (
     get_all_subcategory_choices,
     get_all_subcategory_choices_grouped_by_categories,
+    get_colours,
     get_dual_category_chart_types,
     get_dual_chart_secondary_category_choices,
     get_possible_axis_choices,
@@ -283,6 +284,7 @@ class ChartCard(blocks.StructBlock):
         default=False,
         required=False,
     )
+
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
     class Meta:
@@ -309,6 +311,17 @@ class HeadlineChartCard(ChartCard):
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
         required=False,
+    )
+    confidence_intervals = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text=help_texts.CONFIDENCE_INTERVAL,
+    )
+    confidence_colour = blocks.ChoiceBlock(
+        required=False,
+        choices=get_colours,
+        default="BLACK",
+        help_text=help_texts.CONFIDENCE_COLOUR,
     )
     chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
 
