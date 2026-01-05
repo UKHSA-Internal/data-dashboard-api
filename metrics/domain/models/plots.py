@@ -100,8 +100,6 @@ class PlotParameters(BaseModel):
             "fields_to_export": [
                 self.x_axis_value,
                 self.y_axis_value,
-                "upper_confidence",
-                "lower_confidence",
             ],
             "metric": self.metric or "",
             "topic": self.topic or "",
@@ -118,6 +116,9 @@ class PlotParameters(BaseModel):
             params["date_from"] = self.date_from_value
             params["date_to"] = self.date_to_value
             params["field_to_order_by"] = self.x_axis_value
+        else:
+            params["fields_to_export"].append("upper_confidence")
+            params["fields_to_export"].append("lower_confidence")
 
         return params
 
