@@ -15,6 +15,7 @@ from metrics.domain.models import (
     PlotGenerationData,
     PlotParameters,
 )
+from metrics.domain.models.charts.common import BaseChartRequestParams
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.validation import (
     DatesNotInChronologicalOrderError,
@@ -153,6 +154,10 @@ class PlotsInterface:
             plot_params["theme"] = topic.sub_theme.theme.name
             plot_params["sub_theme"] = topic.sub_theme.name
 
+        if self.chart_request_params.confidence_intervals:
+            plot_params["fields_to_export"].append("upper_confidence")
+            plot_params["fields_to_export"].append("lower_confidence")
+
         return self.core_model_manager.query_for_data(
             **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions
         )
@@ -211,6 +216,11 @@ class PlotsInterface:
         # Set each plot with the selected chart-level x and y-axis choices
         plot_parameters.x_axis = self.chart_request_params.x_axis
         plot_parameters.y_axis = self.chart_request_params.y_axis
+
+        if isinstance(self.chart_request_params, BaseChartRequestParams):
+            plot_parameters.confidence_colour = (
+                self.chart_request_params.confidence_colour
+            )
 
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
             plot_parameters=plot_parameters,
