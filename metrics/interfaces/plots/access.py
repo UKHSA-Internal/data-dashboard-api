@@ -153,11 +153,9 @@ class PlotsInterface:
             plot_params["theme"] = topic.sub_theme.theme.name
             plot_params["sub_theme"] = topic.sub_theme.name
 
-        if (
-            # Sometimes this is a Subplots request which doesn't support these
-            hasattr(self.chart_request_params, "confidence_intervals")
-            and self.chart_request_params.confidence_intervals
-        ):
+        # Sometimes this is a Subplots request which doesn't support confidence intervals
+        confidence_intervals = getattr(self.chart_request_params, "confidence_intervals", False)
+        if confidence_intervals:
             plot_params["fields_to_export"].append("upper_confidence")
             plot_params["fields_to_export"].append("lower_confidence")
 
@@ -220,10 +218,8 @@ class PlotsInterface:
         plot_parameters.x_axis = self.chart_request_params.x_axis
         plot_parameters.y_axis = self.chart_request_params.y_axis
 
-        if (
-            # Sometimes this is a Subplots request which doesn't support these
-            hasattr(self.chart_request_params, "confidence_colour")
-        ):
+        confidence_colour = getattr(self.chart_request_params, "confidence_colour", None)
+        if confidence_colour:
             plot_parameters.confidence_colour = (
                 self.chart_request_params.confidence_colour
             )
