@@ -331,7 +331,9 @@ class TestBuildHeadlineDTOFromSource:
             rebuild_specific_fields = {
                 "period_start": specific_field_group.period_start.strftime(DATE_FORMAT),
                 "period_end": specific_field_group.period_end.strftime(DATE_FORMAT),
+                "upper_confidence": specific_field_group.upper_confidence,
                 "metric_value": specific_field_group.metric_value,
+                "lower_confidence": specific_field_group.lower_confidence,
                 "embargo": specific_field_group.embargo.strftime(DATETIME_FORMAT),
                 "is_public": specific_field_group.is_public,
             }
