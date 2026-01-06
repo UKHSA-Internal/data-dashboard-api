@@ -52,9 +52,9 @@ openpyxl==3.1.5
 orjson==3.11.5
 packageurl-python==0.17.6
 packaging==25.0
-pathspec==0.12.1
+pathspec==1.0.0
 pbr==7.0.3
-Pillow==11.3.0
+Pillow==12.1.0
 platformdirs==4.5.1
 plotly==6.5.0
 pluggy==1.6.0
