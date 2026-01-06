@@ -1,3 +1,4 @@
+import copy
 import zoneinfo
 
 import pytest
@@ -175,3 +176,81 @@ class TestDataIngester:
             core_time_series.embargo.strftime("%Y-%m-%d %H:%M:%S")
             == data["time_series"][0]["embargo"]
         )
+
+    @pytest.mark.django_db
+    def test_reingests_with_updated_embargo_and_later_refresh_date(
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+    ):
+        """
+        Given headline and time series data ingested once
+        When the same data is ingested again with a later refresh date
+            and an updated embargo timestamp
+        Then the latest records for CoreHeadline, CoreTimeSeries, and APITimeSeries
+            reflect the updated embargo timestamps
+        """
+
+        # Before ingestion
+        assert CoreHeadline.objects.all().count() == 0
+        assert CoreTimeSeries.objects.all().count() == 0
+        assert APITimeSeries.objects.all().count() == 0
+
+        # Given
+        initial_headline_data = copy.deepcopy(example_headline_data)
+        initial_timeseries_data = copy.deepcopy(example_time_series_data)
+        updated_headline_data = copy.deepcopy(initial_headline_data)
+        updated_timeseries_data = copy.deepcopy(initial_timeseries_data)
+
+        # When
+        data_ingester(data=initial_headline_data)
+        data_ingester(data=initial_timeseries_data)
+
+        # Reingest with updated embargo and later refresh date
+        updated_headline_refresh_date = "2023-11-10"
+        updated_timeseries_refresh_date = "2023-11-21"
+        updated_headline_embargo = "2023-11-18 08:00:00"
+        updated_timeseries_embargo = "2023-11-19 09:15:00"
+
+        updated_headline_data["refresh_date"] = updated_headline_refresh_date
+        for record in updated_headline_data["data"]:
+            record["embargo"] = updated_headline_embargo
+
+        updated_timeseries_data["refresh_date"] = updated_timeseries_refresh_date
+        for record in updated_timeseries_data["time_series"]:
+            record["embargo"] = updated_timeseries_embargo
+
+        data_ingester(data=updated_headline_data)
+        data_ingester(data=updated_timeseries_data)
+
+        # Then
+        updated_headlines = CoreHeadline.objects.filter(
+            refresh_date__date=updated_headline_refresh_date
+        )
+        assert len(updated_headline_data["data"]) == 2
+        for record in updated_headlines:
+            assert (
+                record.embargo.strftime("%Y-%m-%d %H:%M:%S") == updated_headline_embargo
+            )
+
+        updated_core_timeseries = CoreTimeSeries.objects.filter(
+            refresh_date__date=updated_timeseries_refresh_date
+        )
+        assert len(updated_timeseries_data["time_series"]) == 2
+        for record in updated_core_timeseries:
+            assert (
+                record.embargo.strftime("%Y-%m-%d %H:%M:%S")
+                == updated_timeseries_embargo
+            )
+
+        updated_api_timeseries = APITimeSeries.objects.filter(
+            refresh_date__date=updated_timeseries_refresh_date
+        )
+        assert updated_api_timeseries.count() == len(
+            updated_timeseries_data["time_series"]
+        )
+        for record in updated_api_timeseries:
+            assert (
+                record.embargo.strftime("%Y-%m-%d %H:%M:%S")
+                == updated_timeseries_embargo
+            )
