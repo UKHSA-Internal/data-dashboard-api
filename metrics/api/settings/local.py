@@ -1,6 +1,6 @@
 import os
 
-from metrics.api.settings import INSTALLED_APPS, MIDDLEWARE, ROOT_LEVEL_BASE_DIR
+from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
@@ -23,12 +23,3 @@ CACHES = {
         "KEY_PREFIX": "reserved",
     },
 }
-
-# Debug toolbar configuration
-INSTALLED_APPS += ["debug_toolbar"]
-
-MIDDLEWARE += [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-]
-
-INTERNAL_IPS = ["127.0.0.1"]
