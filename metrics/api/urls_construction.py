@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
@@ -10,11 +11,12 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
+import config
 from cms.dashboard.views import LinkBrowseView
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from cms.snippets.views import GlobalBannerView, MenuView
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from metrics.api import enums, settings
+from metrics.api import enums
 from metrics.api.views import (
     AuditAPITimeSeriesViewSet,
     AuditCoreHeadlineViewSet,
@@ -212,6 +214,14 @@ common_urlpatterns = [
     # Static files
     path("", include(static_urlpatterns)),
 ]
+
+# Add debug toolbar if in local mode
+if settings.DEBUG and config.APIENV == "LOCAL":
+    import debug_toolbar
+
+    common_urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]
 
 django_admin_urlpatterns = [
     # Django admin
