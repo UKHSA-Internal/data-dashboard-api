@@ -76,6 +76,8 @@ class TablesResponseValueSerializer(serializers.Serializer):
     label = serializers.CharField()
     value = serializers.CharField()
     in_reporting_delay_period = serializers.BooleanField()
+    upper_confidence = serializers.CharField(required=False, allow_null=True)
+    lower_confidence = serializers.CharField(required=False, allow_null=True)
 
 
 class TablesResponseValuesListSerializer(serializers.ListSerializer):

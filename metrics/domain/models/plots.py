@@ -97,7 +97,12 @@ class PlotParameters(BaseModel):
 
         """
         params = {
-            "fields_to_export": [self.x_axis_value, self.y_axis_value],
+            "fields_to_export": [
+                self.x_axis_value,
+                self.y_axis_value,
+                "upper_confidence",
+                "lower_confidence",
+            ],
             "metric": self.metric or "",
             "topic": self.topic or "",
             "stratum": self.stratum or "",
