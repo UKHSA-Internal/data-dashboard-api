@@ -154,6 +154,8 @@ class PlotGenerationData(BaseModel):
     y_axis_values: Any
     additional_values: dict[str, Any] | None = None
     latest_date: Any = None  # noqa: UP007
+    confidence_colour: RGBAChartLineColours | None = RGBAChartLineColours.BLACK
+    confidence_intervals: bool = False
 
     @classmethod
     def create_from_parameters(

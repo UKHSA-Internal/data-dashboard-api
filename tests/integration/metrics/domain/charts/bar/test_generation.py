@@ -155,6 +155,71 @@ class TestBarCharts:
         assert not y_axis.showgrid
         assert y_axis.showticklabels
 
+    def test_confidence_intervals_all_data(self, fake_plot_data: PlotGenerationData):
+        """
+        Given a list of dates & values
+        When `generate_chart_figure()` is called from the `bar` module
+        And the confidence_intervals parameter is true
+        Then the data has both upper_confidence and lower_confidence values
+        And has additional error bars
+        """
+        # Given
+        chart_plots_data = [fake_plot_data]
+        fake_plot_data.additional_values = {
+            "upper_confidence": [2] * len(fake_plot_data.x_axis_values),
+            "lower_confidence": [1] * len(fake_plot_data.x_axis_values),
+        }
+        chart_payload = ChartGenerationPayload(
+            chart_width=WIDTH,
+            chart_height=HEIGHT,
+            plots=chart_plots_data,
+            x_axis_title="",
+            y_axis_title="",
+            y_axis_minimum_value=0,
+            y_axis_maximum_value=None,
+            confidence_intervals=True,
+            confidence_colour="Blue",
+        )
+
+        # When
+        figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_generation_payload=chart_payload
+        )
+
+        # Then
+        # There should be 1 plot for the bar plot
+        assert len(figure.data) == 1
+
+        # ---Main bar plot checks---
+        main_bar_plot: plotly.graph_objects.Bar = figure.data[0]
+
+        # Check it is a Bar chart
+        assert type(main_bar_plot) == plotly.graph_objects.Scatter
+        assert main_bar_plot.error_y != None
+        print(f"AIDAN {vars(main_bar_plot.error_y)}")
+        print(f"AIDAN {main_bar_plot.error_y.__dict__}")
+        assert (
+            fake_plot_data.additional_values.get("upper_confidence")
+            == main_bar_plot.error_y["array"]
+        )
+        # assert main_bar_plot.error_y.arrayminus == fake_plot_data.additional_values.get(
+        #     "lower_confidence"
+        # )
+        # assert main_bar_plot.error_y.colour == RGBAChartLineColours.Blue
+        assert False
+
+    # def test_confidence_intervals_missing_data(
+    #     self, fake_plot_data: PlotGenerationData
+    # ):
+    #     """
+    #     Given a list of dates & values
+    #     When `generate_chart_figure()` is called from the `bar` module
+    #     And the confidence_intervals parameter is true
+    #     Then the data has both upper_confidence and lower_confidence values
+    #     And has additional error bars
+    #     """
+    #     assert False
+
     def test_x_axis_type_is_not_date(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of x and y values where x values are NOT dates

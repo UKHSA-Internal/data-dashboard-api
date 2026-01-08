@@ -45,7 +45,15 @@ def create_bar_plot(
     return convert_graph_object_to_dict(graph_object=bar)
 
 
-def get_error_bars(plot_data):
+def get_error_bars(
+    plot_data: PlotGenerationData,
+):
+
+    print("AIDAN: checking for confidence_intervals")
+    if not plot_data.confidence_intervals:
+        print("AIDAN: no confidence")
+        return None
+
     upper_confidence = None
     lower_confidence = None
 
@@ -69,9 +77,10 @@ def get_error_bars(plot_data):
             )
         ]
 
+    print(f"AIDAN: checking for {upper_confidence} or {lower_confidence}")
     if upper_confidence is None or lower_confidence is None:
         return None
-
+    print("AIDAN: returning error")
     confidence_color: colour_scheme.RGBAChartLineColours = (
         colour_scheme.RGBAChartLineColours.get_colour(
             colour=plot_data.parameters.confidence_colour
