@@ -19,8 +19,10 @@ class InboundHeadlineSpecificFields(BaseModel):
 
     period_start: datetime.datetime
     period_end: datetime.datetime
+    upper_confidence: float | None = None
     embargo: datetime.datetime | None
     metric_value: float
+    lower_confidence: float | None = None
     is_public: bool = True
 
     @field_validator("embargo")
@@ -154,7 +156,9 @@ def _build_enriched_headline_specific_fields(
             period_start=individual_time_series["period_start"],
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
+            upper_confidence=individual_time_series.get("upper_confidence"),
             metric_value=individual_time_series["metric_value"],
+            lower_confidence=individual_time_series.get("lower_confidence"),
             is_public=individual_time_series.get("is_public", True),
         )
         for individual_time_series in source_data["data"]
