@@ -48,6 +48,7 @@ class APITimeSeries(models.Model):
     objects = APITimeSeriesManager()
 
     class Meta:
+        verbose_name_plural = "API time series"
         constraints = [
             models.UniqueConstraint(
                 fields=(
@@ -82,6 +83,10 @@ class APITimeSeries(models.Model):
                     "geography",
                     "metric",
                 ]
+            ),
+            models.Index(
+                fields=["-date", "-id"],
+                name="apitimeseries_date_id_idx",
             ),
         ]
 

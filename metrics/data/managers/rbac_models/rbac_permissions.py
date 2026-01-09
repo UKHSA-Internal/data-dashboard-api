@@ -32,7 +32,9 @@ class RBACPermissionManager(models.Manager):
 
     def get_queryset(self) -> RBACPermissionQuerySet:
         """Returns the custom queryset for RBACPermission."""
-        return RBACPermissionQuerySet(self.model, using=self._db)
+        return RBACPermissionQuerySet(self.model, using=self._db).select_related(
+            "theme", "sub_theme", "topic", "metric", "geography_type", "geography"
+        )
 
     def get_existing_permissions(
         self, *, instance: "RBACPermission"

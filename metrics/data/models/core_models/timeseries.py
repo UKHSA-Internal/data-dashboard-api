@@ -67,6 +67,7 @@ class CoreTimeSeries(models.Model):
     objects = CoreTimeSeriesManager()
 
     class Meta:
+        verbose_name_plural = "Core time series"
         constraints = [
             models.UniqueConstraint(
                 fields=(
