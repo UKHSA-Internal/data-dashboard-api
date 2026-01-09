@@ -716,3 +716,150 @@ class TestCreateMultiPlotOutput:
 
         # Then
         assert actual_output == expected_output
+
+    def test_plots_for_headline_data_includes_confidence_intervals(
+        self, valid_plot_parameters_for_headline_data: PlotParameters
+    ):
+        """
+        Given a series of plots for a headline data chart with confidence
+            intervals
+        When `create_multi_plot_output()` is called
+        Then the confidence intervals are included in the output values
+        """
+        # Given
+        plot_labels = ["01 - 04", "05 - 10", "11 - 14"]
+        combined_plots = {
+            "01 - 04": {
+                "01 - 04": "55",
+                "upper_confidence": "60",
+                "lower_confidence": "50",
+            },
+            "05 - 10": {
+                "05 - 10": "65",
+                "upper_confidence": "70",
+                "lower_confidence": "60",
+            },
+            "11 - 14": {
+                "11 - 14": "75",
+                "upper_confidence": "80",
+                "lower_confidence": "70",
+            },
+        }
+        expected_output = [
+            {
+                "reference": "01 - 04",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "55",
+                        "in_reporting_delay_period": False,
+                        "upper_confidence": "60",
+                        "lower_confidence": "50",
+                    }
+                ],
+            },
+            {
+                "reference": "05 - 10",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "65",
+                        "in_reporting_delay_period": False,
+                        "upper_confidence": "70",
+                        "lower_confidence": "60",
+                    }
+                ],
+            },
+            {
+                "reference": "11 - 14",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "75",
+                        "in_reporting_delay_period": False,
+                        "upper_confidence": "80",
+                        "lower_confidence": "70",
+                    }
+                ],
+            },
+        ]
+        plot_data = PlotGenerationData(
+            parameters=valid_plot_parameters_for_headline_data,
+            x_axis_values="",
+            y_axis_values="",
+        )
+
+        # When
+        tabular_data = TabularData(plots=[plot_data])
+        tabular_data.plot_labels = plot_labels
+        tabular_data.combined_plots = combined_plots
+        actual_output = tabular_data.create_multi_plot_output()
+
+        # Then
+        assert actual_output == expected_output
+
+    def test_create_tabular_plots_includes_confidence_intervals_for_timeseries_data(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a `PlotData` model with `upper_confidence` and
+            `lower_confidence` values in `additional_values` for timeseries data
+        When `create_tabular_plots()` is called from an instance of
+            `TabularData`
+        Then the confidence intervals are included in the output values
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        x_axis_values = [
+            "2026-01-01",
+            "2026-01-15",
+        ]
+        y_axis_values = ["10.5", "22.3"]
+        upper_confidence_values = ["12.0", "24.5"]
+        lower_confidence_values = ["9.0", "20.1"]
+
+        plot_data = PlotGenerationData(
+            parameters=valid_plot_parameters,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+            additional_values={
+                "upper_confidence": upper_confidence_values,
+                "lower_confidence": lower_confidence_values,
+                "in_reporting_delay_period": [False, False],
+            },
+        )
+
+        tabular_data = TabularData(plots=[plot_data])
+
+        # When
+        tabular_plots = tabular_data.create_tabular_plots()
+        tabular_data.column_heading = "date"
+
+        # Then
+        expected_tabular_plots = [
+            {
+                "reference": "2026-01-15",
+                "values": [
+                    {
+                        "label": "Plot1",
+                        "value": "22.3",
+                        "in_reporting_delay_period": False,
+                        "upper_confidence": "24.5",
+                        "lower_confidence": "20.1",
+                    },
+                ],
+            },
+            {
+                "reference": "2026-01-01",
+                "values": [
+                    {
+                        "label": "Plot1",
+                        "value": "10.5",
+                        "in_reporting_delay_period": False,
+                        "upper_confidence": "12.0",
+                        "lower_confidence": "9.0",
+                    },
+                ],
+            },
+        ]
+        assert tabular_plots == expected_tabular_plots
