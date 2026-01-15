@@ -47,7 +47,14 @@ class DownloadsView(APIView):
         """
         try:
             if DataSourceFileType[metric_group].is_headline:
-                return self.headline_serializer_class(queryset, many=True)
+                confidence_intervals = self.request.data.get(
+                    "confidence_intervals", False
+                )
+                return self.headline_serializer_class(
+                    queryset,
+                    many=True,
+                    context={"confidence_intervals": confidence_intervals},
+                )
 
             if DataSourceFileType[metric_group].is_timeseries:
                 return self.timeseries_serializer_class(queryset, many=True)

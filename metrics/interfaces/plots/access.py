@@ -15,7 +15,6 @@ from metrics.domain.models import (
     PlotGenerationData,
     PlotParameters,
 )
-from metrics.domain.models.charts.common import BaseChartRequestParams
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.validation import (
     DatesNotInChronologicalOrderError,
