@@ -152,6 +152,8 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
             "period_start",
             "period_end",
             "metric_value",
+            "upper_confidence",
+            "lower_confidence",
         ]
 
     @classmethod
@@ -160,6 +162,15 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
             return obj.metric__topic__sub_theme__theme__name
         except AttributeError:
             return obj.metric.topic.sub_theme.theme.name
+
+    def get_fields(self) -> list[str]:
+        fields = super().get_fields()
+        confidence_intervals = self.context.get("confidence_intervals", False)
+
+        if not confidence_intervals:
+            fields.pop("upper_confidence")
+            fields.pop("lower_confidence")
+        return fields
 
     @classmethod
     def get_sub_theme(cls, obj) -> str:
