@@ -84,4 +84,11 @@ INVALID_PARAMETERS = [
         "impact-of-cold_syndromic_emergencyDepartment_averageRolling7Day",
         "syndromic",
     ),  # Invalid child_theme
+    (
+        "infectious_disease",
+        "antimicrobial_resistance",
+        "carbapenamase-producing-organisms",
+        "carbapenamase-producing-organisms_cases_allSitesRateByMonth",
+        "syndromic",
+    ), # Invalid metric group
 ]

@@ -153,4 +153,11 @@ VALID_PARAMETERS = [
         "impact-of-cold_syndromic_emergencyDepartment_averageRolling7Day",
         "syndromic",
     ),
+    (
+        "infectious_disease",
+        "antimicrobial_resistance",
+        "carbapenamase-producing-organisms",
+        "carbapenamase-producing-organisms_cases_allSitesRateByMonth",
+        "cases",
+    ),
 ]
