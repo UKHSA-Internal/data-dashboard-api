@@ -90,5 +90,5 @@ INVALID_PARAMETERS = [
         "carbapenamase-producing-organisms",
         "carbapenamase-producing-organisms_cases_allSitesRateByMonth",
         "syndromic",
-    ), # Invalid metric group
+    ),  # Invalid metric group
 ]
