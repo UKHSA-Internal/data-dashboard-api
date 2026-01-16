@@ -26,6 +26,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 class MetricsDocumentationChildEntry(UKHSAPage):
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
+    enable_public_page = models.BooleanField(default=False)
     topic = models.CharField(
         max_length=255,
         default="",
@@ -42,6 +43,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("page_description"),
         FieldPanel("metric"),
+        FieldPanel("enable_public_page"),
         FieldPanel("body"),
     ]
 
@@ -51,6 +53,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("metric"),
         APIField("topic"),
         APIField("metric_group"),
+        APIField("enable_public_page"),
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),
@@ -133,6 +136,16 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
+    
+    @property
+    def is_page_public_selector(self) -> bool:
+        """Determines whether this `MetricsDocumentationChildEntry` is viewable to the public
+
+        Returns:
+            True if this `MetricsDocumentationChildEntry` can be viewed by the public
+
+        """
+        return self.enable_public_page
 
 
 class MetricsDocumentationChildPageAnnouncement(Announcement):
