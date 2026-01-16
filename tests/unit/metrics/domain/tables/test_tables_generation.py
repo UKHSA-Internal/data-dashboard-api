@@ -1,10 +1,15 @@
 import datetime
+from decimal import Decimal
 from typing import Any
 
 import pytest
 
 from metrics.domain.models import PlotGenerationData, PlotParameters
-from metrics.domain.tables.generation import TabularData
+from metrics.domain.tables.generation import (
+    LOWER_CONFIDENCE,
+    TabularData,
+    UPPER_CONFIDENCE,
+)
 from metrics.domain.common.utils import ChartAxisFields
 
 TEST_PLOT = "Test Plot"
@@ -433,6 +438,41 @@ class TestAddPlotDataToCombinedPlots:
         # Then
         assert tabular_data.combined_plots == expected_combined_plots
 
+    def test_add_plot_data_to_combined_plots_includes_confidence_intervals(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given plot data with confidence intervals
+        When `add_plot_data_to_combined_plots()` is called
+        Then the confidence intervals are included in the result
+        """
+        # Given
+        plot_data = {datetime.date(2023, 1, 1): Decimal("10.5")}
+        upper_confidence_lookup = {datetime.date(2023, 1, 1): Decimal("12.0")}
+        lower_confidence_lookup = {datetime.date(2023, 1, 1): Decimal("9.0")}
+
+        tabular_data = TabularData(
+            plots=[
+                PlotGenerationData(
+                    parameters=valid_plot_parameters,
+                    x_axis_values="",
+                    y_axis_values="",
+                )
+            ]
+        )
+
+        # When
+        tabular_data.add_plot_data_to_combined_plots(
+            plot_data=plot_data,
+            plot_label=PLOT_1_LABEL,
+            upper_confidence_lookup=upper_confidence_lookup,
+            lower_confidence_lookup=lower_confidence_lookup,
+        )
+
+        # Then
+        assert tabular_data.combined_plots["2023-01-01"][UPPER_CONFIDENCE] == "12.0"
+        assert tabular_data.combined_plots["2023-01-01"][LOWER_CONFIDENCE] == "9.0"
+
 
 class TestCombineAllPlots:
     def test_plot_with_sequential_date_point(self):
@@ -716,3 +756,66 @@ class TestCreateMultiPlotOutput:
 
         # Then
         assert actual_output == expected_output
+
+    def test_create_timeseries_plot_values_includes_confidence_intervals(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given plot values with confidence intervals
+        When `create_timeseries_plot_values()` is called
+        Then the confidence intervals are included in the result
+        """
+        # Given
+        plot_values = {
+            PLOT_1_LABEL: "10.5",
+            "in_reporting_delay_period": False,
+            UPPER_CONFIDENCE: "12.0",
+            LOWER_CONFIDENCE: "9.0",
+        }
+
+        plot_data = PlotGenerationData(
+            parameters=valid_plot_parameters,
+            x_axis_values="",
+            y_axis_values="",
+        )
+        tabular_data = TabularData(plots=[plot_data])
+        tabular_data.plot_labels = [PLOT_1_LABEL]
+
+        # When
+        result = tabular_data.create_timeseries_plot_values(plot_values=plot_values)
+
+        # Then
+        assert len(result) == 1
+        assert result[0][UPPER_CONFIDENCE] == "12.0"
+        assert result[0][LOWER_CONFIDENCE] == "9.0"
+
+    def test_create_headline_plot_values_includes_confidence_intervals(
+        self, valid_plot_parameters_for_headline_data: PlotParameters
+    ):
+        """
+        Given headline plot values with confidence intervals
+        When `create_headline_plot_values()` is called
+        Then the confidence intervals are included in the result
+        """
+        # Given
+        plot_values = {
+            "01 - 04": "55.0",
+            UPPER_CONFIDENCE: "60.0",
+            LOWER_CONFIDENCE: "50.0",
+        }
+
+        plot_data = PlotGenerationData(
+            parameters=valid_plot_parameters_for_headline_data,
+            x_axis_values="",
+            y_axis_values="",
+        )
+        tabular_data = TabularData(plots=[plot_data])
+        tabular_data.plot_labels = ["01 - 04"]
+
+        # When
+        result = tabular_data.create_headline_plot_values(plot_values=plot_values)
+
+        # Then
+        assert len(result) == 1
+        assert result[0][UPPER_CONFIDENCE] == "60.0"
+        assert result[0][LOWER_CONFIDENCE] == "50.0"
