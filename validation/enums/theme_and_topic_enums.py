@@ -120,6 +120,7 @@ class _AntimicrobialResistanceTopic(Enum):
     K_PNEUMONIAE = "K-pneumoniae"
     E_FAECIUM = "E-faecium"
     E_FAECALIS = "E-faecalis"
+    CARBAPENAMASE_PRODUCING_ORGANISMS = "carbapenamase-producing-organisms"
 
 
 class BaseEnum(Enum):
