@@ -41,21 +41,23 @@ class SubplotParametersSerializer(serializers.Serializer):
         Check that theme and sub_theme are present at either
         chart_parameters or subplot_parameters level
         """
-        chart_params = self.parent.parent.parent.initial_data['chart_parameters']
-        chart_theme = chart_params.get('theme')
-        chart_sub_theme = chart_params.get('sub_theme')
-        subplot_theme = data.get('theme')
-        subplot_sub_theme = data.get('sub_theme')
+        chart_params = self.parent.parent.parent.initial_data["chart_parameters"]
+        chart_theme = chart_params.get("theme")
+        chart_sub_theme = chart_params.get("sub_theme")
+        subplot_theme = data.get("theme")
+        subplot_sub_theme = data.get("sub_theme")
         if not subplot_theme and not chart_theme:
-            raise serializers.ValidationError(
+            msg = (
                 "'theme' must be specified at either "
                 "subplot_parameters or chart_parameters level"
             )
+            raise serializers.ValidationError(msg)
         if not subplot_sub_theme and not chart_sub_theme:
-            raise serializers.ValidationError(
+            msg = (
                 "'sub_theme' must be specified at either "
                 "subplot_parameters or chart_parameters level"
             )
+            raise serializers.ValidationError(msg)
         return data
 
 
