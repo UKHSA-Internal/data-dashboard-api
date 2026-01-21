@@ -130,14 +130,14 @@ class TestSubplotChartRequestParameters:
         payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         # Remove theme from chart params
         # so there is no theme
-        del payload['chart_parameters']['theme']
+        del payload["chart_parameters"]["theme"]
         # When
         serializer = SubplotChartRequestSerializer(data=payload)
         # Then validation should fail on theme
         with pytest.raises(
             ValidationError,
             match=r".*'theme' must be specified at either "
-            "subplot_parameters or chart_parameters level.*"
+            "subplot_parameters or chart_parameters level.*",
         ):
             serializer.is_valid(raise_exception=True)
 
@@ -152,14 +152,14 @@ class TestSubplotChartRequestParameters:
         payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         # Remove sub_theme from chart params
         # so there is no sub_theme
-        del payload['chart_parameters']['sub_theme']
+        del payload["chart_parameters"]["sub_theme"]
         # When
         serializer = SubplotChartRequestSerializer(data=payload)
         # Then validation should fail on sub_theme
         with pytest.raises(
             ValidationError,
             match=r".*'sub_theme' must be specified at either "
-            "subplot_parameters or chart_parameters level.*"
+            "subplot_parameters or chart_parameters level.*",
         ):
             serializer.is_valid(raise_exception=True)
 
@@ -175,11 +175,11 @@ class TestSubplotChartRequestParameters:
         # Given
         payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         # Add modified theme and sub_theme to subplot_parameters
-        theme = payload['chart_parameters']['theme'] + "_subplot"
-        sub_theme = payload['chart_parameters']['sub_theme'] + "_subplot"
-        for subplot in payload['subplots']:
-            subplot['subplot_parameters']['theme'] = theme
-            subplot['subplot_parameters']['sub_theme'] = sub_theme
+        theme = payload["chart_parameters"]["theme"] + "_subplot"
+        sub_theme = payload["chart_parameters"]["sub_theme"] + "_subplot"
+        for subplot in payload["subplots"]:
+            subplot["subplot_parameters"]["theme"] = theme
+            subplot["subplot_parameters"]["sub_theme"] = sub_theme
         # When
         serializer = SubplotChartRequestSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
@@ -201,8 +201,8 @@ class TestSubplotChartRequestParameters:
         """
         # Given
         payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
-        theme = payload['chart_parameters']['theme']
-        sub_theme = payload['chart_parameters']['sub_theme']
+        theme = payload["chart_parameters"]["theme"]
+        sub_theme = payload["chart_parameters"]["sub_theme"]
         # When
         serializer = SubplotChartRequestSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
