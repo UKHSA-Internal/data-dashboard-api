@@ -136,16 +136,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
-    
-    @property
-    def is_page_public_selector(self) -> bool:
-        """Determines whether this `MetricsDocumentationChildEntry` is viewable to the public
-
-        Returns:
-            True if this `MetricsDocumentationChildEntry` can be viewed by the public
-
-        """
-        return self.enable_public_page
 
 
 class MetricsDocumentationChildPageAnnouncement(Announcement):
