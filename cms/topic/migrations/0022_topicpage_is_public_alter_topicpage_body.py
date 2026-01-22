@@ -17,4 +17,4 @@ class Migration(migrations.Migration):
             name="is_public",
             field=models.BooleanField(default=False, verbose_name="enable public page"),
         )
-        ]
+    ]
