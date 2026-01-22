@@ -38,7 +38,10 @@ class TopicPage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
-    enable_public_page = models.BooleanField(default=False)
+    isPublic = models.BooleanField(
+        default=False,
+        verbose_name="enable public page",
+    )
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -60,7 +63,7 @@ class TopicPage(UKHSAPage):
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("enable_area_selector"),
-        FieldPanel("enable_public_page"),
+        FieldPanel("isPublic"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
@@ -74,7 +77,7 @@ class TopicPage(UKHSAPage):
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("enable_area_selector"),
-        APIField("enable_public_page"),
+        APIField("isPublic"),
         APIField("selected_topics"),
     ]
 
@@ -183,8 +186,8 @@ class TopicPage(UKHSAPage):
             True if this `TopicPage` can be viewed by the public
 
         """
-        return self.enable_public_page
-    
+        return self.isPublic
+
     @property
     def last_updated_at(self) -> datetime.datetime:
         """Fetches the time for the last content update or data update on the page.
