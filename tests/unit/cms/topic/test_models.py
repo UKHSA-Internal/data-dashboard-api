@@ -176,11 +176,9 @@ class TestTemplateCOVID19Page:
 
         # Then
         assert is_valid_for_area_selector == enable_area_selector
-        
+
     @pytest.mark.parametrize("isPublic", [True, False])
-    def test_is_page_public_selector_for_covid_template_page(
-        self, isPublic: bool
-    ):
+    def test_is_page_public_selector_for_covid_template_page(self, isPublic: bool):
         """
         Given a `TopicPage` created with a template for the `COVID-19` page
         And the isPublic` field switched on or off
@@ -194,9 +192,7 @@ class TestTemplateCOVID19Page:
         template_covid_19_page.isPublic = isPublic
 
         # When
-        is_page_public_selector: bool = (
-            template_covid_19_page.is_page_public_selector
-        )
+        is_page_public_selector: bool = template_covid_19_page.is_page_public_selector
 
         # Then
         assert is_page_public_selector == isPublic

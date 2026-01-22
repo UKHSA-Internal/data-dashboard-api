@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
             model_name="metricsdocumentationchildentry",
             name="isPublic",
             field=models.BooleanField(default=True, verbose_name="enable public page"),
-            preserve_default=False
+            preserve_default=False,
         ),
     ]
