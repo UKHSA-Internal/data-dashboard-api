@@ -177,11 +177,11 @@ class TestTemplateCOVID19Page:
         # Then
         assert is_valid_for_area_selector == enable_area_selector
 
-    @pytest.mark.parametrize("isPublic", [True, False])
-    def test_is_page_public_selector_for_covid_template_page(self, isPublic: bool):
+    @pytest.mark.parametrize("is_public", [True, False])
+    def test_is_page_public_selector_for_covid_template_page(self, is_public: bool):
         """
         Given a `TopicPage` created with a template for the `COVID-19` page
-        And the isPublic` field switched on or off
+        And the is_public` field switched on or off
         When the `is_page_public_selector` property is called
         Then the correct boolean is returned
         """
@@ -189,13 +189,13 @@ class TestTemplateCOVID19Page:
         template_covid_19_page = (
             FakeTopicPageFactory.build_covid_19_page_from_template()
         )
-        template_covid_19_page.isPublic = isPublic
+        template_covid_19_page.is_public = is_public
 
         # When
         is_page_public_selector: bool = template_covid_19_page.is_page_public_selector
 
         # Then
-        assert is_page_public_selector == isPublic
+        assert is_page_public_selector == is_public
 
     @pytest.mark.parametrize(
         "expected_api_field",
@@ -209,7 +209,7 @@ class TestTemplateCOVID19Page:
             "seo_title",
             "search_description",
             "enable_area_selector",
-            "isPublic",
+            "is_public",
             "selected_topics",
         ],
     )
@@ -234,7 +234,7 @@ class TestTemplateCOVID19Page:
         "expected_content_panel_name",
         [
             "enable_area_selector",
-            "isPublic",
+            "is_public",
             "page_description",
             "body",
         ],
