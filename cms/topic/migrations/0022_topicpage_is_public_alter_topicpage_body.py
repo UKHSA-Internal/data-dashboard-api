@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="topicpage",
             name="is_public",
-            field=models.BooleanField(default=False, verbose_name="enable public page"),
+            field=models.BooleanField(default=True, verbose_name="enable public page"),
+            preserve_default=False,
         )
     ]
