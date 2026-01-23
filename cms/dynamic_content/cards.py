@@ -50,6 +50,10 @@ DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
 
 CHART_CARD_DATE_PREFIX_DEFAULT_TEXT = "Up to and including"
 
+CONFIDENCE_INTERVALS_DESCRIPTION_DEFAULT_TEXT = """
+Metric column includes 95% lower and upper confidence intervals, in brackets.
+""".strip()
+
 
 class TextCard(blocks.StructBlock):
     body = blocks.RichTextBlock(
@@ -316,6 +320,11 @@ class HeadlineChartCard(ChartCard):
         required=False,
         default=False,
         help_text=help_texts.CONFIDENCE_INTERVAL,
+    )
+    confidence_intervals_description = blocks.TextBlock(
+        required=False,
+        help_text=help_texts.CONFIDENCE_INTERVALS_DESCRIPTION,
+        default=CONFIDENCE_INTERVALS_DESCRIPTION_DEFAULT_TEXT,
     )
     confidence_colour = blocks.ChoiceBlock(
         required=False,
