@@ -547,3 +547,8 @@ CONFIDENCE_COLOUR: str = """
 The colour to display the confidence interval in. The colours conform to the GDS specification.
 Note that if nothing is provided, a default of "BLACK" will be applied.
 """
+
+CONFIDENCE_INTERVALS_DESCRIPTION: str = """
+An optional body of text to accompany this block.
+This text will be displayed above the metrics table if confidence intervals is enabled.
+"""
