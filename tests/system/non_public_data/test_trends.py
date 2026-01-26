@@ -13,7 +13,6 @@ from tests.factories.metrics.rbac_models.rbac_group_permissions import (
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
-
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 
