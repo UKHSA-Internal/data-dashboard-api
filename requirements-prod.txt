@@ -40,7 +40,7 @@ jsonschema==4.26.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.10
+Markdown==3.10.1
 markdown-it-py==2.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
@@ -58,7 +58,7 @@ Pillow==12.1.0
 platformdirs==4.5.1
 plotly==6.5.2
 pluggy==1.6.0
-pyparsing==3.3.1
+pyparsing==3.3.2
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
@@ -69,9 +69,9 @@ requests==2.32.5
 rich==14.2.0
 ruamel.yaml==0.19.1
 ruamel.yaml.clib==0.2.15
-SQLAlchemy==2.0.45
+SQLAlchemy==2.0.46
 scour==0.38.2
-setuptools==80.9.0
+setuptools==80.10.1
 simplejson==3.20.2
 six==1.17.0
 sortedcontainers==2.4.0

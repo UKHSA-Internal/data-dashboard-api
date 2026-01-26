@@ -17,7 +17,6 @@ from tests.fakes.factories.metrics.sub_theme_factory import FakeSubThemeFactory
 from tests.fakes.factories.metrics.theme_factory import FakeThemeFactory
 from tests.fakes.factories.metrics.topic_factory import FakeTopicFactory
 
-
 DATA_PARAMETERS = {
     "theme": "infectious_disease",
     "sub_theme": "respiratory",

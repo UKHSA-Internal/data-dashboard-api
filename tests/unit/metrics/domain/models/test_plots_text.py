@@ -17,7 +17,6 @@ from metrics.domain.models.plots import (
 from metrics.domain.models.plots_text import PlotsText
 from metrics.domain.common.utils import ChartTypes
 
-
 MODULE_PATH = "metrics.domain.models.plots_text"
 
 

@@ -5,7 +5,6 @@ from django.db import connection, models
 from django.db.migrations.executor import MigrationExecutor
 import pytest
 
-
 REASON = "Migration tests are excluded from coverage test runs"
 
 

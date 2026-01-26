@@ -15,7 +15,6 @@ from tests.factories.metrics.rbac_models.rbac_group_permissions import (
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
-
 MODULE_PATH = "metrics.api.decorators.auth"
 
 
