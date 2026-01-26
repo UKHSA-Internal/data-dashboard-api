@@ -7,7 +7,6 @@ from tests.fakes.factories.metrics.rbac_models.rbac_permission import (
     FakeRBACPermissionFactory,
 )
 
-
 DATA_PARAMETERS = {
     "theme": "infectious_disease",
     "sub_theme": "respiratory",

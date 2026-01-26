@@ -2,7 +2,6 @@ import pytest
 
 from metrics.domain.common import information
 
-
 INCREASING_METRIC_VALUE: int = 10
 DECREASING_METRIC_VALUE: int = -10
 
