@@ -96,6 +96,8 @@ class ChartsSerializer(BaseChartsSerializer):
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
             legend_title=self.data.get("legend_title", ""),
+            confidence_intervals=self.data.get("confidence_intervals", False),
+            confidence_colour=self.data.get("confidence_colour", ""),
             request=request,
         )
 
