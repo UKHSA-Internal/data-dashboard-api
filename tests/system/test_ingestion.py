@@ -331,7 +331,9 @@ class TestIngestion:
         first_refresh_date = "2023-12-01"
         first_headline_data = copy.deepcopy(example_headline_data)
         first_headline_data["refresh_date"] = first_refresh_date
+        first_headline_data["data"][0]["upper_confidence"] = first_metric_value + 1
         first_headline_data["data"][0]["metric_value"] = first_metric_value
+        first_headline_data["data"][0]["lower_confidence"] = first_metric_value - 1
         data_ingester(data=first_headline_data)
         assert CoreHeadline.objects.all().count() == 1
 
@@ -346,7 +348,9 @@ class TestIngestion:
         second_refresh_date = "2023-12-01 13:00:00"
         second_headline_data = copy.deepcopy(example_headline_data)
         second_headline_data["refresh_date"] = second_refresh_date
+        second_headline_data["data"][0]["upper_confidence"] = second_metric_value + 1
         second_headline_data["data"][0]["metric_value"] = second_metric_value
+        second_headline_data["data"][0]["lower_confidence"] = second_metric_value - 1
         data_ingester(data=second_headline_data)
         assert CoreHeadline.objects.all().count() == 2
 
@@ -361,7 +365,9 @@ class TestIngestion:
         third_refresh_date = "2023-12-01 13:01:00"
         third_headline_data = copy.deepcopy(example_headline_data)
         third_headline_data["refresh_date"] = third_refresh_date
+        third_headline_data["data"][0]["upper_confidence"] = third_metric_value + 1
         third_headline_data["data"][0]["metric_value"] = third_metric_value
+        third_headline_data["data"][0]["lower_confidence"] = third_metric_value - 1
         data_ingester(data=third_headline_data)
 
         # When
@@ -411,7 +417,9 @@ class TestIngestion:
         )
         first_headline_data = copy.deepcopy(example_headline_data)
         first_headline_data["refresh_date"] = first_refresh_date
+        first_headline_data["data"][0]["upper_confidence"] = first_metric_value + 1
         first_headline_data["data"][0]["metric_value"] = first_metric_value
+        first_headline_data["data"][0]["lower_confidence"] = first_metric_value - 1
 
         # When
         data_ingester(data=first_headline_data)
@@ -426,7 +434,9 @@ class TestIngestion:
         )
         second_headline_data = copy.deepcopy(example_headline_data)
         second_headline_data["refresh_date"] = second_refresh_date
+        second_headline_data["data"][0]["upper_confidence"] = second_metric_value + 1
         second_headline_data["data"][0]["metric_value"] = second_metric_value
+        second_headline_data["data"][0]["lower_value"] = second_metric_value - 1
 
         # When
         data_ingester(data=second_headline_data)
@@ -441,7 +451,9 @@ class TestIngestion:
         )
         third_headline_data = copy.deepcopy(example_headline_data)
         third_headline_data["refresh_date"] = third_refresh_date
+        third_headline_data["data"][0]["upper_confidence"] = first_metric_value + 1
         third_headline_data["data"][0]["metric_value"] = first_metric_value
+        third_headline_data["data"][0]["lower_value"] = first_metric_value - 1
 
         # When
         data_ingester(data=third_headline_data)
