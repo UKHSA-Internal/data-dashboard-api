@@ -33,6 +33,32 @@ class SubplotParametersSerializer(serializers.Serializer):
     metric = serializers.CharField(required=True)
     topic = serializers.CharField(required=True)
     stratum = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    theme = serializers.CharField(required=False)
+    sub_theme = serializers.CharField(required=False)
+
+    def validate(self, data):
+        """
+        Check that theme and sub_theme are present at either
+        chart_parameters or subplot_parameters level
+        """
+        chart_params = self.parent.parent.parent.initial_data["chart_parameters"]
+        chart_theme = chart_params.get("theme")
+        chart_sub_theme = chart_params.get("sub_theme")
+        subplot_theme = data.get("theme")
+        subplot_sub_theme = data.get("sub_theme")
+        if not subplot_theme and not chart_theme:
+            msg = (
+                "'theme' must be specified at either "
+                "subplot_parameters or chart_parameters level"
+            )
+            raise serializers.ValidationError(msg)
+        if not subplot_sub_theme and not chart_sub_theme:
+            msg = (
+                "'sub_theme' must be specified at either "
+                "subplot_parameters or chart_parameters level"
+            )
+            raise serializers.ValidationError(msg)
+        return data
 
 
 class SubplotSerializer(serializers.Serializer):
@@ -53,8 +79,8 @@ class MetricRangeSerializer(serializers.Serializer):
 class ChartParametersSerializer(serializers.Serializer):
     x_axis = serializers.CharField(required=True)
     y_axis = serializers.CharField(required=True)
-    theme = serializers.CharField(required=True)
-    sub_theme = serializers.CharField(required=True)
+    theme = serializers.CharField(required=False)
+    sub_theme = serializers.CharField(required=False)
     date_from = serializers.DateField(required=True)
     date_to = serializers.DateField(required=True)
 

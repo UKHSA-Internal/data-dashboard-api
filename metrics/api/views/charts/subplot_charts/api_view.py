@@ -76,7 +76,6 @@ class SubplotChartsView(APIView):
         subplot_chart_parameters: SubplotChartRequestParameters = serializer.to_models(
             request=request
         )
-
         return self._handle_chart_as_file(
             subplot_chart_parameters=subplot_chart_parameters
         )
