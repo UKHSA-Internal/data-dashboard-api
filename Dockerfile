@@ -6,7 +6,7 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.6
 
-FROM python:${PYTHON_VERSION}-slim AS build
+FROM dhi.io/python:${PYTHON_VERSION}-debian13-dev AS build
 
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
@@ -35,7 +35,7 @@ COPY . code
 ###############################################################################
 # Production stage
 ###############################################################################
-FROM python:${PYTHON_VERSION}-slim AS production
+FROM dhi.io/python:${PYTHON_VERSION}-debian13-dev AS production
 
 # Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
