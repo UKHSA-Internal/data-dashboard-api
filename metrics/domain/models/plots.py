@@ -30,6 +30,8 @@ class PlotParameters(BaseModel):
     date_from: str | None = ""
     date_to: str | None = ""
     label: str | None = ""
+    confidence_intervals: str | None = ""
+    confidence_colour: str | None = ""
     line_colour: str | None = ""
     line_type: str | None = ""
     x_axis: str | None = ""
@@ -93,7 +95,10 @@ class PlotParameters(BaseModel):
 
         """
         params = {
-            "fields_to_export": [self.x_axis_value, self.y_axis_value],
+            "fields_to_export": [
+                self.x_axis_value,
+                self.y_axis_value,
+            ],
             "metric": self.metric or "",
             "topic": self.topic or "",
             "stratum": self.stratum or "",
@@ -109,6 +114,9 @@ class PlotParameters(BaseModel):
             params["date_from"] = self.date_from_value
             params["date_to"] = self.date_to_value
             params["field_to_order_by"] = self.x_axis_value
+        else:
+            params["fields_to_export"].append("upper_confidence")
+            params["fields_to_export"].append("lower_confidence")
 
         return params
 
@@ -219,6 +227,8 @@ class ChartGenerationPayload(BaseModel):
     y_axis_minimum_value: Decimal = 0
     y_axis_maximum_value: Decimal | None = None
     legend_title: str | None = ""
+    confidence_intervals: bool | None = False
+    confidence_colour: str | None = ""
 
 
 class CompletePlotData(BaseModel):
