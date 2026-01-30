@@ -1,68 +1,67 @@
+# syntax=docker/dockerfile:1
+
 ###############################################################################
-# Build stage
+# Build stage (Debian-based)
 ###############################################################################
 # Default arguments
 # This version is hardcoded but ideally it should pull from the `.python-version`
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.6
 
-FROM dhi.io/python:${PYTHON_VERSION}-debian13-dev AS build
+FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
-# Ensure the virtual environment will be available on the `PATH` variable
-ENV PATH=/venv/bin:$PATH
+WORKDIR /build
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
 COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
-# Main build process
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev gcc \
-    # Install toolchain needed for C libraries like `psycopg2`
-    && python3 -m venv /venv \
-    # Create the python virtual environment
-    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
-    # Remove dangling files from installation of libraries
-    && pip install --upgrade pip \
-    # Upgrade the pip installer to the latest version
-    && pip install --no-cache-dir -r requirements-prod.txt
-    # Install project dependencies onto the virtual environment
+# Build the runtime bundle and Python deps via a dedicated script, so the
+# Dockerfile stays readable and the build logic can be tested/iterated on.
+COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
+RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 # Mounts the application code into the image
-COPY . code
+COPY . /code
 
 ###############################################################################
-# Production stage
+# Production stage (distroless)
 ###############################################################################
-FROM dhi.io/python:${PYTHON_VERSION}-debian13-dev AS production
+FROM gcr.io/distroless/base-debian12:nonroot-arm64 AS production
 
 # Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
 
-# Copy the virtual environment & application code from the `build` stage
-COPY --from=build /venv /venv
-COPY --from=build /code /code
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH=/usr/local/bin:/usr/bin:/bin \
+    LD_LIBRARY_PATH=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu \
+    PYTHONPATH=/opt/python
 
-# Ensure the virtual environment is made available on the system `PATH`
-ENV PATH=/venv/bin:$PATH
+# Copy dependencies and app code from the `build` stage.
+COPY --from=build /opt/runtime-libs/ /
+COPY --from=build /usr/local /usr/local
+COPY --from=build /opt/python /opt/python
+COPY --chown=nonroot:nonroot --from=build /code /code
 
-# Listen on the specified port at runtime
-# Note that this does not actually publish the port.
-# This also assumes TCP.
+# Listen on the specified port at runtime.
 EXPOSE 8000
 
-# Reinstall system libraries required for PostgreSQL drivers
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev \
-    # Reinstall the C library needed for `psycopg2`
-    && chmod +x entrypoint.sh
-    # Add execution permission for the entrypoint shell script
+# # Reinstall system libraries required for PostgreSQL drivers
+# RUN apt-get update \
+#     # Update the database of available packages
+#     && apt-get -y install libpq-dev \
+#     # Reinstall the C library needed for `psycopg2`
+#     && chmod +x entrypoint.sh
+#     # Add execution permission for the entrypoint shell script
 
 # Opens a shell on the entrypoint.
 # This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
 ENTRYPOINT ["/bin/bash"]
 
 # Runs the production server by default
-CMD ["./entrypoint.sh"]
+CMD ["./docker/entrypoint.sh"]
+
