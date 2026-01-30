@@ -2,6 +2,8 @@
 .pytest_cache/
 .import_linter_cache/
 __pycache__/
+.mypy_cache/
+.ruff_cache/
 
 # CI manifests
 .github/
@@ -27,6 +29,12 @@ requirements-dev.txt
 # IDE artifacts
 .idea/
 .vscode/
+.DS_Store
+*.log
+*.swp
+*.swo
+.coverage
+htmlcov/
 
 # Existing virtual environment
 venv/
