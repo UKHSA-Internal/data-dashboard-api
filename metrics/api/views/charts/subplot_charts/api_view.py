@@ -123,7 +123,7 @@ class SubplotChartsView(APIView):
     @classmethod
     def _handle_chart_as_file(
         cls, subplot_chart_parameters: SubplotChartRequestParameters
-    ) -> FileResponse:
+    ) -> FileResponse | Response:
         try:
             chart_result: bytes = access.generate_sub_plot_chart_image(
                 chart_request_params=subplot_chart_parameters,
