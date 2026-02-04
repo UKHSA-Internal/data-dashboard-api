@@ -3,24 +3,20 @@
 ###############################################################################
 # Build stage (Debian-based)
 ###############################################################################
-# Default arguments
-# This version is hardcoded but ideally it should pull from the `.python-version`
-# When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.6
 
 FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
 WORKDIR /build
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
 COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
-# Build the runtime bundle and Python deps via a dedicated script, so the
-# Dockerfile stays readable and the build logic can be tested/iterated on.
+# Build runtime bundle and collect shared library deps via dedicated script.
 COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
 RUN bash /usr/local/bin/build_distroless_runtime.sh
 
@@ -30,38 +26,41 @@ COPY . /code
 ###############################################################################
 # Production stage (distroless)
 ###############################################################################
-FROM gcr.io/distroless/base-debian12:nonroot-arm64 AS production
+FROM gcr.io/distroless/cc-debian12:nonroot AS production
 
-# Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
+ARG PYTHON_VERSION=3.12.6
+
 WORKDIR /code
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PATH=/usr/local/bin:/usr/bin:/bin \
-    LD_LIBRARY_PATH=/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu \
-    PYTHONPATH=/opt/python
+# Python runtime (pattern taken from distroless-base/python3/Dockerfile)
+COPY --from=build /usr/local/lib/ /usr/local/lib/
+COPY --from=build /usr/local/bin/ /usr/local/bin/
+COPY --from=build /etc/ld.so.cache /etc/ld.so.cache
+COPY --from=build /deps/ /
 
-# Copy dependencies and app code from the `build` stage.
-COPY --from=build /opt/runtime-libs/ /
-COPY --from=build /usr/local /usr/local
-COPY --from=build /opt/python /opt/python
+# zsh, bash and minimal coreutils required by our entrypoint tooling
+# bash is needed for kaleido's wrapper script
+COPY --from=build /usr/bin/zsh /usr/bin/zsh
+COPY --from=build /bin/bash /bin/bash
+COPY --from=build /usr/bin/dirname /usr/bin/dirname
+
+# Application code
 COPY --chown=nonroot:nonroot --from=build /code /code
 
-# Listen on the specified port at runtime.
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONFAULTHANDLER 1
+ENV PYTHONUNBUFFERED 1
+ENV PATH /usr/local/bin:/usr/bin:/bin
+# LD_LIBRARY_PATH includes kaleido's bundled Chromium libs
+ENV LD_LIBRARY_PATH /usr/local/lib/python3.12/site-packages/kaleido/executable/lib:/lib:/usr/lib:/lib/aarch64-linux-gnu:/usr/lib/aarch64-linux-gnu:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu
+
 EXPOSE 8000
 
-# # Reinstall system libraries required for PostgreSQL drivers
-# RUN apt-get update \
-#     # Update the database of available packages
-#     && apt-get -y install libpq-dev \
-#     # Reinstall the C library needed for `psycopg2`
-#     && chmod +x entrypoint.sh
-#     # Add execution permission for the entrypoint shell script
-
 # Opens a shell on the entrypoint.
-# This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
-ENTRYPOINT ["/bin/bash"]
+# This allows the `./docker/entrypoint.sh` shell script or any other tooling to be ran from the container
+ENTRYPOINT ["/usr/bin/zsh"]
 
 # Runs the production server by default
 CMD ["./docker/entrypoint.sh"]
-
