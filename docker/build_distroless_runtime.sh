@@ -15,7 +15,7 @@ readonly DEPS_DIR="/deps"
 main() {
   apt-get update
   apt-get -y install --no-install-recommends \
-    bash zsh coreutils libc-bin libcap2 libtinfo6 gcc libpq-dev python3-dev
+    bash zsh coreutils libcap2 libtinfo6 gcc libpq-dev python3-dev
   rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
   python -m pip install --upgrade pip
