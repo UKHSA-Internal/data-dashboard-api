@@ -1,8 +1,11 @@
 # syntax=docker/dockerfile:1
 
 ###############################################################################
-# Build stage (Debian-based)
+# Build stage
 ###############################################################################
+# Default arguments
+# This version is hardcoded but ideally it should pull from the `.python-version`
+# When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.6
 
 FROM python:${PYTHON_VERSION}-slim-bookworm AS build
