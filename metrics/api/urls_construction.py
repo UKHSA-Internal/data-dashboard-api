@@ -184,6 +184,7 @@ audit_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/dual-category/v1", DualCategoryChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
