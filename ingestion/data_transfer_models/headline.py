@@ -109,7 +109,7 @@ class InboundHeadlineSpecificFields(BaseModel):
         return validation.validate_period_end(
             period_start=input_period_start, period_end=period_end
         )
-    
+
     @model_validator(mode="after")
     def invalidate_non_public_data_for_public_ingestion(self) -> Self:
         """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
@@ -155,7 +155,7 @@ def _build_enriched_headline_specific_fields(
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
-            is_public=individual_time_series["is_public"]
+            is_public=individual_time_series["is_public"],
         )
         for individual_time_series in source_data["data"]
         if individual_time_series["metric_value"] is not None
