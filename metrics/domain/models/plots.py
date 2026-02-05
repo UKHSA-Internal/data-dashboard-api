@@ -38,6 +38,8 @@ class PlotParameters(BaseModel):
     use_smooth_lines: bool = True
     use_markers: bool = False
     metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
+    theme: str = ""
+    sub_theme: str = ""
 
     @property
     def metric_group(self) -> str:
