@@ -307,11 +307,7 @@ class TestBuildModelMethods:
                 == fake_data["time_series"][index]["is_public"]
             )
 
-    @mock.patch(
-        "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
-        new=True,
-    )
-    def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
+    def test_build_api_time_series_sets_is_public_to_false_when_not_provided(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
@@ -320,7 +316,7 @@ class TestBuildModelMethods:
         When `build_api_time_series()` is called
             from an instance of the `Consumer`
         Then the enriched `APITimeSeries` instances
-            set `is_public` to True
+            set `is_public` to False
         """
         # Given
         fake_data = example_time_series_data
@@ -334,4 +330,4 @@ class TestBuildModelMethods:
 
         # Then
         for api_time_series_model in api_time_series_models:
-            assert api_time_series_model.is_public is True
+            assert api_time_series_model.is_public is False

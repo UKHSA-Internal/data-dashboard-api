@@ -23,6 +23,7 @@ class TestInboundHeadlineSpecificFieldsForPeriodDates:
             period_end=period_end,
             embargo=None,
             metric_value=123,
+            is_public=True
         )
 
         # Then
@@ -44,6 +45,7 @@ class TestInboundHeadlineSpecificFieldsForPeriodDates:
             period_end=period_end,
             embargo=None,
             metric_value=123,
+            is_public=True
         )
 
         # Then

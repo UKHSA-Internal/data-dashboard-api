@@ -21,7 +21,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     period_end: datetime.datetime
     embargo: datetime.datetime | None
     metric_value: float
-    is_public: bool = True
+    is_public: bool
 
     @field_validator("embargo")
     @classmethod
@@ -111,6 +111,14 @@ class InboundHeadlineSpecificFields(BaseModel):
         )
 
     @model_validator(mode="after")
+    def error_if_no_is_public_field(self) -> Self:
+        """Checks that the `is_public` field is set."""
+        if not AUTH_ENABLED and not self.is_public:
+            raise NonPublicDataSentToPublicIngestionError
+
+        return self
+    
+    @model_validator(mode="after")
     def invalidate_non_public_data_for_public_ingestion(self) -> Self:
         """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
         if not AUTH_ENABLED and not self.is_public:
@@ -155,11 +163,7 @@ def _build_enriched_headline_specific_fields(
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
-            is_public=(
-                individual_time_series["is_public"]
-                if not ALLOW_MISSING_IS_PUBLIC_FIELD
-                else individual_time_series.get("is_public", True)
-            ),
+            is_public=individual_time_series["is_public"]
         )
         for individual_time_series in source_data["data"]
         if individual_time_series["metric_value"] is not None
