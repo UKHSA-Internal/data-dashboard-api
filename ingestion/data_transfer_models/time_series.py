@@ -6,7 +6,7 @@ from pydantic.fields import Field
 
 import validation
 from ingestion.utils import type_hints
-from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.api.settings.auth import AUTH_ENABLED, ALLOW_MISSING_IS_PUBLIC_FIELD
 from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,
@@ -128,7 +128,11 @@ def _build_enriched_time_series_specific_fields(
                 "in_reporting_delay_period", False
             ),
             force_write=individual_time_series.get("force_write", False),
-            is_public=individual_time_series.get("is_public", True),
+            is_public=(
+                individual_time_series["is_public"]
+                if not ALLOW_MISSING_IS_PUBLIC_FIELD
+                else individual_time_series.get("is_public", True)
+            ),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None

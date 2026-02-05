@@ -1,3 +1,4 @@
+from unittest import mock
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -6,6 +7,7 @@ from ingestion.data_transfer_models.handlers import (
     build_time_series_dto_from_source,
 )
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
+from metrics.api.settings import auth
 from validation.data_transfer_models.base import MissingFieldError
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -95,16 +97,19 @@ class TestBuildTimeSeriesDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["time_series"]
 
+    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
     def test_defaults_is_public_to_true_when_not_provided(
-        self, example_time_series_data: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE, mocked_allow_missing_is_public: mock.MagicMock
     ):
         """
         Given valid incoming time series source data
-            which omits the `is_public` field
+            which omits the `is_public` field 
+        AND GIVEN `ALLOW_MISSING_IS_PUBLIC_FIELD` is true
         When `build_time_series_dto_from_source()` is called
         Then the enriched `TimeSeriesDTO` has set `is_public` to True
         """
         # Given
+        mocked_allow_missing_is_public.return_value = True
         source_data = example_time_series_data
         for time_series_data in source_data["time_series"]:
             time_series_data.pop("is_public")
@@ -115,7 +120,28 @@ class TestBuildTimeSeriesDTOFromSource:
         # Then
         assert time_series_dto.time_series[0].is_public is True
         assert time_series_dto.time_series[1].is_public is True
+        
+    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
+    def test_error_raised_when_is_public_field_missing(
+        self, mocked_allow_missing_is_public: mock.MagicMock, example_time_series_data: INCOMING_DATA_TYPE
+    ):
+        """
+        Given valid incoming time series source data
+            which omits the `is_public` field 
+        AND GIVEN `ALLOW_MISSING_IS_PUBLIC_FIELD` is false
+        When `build_time_series_dto_from_source()` is called
+        Then the MissingFieldError is thrown for `is_public`
+        """
+        # Given
+        mocked_allow_missing_is_public.return_value = False
+        source_data = example_time_series_data
+        for time_series_data in source_data["time_series"]:
+            time_series_data.pop("is_public")
 
+        # When/Then
+        with pytest.raises(MissingFieldError):
+            build_time_series_dto_from_source(source_data=source_data)
+        
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
@@ -337,16 +363,19 @@ class TestBuildHeadlineDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["data"]
 
+    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
     def test_defaults_is_public_to_true_when_not_provided(
-        self, example_headline_data: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE, mocked_allow_missing_is_public: mock.MagicMock
     ):
         """
         Given valid incoming headline source data
             which omits the `is_public` field
+        AND GIVEN `ALLOW_MISSING_IS_PUBLIC_FIELD` is True
         When `build_headline_dto_from_source()` is called
         Then the enriched `HeadlineDTO` has set `is_public` to True
         """
         # Given
+        mocked_allow_missing_is_public = True
         source_data = example_headline_data
         for headline_data in source_data["data"]:
             headline_data.pop("is_public")

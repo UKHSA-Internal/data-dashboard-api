@@ -2,6 +2,7 @@ from unittest import mock
 
 from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
+from metrics.api.settings import auth
 from tests.unit.ingestion.data_transfer_models.test_handlers import (
     DATE_FORMAT,
     DATETIME_FORMAT,
@@ -89,6 +90,7 @@ class TestBuildModelMethods:
     ):
         """
         Given fake input data which omits the `is_public` field
+        AND GIVEN `ALLOW_MISSING_IS_PUBLIC_FIELD` is True
         When `build_core_headlines()` is called
             from an instance of the `Consumer`
         Then enriched `CoreHeadline` instances
@@ -292,9 +294,9 @@ class TestBuildModelMethods:
                 api_time_series_model_instance.is_public
                 == fake_data["time_series"][index]["is_public"]
             )
-
+    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
     def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
-        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
+        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE, mocked_allow_missing_is_public: mock.MagicMock
     ):
         """
         Given fake input data which omits the `is_public` field
@@ -304,6 +306,8 @@ class TestBuildModelMethods:
             set `is_public` to True
         """
         # Given
+        mocked_allow_missing_is_public.return_value = True
+
         fake_data = example_time_series_data
         for time_series_data in fake_data["time_series"]:
             time_series_data.pop("is_public")

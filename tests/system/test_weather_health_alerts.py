@@ -1,10 +1,12 @@
 import datetime
+from unittest import mock
 
 import freezegun
 import pytest
 from rest_framework.test import APIClient
 
 from ingestion.file_ingestion import data_ingester
+from metrics.api.settings import auth
 
 EXPECTED_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -34,6 +36,7 @@ class TestIngestion:
                     "period_end": "2025-01-07 08:00:00",
                     "metric_value": 11,
                     "embargo": None,
+                    "is_public": True
                 }
             ],
             "refresh_date": "2025-06-11 11:15:00",
