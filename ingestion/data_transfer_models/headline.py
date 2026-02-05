@@ -109,14 +109,6 @@ class InboundHeadlineSpecificFields(BaseModel):
         return validation.validate_period_end(
             period_start=input_period_start, period_end=period_end
         )
-
-    @model_validator(mode="after")
-    def error_if_no_is_public_field(self) -> Self:
-        """Checks that the `is_public` field is set."""
-        if not AUTH_ENABLED and not self.is_public:
-            raise NonPublicDataSentToPublicIngestionError
-
-        return self
     
     @model_validator(mode="after")
     def invalidate_non_public_data_for_public_ingestion(self) -> Self:
