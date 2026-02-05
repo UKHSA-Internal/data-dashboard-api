@@ -103,7 +103,7 @@ class TestBuildModelMethods:
                 "date": "2023-08-01",
                 "metric_value": 123,
                 "force_write": True,
-                "is_public": True
+                "is_public": True,
             }
         ]
 

@@ -67,7 +67,7 @@ class TestInboundTimeSeriesSpecificFields:
                 date=fake_date,
                 embargo=fake_embargo,
                 metric_value=fake_metric_value,
-                is_public=True
+                is_public=True,
             )
         )
 
@@ -137,7 +137,7 @@ class TestInboundTimeSeriesSpecificFields:
                 epiweek=fake_epiweek,
                 embargo=fake_embargo,
                 metric_value=123,
-                is_public=True
+                is_public=True,
             )
         )
 
