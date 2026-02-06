@@ -11,6 +11,7 @@ class TestInboundTimeSeriesSpecificFieldsForEpiWeek:
             "date": "2023-11-01",
             "embargo": None,
             "metric_value": 123,
+            "is_public": True,
         }
 
     @pytest.mark.parametrize("epiweek", list(range(1, 53 + 1)))
