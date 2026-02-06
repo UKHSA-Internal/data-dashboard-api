@@ -20,7 +20,7 @@ django-permissionedforms==0.1
 django-taggit==5.0.0
 django-treebeard==4.8.0
 djangorestframework==3.15.2
-draftjs-exporter==2.1.7
+draftjs-exporter==5.2.0
 drf-nested-routers==0.95.0
 drf-spectacular==0.27.2
 et-xmlfile==2.0.0
