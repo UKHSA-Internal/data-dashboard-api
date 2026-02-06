@@ -97,9 +97,8 @@ class TestBuildTimeSeriesDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["time_series"]
 
-    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
     def test_defaults_is_public_to_true_when_not_provided(
-        self, example_time_series_data: INCOMING_DATA_TYPE, mocked_allow_missing_is_public: mock.MagicMock
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
@@ -109,7 +108,6 @@ class TestBuildTimeSeriesDTOFromSource:
         Then the enriched `TimeSeriesDTO` has set `is_public` to True
         """
         # Given
-        mocked_allow_missing_is_public.return_value = True
         source_data = example_time_series_data
         for time_series_data in source_data["time_series"]:
             time_series_data.pop("is_public")

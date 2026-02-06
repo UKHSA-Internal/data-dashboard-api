@@ -294,9 +294,9 @@ class TestBuildModelMethods:
                 api_time_series_model_instance.is_public
                 == fake_data["time_series"][index]["is_public"]
             )
-    @mock.patch.object(auth, "ALLOW_MISSING_IS_PUBLIC_FIELD")
+
     def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
-        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE, mocked_allow_missing_is_public: mock.MagicMock
+        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given fake input data which omits the `is_public` field
@@ -306,7 +306,6 @@ class TestBuildModelMethods:
             set `is_public` to True
         """
         # Given
-        mocked_allow_missing_is_public.return_value = True
 
         fake_data = example_time_series_data
         for time_series_data in fake_data["time_series"]:
