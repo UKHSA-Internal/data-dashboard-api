@@ -35,7 +35,9 @@ def generate_chart_figure(
     for plot in chart_generation_payload.plots:
         match plot.parameters.chart_type:
             case ChartTypes.bar.value:
-                bar_plot = create_bar_plot(plot_data=plot)
+                bar_plot = create_bar_plot(
+                    plot_data=plot, chart_generation_payload=chart_generation_payload
+                )
                 figure.add_trace(trace=bar_plot)
 
             case ChartTypes.line_multi_coloured.value:
