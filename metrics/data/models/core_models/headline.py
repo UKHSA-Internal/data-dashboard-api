@@ -45,9 +45,21 @@ class CoreHeadline(models.Model):
 
     period_start = models.DateTimeField(help_text=help_texts.PERIOD_START)
     period_end = models.DateTimeField(help_text=help_texts.PERIOD_END)
+    upper_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        blank=True,
+        null=True,
+    )
     metric_value = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+    )
+    lower_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        null=True,
+        blank=True,
     )
     force_write = models.BooleanField(default=False)
 
