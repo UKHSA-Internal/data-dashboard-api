@@ -273,6 +273,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "dashboard"
+WAGTAIL_AUTOSAVE_INTERVAL = 0
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

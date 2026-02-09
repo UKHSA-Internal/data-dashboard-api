@@ -1,4 +1,6 @@
 import copy
+import pytest
+from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.charts.subplot_charts import SubplotChartRequestSerializer
 from metrics.api.views.tables.subplot_tables.request_example import (
@@ -116,3 +118,97 @@ class TestSubplotChartRequestParameters:
         # The other groups (North East & Darlington) still have all 4 plots
         assert len(output[1].plots) == 4
         assert len(output[2].plots) == 4
+
+    def test_validation_fails_on_missing_theme(self):
+        """
+        Given an invalid payload for a subplot chart
+        When `is_valid()` is called from
+            an instance of `SubplotChartRequestSerializer`
+        Then a rest_framework.exceptions.ValidationError is thrown
+        """
+        # Given
+        payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+        # Remove theme from chart params
+        # so there is no theme
+        del payload["chart_parameters"]["theme"]
+        # When
+        serializer = SubplotChartRequestSerializer(data=payload)
+        # Then validation should fail on theme
+        with pytest.raises(
+            ValidationError,
+            match=r".*'theme' must be specified at either "
+            "subplot_parameters or chart_parameters level.*",
+        ):
+            serializer.is_valid(raise_exception=True)
+
+    def test_validation_fails_on_missing_sub_theme(self):
+        """
+        Given an invalid payload for a subplot chart
+        When `is_valid()` is called from
+            an instance of `SubplotChartRequestSerializer`
+        Then a rest_framework.exceptions.ValidationError is thrown
+        """
+        # Given
+        payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+        # Remove sub_theme from chart params
+        # so there is no sub_theme
+        del payload["chart_parameters"]["sub_theme"]
+        # When
+        serializer = SubplotChartRequestSerializer(data=payload)
+        # Then validation should fail on sub_theme
+        with pytest.raises(
+            ValidationError,
+            match=r".*'sub_theme' must be specified at either "
+            "subplot_parameters or chart_parameters level.*",
+        ):
+            serializer.is_valid(raise_exception=True)
+
+    def test_subplot_params_override_chart_params(self):
+        """
+        Given a payload with theme and sub_theme in both chart_parameters
+        and subplot_parameters
+        When `serializer.to_models` is called from
+            an instance of `SubplotChartRequestSerializer`
+        Then the plots in each subplot will use the theme and sub_theme
+        from the subplot_parameters
+        """
+        # Given
+        payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+        # Add modified theme and sub_theme to subplot_parameters
+        theme = payload["chart_parameters"]["theme"] + "_subplot"
+        sub_theme = payload["chart_parameters"]["sub_theme"] + "_subplot"
+        for subplot in payload["subplots"]:
+            subplot["subplot_parameters"]["theme"] = theme
+            subplot["subplot_parameters"]["sub_theme"] = sub_theme
+        # When
+        serializer = SubplotChartRequestSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        params: SubplotChartRequestParameters = serializer.to_models(request=None)
+        # Then theme and sub_theme from subplot_parameters will
+        # override the values from chart_parameters
+        for subplot in params.subplots:
+            for plot in subplot.plots:
+                assert plot.theme == theme
+                assert plot.sub_theme == sub_theme
+
+    def test_chart_params_are_used_when_subplot_params_are_missing(self):
+        """
+        Given a payload with theme and sub_theme in only chart_parameters
+        When `serializer.to_models` is called from
+            an instance of `SubplotChartRequestSerializer`
+        Then the plots in each subplot will use the theme and sub_theme
+        from the chart_parameters
+        """
+        # Given
+        payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+        theme = payload["chart_parameters"]["theme"]
+        sub_theme = payload["chart_parameters"]["sub_theme"]
+        # When
+        serializer = SubplotChartRequestSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        params: SubplotChartRequestParameters = serializer.to_models(request=None)
+        # Then theme and sub_theme from chart_parameters will be used
+        for subplot in params.subplots:
+            for plot in subplot.plots:
+                assert plot.theme == theme
+                assert plot.sub_theme == sub_theme
