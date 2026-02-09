@@ -39,6 +39,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=VALID_DATETIME,
             metric_value=123,
+            is_public=True,
         )
 
         # Then
@@ -65,6 +66,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=fake_embargo,
             metric_value=123,
+            is_public=True,
         )
 
         # Then
@@ -89,6 +91,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             metric_value=123,
             embargo=None,
+            is_public=True,
         )
 
         # Then
@@ -113,6 +116,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             metric_value=123,
             embargo=None,
+            is_public=True,
         )
 
         # Then
@@ -141,6 +145,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=fake_embargo,
             metric_value=123,
+            is_public=True,
         )
 
         # Then

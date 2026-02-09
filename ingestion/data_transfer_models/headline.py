@@ -21,7 +21,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     period_end: datetime.datetime
     embargo: datetime.datetime | None
     metric_value: float
-    is_public: bool = True
+    is_public: bool
 
     @field_validator("embargo")
     @classmethod
@@ -155,7 +155,7 @@ def _build_enriched_headline_specific_fields(
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
-            is_public=individual_time_series.get("is_public", True),
+            is_public=individual_time_series["is_public"],
         )
         for individual_time_series in source_data["data"]
         if individual_time_series["metric_value"] is not None
