@@ -34,6 +34,7 @@ class TestIngestion:
                     "period_end": "2025-01-07 08:00:00",
                     "metric_value": 11,
                     "embargo": None,
+                    "is_public": True
                 }
             ],
             "refresh_date": "2025-06-11 11:15:00",

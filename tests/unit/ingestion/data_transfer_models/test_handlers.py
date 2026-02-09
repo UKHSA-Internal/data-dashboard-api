@@ -1,3 +1,4 @@
+from unittest import mock
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -95,12 +96,14 @@ class TestBuildTimeSeriesDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["time_series"]
 
+    @mock.patch("ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     def test_defaults_is_public_to_true_when_not_provided(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
             which omits the `is_public` field
+        And Given ALLOW_MISSING_IS_PUBLIC_FIELD is True
         When `build_time_series_dto_from_source()` is called
         Then the enriched `TimeSeriesDTO` has set `is_public` to True
         """
@@ -115,7 +118,7 @@ class TestBuildTimeSeriesDTOFromSource:
         # Then
         assert time_series_dto.time_series[0].is_public is True
         assert time_series_dto.time_series[1].is_public is True
-
+        
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
@@ -337,6 +340,7 @@ class TestBuildHeadlineDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["data"]
 
+    @mock.patch("ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     def test_defaults_is_public_to_true_when_not_provided(
         self, example_headline_data: INCOMING_DATA_TYPE
     ):

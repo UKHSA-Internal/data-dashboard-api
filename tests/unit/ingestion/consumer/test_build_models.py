@@ -82,6 +82,7 @@ class TestBuildModelMethods:
         )
 
     @mock.patch.object(Consumer, "update_supporting_models")
+    @mock.patch("ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)    
     def test_build_core_headlines_sets_is_public_to_true_when_not_provided(
         self,
         mocked_update_supporting_models: mock.MagicMock,
@@ -89,6 +90,7 @@ class TestBuildModelMethods:
     ):
         """
         Given fake input data which omits the `is_public` field
+        And Given ALLOW_MISSING_IS_PUBLIC_FIELD is set to True
         When `build_core_headlines()` is called
             from an instance of the `Consumer`
         Then enriched `CoreHeadline` instances
@@ -113,6 +115,7 @@ class TestBuildModelMethods:
         for core_headline_model in core_headline_models:
             assert core_headline_model.is_public is True
 
+    @mock.patch("ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_time_series(
         self,
@@ -121,6 +124,7 @@ class TestBuildModelMethods:
     ):
         """
         Given fake input data
+        And Given ALLOW_MISSING_IS_PUBLIC_FIELD is True
         When `build_core_time_series()` is called
             from an instance of the `Consumer`
         Then returned `CoreTimeSeries` instances
@@ -188,7 +192,8 @@ class TestBuildModelMethods:
             == fake_data["time_series"][0]["metric_value"]
         )
         assert built_core_time_series_instance.force_write is True
-
+        
+    @mock.patch("ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_time_series_sets_is_public_to_true_when_not_provided(
         self,
@@ -292,12 +297,14 @@ class TestBuildModelMethods:
                 api_time_series_model_instance.is_public
                 == fake_data["time_series"][index]["is_public"]
             )
-
+            
+    @mock.patch("ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given fake input data which omits the `is_public` field
+        And Given ALLOW_MISSING_IS_PUBLIC_FIELD is set to True
         When `build_api_time_series()` is called
             from an instance of the `Consumer`
         Then the enriched `APITimeSeries` instances
