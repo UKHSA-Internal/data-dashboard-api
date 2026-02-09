@@ -6,7 +6,7 @@ from pydantic.fields import Field
 
 import validation
 from ingestion.utils import type_hints
-from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD, AUTH_ENABLED
+from metrics.api.settings.auth import AUTH_ENABLED
 from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,
