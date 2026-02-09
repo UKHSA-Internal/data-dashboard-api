@@ -6,7 +6,7 @@ from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.headline import (
     HeadlineDTO,
-    InboundHeadlineSpecificFields
+    InboundHeadlineSpecificFields,
 )
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 

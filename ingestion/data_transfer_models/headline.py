@@ -7,7 +7,7 @@ from pydantic_core.core_schema import ValidationInfo
 
 import validation
 from ingestion.utils import type_hints
-from metrics.api.settings.auth import AUTH_ENABLED, ALLOW_MISSING_IS_PUBLIC_FIELD
+from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD, AUTH_ENABLED
 from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
     NonPublicDataSentToPublicIngestionError,
@@ -155,9 +155,11 @@ def _build_enriched_headline_specific_fields(
             period_end=individual_time_series["period_end"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
-            is_public=(individual_time_series["is_public"]
+            is_public=(
+                individual_time_series["is_public"]
                 if not ALLOW_MISSING_IS_PUBLIC_FIELD
-                else individual_time_series.get("is_public", True))
+                else individual_time_series.get("is_public", True)
+            ),
         )
         for individual_time_series in source_data["data"]
         if individual_time_series["metric_value"] is not None
