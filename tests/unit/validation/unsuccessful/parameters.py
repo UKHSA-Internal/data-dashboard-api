@@ -91,4 +91,11 @@ INVALID_PARAMETERS = [
         "carbapenamase-producing-organisms_cases_allSitesRateByMonth",
         "syndromic",
     ),  # Invalid metric group
+    (
+        "infectious_disease",
+        "chemical_exposure",
+        "lyme",
+        "lyme_cases_infectionRateByYear",
+        "cases",  # Invalid child theme
+    ),
 ]
