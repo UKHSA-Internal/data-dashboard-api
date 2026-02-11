@@ -130,6 +130,7 @@ class SingleCategoryChartSettings(ChartSettings):
             item
             for row in self.plots_data
             for item in row.additional_values.get("lower_confidence", [])
+            if item
         ]
 
         if self.y_axis_minimum_value < min(y_axis_range):
