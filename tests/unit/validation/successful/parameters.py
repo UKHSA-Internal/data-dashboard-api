@@ -160,4 +160,11 @@ VALID_PARAMETERS = [
         "carbapenamase-producing-organisms_cases_allSitesRateByMonth",
         "cases",
     ),
+    (
+        "infectious_disease",
+        "vector_borne",
+        "lyme",
+        "lyme_cases_infectionRateByYear",
+        "cases",
+    ),
 ]
