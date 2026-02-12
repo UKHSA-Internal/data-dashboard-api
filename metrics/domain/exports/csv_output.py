@@ -31,6 +31,8 @@ HEADLINE_FIELDS = {
     "period_start": "period_start",
     "period_end": "period_end",
     "metric_value": "metric_value",
+    "lower_confidence": "lower_confidence",
+    "upper_confidence": "upper_confidence",
 }
 
 
@@ -64,7 +66,16 @@ def write_headline_data_to_csv(
     headers: list[str] | None = None,
     use_csv_dict_writer: bool = True,
 ) -> io.StringIO:
+    confidence_intervals = core_headline_data.serializer.context.get(
+        "confidence_intervals", False
+    )
+
     headers = headers or list(HEADLINE_FIELDS.keys())
+
+    if not confidence_intervals:
+        headers.remove("upper_confidence")
+        headers.remove("lower_confidence")
+
     rows = core_headline_data
     params = {"file": file, "headers": headers, "rows": rows}
     if use_csv_dict_writer:

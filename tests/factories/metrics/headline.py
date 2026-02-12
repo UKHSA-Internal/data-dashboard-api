@@ -45,6 +45,8 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         period_start: str | datetime.date = "2023-01-01",
         period_end: str | datetime.date = "2023-01-07",
         embargo: str | datetime.datetime = datetime.datetime(2024, 4, 10),
+        upper_confidence: float | None = None,
+        lower_confidence: float | None = None,
         is_public: bool = True,
         **kwargs
     ):
@@ -82,7 +84,9 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
             period_end=period_end,
             embargo=embargo,
             is_public=is_public,
-            **kwargs
+            lower_confidence=lower_confidence,
+            upper_confidence=upper_confidence,
+            **kwargs,
         )
 
     @classmethod

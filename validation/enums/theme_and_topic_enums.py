@@ -11,10 +11,12 @@ class _InfectiousDiseaseChildTheme(Enum):
     CONTACT = "contact"
     CHILDHOOD_ILLNESS = "childhood_illness"
     INVASIVE_BACTERIAL_INFECTIONS = "invasive_bacterial_infections"
+    VECTOR_BORNE = "vector_borne"
 
 
 class _ExtremeEventChildTheme(Enum):
     WEATHER_ALERT = "weather_alert"
+    MORTALITY_REPORT = "mortality-report"
 
 
 class _ImmunisationChildTheme(Enum):
@@ -63,6 +65,10 @@ class _BloodbourneTopic(Enum):
     HEPATITIS_C = "Hepatitis-C"
 
 
+class _MortalityReportTopic(Enum):
+    HEAT_MORTALITY = "Heat-mortality"
+
+
 class _WeatherAlertTopic(Enum):
     HEAT_ALERT = "Heat-alert"
     COLD_ALERT = "Cold-alert"
@@ -78,6 +84,10 @@ class _ChildhoodVaccinesTopic(Enum):
     MEN_B_BOOSTER = "MenB-booster"
     PNEUMOCOCCAL = "pneumococcal"
     ROTAVIRUS = "rotavirus"
+
+
+class _VectorBorneTopic(Enum):
+    LYME = "lyme"
 
 
 class _RespiratoryTopic(Enum):
@@ -147,8 +157,10 @@ class ChildTheme(BaseEnum):
 
 class Topic(BaseEnum):
     WEATHER_ALERT = _WeatherAlertTopic
+    MORTALITY_REPORT = _MortalityReportTopic
     VACCINE_PREVENTABLE = _VaccinePreventableTopic
     RESPIRATORY = _RespiratoryTopic
+    VECTOR_BORNE = _VectorBorneTopic
     BLOODSTREAM_INFECTION = _BloodstreamInfectionTopic
     BLOODBORNE = _BloodbourneTopic
     GASTROINTESTINAL = _GastrointestinalTopic

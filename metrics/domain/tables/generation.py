@@ -9,9 +9,12 @@ from metrics.domain.common.utils import (
 )
 
 IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
+UPPER_CONFIDENCE = "upper_confidence"
+LOWER_CONFIDENCE = "lower_confidence"
 
 PLOT_DATA_LOOKUP_TYPE = dict[datetime.date, Decimal]
 IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE = dict[datetime.date, bool]
+CONFIDENCE_LOOKUP_TYPE = dict[datetime.date, Decimal | None]
 
 DEFAULT_PLOT_LABEL = "Plot"
 
@@ -56,6 +59,8 @@ class TabularData:
         in_reporting_delay_period_lookup: (
             IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE | None
         ) = None,
+        upper_confidence_lookup: CONFIDENCE_LOOKUP_TYPE | None = None,
+        lower_confidence_lookup: CONFIDENCE_LOOKUP_TYPE | None = None,
     ):
         """Add the values to the combined plots dictionary
 
@@ -65,12 +70,18 @@ class TabularData:
             in_reporting_delay_period_lookup: The lookups for
                 the reporting delay period associated with
                 each data point in the `plot_data`
+            upper_confidence_lookup: The lookups for upper confidence
+                intervals associated with each data point
+            lower_confidence_lookup: The lookups for lower confidence
+                intervals associated with each data point
 
         Returns:
             None
 
         """
         in_reporting_delay_period_lookup = in_reporting_delay_period_lookup or {}
+        upper_confidence_lookup = upper_confidence_lookup or {}
+        lower_confidence_lookup = lower_confidence_lookup or {}
 
         for key, value in plot_data.items():
             result = {plot_label: str(value)}
@@ -79,6 +90,20 @@ class TabularData:
                 key=key,
             )
             result[IN_REPORTING_DELAY_PERIOD] = in_reporting_delay_period_value
+
+            upper_confidence_value = self._fetch_confidence_value(
+                confidence_lookup=upper_confidence_lookup,
+                key=key,
+            )
+            if upper_confidence_value is not None:
+                result[UPPER_CONFIDENCE] = str(upper_confidence_value)
+
+            lower_confidence_value = self._fetch_confidence_value(
+                confidence_lookup=lower_confidence_lookup,
+                key=key,
+            )
+            if lower_confidence_value is not None:
+                result[LOWER_CONFIDENCE] = str(lower_confidence_value)
 
             self.combined_plots[str(key)].update(result)
 
@@ -92,6 +117,17 @@ class TabularData:
             return in_reporting_delay_period_lookup[key]
         except KeyError:
             return False
+
+    @classmethod
+    def _fetch_confidence_value(
+        cls,
+        confidence_lookup: CONFIDENCE_LOOKUP_TYPE,
+        key: datetime.date,
+    ) -> Decimal | None:
+        try:
+            return confidence_lookup[key]
+        except KeyError:
+            return None
 
     def _cast_combined_plots_in_order(self) -> None:
         if self._is_date_based:
@@ -120,11 +156,23 @@ class TabularData:
             in_reporting_delay_period_lookup: IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE = (
                 self._build_plot_data_for_in_reporting_delay_period_values(plot=plot)
             )
+            upper_confidence_lookup: CONFIDENCE_LOOKUP_TYPE = (
+                self._build_plot_data_for_confidence_values(
+                    plot=plot, confidence_field=UPPER_CONFIDENCE
+                )
+            )
+            lower_confidence_lookup: CONFIDENCE_LOOKUP_TYPE = (
+                self._build_plot_data_for_confidence_values(
+                    plot=plot, confidence_field=LOWER_CONFIDENCE
+                )
+            )
 
             self.add_plot_data_to_combined_plots(
                 plot_data=plot_data,
                 plot_label=plot_label,
                 in_reporting_delay_period_lookup=in_reporting_delay_period_lookup,
+                upper_confidence_lookup=upper_confidence_lookup,
+                lower_confidence_lookup=lower_confidence_lookup,
             )
 
     @property
@@ -153,6 +201,27 @@ class TabularData:
         return dict(
             zip(plot.x_axis_values, in_report_delay_period_values, strict=False)
         )
+
+    @classmethod
+    def _build_plot_data_for_confidence_values(
+        cls, *, plot: "PlotGenerationData", confidence_field: str
+    ) -> CONFIDENCE_LOOKUP_TYPE:
+        """Builds a lookup dictionary for confidence interval values
+
+        Args:
+            plot: The plot data containing confidence intervals
+            confidence_field: The field name for the confidence interval
+                (either "upper_confidence" or "lower_confidence")
+
+        Returns:
+            A dictionary mapping x-axis values to confidence interval values
+        """
+        try:
+            confidence_values = plot.additional_values[confidence_field]
+        except (KeyError, TypeError):
+            confidence_values = [None for _ in range(len(plot.x_axis_values))]
+
+        return dict(zip(plot.x_axis_values, confidence_values, strict=False))
 
     def create_multi_plot_output(self) -> list[dict[str, str] | list[dict]]:
         """Creates the tabular output for the given plots
@@ -214,18 +283,23 @@ class TabularData:
 
         Returns:
             A list of dictionaries representing a plot and its values
-            Eg. [{label: "Plot1", value: "55", IN_REPORTING_DELAY_PERIOD: False}]
+            Eg. [{label: "Plot1", value: "55", IN_REPORTING_DELAY_PERIOD: False, upper_confidence: "60", lower_confidence: "50"}]
         """
-        return [
-            {
+        result = []
+        for plot_label in self.plot_labels:
+            value_dict = {
                 "label": plot_label,
                 "value": plot_values.get(plot_label),
                 IN_REPORTING_DELAY_PERIOD: plot_values.get(
                     IN_REPORTING_DELAY_PERIOD, False
                 ),
             }
-            for plot_label in self.plot_labels
-        ]
+            if UPPER_CONFIDENCE in plot_values:
+                value_dict[UPPER_CONFIDENCE] = plot_values.get(UPPER_CONFIDENCE)
+            if LOWER_CONFIDENCE in plot_values:
+                value_dict[LOWER_CONFIDENCE] = plot_values.get(LOWER_CONFIDENCE)
+            result.append(value_dict)
+        return result
 
     def create_headline_plot_values(self, plot_values: dict[str, str]) -> list[dict]:
         """Creates an array of values for times series tabular data row
@@ -236,14 +310,19 @@ class TabularData:
 
         Returns:
             A list of dictionaries representing a plot and its values
-            Eg. [{label: "Amount", value: "55", IN_REPORTING_DELAY_PERIOD: False}]
+            Eg. [{label: "Amount", value: "55", IN_REPORTING_DELAY_PERIOD: False, upper_confidence: "60", lower_confidence: "50"}]
         """
-        return [
-            {
-                "label": "Amount",
-                "value": plot_values.get(plot_label),
-                IN_REPORTING_DELAY_PERIOD: False,
-            }
-            for plot_label in self.plot_labels
-            if plot_values.get(plot_label)
-        ]
+        result = []
+        for plot_label in self.plot_labels:
+            if plot_values.get(plot_label):
+                value_dict = {
+                    "label": "Amount",
+                    "value": plot_values.get(plot_label),
+                    IN_REPORTING_DELAY_PERIOD: False,
+                }
+                if UPPER_CONFIDENCE in plot_values:
+                    value_dict[UPPER_CONFIDENCE] = plot_values.get(UPPER_CONFIDENCE)
+                if LOWER_CONFIDENCE in plot_values:
+                    value_dict[LOWER_CONFIDENCE] = plot_values.get(LOWER_CONFIDENCE)
+                result.append(value_dict)
+        return result

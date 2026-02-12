@@ -318,14 +318,18 @@ def example_headline_data() -> dict[str, str | list[dict[str, str | float]]]:
             {
                 "period_start": "2023-10-15",
                 "period_end": "2023-10-22",
+                "upper_confidence": 15,
                 "metric_value": 12.3,
+                "lower_confidence": 10,
                 "embargo": "2023-11-16 17:30:00",
                 "is_public": True,
             },
             {
                 "period_start": "2023-10-23",
                 "period_end": "2023-10-30",
+                "upper_confidence": 11,
                 "metric_value": 10.7,
+                "lower_confidence": 8,
                 "embargo": "2023-11-16 17:30:00",
                 "is_public": True,
             },

@@ -175,6 +175,8 @@ class TestPlotParameters:
             "fields_to_export": [
                 ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
                 ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
+                "upper_confidence",
+                "lower_confidence",
             ],
             "topic": fake_chart_plot_parameters.topic,
             "metric": fake_chart_plot_parameters.metric,
