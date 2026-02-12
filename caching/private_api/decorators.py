@@ -14,7 +14,12 @@ def is_caching_v2_enabled() -> bool:
     return os.environ.get("CACHING_V2_ENABLED", "").lower() in {"true", "1"}
 
 
-def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = False):
+def cache_response(
+    *,
+    timeout: int | None = None,
+    is_reserved_namespace: bool = False,
+    is_public: bool = False
+):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
     Notes:
@@ -50,7 +55,12 @@ def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = 
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
             return _retrieve_response_from_cache_or_calculate(
-                view_function, timeout, is_reserved_namespace, *args, **kwargs
+                view_function,
+                timeout,
+                is_reserved_namespace,
+                is_public,
+                *args,
+                **kwargs
             )
 
         return wrapped_view
@@ -59,7 +69,7 @@ def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = 
 
 
 def _retrieve_response_from_cache_or_calculate(
-    view_function, timeout, is_reserved_namespace, *args, **kwargs
+    view_function, timeout, is_reserved_namespace, is_public, *args, **kwargs
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
@@ -67,6 +77,10 @@ def _retrieve_response_from_cache_or_calculate(
         If the `CACHING_V2_ENABLED` env variable is set to "true",
         then the response will always be recalculated from the server
         and no caching will take place.
+
+        If data is not public (i.e. is_public is set to "false"), then the
+        response will always be recalculated from the server and no caching
+        will take place.
 
     Args:
         view_function: The view associated with the endpoint
@@ -83,6 +97,8 @@ def _retrieve_response_from_cache_or_calculate(
 
     """
     request: Request = args[1]
+    if not is_public:
+        return _calculate_response_from_view(view_function, *args, **kwargs)
 
     if is_caching_v2_enabled() and not is_reserved_namespace:
         return _calculate_response_from_view(view_function, *args, **kwargs)
