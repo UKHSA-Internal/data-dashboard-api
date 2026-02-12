@@ -320,7 +320,7 @@ to use key word arguments instead of positional arguments.
 
 We shall avoid the use of `assert` statements in source code.
 
-For Python processes, the application of th `assert` keyword can be easily switched off in production 
+For Python processes, the application of the `assert` keyword can be easily switched off in production 
 with the [PYTHONOPTIMIZE](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONOPTIMIZE) flag.
 This is usually done for compilation optimization purposes.
 
