@@ -40,7 +40,7 @@ jsonschema==4.26.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.10.1
+Markdown==3.10.2
 markdown-it-py==2.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
@@ -64,7 +64,7 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 Pygments==2.19.2
 PyYAML==6.0.3
-redis==7.1.0
+redis==7.1.1
 requests==2.32.5
 rich==14.3.2
 ruamel.yaml==0.19.1
