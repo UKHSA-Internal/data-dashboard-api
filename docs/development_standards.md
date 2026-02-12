@@ -207,7 +207,7 @@ As such it is important to ensure the body of the test is signposted with enough
 
 In this example, we follow the same structure as if we were writing a unit test but we add more comments as necessary.
 
-> Note that we consider something to be a unit test if there is some I/O bound activity. 
+> Note that we consider something to be an integration test if there is some I/O bound activity. 
 > Think request over network or database query.
 
 Generally, test time can be a good indication 
