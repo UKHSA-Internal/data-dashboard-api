@@ -54,6 +54,12 @@ class DownloadsSerializer(serializers.Serializer):
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS,
     )
+    confidence_intervals = serializers.BooleanField(
+        required=False,
+        default=False,
+        allow_null=True,
+        help_text=help_texts.CONFIDENCE_INTERVALS,
+    )
 
     plots = DownloadListSerializer()
 
@@ -88,6 +94,7 @@ class DownloadsSerializer(serializers.Serializer):
             chart_width=DEFAULT_CHART_WIDTH,
             x_axis="",
             y_axis="",
+            confidence_intervals=self.data.get("confidence_intervals", False),
             request=request,
         )
 

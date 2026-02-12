@@ -124,7 +124,14 @@ class SingleCategoryChartSettings(ChartSettings):
             A list containing two values the minimum y-axis value
             and the maximum y-axis value
         """
-        y_axis_range = [item for row in self.plots_data for item in row.y_axis_values]
+        y_axis_range = [
+            item for row in self.plots_data for item in row.y_axis_values
+        ] + [
+            item
+            for row in self.plots_data
+            for item in row.additional_values.get("lower_confidence", [])
+            if item
+        ]
 
         if self.y_axis_minimum_value < min(y_axis_range):
             min_value = self.y_axis_minimum_value

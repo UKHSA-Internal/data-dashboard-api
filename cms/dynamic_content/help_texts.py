@@ -538,3 +538,17 @@ An optional value to draw a target threshold for.
 FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD_LABEL: str = """
 An optional label to add as for the target threshold indicator on the charts.
 """
+
+CONFIDENCE_INTERVAL: str = """
+Toggle to enable confidence intervals if they are present in the data set
+"""
+
+CONFIDENCE_COLOUR: str = """
+The colour to display the confidence interval in. The colours conform to the GDS specification.
+Note that if nothing is provided, a default of "BLACK" will be applied.
+"""
+
+CONFIDENCE_INTERVALS_DESCRIPTION: str = """
+An optional body of text to accompany this block.
+This text will be displayed above the metrics table if confidence intervals is enabled.
+"""

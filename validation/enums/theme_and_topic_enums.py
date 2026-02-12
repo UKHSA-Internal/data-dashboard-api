@@ -16,6 +16,7 @@ class _InfectiousDiseaseChildTheme(Enum):
 
 class _ExtremeEventChildTheme(Enum):
     WEATHER_ALERT = "weather_alert"
+    MORTALITY_REPORT = "mortality-report"
 
 
 class _ImmunisationChildTheme(Enum):
@@ -62,6 +63,10 @@ class _ChildhoodIllnessTopic(Enum):
 class _BloodbourneTopic(Enum):
     HEPATITIS_B = "Hepatitis-B"
     HEPATITIS_C = "Hepatitis-C"
+
+
+class _MortalityReportTopic(Enum):
+    HEAT_MORTALITY = "Heat-mortality"
 
 
 class _WeatherAlertTopic(Enum):
@@ -152,6 +157,7 @@ class ChildTheme(BaseEnum):
 
 class Topic(BaseEnum):
     WEATHER_ALERT = _WeatherAlertTopic
+    MORTALITY_REPORT = _MortalityReportTopic
     VACCINE_PREVENTABLE = _VaccinePreventableTopic
     RESPIRATORY = _RespiratoryTopic
     VECTOR_BORNE = _VectorBorneTopic
