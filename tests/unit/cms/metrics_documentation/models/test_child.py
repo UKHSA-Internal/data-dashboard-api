@@ -27,6 +27,7 @@ class TestMetricsDocumentationChildEntry:
             "last_updated_at",
             "last_published_at",
             "page_description",
+            "is_public"
         ],
     )
     @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")

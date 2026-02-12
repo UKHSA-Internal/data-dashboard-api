@@ -36,8 +36,7 @@ class TestWhatsNewChildEntry:
             "seo_title",
             "search_description",
             "additional_details",
-            "badge",
-            "is_public"
+            "badge"
         ],
     )
     def test_has_correct_api_fields(
