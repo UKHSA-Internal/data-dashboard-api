@@ -242,7 +242,6 @@ class TestRetrieveResponseFromCacheOrCalculate:
             == mocked_cache_management.retrieve_item_from_cache.return_value
         )
 
-
 class TestCalculateResponseAndSaveInCache:
     @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
     def test_delegates_call_to_calculate_response_from_view(
@@ -320,3 +319,29 @@ class TestCalculateResponseAndSaveInCache:
             item=expected_calculated_response,
             timeout=123,
         )
+        
+    
+    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
+    def test_returns_early_when_timeout_zero(self, spy_calculate_response_from_view: mock.MagicMock):
+        """
+        Given timeout == 0
+        When `_calculate_response_and_save_in_cache()` is called
+        Then it returns early and does NOT call `save_item_in_cache()`
+        """
+        # Given
+        mocked_view_function = mock.Mock()
+        spy_cache_management = mock.Mock()
+
+        # When
+        response = _calculate_response_and_save_in_cache(
+            mocked_view_function,
+            0,  # timeout - set to 0 so triggers early return
+            spy_cache_management,
+            "abc", # cache entry key
+            mock.Mock(),
+        )
+
+        # Then
+        spy_cache_management.save_item_in_cache.assert_not_called()
+        assert response == spy_calculate_response_from_view.return_value
+
