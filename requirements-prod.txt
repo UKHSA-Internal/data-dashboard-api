@@ -40,7 +40,7 @@ jsonschema==4.26.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.10.1
+Markdown==3.10.2
 markdown-it-py==2.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
