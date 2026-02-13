@@ -199,7 +199,7 @@ class TestBarCharts:
         # Check there are error bars
         assert main_bar_plot.error_y != None
 
-    def test_confidence_intervals_missing_data(
+    def test_confidence_intervals_missing_data_no_lower(
         self, fake_plot_data: PlotGenerationData
     ):
         """
@@ -241,6 +241,12 @@ class TestBarCharts:
         assert main_bar_plot.error_y.array is None
         assert main_bar_plot.error_y.arrayminus is None
 
+    def test_confidence_intervals_missing_data_no_upper(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        # Given
+        chart_plots_data = [fake_plot_data]
+        chart_plots_data[0].parameters.chart_type = "bar"
         fake_plot_data.additional_values = {
             "lower_confidence": [2] * len(fake_plot_data.x_axis_values),
         }
