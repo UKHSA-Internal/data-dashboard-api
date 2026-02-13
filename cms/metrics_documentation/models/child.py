@@ -26,6 +26,10 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 class MetricsDocumentationChildEntry(UKHSAPage):
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
+    is_public = models.BooleanField(
+        default=False,
+        verbose_name="enable public page",
+    )
     topic = models.CharField(
         max_length=255,
         default="",
@@ -42,6 +46,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("page_description"),
         FieldPanel("metric"),
+        FieldPanel("is_public"),
         FieldPanel("body"),
     ]
 
@@ -51,6 +56,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("metric"),
         APIField("topic"),
         APIField("metric_group"),
+        APIField("is_public"),
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),
