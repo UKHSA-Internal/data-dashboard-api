@@ -9,6 +9,7 @@ class JwtDetectionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        print("🦄 MIDDLEWARE: path =", request.path)
         auth_header = request.META.get("HTTP_AUTHORIZATION", "")
 
         # Expected format (this might change once JWT fully implemented):
