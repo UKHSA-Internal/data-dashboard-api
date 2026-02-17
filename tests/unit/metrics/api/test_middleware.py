@@ -45,7 +45,7 @@ class TestJwtDetectionMiddleware(TestCase):
         # Then
         self.assertEqual(response.status_code, 200)
         self.assertFalse(request.has_jwt)
-        
+
     def test_only_accepts_valid_prefix_for_jwt(self):
         """
         Given a mocked request with an invalid JWT prefix
@@ -61,7 +61,7 @@ class TestJwtDetectionMiddleware(TestCase):
         # Then
         self.assertEqual(response.status_code, 200)
         self.assertFalse(request.has_jwt)
-        
+
     def test_only_accepts_valid_format_for_jwt(self):
         """
         Given a mocked request with an invalid JWT token format

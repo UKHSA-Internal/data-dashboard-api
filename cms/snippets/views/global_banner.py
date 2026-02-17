@@ -14,7 +14,7 @@ from cms.snippets.serializers import (
 
 class GlobalBannerView(APIView):
     permission_classes = []
-    
+
     @classmethod
     @extend_schema(
         tags=["cms"], responses={HTTPStatus.OK: GlobalBannerResponseSerializer}

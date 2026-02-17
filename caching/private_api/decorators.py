@@ -53,11 +53,11 @@ def cache_response(
     def decorator(view_function):
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
-            
+
             request = args[1]
             has_jwt = getattr(request, "has_jwt", False)
-            
-            is_public = not(has_jwt)
+
+            is_public = not (has_jwt)
 
             return _retrieve_response_from_cache_or_calculate(
                 view_function,
@@ -65,7 +65,7 @@ def cache_response(
                 is_reserved_namespace,
                 is_public,
                 *args,
-                **kwargs
+                **kwargs,
             )
 
         return wrapped_view
