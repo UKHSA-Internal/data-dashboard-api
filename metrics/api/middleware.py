@@ -18,7 +18,10 @@ class JwtDetectionMiddleware:
         jwt_length = 3
         jwt_token_length = 2
 
-        if auth_header.startswith("Bearer ") and len(auth_header.split()) == jwt_token_length:
+        if (
+            auth_header.startswith("Bearer ")
+            and len(auth_header.split()) == jwt_token_length
+        ):
             token = auth_header.split()[1]
             parts = token.split(".")
 
