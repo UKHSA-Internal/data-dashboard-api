@@ -9,19 +9,20 @@ class JwtDetectionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("🦄 MIDDLEWARE: path =", request.path)
         auth_header = request.META.get("HTTP_AUTHORIZATION", "")
 
         # Expected format (this might change once JWT fully implemented):
         # "Bearer <token>" and token itself is three parts separated by "."
 
         has_jwt = False
+        jwt_length = 3
+        jwt_token_length = 2
 
-        if auth_header.startswith("Bearer ") and len(auth_header.split()) == 2:
+        if auth_header.startswith("Bearer ") and len(auth_header.split()) == jwt_token_length:
             token = auth_header.split()[1]
             parts = token.split(".")
 
-            if len(parts) == 3:
+            if len(parts) == jwt_length:
                 has_jwt = True
 
         # Store on the request for downstream use
