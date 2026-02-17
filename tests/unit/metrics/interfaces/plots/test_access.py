@@ -510,6 +510,7 @@ class TestPlotsInterface:
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
         mocked_chart_request_params = mock.MagicMock()
+        mocked_chart_request_params.confidence_intervals = False
 
         plots_interface = PlotsInterface(
             chart_request_params=mocked_chart_request_params,
@@ -547,6 +548,73 @@ class TestPlotsInterface:
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
         )
 
+    def test_get_headline_data_calls_core_headline_manager_with_confidence_intervals(
+        self,
+    ):
+        """
+        Given a `CoreHeadlineManager`
+        When `get_headline_data` is called from an instance of `PlotsInterface` with confidence intervals requested
+        Then the correct method is called from `CoreHeadlineManager` to retrieve headline data with upper and lower confidence requested.
+        """
+        # Given
+        spy_core_headline_manager = mock.Mock()
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+        mocked_geography = mock.Mock()
+        mocked_geography_type = mock.Mock()
+        mocked_stratum = mock.Mock()
+        mocked_sex = mock.Mock()
+        mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
+        mocked_chart_request_params.confidence_intervals = True
+
+        plots_interface = PlotsInterface(
+            chart_request_params=mocked_chart_request_params,
+            core_model_manager=spy_core_headline_manager,
+        )
+
+        # When
+        plots_params = {
+            "fields_to_export": [
+                mocked_x_axis,
+                mocked_y_axis,
+            ],
+            "topic": mocked_topic,
+            "metric": mocked_metric,
+            "geography": mocked_geography,
+            "geography_type": mocked_geography_type,
+            "geography_code": "",
+            "stratum": mocked_stratum,
+            "sex": mocked_sex,
+            "age": mocked_age,
+        }
+
+        headline_data = plots_interface.get_queryset_from_core_model_manager(
+            plot_params=plots_params
+        )
+
+        # Then
+        assert headline_data == spy_core_headline_manager.query_for_data.return_value
+        spy_core_headline_manager.query_for_data.assert_called_once_with(
+            fields_to_export=[
+                mocked_x_axis,
+                mocked_y_axis,
+                "upper_confidence",
+                "lower_confidence",
+            ],
+            topic=mocked_topic,
+            metric=mocked_metric,
+            geography=mocked_geography,
+            geography_type=mocked_geography_type,
+            geography_code="",
+            stratum=mocked_stratum,
+            sex=mocked_sex,
+            age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
+        )
+
     @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_get_queryset_from_core_model_manager_passes_theme_and_topic_into_query_when_auth_enabled(
         self,
@@ -569,6 +637,7 @@ class TestPlotsInterface:
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
         mocked_chart_request_params = mock.MagicMock()
+        mocked_chart_request_params.confidence_intervals = False
 
         plots_interface = PlotsInterface(
             chart_request_params=mocked_chart_request_params,
@@ -629,6 +698,7 @@ class TestPlotsInterface:
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
         mocked_chart_request_params = mock.MagicMock()
+        mocked_chart_request_params.confidence_intervals = False
 
         plots_interface = PlotsInterface(
             chart_request_params=mocked_chart_request_params,
