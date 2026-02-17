@@ -64,7 +64,7 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 Pygments==2.19.2
 PyYAML==6.0.3
-redis==7.1.1
+redis==7.2.0
 requests==2.32.5
 rich==14.3.2
 ruamel.yaml==0.19.1
@@ -83,7 +83,7 @@ tomli==2.4.0
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.6.3
-virtualenv==20.36.1
+virtualenv==20.37.0
 wagtail==7.3
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.2.0
