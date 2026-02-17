@@ -244,7 +244,7 @@ def _construct_version_three_urls(
 
     return [
         path(
-            f"{prefix}v3/",
+            f"{prefix}v3/themes/<str:theme>",
             APITimeSeriesViewSetV3.as_view(
                 {"get": "list"}, name=APITimeSeriesViewSetV3.name
             ),

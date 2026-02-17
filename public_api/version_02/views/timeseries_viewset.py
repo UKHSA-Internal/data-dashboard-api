@@ -113,7 +113,6 @@ class APITimeSeriesFilterSetv3(django_filters.FilterSet):
     class Meta:
         model = MetricsPublicAPIInterface.get_api_timeseries_model()
         fields = [
-            "theme",
             "sub_theme",
             "topic",
             "geography_type",
@@ -134,7 +133,7 @@ class APITimeSeriesViewSetV3(viewsets.ReadOnlyModelViewSet):
     """
     This endpoint will provide the full timeseries of a slice of data.
 
-    There are only optional query parameters:
+    There is one mandatory URL parameter and other optional query parameters:
 
     Note that by default, results are paginated by a page size of 5
 
@@ -143,9 +142,13 @@ class APITimeSeriesViewSetV3(viewsets.ReadOnlyModelViewSet):
 
     ---
 
-    The optional query parameters are as follows in order from first to last:
+    The mandatory URL parameter is:
 
     - `theme` - The largest topical subgroup e.g. **infectious_disease**
+
+    ---
+
+    The optional query parameters are as follows in order from first to last:
 
     - `sub_theme` - A topical subgroup e.g. **respiratory**
 
@@ -187,3 +190,10 @@ class APITimeSeriesViewSetV3(viewsets.ReadOnlyModelViewSet):
     pagination_class = APITimeSeriesPaginationv2
     filter_backends = [DjangoFilterBackend]
     filterset_class = APITimeSeriesFilterSetv3
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        return queryset.filter(
+            theme=self.kwargs["theme"],
+        )
