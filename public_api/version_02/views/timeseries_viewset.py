@@ -136,7 +136,7 @@ class APITimeSeriesViewSetV3(viewsets.ReadOnlyModelViewSet):
 
     There are only optional query parameters:
 
-    Note that by default, results are paginated by a page size of 100
+    Note that by default, results are paginated by a page size of 5
 
     This page size can be changed using the *page_size* parameter.
     The maximum supported page size is **365**.
@@ -185,6 +185,5 @@ class APITimeSeriesViewSetV3(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = APITimeSeriesListSerializerv2
     pagination_class = APITimeSeriesPaginationv2
-    page_size = 100
     filter_backends = [DjangoFilterBackend]
     filterset_class = APITimeSeriesFilterSetv3
