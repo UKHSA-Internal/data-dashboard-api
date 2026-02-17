@@ -18,7 +18,6 @@ def cache_response(
     *,
     timeout: int | None = None,
     is_reserved_namespace: bool = False,
-    is_public: bool = False
 ):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
@@ -54,6 +53,12 @@ def cache_response(
     def decorator(view_function):
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
+            
+            request = args[1]
+            has_jwt = getattr(request, "has_jwt", False)
+            
+            is_public = not(has_jwt)
+
             return _retrieve_response_from_cache_or_calculate(
                 view_function,
                 timeout,
