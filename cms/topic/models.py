@@ -56,9 +56,7 @@ class TopicPage(UKHSAPage):
     ]
 
     # Search index configuration
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("title"),
-    ]
+    search_fields = UKHSAPage.search_fields + [index.SearchField("page_description")]
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
