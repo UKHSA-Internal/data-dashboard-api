@@ -25,7 +25,7 @@ drf-nested-routers==0.95.0
 drf-spectacular==0.27.2
 et-xmlfile==2.0.0
 exceptiongroup==1.3.1
-filelock==3.20.3
+filelock==3.24.2
 grimp==3.14
 gunicorn==23.0.0
 html5lib==1.1
@@ -40,7 +40,7 @@ jsonschema==4.26.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.10.1
+Markdown==3.10.2
 markdown-it-py==2.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
@@ -54,8 +54,8 @@ packageurl-python==0.17.6
 packaging==26.0
 pathspec==1.0.4
 pbr==7.0.3
-Pillow==12.1.0
-platformdirs==4.5.1
+Pillow==12.1.1
+platformdirs==4.9.2
 plotly==6.5.2
 pluggy==1.6.0
 pyparsing==3.3.2
@@ -64,7 +64,7 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 Pygments==2.19.2
 PyYAML==6.0.3
-redis==7.1.0
+redis==7.2.0
 requests==2.32.5
 rich==14.3.2
 ruamel.yaml==0.19.1
@@ -83,7 +83,7 @@ tomli==2.4.0
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.6.3
-virtualenv==20.36.1
+virtualenv==20.37.0
 wagtail==7.3
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.2.0
