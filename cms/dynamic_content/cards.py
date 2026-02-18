@@ -13,6 +13,7 @@ from cms.dynamic_content.blocks import (
     MetricNumberBlock,
     PageLinkChooserBlock,
     RelatedLinkBlock,
+    SourceLinkBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -76,10 +77,18 @@ class WHAlerts(models.TextChoices):
 class WeatherHealthAlertsCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     sub_title = blocks.TextBlock(required=True, help_text=help_texts.SUB_TITLE_FIELD)
+    description = blocks.TextBlock(
+        required=False,
+        help_text=help_texts.WEATHER_HEALTH_ALERT_DESCRIPTION,
+    )
     alert_type = blocks.ChoiceBlock(
         required=True,
         choices=WHAlerts.get_alerts,
         help_text=help_texts.WHA_ALERT_CHOICE,
+    )
+    source = SourceLinkBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK,
     )
 
     class Meta:
@@ -295,6 +304,20 @@ class ChartCard(blocks.StructBlock):
         icon = "standalone_chart"
 
 
+class ChartWithDescriptionCard(ChartCard):
+    description = blocks.TextBlock(
+        required=True,
+        help_text=help_texts.CHART_DESCRIPTION,
+    )
+    source = SourceLinkBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_INTERNAL_OR_EXTERNAL,
+    )
+
+    class Meta:
+        icon = "standalone_chart"
+
+
 class HeadlineChartCard(ChartCard):
     x_axis = blocks.ChoiceBlock(
         required=True,
@@ -333,6 +356,20 @@ class HeadlineChartCard(ChartCard):
         help_text=help_texts.CONFIDENCE_COLOUR,
     )
     chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
+
+    class Meta:
+        icon = "standalone_chart"
+
+
+class HeadlineChartWithDescriptionCard(HeadlineChartCard):
+    description = blocks.TextBlock(
+        required=True,
+        help_text=help_texts.HEADLINE_CHART_DESCRIPTION,
+    )
+    source = SourceLinkBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_INTERNAL_OR_EXTERNAL,
+    )
 
     class Meta:
         icon = "standalone_chart"
@@ -445,7 +482,9 @@ register(DualCategoryChartCardAdapter(), DualCategoryChartCard)
 
 class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
+    chart_with_description_card = ChartWithDescriptionCard()
     headline_chart_card = HeadlineChartCard()
+    headline_chart_with_description_card = HeadlineChartWithDescriptionCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
     dual_category_chart_card = DualCategoryChartCard()

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.snippets.blocks import SnippetChooserBlock
@@ -161,3 +162,55 @@ class RelatedLink(blocks.StructBlock):
 
 class RelatedLinkBlock(blocks.StreamBlock):
     related_link = RelatedLink()
+
+
+class SourceLinkBlock(blocks.StructBlock):
+    """Source link supporting internal (page) or external (URL) links."""
+
+    link_display_text = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_TEXT,
+    )
+    page = PageLinkChooserBlock(
+        page_type=["topic.TopicPage", "composite.CompositePage"],
+        required=False,
+        help_text=help_texts.SOURCE_LINK_PAGE,
+    )
+    external_url = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_URL,
+    )
+
+    def clean(self, value: blocks.StructValue):
+        self._validate_only_one_of_page_or_external_url(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_only_one_of_page_or_external_url(
+        cls, *, value: blocks.StructValue
+    ) -> None:
+        """Validate that only one of the page or external_url fields is set."""
+        page = value.get("page")
+        external_url = value.get("external_url")
+
+        if not page and not external_url:
+            error_message = ValidationError(
+                "Choose an internal page or enter an external URL."
+            )
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "page": [error_message],
+                    "external_url": [error_message],
+                }
+            )
+
+        if page and external_url:
+            error_message = ValidationError(
+                "Use either internal OR external, not both."
+            )
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "page": [error_message],
+                    "external_url": [error_message],
+                }
+            )

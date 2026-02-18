@@ -552,3 +552,35 @@ CONFIDENCE_INTERVALS_DESCRIPTION: str = """
 An optional body of text to accompany this block.
 This text will be displayed above the metrics table if confidence intervals is enabled.
 """
+
+WEATHER_HEALTH_ALERT_DESCRIPTION: str = """
+Optional description for the weather health alerts card.
+"""
+
+SOURCE_LINK: str = """
+Optional source link.
+"""
+
+CHART_DESCRIPTION: str = """
+Required description for the chart.
+"""
+
+HEADLINE_CHART_DESCRIPTION: str = """
+Description for the headline chart.
+"""
+
+SOURCE_LINK_INTERNAL_OR_EXTERNAL: str = """
+Source link (internal or external).
+"""
+
+SOURCE_LINK_TEXT: str = """
+Display text for the link.
+"""
+
+SOURCE_LINK_PAGE: str = """
+For linking to internal pages. (If chosen, external_url must be blank).
+"""
+
+SOURCE_LINK_URL: str = """
+For linking to external url. (Only one of page or external_url must be filled not both).
+"""
