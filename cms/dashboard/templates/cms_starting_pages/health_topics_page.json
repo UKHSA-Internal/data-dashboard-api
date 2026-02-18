@@ -1,0 +1,31 @@
+{
+  "id": 83,
+  "meta": {
+    "seo_title": "Health topics",
+    "search_description": "",
+    "type": "topics_list.TopicsListPage",
+    "detail_url": "https://http:/api/pages/83/",
+    "html_url": "https://http://localhost:3000/health-topics/",
+    "slug": "health-topics",
+    "show_in_menus": false,
+    "first_published_at": "2026-02-16T16:00:23.483810Z",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.UKHSARootPage",
+        "detail_url": "https://http:/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "health topics",
+  "body": "",
+  "seo_change_frequency": 5,
+  "seo_priority": "0.5",
+  "last_updated_at": "2026-02-16T16:00:23.483810Z",
+  "last_published_at": "2026-02-16T16:00:23.483810Z",
+  "active_announcements": [],
+  "page_description": "<p data-block-key=\"onu6j\">The UKHSA data dashboard shares public health data in a simple, inclusive and accessible way.</p>"
+}
