@@ -16,10 +16,10 @@ class TopicsListPageQuerySet(PageQuerySet):
     """Custom queryset for which can be used by the `TopicsListPageManager`."""
 
     def get_topics_list_page(self) -> models.QuerySet:
-        """Gets all currently live pages.
+        """Gets the designated health-topics page.
 
         Returns:
-            QuerySet: A queryset of all live pages.
+            QuerySet: A queryset of the individual topics_list page.
                 Examples:
                     `<TopicsListPageQuerySet [<TopicsListPage: Health Topics>, ... ]`
         """
@@ -33,10 +33,10 @@ class TopicsListPageManager(PageManager):
         return TopicsListPageQuerySet(self.model, using=self._db)
 
     def get_topics_list_page(self):
-        """Gets the all currently live pages.
+        """Gets the designated health topics page.
 
         Returns:
-            The designated landing page object
+            The designated topics list page object
             which has the slug of `health-topics`
         """
         return self.get_queryset().get_topics_list_page().last()
