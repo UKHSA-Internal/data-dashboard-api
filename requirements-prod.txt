@@ -18,7 +18,7 @@ django-filter==24.3
 django-modelcluster==6.4.1
 django-permissionedforms==0.1
 django-taggit==5.0.0
-django-treebeard==4.8.0
+django-treebeard==5.0.3
 djangorestframework==3.15.2
 draftjs-exporter==5.2.0
 drf-nested-routers==0.95.0
