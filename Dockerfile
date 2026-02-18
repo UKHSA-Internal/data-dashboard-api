@@ -26,6 +26,12 @@ RUN bash /usr/local/bin/build_distroless_runtime.sh
 # Mounts the application code into the image
 COPY . /code
 
+# Create .venv so entrypoint/scripts (_venv.sh) can activate it; distroless runtime
+# copies /usr/local/bin so the venv's python symlink will resolve there.
+RUN python3 -m venv /code/.venv \
+    && /code/.venv/bin/pip install --upgrade pip \
+    && /code/.venv/bin/pip install --no-cache-dir -r /code/requirements-prod.txt
+
 ###############################################################################
 # Production stage (distroless)
 ###############################################################################
