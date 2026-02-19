@@ -29,9 +29,9 @@ RUN mkdir -p /code/metrics/static && chmod 775 /code/metrics/static
 RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
-# Production stage (distroless)
+# Production stage (distroless, root)
 ###############################################################################
-FROM gcr.io/distroless/cc-debian12:nonroot AS production
+FROM gcr.io/distroless/cc-debian12 AS production
 
 ARG PYTHON_VERSION=3.12.6
 
