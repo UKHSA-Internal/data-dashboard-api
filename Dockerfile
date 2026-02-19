@@ -12,8 +12,8 @@ FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
 WORKDIR /build
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
@@ -21,16 +21,9 @@ COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
 # Build runtime bundle and collect shared library deps via dedicated script.
 COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
-RUN bash /usr/local/bin/build_distroless_runtime.sh
-
-# Mounts the application code into the image
 COPY . /code
 
-# Create .venv so entrypoint/scripts (_venv.sh) can activate it; distroless runtime
-# copies /usr/local/bin so the venv's python symlink will resolve there.
-RUN python3 -m venv /code/.venv \
-    && /code/.venv/bin/pip install --upgrade pip \
-    && /code/.venv/bin/pip install --no-cache-dir -r /code/requirements-prod.txt
+RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
 # Production stage (distroless)
@@ -55,10 +48,8 @@ COPY --from=build /usr/bin/dirname /usr/bin/dirname
 # Application code
 COPY --chown=nonroot:nonroot --from=build /code /code
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONFAULTHANDLER 1
-ENV PYTHONUNBUFFERED 1
-ENV PATH /usr/local/bin:/usr/bin:/bin
+ENV PYTHONFAULTHANDLER=1
+ENV PATH=/usr/local/bin:/usr/bin:/bin
 
 EXPOSE 8000
 
