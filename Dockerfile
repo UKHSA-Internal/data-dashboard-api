@@ -46,7 +46,7 @@ COPY --from=build /bin/bash /bin/bash
 COPY --from=build /usr/bin/dirname /usr/bin/dirname
 
 # Application code
-COPY --chown=nonroot:nonroot --chmod=755 --from=build /code /code
+COPY --chown=nonroot:nonroot --from=build /code /code
 
 ENV PYTHONFAULTHANDLER=1
 ENV PATH=/usr/local/bin:/usr/bin:/bin
