@@ -186,6 +186,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         mocked_request = mock.MagicMock(method="POST")
         mocked_view_function = mock.Mock()
         mocked_args = mock.Mock()
+        mocked_cache_management = mock.Mock()
 
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
@@ -195,7 +196,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             False,  # is_public
             mocked_args,
             mocked_request,
-            cache_management=mock.Mock(),
+            cache_management=mocked_cache_management,
         )
 
         # Then
