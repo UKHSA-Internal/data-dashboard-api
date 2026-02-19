@@ -23,6 +23,9 @@ COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
 COPY . /code
 
+# Ensure Django STATIC_ROOT exists before runtime and ends up owned by `nonroot`
+RUN mkdir -p /code/metrics/static && chmod 775 /code/metrics/static
+
 RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
