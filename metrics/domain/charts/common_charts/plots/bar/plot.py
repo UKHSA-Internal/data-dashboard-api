@@ -85,15 +85,18 @@ def get_error_bars(
 
     # Plotly wants this as distances from the metric value rather than the
     # absolute values that we're given in data see https://plotly.com/python-api-reference/generated/plotly.graph_objects.bar.html#plotly.graph_objects.bar.ErrorY.type
+
+    # We may get some plots with confidence and some without so handle those
+    # gracefully
     upper_values = [
-        confidence - metric
+        (confidence or metric) - metric
         for confidence, metric in zip(
             upper_confidence, plot_data.y_axis_values, strict=True
         )
     ]
 
     lower_values = [
-        metric - confidence
+        metric - (confidence or metric)
         for confidence, metric in zip(
             lower_confidence, plot_data.y_axis_values, strict=True
         )
