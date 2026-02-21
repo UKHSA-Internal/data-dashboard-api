@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ###############################################################################
 # Build stage
 ###############################################################################
@@ -6,63 +8,57 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.6
 
-FROM python:${PYTHON_VERSION}-slim AS build
+FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
-# Ensure the virtual environment will be available on the `PATH` variable
-ENV PATH=/venv/bin:$PATH
+WORKDIR /build
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
 COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
-# Main build process
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev gcc \
-    # Install toolchain needed for C libraries like `psycopg2`
-    && python3 -m venv /venv \
-    # Create the python virtual environment
-    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
-    # Remove dangling files from installation of libraries
-    && pip install --upgrade pip \
-    # Upgrade the pip installer to the latest version
-    && pip install --no-cache-dir -r requirements-prod.txt
-    # Install project dependencies onto the virtual environment
+# Build runtime bundle and collect shared library deps via dedicated script.
+COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
+COPY . /code
 
-# Mounts the application code into the image
-COPY . code
+# Ensure Django STATIC_ROOT exists before runtime and ends up owned by `nonroot`
+RUN mkdir -p /code/metrics/static && chmod 775 /code/metrics/static
+
+RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
-# Production stage
+# Production stage (distroless, root)
 ###############################################################################
-FROM python:${PYTHON_VERSION}-slim AS production
+FROM gcr.io/distroless/cc-debian12 AS production
 
-# Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
+ARG PYTHON_VERSION=3.12.6
+
 WORKDIR /code
 
-# Copy the virtual environment & application code from the `build` stage
-COPY --from=build /venv /venv
-COPY --from=build /code /code
+# Copy dependencies and app code from the `build` stage.
+COPY --from=build /usr/local/lib/ /usr/local/lib/
+COPY --from=build /usr/local/bin/ /usr/local/bin/
+COPY --from=build /deps/ /
 
-# Ensure the virtual environment is made available on the system `PATH`
-ENV PATH=/venv/bin:$PATH
+# zsh, bash and minimal coreutils required by our entrypoint tooling
+# bash is needed for kaleido's wrapper script
+COPY --from=build /usr/bin/zsh /usr/bin/zsh
+COPY --from=build /bin/bash /bin/bash
+COPY --from=build /usr/bin/dirname /usr/bin/dirname
 
-# Listen on the specified port at runtime
-# Note that this does not actually publish the port.
-# This also assumes TCP.
+# Application code
+COPY --chown=nonroot:nonroot --from=build /code /code
+
+ENV PYTHONFAULTHANDLER=1
+ENV PATH=/usr/local/bin:/usr/bin:/bin
+
 EXPOSE 8000
 
-# Reinstall system libraries required for PostgreSQL drivers
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev \
-    # Reinstall the C library needed for `psycopg2`
-    && chmod +x entrypoint.sh
-    # Add execution permission for the entrypoint shell script
-
 # Opens a shell on the entrypoint.
-# This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
-ENTRYPOINT ["/bin/bash"]
+# This allows the `./docker/entrypoint.sh` shell script or any other tooling to be ran from the container
+ENTRYPOINT ["/usr/bin/zsh"]
 
 # Runs the production server by default
-CMD ["./entrypoint.sh"]
+CMD ["./docker/entrypoint.sh"]
