@@ -9,6 +9,7 @@ from cms.dynamic_content.components import (
     PercentageNumberComponent,
     TrendNumberComponent,
 )
+from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
@@ -176,9 +177,10 @@ class SourceLinkBlock(blocks.StructBlock):
         required=False,
         help_text=help_texts.SOURCE_LINK_PAGE,
     )
-    external_url = blocks.CharBlock(
+    external_url = blocks.URLBlock(
         required=False,
         help_text=help_texts.SOURCE_LINK_URL,
+        validators=[validate_https_scheme],
     )
 
     def clean(self, value: blocks.StructValue):
