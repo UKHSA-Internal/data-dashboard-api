@@ -244,7 +244,21 @@ You can check for known vulnerabilities in the codebase with the following comma
 ```bash
 uhd security vulnerabilities
 ```
+---
 
+### Pre-commit Hooks
+
+This repository uses **pre-commit** to automatically scan for hardcoded secrets before allowing commits.
+
+#### Setup (one-time)
+
+1. Install Python (if not already installed)
+
+2. Install pre-commit:
+
+```bash
+pip install pre-commit
+```
 ---
 
 ### Architectural constraints check
