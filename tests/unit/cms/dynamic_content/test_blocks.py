@@ -1,9 +1,10 @@
 """Unit tests for cms.dynamic_content.blocks."""
 
 from unittest import mock
+from django.core.exceptions import ValidationError
 
 import pytest
-from wagtail.blocks import StructBlock, StructBlockValidationError, StructValue
+from wagtail.blocks import StructBlock, StructValue
 
 from cms.dynamic_content.blocks import SourceLinkBlock
 
@@ -11,11 +12,11 @@ from cms.dynamic_content.blocks import SourceLinkBlock
 class TestSourceLinkBlockClean:
     """Tests for SourceLinkBlock.clean() and validation."""
 
-    def test_clean_raises_when_neither_page_nor_external_url(self):
+    def test_clean_validates_when_neither_page_nor_external_url(self):
         """
         Given a value with neither page nor external_url set
         When clean() is called
-        Then StructBlockValidationError is raised with the expected message.
+        Then validation passes and parent clean() is called and its result returned.
         """
         block = SourceLinkBlock()
         value = {
@@ -24,22 +25,15 @@ class TestSourceLinkBlockClean:
             "external_url": "",
         }
 
-        with pytest.raises(StructBlockValidationError) as exc_info:
-            block.clean(value)
-
-        block_errors = exc_info.value.block_errors
-        assert "page" in block_errors
-        assert "external_url" in block_errors
-        assert (
-            str(exc_info.value.block_errors["page"].message)
-            == "Choose an internal page or enter an external URL."
-        )
+        expected = block.clean(value)
+        assert expected["page"] is None
+        assert expected["external_url"] == ""
 
     def test_clean_raises_when_both_page_and_external_url(self):
         """
         Given a value with both page and external_url set
         When clean() is called
-        Then StructBlockValidationError is raised with the expected message.
+        Then ValidationError is raised with the expected message.
         """
         block = SourceLinkBlock()
         value = {
@@ -48,16 +42,10 @@ class TestSourceLinkBlockClean:
             "external_url": "https://example.com",
         }
 
-        with pytest.raises(StructBlockValidationError) as exc_info:
+        with pytest.raises(ValidationError) as exc_info:
             block.clean(value)
 
-        block_errors = exc_info.value.block_errors
-        assert "page" in block_errors
-        assert "external_url" in block_errors
-        assert (
-            str(exc_info.value.block_errors["page"].message)
-            == "Use either internal OR external, not both."
-        )
+        assert exc_info.value.message == "Use either page OR external_url, not both."
 
     @mock.patch.object(StructBlock, "clean")
     def test_clean_passes_when_only_page_set(self, mocked_super_clean: mock.MagicMock):
@@ -107,28 +95,26 @@ class TestSourceLinkBlockClean:
 class TestSourceLinkBlockValidateOnlyOneOfPageOrExternalUrl:
     """Tests for _validate_only_one_of_page_or_external_url class method."""
 
-    def test_raises_when_neither_set(self):
-        """Raises StructBlockValidationError when both page and external_url are falsy."""
+    def test_does_not_raise_when_neither_set(self):
+        """Does not raise when neither page nor external_url are set."""
         value = StructValue(SourceLinkBlock(), [("page", None), ("external_url", "")])
 
-        with pytest.raises(StructBlockValidationError) as exc_info:
-            SourceLinkBlock._validate_only_one_of_page_or_external_url(value=value)
+        SourceLinkBlock._validate_only_one_of_page_or_external_url(value=value)
 
-        assert "page" in exc_info.value.block_errors
-        assert "external_url" in exc_info.value.block_errors
+        assert value["page"] is None
+        assert value["external_url"] == ""
 
     def test_raises_when_both_set(self):
-        """Raises StructBlockValidationError when both page and external_url are set."""
+        """Raises ValidationError when both page and external_url are set."""
         value = StructValue(
             SourceLinkBlock(),
             [("page", 1), ("external_url", "https://example.com")],
         )
 
-        with pytest.raises(StructBlockValidationError) as exc_info:
+        with pytest.raises(ValidationError) as exc_info:
             SourceLinkBlock._validate_only_one_of_page_or_external_url(value=value)
 
-        assert "page" in exc_info.value.block_errors
-        assert "external_url" in exc_info.value.block_errors
+        assert exc_info.value.message == "Use either page OR external_url, not both."
 
     def test_does_not_raise_when_only_page_set(self):
         """Does not raise when only page is set."""

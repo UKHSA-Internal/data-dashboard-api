@@ -172,7 +172,7 @@ class SourceLinkBlock(blocks.StructBlock):
         help_text=help_texts.SOURCE_LINK_TEXT,
     )
     page = PageLinkChooserBlock(
-        page_type=["topic.TopicPage", "composite.CompositePage"],
+        target_model=["topic.TopicPage"],
         required=False,
         help_text=help_texts.SOURCE_LINK_PAGE,
     )
@@ -189,28 +189,10 @@ class SourceLinkBlock(blocks.StructBlock):
     def _validate_only_one_of_page_or_external_url(
         cls, *, value: blocks.StructValue
     ) -> None:
-        """Validate that only one of the page or external_url fields is set."""
+        """Validate that only one of the page or external_url fields is set if provided."""
         page = value.get("page")
         external_url = value.get("external_url")
 
-        if not page and not external_url:
-            error_message = ValidationError(
-                "Choose an internal page or enter an external URL."
-            )
-            raise blocks.StructBlockValidationError(
-                block_errors={
-                    "page": [error_message],
-                    "external_url": [error_message],
-                }
-            )
-
         if page and external_url:
-            error_message = ValidationError(
-                "Use either internal OR external, not both."
-            )
-            raise blocks.StructBlockValidationError(
-                block_errors={
-                    "page": [error_message],
-                    "external_url": [error_message],
-                }
-            )
+            error_message = "Use either page OR external_url, not both."
+            raise ValidationError(error_message)
