@@ -314,6 +314,45 @@ class TestBarCharts:
         assert main_bar_plot.error_y.array is not None
         assert main_bar_plot.error_y.arrayminus is not None
 
+    def test_confidence_intervals_missing_data_0_in_values(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        # Given
+        chart_plots_data = [fake_plot_data]
+        chart_plots_data[0].parameters.chart_type = "bar"
+        # Check that it works if there's a mix of 0 and Values
+        fake_plot_data.additional_values = {
+            "lower_confidence": [0] * len(fake_plot_data.y_axis_values),
+            "upper_confidence": [2] * len(fake_plot_data.y_axis_values),
+        }
+        chart_payload = ChartGenerationPayload(
+            chart_width=WIDTH,
+            chart_height=HEIGHT,
+            plots=chart_plots_data,
+            x_axis_title="",
+            y_axis_title="",
+            y_axis_minimum_value=0,
+            y_axis_maximum_value=None,
+            confidence_intervals=True,
+            confidence_colour="BLUE",
+        )
+
+        # When
+        figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_generation_payload=chart_payload
+        )
+
+        # Then
+        # There should be 1 plot for the bar plot
+        assert len(figure.data) == 1
+
+        main_bar_plot: plotly.graph_objects.Bar = figure.data[0]
+        # There should be a populated error object
+        assert main_bar_plot.error_y.array is not None
+        assert main_bar_plot.error_y.arrayminus == tuple(
+            [value for value in fake_plot_data.y_axis_values]
+        )
+
     def test_x_axis_type_is_not_date(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of x and y values where x values are NOT dates
