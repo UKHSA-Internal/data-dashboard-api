@@ -89,14 +89,14 @@ def get_error_bars(
     # We may get some plots with confidence and some without so handle those
     # gracefully
     upper_values = [
-        (confidence or metric) - metric
+        (confidence if confidence is not None else metric) - metric
         for confidence, metric in zip(
             upper_confidence, plot_data.y_axis_values, strict=True
         )
     ]
 
     lower_values = [
-        metric - (confidence or metric)
+        metric - (confidence if confidence is not None else metric)
         for confidence, metric in zip(
             lower_confidence, plot_data.y_axis_values, strict=True
         )
