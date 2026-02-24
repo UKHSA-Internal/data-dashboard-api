@@ -1,5 +1,7 @@
 from enum import Enum
+
 from validation.enums.helper_enum import BaseEnum
+
 
 class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"

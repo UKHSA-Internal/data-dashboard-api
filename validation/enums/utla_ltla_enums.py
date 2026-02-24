@@ -1,4 +1,5 @@
 from enum import Enum
+
 from validation.enums.helper_enum import BaseEnum
 
 
@@ -1210,6 +1211,7 @@ class LTLAs(Enum):
     WYRE = "E07000128"
     WYRE_FOREST = "E07000239"
     YORK = "E06000014"
+
 
 class UTLAtoLTLA(BaseEnum):
     BARKING_AND_DAGENHAM = _BarkingAndDagenhamLTLAs

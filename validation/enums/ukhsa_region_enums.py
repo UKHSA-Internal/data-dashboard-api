@@ -1,5 +1,7 @@
 from enum import Enum
+
 from validation.enums.helper_enum import BaseEnum
+
 
 class UKHSARegion(Enum):
     NORTH_EAST = "E45000009"
@@ -13,7 +15,7 @@ class UKHSARegion(Enum):
     SOUTH_WEST = "E45000020"
 
 
-class _UKHSA_NorthEastUTLAs(Enum):
+class _UKHSANorthEastUTLAs(Enum):
     HARTLEPOOL = "E06000001"
     MIDDLESBOROUGH = "E06000002"
     REDCAR_AND_CLEVELAND = "E06000003"
@@ -27,7 +29,7 @@ class _UKHSA_NorthEastUTLAs(Enum):
     GATESHEAD = "E08000037"
 
 
-class _UKHSA_NorthWestUTLAs(Enum):
+class _UKHSANorthWestUTLAs(Enum):
     HALTON = "E06000006"
     WARRINGTON = "E06000007"
     BLACKBURN_WITH_DARWEN = "E06000008"
@@ -55,7 +57,7 @@ class _UKHSA_NorthWestUTLAs(Enum):
     LANCASHIRE = "E10000017"
 
 
-class _UKHSA_YorkshireHumberUTLAs(Enum):
+class _UKHSAYorkshireHumberUTLAs(Enum):
     KINGSTON_UPON_HULL_CITY_OF = "E06000010"
     EAST_RIDING_OF_YORKSHIRE = "E06000011"
     NORTH_EAST_LINCOLNSHIRE = "E06000012"
@@ -73,7 +75,7 @@ class _UKHSA_YorkshireHumberUTLAs(Enum):
     WAKEFIELD = "E08000036"
 
 
-class _UKHSA_EastMidlandsUTLAs(Enum):
+class _UKHSAEastMidlandsUTLAs(Enum):
     DERBY = "E06000015"
     LEICESTER = "E06000016"
     RUTLAND = "E06000017"
@@ -85,7 +87,7 @@ class _UKHSA_EastMidlandsUTLAs(Enum):
     NOTTINGHAMSHIRE = "E10000024"
 
 
-class _UKHSA_WestMidlandsUTLAs(Enum):
+class _UKHSAWestMidlandsUTLAs(Enum):
     COUNTY_OF_HEREFORDSHIRE = "E06000019"
     TELFORD_AND_WREKIN = "E06000020"
     STOKE_ON_TRENT = "E06000021"
@@ -102,7 +104,7 @@ class _UKHSA_WestMidlandsUTLAs(Enum):
     WORCESTERSHIRE = "E10000034"
 
 
-class _UKHSA_SouthWestUTLAs(Enum):
+class _UKHSASouthWestUTLAs(Enum):
     BATH_AND_NORTH_SOMERSET = "E06000022"
     BRISTOL_CITY_OF = "E06000023"
     NORTH_SOMERSET = "E06000024"
@@ -120,7 +122,7 @@ class _UKHSA_SouthWestUTLAs(Enum):
     GLOUCESTERSHIRE = "E10000013"
 
 
-class _UKHSA_EastOfEnglandUTLAs(Enum):
+class _UKHSAEastOfEnglandUTLAs(Enum):
     PETERBOROUGH = "E06000031"
     LUTON = "E06000032"
     SOUTHEND_ON_SEA = "E06000033"
@@ -134,7 +136,7 @@ class _UKHSA_EastOfEnglandUTLAs(Enum):
     SUFFOLK = "E10000029"
 
 
-class _UKHSA_SouthEastUTLAs(Enum):
+class _UKHSASouthEastUTLAs(Enum):
     MEDWAY = "E06000035"
     BRACKNELL_FOREST = "E06000036"
     WEST_BERKSHIRE = "E06000037"
@@ -156,7 +158,7 @@ class _UKHSA_SouthEastUTLAs(Enum):
     WEST_SUSSEX = "E10000032"
 
 
-class _UKHSA_LondonUTLAs(Enum):
+class _UKHSALondonUTLAs(Enum):
     CITY_OF_LONDON = "E09000001"
     BARKING_AND_DAGENHAM = "E09000002"
     BARNET = "E09000003"
@@ -193,12 +195,12 @@ class _UKHSA_LondonUTLAs(Enum):
 
 
 class UKHSARegionUTLAs(BaseEnum):
-    NORTH_EAST = _UKHSA_NorthEastUTLAs
-    NORTH_WEST = _UKHSA_NorthWestUTLAs
-    YORKSHIRE_AND_HUMBER = _UKHSA_YorkshireHumberUTLAs
-    EAST_MIDLANDS = _UKHSA_EastMidlandsUTLAs
-    WEST_MIDLANDS = _UKHSA_WestMidlandsUTLAs
-    SOUTH_WEST = _UKHSA_SouthWestUTLAs
-    EAST_OF_ENGLAND = _UKHSA_EastOfEnglandUTLAs
-    SOUTH_EAST = _UKHSA_SouthEastUTLAs
-    LONDON = _UKHSA_LondonUTLAs
+    NORTH_EAST = _UKHSANorthEastUTLAs
+    NORTH_WEST = _UKHSANorthWestUTLAs
+    YORKSHIRE_AND_HUMBER = _UKHSAYorkshireHumberUTLAs
+    EAST_MIDLANDS = _UKHSAEastMidlandsUTLAs
+    WEST_MIDLANDS = _UKHSAWestMidlandsUTLAs
+    SOUTH_WEST = _UKHSASouthWestUTLAs
+    EAST_OF_ENGLAND = _UKHSAEastOfEnglandUTLAs
+    SOUTH_EAST = _UKHSASouthEastUTLAs
+    LONDON = _UKHSALondonUTLAs

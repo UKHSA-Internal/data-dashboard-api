@@ -1,4 +1,5 @@
 from enum import Enum
+
 from validation.enums.helper_enum import BaseEnum
 
 
@@ -14,7 +15,7 @@ class GovOfficeRegion(Enum):
     SOUTH_WEST = "E12000009"
 
 
-class _GovOffice_NorthEastUTLAS(Enum):
+class _GovOfficeNorthEastUTLAS(Enum):
     COUNTY_DURHAM = "E06000047"
     DARLINGTON = "E06000005"
     GATESHEAD = "E08000037"
@@ -29,7 +30,7 @@ class _GovOffice_NorthEastUTLAS(Enum):
     SUNDERLAND = "E08000024"
 
 
-class _GovOffice_NorthWestUTLAS(Enum):
+class _GovOfficeNorthWestUTLAS(Enum):
     BLACKBURN_WITH_DARWEN = "E06000008"
     BLACKPOOL = "E06000009"
     BOLTON = "E08000001"
@@ -56,7 +57,7 @@ class _GovOffice_NorthWestUTLAS(Enum):
     WIRRAL = "E08000015"
 
 
-class _GovOffice_YorkshireAndTheHumberUTLAS(Enum):
+class _GovOfficeYorkshireAndTheHumberUTLAS(Enum):
     BARNSLEY = "E08000016"
     BRADFORD = "E08000032"
     CALDERDALE = "E08000033"
@@ -74,7 +75,7 @@ class _GovOffice_YorkshireAndTheHumberUTLAS(Enum):
     YORK = "E06000014"
 
 
-class _GovOffice_EastMidlandsUTLAS(Enum):
+class _GovOfficeEastMidlandsUTLAS(Enum):
     DERBY = "E06000015"
     DERBYSHIRE = "E10000007"
     LEICESTER = "E06000016"
@@ -87,7 +88,7 @@ class _GovOffice_EastMidlandsUTLAS(Enum):
     WEST_NORTHAMPTONSHIRE = "E06000062"
 
 
-class _GovOffice_WestMidlandsUTLAS(Enum):
+class _GovOfficeWestMidlandsUTLAS(Enum):
     BIRMINGHAM = "E08000025"
     COVENTRY = "E08000026"
     DUDLEY = "E08000027"
@@ -104,7 +105,7 @@ class _GovOffice_WestMidlandsUTLAS(Enum):
     WORCESTERSHIRE = "E10000034"
 
 
-class _GovOffice_EastOfEnglandUTLAS(Enum):
+class _GovOfficeEastOfEnglandUTLAS(Enum):
     BEDFORD = "E06000055"
     CAMBRIDGESHIRE = "E10000003"
     CENTRAL_BEDFORDSHIRE = "E06000056"
@@ -118,7 +119,7 @@ class _GovOffice_EastOfEnglandUTLAS(Enum):
     THURROCK = "E06000034"
 
 
-class _GovOffice_LondonUTLAS(Enum):
+class _GovOfficeLondonUTLAS(Enum):
     BARKING_AND_DAGENHAM = "E09000002"
     BARNET = "E09000003"
     BEXLEY = "E09000004"
@@ -154,7 +155,7 @@ class _GovOffice_LondonUTLAS(Enum):
     WESTMINSTER = "E09000033"
 
 
-class _GovOffice_SouthEastUTLAS(Enum):
+class _GovOfficeSouthEastUTLAS(Enum):
     BRACKNELL_FOREST = "E06000036"
     BRIGHTON_AND_HOVE = "E06000043"
     BUCKINGHAMSHIRE = "E06000060"
@@ -176,7 +177,7 @@ class _GovOffice_SouthEastUTLAS(Enum):
     WOKINGHAM = "E06000041"
 
 
-class _GovOffice_SouthWestUTLAS(Enum):
+class _GovOfficeSouthWestUTLAS(Enum):
     BATH_AND_NORTH_EAST_SOMERSET = "E06000022"
     BOURNEMOUTH_CHRISTCHURCH_AND_POOLE = "E06000058"
     BRISTOL_CITY_OF = "E06000023"
@@ -195,12 +196,12 @@ class _GovOffice_SouthWestUTLAS(Enum):
 
 
 class GovOfficeRegionUTLAs(BaseEnum):
-    NORTH_EAST = _GovOffice_NorthEastUTLAS
-    NORTH_WEST = _GovOffice_NorthWestUTLAS
-    YORKSHIRE_AND_THE_HUMBER = _GovOffice_YorkshireAndTheHumberUTLAS
-    EAST_MIDLANDS = _GovOffice_EastMidlandsUTLAS
-    WEST_MIDLANDS = _GovOffice_WestMidlandsUTLAS
-    EAST_OF_ENGLAND = _GovOffice_EastOfEnglandUTLAS
-    LONDON = _GovOffice_LondonUTLAS
-    SOUTH_EAST = _GovOffice_SouthEastUTLAS
-    SOUTH_WEST = _GovOffice_SouthWestUTLAS
+    NORTH_EAST = _GovOfficeNorthEastUTLAS
+    NORTH_WEST = _GovOfficeNorthWestUTLAS
+    YORKSHIRE_AND_THE_HUMBER = _GovOfficeYorkshireAndTheHumberUTLAS
+    EAST_MIDLANDS = _GovOfficeEastMidlandsUTLAS
+    WEST_MIDLANDS = _GovOfficeWestMidlandsUTLAS
+    EAST_OF_ENGLAND = _GovOfficeEastOfEnglandUTLAS
+    LONDON = _GovOfficeLondonUTLAS
+    SOUTH_EAST = _GovOfficeSouthEastUTLAS
+    SOUTH_WEST = _GovOfficeSouthWestUTLAS

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class GeographyType(Enum):
     UNITED_KINGDOM = "United Kingdom"
     NATION = "Nation"

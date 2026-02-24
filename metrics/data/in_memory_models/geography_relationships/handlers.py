@@ -12,8 +12,8 @@ from metrics.data.in_memory_models.geography_relationships.utla_to_region import
 )
 from validation.enums import (
     GeographyType,
-    UKHSARegionUTLAs,
     GovOfficeRegionUTLAs,
+    UKHSARegionUTLAs,
     UTLAtoLTLA,
 )
 from validation.enums.gov_office_region_enums import GovOfficeRegion
@@ -157,7 +157,7 @@ def get_downstream_relationships_for_geography(
 
     """
 
-    if geography_type not in set(t.value for t in GeographyType):
+    if geography_type not in {t.value for t in GeographyType}:
         return None
 
     ukhsa_regions = []
@@ -188,11 +188,10 @@ def get_downstream_relationships_for_geography(
                 lower_tier_local_authorities.extend(_get_ltla_from_utlas([key]))
             case "Lower Tier Local Authority":
                 lower_tier_local_authorities.extend(LTLAs[key].value)
-    except KeyError as e:
-        print(f"KEY ERROR: {e}")
+    except KeyError:
         return None
 
-    downstream_geographies = {
+    return {
         "ukhsa_regions": ukhsa_regions,
         "government_office_regions": government_office_regions,
         "nhs_regions": nhs_regions,
@@ -200,5 +199,3 @@ def get_downstream_relationships_for_geography(
         "upper_tier_local_authorities": upper_tier_local_authorities,
         "lower_tier_local_authorities": lower_tier_local_authorities,
     }
-
-    return downstream_geographies

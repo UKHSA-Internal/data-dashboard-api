@@ -295,7 +295,7 @@ class TestDownstreamRelationships:
             assert result is None
 
     def test_ukhsa_region(self):
-        #Given
+        # Given
         GeographyType = MagicMock()
         GeographyType.__iter__.return_value = iter([MagicMock(value="UKHSA Region")])
 
@@ -341,31 +341,43 @@ class TestDownstreamRelationships:
         assert result["upper_tier_local_authorities"] == ["UTLA1", "UTLA2"]
         assert result["lower_tier_local_authorities"] == ["LTLA1", "LTLA2"]
 
-
     def test_gov_office_region(self):
         GeographyType = MagicMock()
-        GeographyType.__iter__.return_value = iter([
-            MagicMock(value="Government Office Region")
-        ])
+        GeographyType.__iter__.return_value = iter(
+            [MagicMock(value="Government Office Region")]
+        )
 
         GovOfficeRegion = MagicMock()
         GovOfficeRegion._members = {"NORTH_WEST": MagicMock(value="GOR_NW")}
-        GovOfficeRegion.__getitem__.side_effect = lambda key: GovOfficeRegion._members[key]
+        GovOfficeRegion.__getitem__.side_effect = lambda key: GovOfficeRegion._members[
+            key
+        ]
 
         GovOfficeRegionUTLAs = MagicMock()
         gor_mock = MagicMock()
         gor_mock.return_list.return_value = ["UTLA10"]
         gor_mock.return_name_list.return_value = ["UTLA10"]
         GovOfficeRegionUTLAs._members = {"NORTH_WEST": gor_mock}
-        GovOfficeRegionUTLAs.__getitem__.side_effect = lambda key: GovOfficeRegionUTLAs._members[key]
+        GovOfficeRegionUTLAs.__getitem__.side_effect = (
+            lambda key: GovOfficeRegionUTLAs._members[key]
+        )
 
         UTLAtoLTLA = _dict_like_mock()
         UTLAtoLTLA["UTLA10"] = MagicMock(return_list=MagicMock(return_value=["LTLA10"]))
 
-        with patch("metrics.data.in_memory_models.geography_relationships.handlers.GeographyType", new=GeographyType), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.GovOfficeRegion", new=GovOfficeRegion), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.GovOfficeRegionUTLAs", new=GovOfficeRegionUTLAs), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.UTLAtoLTLA", new=UTLAtoLTLA):
+        with patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.GeographyType",
+            new=GeographyType,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.GovOfficeRegion",
+            new=GovOfficeRegion,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.GovOfficeRegionUTLAs",
+            new=GovOfficeRegionUTLAs,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.UTLAtoLTLA",
+            new=UTLAtoLTLA,
+        ):
 
             result = get_downstream_relationships_for_geography(
                 "Government Office Region", "North West"
@@ -376,12 +388,11 @@ class TestDownstreamRelationships:
         assert result["upper_tier_local_authorities"] == ["UTLA10"]
         assert result["lower_tier_local_authorities"] == ["LTLA10"]
 
-
     def test_upper_tier_local_authority(self):
         GeographyType = MagicMock()
-        GeographyType.__iter__.return_value = iter([
-            MagicMock(value="Upper Tier Local Authority")
-        ])
+        GeographyType.__iter__.return_value = iter(
+            [MagicMock(value="Upper Tier Local Authority")]
+        )
 
         UTLAs = MagicMock()
         UTLAs._members = {"UTLA1": MagicMock(value=["UTLA1_CODE"])}
@@ -390,9 +401,16 @@ class TestDownstreamRelationships:
         UTLAtoLTLA = _dict_like_mock()
         UTLAtoLTLA["UTLA1"] = MagicMock(return_list=MagicMock(return_value=["LTLA_X"]))
 
-        with patch("metrics.data.in_memory_models.geography_relationships.handlers.GeographyType", new=GeographyType), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.UTLAs", new=UTLAs), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.UTLAtoLTLA", new=UTLAtoLTLA):
+        with patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.GeographyType",
+            new=GeographyType,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.UTLAs",
+            new=UTLAs,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.UTLAtoLTLA",
+            new=UTLAtoLTLA,
+        ):
 
             result = get_downstream_relationships_for_geography(
                 "Upper Tier Local Authority", "UTLA1"
@@ -402,19 +420,23 @@ class TestDownstreamRelationships:
         assert result["upper_tier_local_authorities"] == ["UTLA1_CODE"]
         assert result["lower_tier_local_authorities"] == ["LTLA_X"]
 
-    
     def test_lower_tier_local_authority(self):
         GeographyType = MagicMock()
-        GeographyType.__iter__.return_value = iter([
-            MagicMock(value="Lower Tier Local Authority")
-        ])
+        GeographyType.__iter__.return_value = iter(
+            [MagicMock(value="Lower Tier Local Authority")]
+        )
 
         LTLAs = MagicMock()
         LTLAs._members = {"LTLA1": MagicMock(value=["LTLA1_CODE"])}
         LTLAs.__getitem__.side_effect = lambda key: LTLAs._members[key]
 
-        with patch("metrics.data.in_memory_models.geography_relationships.handlers.GeographyType", new=GeographyType), \
-             patch("metrics.data.in_memory_models.geography_relationships.handlers.LTLAs", new=LTLAs):
+        with patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.GeographyType",
+            new=GeographyType,
+        ), patch(
+            "metrics.data.in_memory_models.geography_relationships.handlers.LTLAs",
+            new=LTLAs,
+        ):
 
             result = get_downstream_relationships_for_geography(
                 "Lower Tier Local Authority", "LTLA1"
