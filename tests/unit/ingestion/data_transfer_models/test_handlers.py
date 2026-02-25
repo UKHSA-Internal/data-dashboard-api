@@ -212,7 +212,7 @@ class TestBuildTimeSeriesDTOFromSource:
         # When / Then
         with pytest.raises(MissingFieldError):
             build_time_series_dto_from_source(source_data=source_data)
-    
+
     def test_raises_error_when_is_public_is_missing_from_source_data(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
@@ -442,7 +442,7 @@ class TestBuildHeadlineDTOFromSource:
         # When / Then
         with pytest.raises(MissingFieldError):
             build_headline_dto_from_source(source_data=source_data)
-    
+
     def test_raises_error_when_is_public_is_missing_from_source_data(
         self, example_headline_data: INCOMING_DATA_TYPE
     ):
