@@ -26,20 +26,26 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     detail_only_fields = []
 
     def get_queryset(self):
-        """Returns the queryset as per the individual models.
+        """Returns the queryset as per the individual models
 
-        The base class `UKHSAPage` sits between Wagtail's `Page` and our page models,
-        implementing custom logic for building URLs. The queryset must return specific
-        model instances (e.g., LandingPage, TopicPage) rather than generic Page objects
-        so the API can access the custom `get_url_parts()` method defined in UKHSAPage.
+        Notes:
+            The base class `UKHSAPage` sits between
+            Wagtail's `Page` and our page models.
+            This includes custom logic for building URLs.
+            To give the list endpoint the know-how to build URLs,
+            the queryset should be returned as per the individual models.
+            Since the models reimplement `get_url_parts()` by virtue
+            of the base abstract class `UKHSAPage`
 
-        The use of `specific()` here is horribly inefficient, causing N+1 queries or
-        expensive JOINs. However, this endpoint is cached in Redis with @cache_response(),
-        so we only pay the penalty once per cache flush.
+            The use of `specific()` here is horribly inefficient.
+            But we already cache this endpoint in Redis,
+            so we only pay the penalty once per cache flush.
 
         Returns:
-            PageQuerySet: A queryset of specific page model instances.
-                Example: <PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>
+            Queryset of each page model.
+            E.g.
+                `<PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
+
         """
         queryset = super().get_queryset()
         return queryset.specific()
@@ -71,21 +77,9 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         return Page.objects.all().specific()
 
     def detail_view(self, request: Request, pk: int) -> Response:
-        """Returns a page including any unpublished changes (draft preview).
+        """This endpoint returns a page including any unpublished changes in its payload.
 
-        Validates the preview token from the Authorization header before returning
-        the latest revision of the requested page. This enables CMS editors to preview
-        their unpublished changes.
-
-        Note:
-            This only returns published pages with unpublished changes.
-
-        Args:
-            request: The HTTP request with Authorization header containing Bearer token
-            pk: The page ID to preview
-
-        Returns:
-            Response: JSON payload with draft page content, or HTTP 401 if unauthorized
+        **Note:** this only returns `published` pages with `unpublished` changes.
         """
         auth = request.headers.get("Authorization", "")
         if not auth or not auth.lower().startswith("bearer "):
