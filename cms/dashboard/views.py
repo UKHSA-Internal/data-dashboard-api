@@ -24,8 +24,12 @@ class PreviewToFrontendRedirectView(View):
     This view is intentionally simple: it performs a permission check on the
     requested page, builds a small payload, signs it using Django's signing
     utilities and then redirects the browser to the frontend with the token as
-    a query parameter.  The frontend is responsible for validating the token
+    a query parameter. The frontend is responsible for validating the token
     and fetching any draft content.
+
+    Attributes:
+        PREVIEW_TOKEN_TTL_SECONDS: Token lifetime in seconds (configurable via
+            FRONTEND_PREVIEW_TOKEN_TTL_SECONDS setting, defaults to 120)
     """
 
     # token lifetime in seconds (configurable via settings)
@@ -36,6 +40,19 @@ class PreviewToFrontendRedirectView(View):
     )
 
     def get(self, request, pk):
+        """Handle GET request to generate preview token and redirect to frontend.
+
+        Args:
+            request: The HTTP request object
+            pk: Primary key of the Page to preview
+
+        Returns:
+            HttpResponseRedirect: Redirect to frontend preview URL with signed token
+
+        Raises:
+            Http404: If page with given pk does not exist
+            PermissionDenied: If user lacks edit permission for the page
+        """
         page = get_object_or_404(Page, pk=pk).specific
 
         perms = page.permissions_for_user(request.user)
@@ -57,6 +74,7 @@ class PreviewToFrontendRedirectView(View):
         # Build the frontend URL using a configurable template. The template
         # should include placeholders for `{page_id}` and `{token}`. A default
         # value is provided to preserve previous behaviour.
+        # See docs/environment_variables.md for FRONTEND_PREVIEW_URL_TEMPLATE format.
         template = getattr(
             settings,
             "FRONTEND_PREVIEW_URL_TEMPLATE",
@@ -69,9 +87,24 @@ class PreviewToFrontendRedirectView(View):
 
 
 class LinkBrowseView(BrowseView):
+    """Custom browse view for link selection with external link types disabled.
+
+    Extends Wagtail's BrowseView to intercept requests and disable email/phone
+    link options in the page chooser interface.
+    """
+
     def get(
         self, request: WSGIRequest, parent_page_id: int | None = None
     ) -> JsonResponse:
+        """Handle GET request with modified query parameters to disable extra link types.
+
+        Args:
+            request: The WSGI HTTP request object
+            parent_page_id: Optional parent page ID for filtering browse results
+
+        Returns:
+            JsonResponse: JSON response from parent BrowseView with browse results
+        """
         request: WSGIRequest = self._intercept_request_and_switch_off_extra_links(
             request=request
         )
@@ -81,6 +114,14 @@ class LinkBrowseView(BrowseView):
     def _intercept_request_and_switch_off_extra_links(
         cls, request: WSGIRequest
     ) -> WSGIRequest:
+        """Modify request query parameters to disable email and phone link options.
+
+        Args:
+            request: The WSGI HTTP request object to modify
+
+        Returns:
+            WSGIRequest: Modified request with email and phone links disabled
+        """
         intercepted_query_params = request.GET.copy()
         intercepted_query_params["allow_email_link"] = False
         intercepted_query_params["allow_phone_link"] = False
