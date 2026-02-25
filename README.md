@@ -165,6 +165,13 @@ Head to http://localhost:8000/cms-admin/ and use the following credentials:
 Where the `<Admin Password>` is the password you provided to the call made 
 to the `uhd bootstrap all` or `uhd bootstrap admin-user` script.
 
+## Preview integration (frontend)
+
+For the secured CMS draft preview contract (including required env vars and
+the authenticated call to `/api/drafts/{page_id}/`), see:
+
+- [docs/environment_variables.md](docs/environment_variables.md)
+
 ---
 
 ## Development flows

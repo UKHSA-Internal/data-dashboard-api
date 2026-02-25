@@ -155,14 +155,14 @@ def frontend_preview_button(page, user, next_url, view_name):
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
     except Exception:
         # Fallback to a configurable frontend preview URL template. The
-        # template may include `{slug}` and any other placeholders; the
+        # template may include `{page_id}` and any other placeholders; the
         # default matches the previous behaviour.
         template = getattr(
             settings,
             "FRONTEND_PREVIEW_URL_TEMPLATE",
-            "https://example.com?page={slug}&draft=true",
+            "http://localhost:3000/preview?page_id={page_id}&draft=true",
         )
-        admin_url = template.format(slug=page.slug)
+        admin_url = template.format(page_id=page.pk)
 
     return [Button("Preview", url=admin_url, priority=10)]
 

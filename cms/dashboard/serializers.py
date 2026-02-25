@@ -12,9 +12,30 @@ PAGE_HAS_NO_DRAFTS = (
 
 
 class CMSDraftPagesSerializer(PageSerializer):
+    meta_fields = []
+    child_serializer_classes = {}
+
     class Meta:
         model = Page
         fields = "__all__"
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields.pop("type", None)
+        fields.pop("detail_url", None)
+        fields.pop("parent", None)
+        fields.pop("alias_of", None)
+        return fields
+
+    def build_relational_field(self, field_name, relation_info):
+        child_serializer_classes = getattr(self, "child_serializer_classes", {})
+        if field_name not in child_serializer_classes:
+            return serializers.PrimaryKeyRelatedField, {
+                "read_only": True,
+                "allow_null": relation_info.model_field.null,
+            }
+
+        return super().build_relational_field(field_name, relation_info)
 
     def to_representation(self, instance: Page) -> OrderedDict:
         """Provides a representation of the serialized instance

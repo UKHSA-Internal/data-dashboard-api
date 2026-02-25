@@ -14,6 +14,7 @@ function _tests_help() {
     echo
     echo "  coverage                  - run test coverage"
     echo "  all                       - run all tests regardless of type"
+    echo "  preview <page_id> [base_url] - call draft preview endpoint for a page id"
 
     return 0
 }
@@ -29,6 +30,7 @@ function _tests() {
         "migrations") _tests_migrations $args ;;
         "coverage") _tests_coverage $args ;;
         "all") _tests_all $args ;;
+        "preview") _tests_preview $args ;;
 
         *) _tests_help ;;
     esac
@@ -64,4 +66,35 @@ function _tests_all() {
     uhd tests integration
     uhd tests system
     uhd tests migrations
+}
+
+function _tests_preview() {
+    local page_id=$1
+    local base_url=${2:-"http://localhost:8000"}
+
+    if [[ -z "$page_id" ]]; then
+        echo "usage: uhd tests preview <page_id> [base_url]"
+        return 1
+    fi
+
+    uhd venv activate >/dev/null
+
+    local token
+    token=$(PAGE_ID="$page_id" python manage.py shell -c "from django.core.signing import dumps; from django.utils import timezone; from datetime import timedelta; import os; now = timezone.now(); print(dumps({'page_id': int(os.environ['PAGE_ID']), 'iat': int(now.timestamp()), 'exp': int((now + timedelta(seconds=900)).timestamp())}, salt='preview-token'))" 2>/dev/null | tail -1)
+
+    if [[ -z "$token" ]]; then
+        echo "failed to generate preview token"
+        return 1
+    fi
+
+    set -x
+    curl -i -H "Authorization: Bearer $token" "${base_url}/api/drafts/${page_id}/"
+    local exit_code=$?
+    set +x
+
+    return $exit_code
+}
+
+function test-page-previews() {
+    _tests_preview "$@"
 }

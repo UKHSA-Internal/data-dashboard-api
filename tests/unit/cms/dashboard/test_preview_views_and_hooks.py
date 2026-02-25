@@ -1,12 +1,8 @@
 import pytest
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest
 from django.test import RequestFactory
-from django.urls import reverse as dj_reverse
-from django.conf import settings
 
 from wagtail.admin.widgets import Button
-from wagtail.models import Page
 
 from cms.dashboard import wagtail_hooks
 from cms.dashboard.views import PreviewToFrontendRedirectView
@@ -49,15 +45,15 @@ def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
     monkeypatch.setattr(wagtail_hooks, "reverse", fake_reverse)
 
     # set a custom template in settings
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?slug={slug}"
+    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?page_id={page_id}"
 
-    page = FakePage(slug="bar")
+    page = FakePage(pk=123, slug="bar")
 
     buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
     assert isinstance(buttons, list) and buttons, "should return a non-empty list"
     btn = buttons[0]
     assert isinstance(btn, Button)
-    assert "https://frontend.test/preview?slug=bar" == btn.url
+    assert "https://frontend.test/preview?page_id=123" == btn.url
 
 
 def test_preview_redirect_view_permission_denied(monkeypatch):
@@ -84,7 +80,7 @@ def test_preview_redirect_view_success(monkeypatch, settings):
     monkeypatch.setattr("cms.dashboard.views.get_object_or_404", fake_get_object_or_404)
 
     # set a known template so we can assert the redirect location
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?slug={slug}&t={token}"
+    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?page_id={page_id}&t={token}"
 
     request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
     request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
@@ -94,7 +90,7 @@ def test_preview_redirect_view_success(monkeypatch, settings):
 
     # response is an HttpResponseRedirect; ensure location contains expected values
     location = resp.url if hasattr(resp, "url") else resp.get("Location")
-    assert location.startswith("https://frontend.test/preview?slug=cover&t=")
+    assert location.startswith("https://frontend.test/preview?page_id=1&t=")
 
 
 def test_construct_page_action_menu_missing_page():
@@ -159,5 +155,7 @@ def test_add_page_to_parent_raises_when_parent_is_none():
 
     with pytest.raises(ValueError, match="parent_page cannot be None"):
         _add_page_to_parent(page=sentinel, parent_page=None)
+    sentinel = object()
+
 
 

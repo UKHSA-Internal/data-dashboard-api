@@ -11,6 +11,10 @@ from django.http import JsonResponse
 from wagtail.models import Page
 from wagtail.admin.views.chooser import BrowseView
 
+# Token salt for preview tokens; configurable via Django settings to avoid
+# hard-coded strings in code.
+PAGE_PREVIEWS_TOKEN_SALT = getattr(settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token")
+
 
 class PreviewToFrontendRedirectView(View):
     """Generate a signed preview token and redirect to the frontend.
@@ -22,8 +26,12 @@ class PreviewToFrontendRedirectView(View):
     and fetching any draft content.
     """
 
-    # token lifetime in seconds
-    TOKEN_TTL_SECONDS = 60 * 15
+    # token lifetime in seconds (configurable via settings)
+    PREVIEW_TOKEN_TTL_SECONDS = getattr(
+        settings,
+        "FRONTEND_PREVIEW_TOKEN_TTL_SECONDS",
+        60 * 15,
+    )
 
     def get(self, request, pk):
         page = get_object_or_404(Page, pk=pk).specific
@@ -36,24 +44,24 @@ class PreviewToFrontendRedirectView(View):
 
         now = timezone.now()
         payload = {
-            "slug": page.slug,
+            "page_id": page.pk,
             "editor_id": request.user.pk if request.user.is_authenticated else None,
             "iat": int(now.timestamp()),
-            "exp": int((now + timedelta(seconds=self.TOKEN_TTL_SECONDS)).timestamp()),
+            "exp": int((now + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()),
         }
 
-        token = dumps(payload, salt="preview-token")
+        token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
 
         # Build the frontend URL using a configurable template. The template
-        # should include placeholders for `{slug}` and `{token}`. A default
+        # should include placeholders for `{page_id}` and `{token}`. A default
         # value is provided to preserve previous behaviour.
         template = getattr(
             settings,
             "FRONTEND_PREVIEW_URL_TEMPLATE",
-            "https://example.com?page={slug}&draft=true&t={token}",
+            "http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}",
         )
 
-        frontend_url = template.format(slug=page.slug, token=token)
+        frontend_url = template.format(page_id=page.pk, token=token)
 
         return redirect(frontend_url)
 

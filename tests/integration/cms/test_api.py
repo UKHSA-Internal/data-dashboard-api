@@ -1,6 +1,8 @@
 from http import HTTPStatus
 
 import pytest
+from django.core.signing import dumps
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 from wagtail.models import Page
@@ -10,6 +12,19 @@ class TestDraftPagesAPI:
     @property
     def path(self) -> str:
         return "/api/drafts"
+
+    @staticmethod
+    def _build_preview_auth_header(*, page_id: int) -> dict[str, str]:
+        now = timezone.now()
+        token = dumps(
+            {
+                "page_id": page_id,
+                "iat": int(now.timestamp()),
+                "exp": int((now.timestamp()) + (60 * 15)),
+            },
+            salt="preview-token",
+        )
+        return {"HTTP_AUTHORIZATION": f"Bearer {token}"}
 
     @pytest.mark.django_db
     def test_request_returns_draft_with_unpublished_changes(self):
@@ -27,11 +42,13 @@ class TestDraftPagesAPI:
         page.save_revision()
 
         api_client = APIClient()
+        authorization_header = self._build_preview_auth_header(page_id=page.pk)
 
         # When
         response_from_drafts_endpoint: Response = api_client.get(
             path=f"{self.path}/{page.pk}/",
             format="json",
+            **authorization_header,
         )
         response_from_pages_endpoint: Response = api_client.get(
             path=f"/api/pages/{page.pk}/",

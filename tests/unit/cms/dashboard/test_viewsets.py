@@ -1,3 +1,7 @@
+import pytest
+from django.test import RequestFactory
+from rest_framework import status
+
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 
@@ -48,6 +52,86 @@ class TestCMSDraftPagesViewSet:
 
         # Then
         assert permission_classes == []
+
+    def test_detail_view_returns_401_without_valid_bearer_authorization(self):
+        request = RequestFactory().get("/api/drafts/1/")
+
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_detail_view_returns_401_when_token_cannot_be_loaded(self, monkeypatch):
+        def raise_bad_token(token, salt):
+            raise ValueError("bad token")
+
+        monkeypatch.setattr("cms.dashboard.viewsets.loads", raise_bad_token)
+        request = RequestFactory().get(
+            "/api/drafts/1/",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_detail_view_returns_401_when_page_id_does_not_match(self, monkeypatch):
+        monkeypatch.setattr(
+            "cms.dashboard.viewsets.loads",
+            lambda token, salt: {"page_id": 999, "exp": 9999999999},
+        )
+        request = RequestFactory().get(
+            "/api/drafts/1/",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @pytest.mark.parametrize("payload", [{"page_id": 1}, {"page_id": 1, "exp": 1}])
+    def test_detail_view_returns_401_for_missing_or_expired_exp(self, monkeypatch, payload):
+        monkeypatch.setattr("cms.dashboard.viewsets.loads", lambda token, salt: payload)
+        request = RequestFactory().get(
+            "/api/drafts/1/",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_detail_view_returns_serialized_draft_when_token_is_valid(self, monkeypatch):
+        class FakeInstance:
+            def get_latest_revision_as_object(self):
+                return object()
+
+        class FakeSerializer:
+            data = {"ok": True}
+
+        monkeypatch.setattr(
+            "cms.dashboard.viewsets.loads",
+            lambda token, salt: {"page_id": 1, "exp": 9999999999},
+        )
+        monkeypatch.setattr(
+            CMSDraftPagesViewSet,
+            "get_object",
+            lambda self: FakeInstance(),
+        )
+        monkeypatch.setattr(
+            CMSDraftPagesViewSet,
+            "get_serializer",
+            lambda self, instance: FakeSerializer(),
+        )
+
+        request = RequestFactory().get(
+            "/api/drafts/1/",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data == {"ok": True}
 
 
 class TestCMSPagesAPIViewSet:

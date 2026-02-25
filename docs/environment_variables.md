@@ -128,6 +128,52 @@ The port number of the postgresql database. Typically, this is set to 5432.
 This is the secret key used by Django to provide cryptographically signing.
 See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECRET_KEY) for more information.
 
+#### `FRONTEND_PREVIEW_URL_TEMPLATE`
+
+Template URL used by the CMS preview button redirect flow.
+
+Expected placeholders:
+- `{page_id}`: the Wagtail page ID (used to call the drafts endpoint at `/api/drafts/{id}/`)
+- `{token}`: short-lived signed preview token
+
+Example:
+- `https://frontend.example/preview?page_id={page_id}&t={token}`
+
+Local default template used by the backend:
+- `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`
+
+If omitted, a local default template is used by the backend.
+
+#### `PAGE_PREVIEWS_TOKEN_SALT`
+
+Optional signing salt used when issuing and validating preview tokens.
+If omitted, the backend uses `preview-token`.
+
+#### `FRONTEND_PREVIEW_TOKEN_TTL_SECONDS`
+
+Optional preview token TTL in seconds.
+If omitted, the backend default is 15 minutes.
+
+### Frontend preview integration
+
+To fetch preview content from the private drafts API:
+
+- Endpoint: `/api/drafts/{page_id}/`
+- Method: `GET`
+- Header: `Authorization: Bearer {token}`
+
+Example:
+
+Sample bash call - generates a token and makes the API call to show CMS draft page:
+
+```bash
+uhd tests preview 123
+```
+
+Request behavior:
+- Returns `200` with draft payload when token is valid and unexpired
+- Returns `401` when token is missing, invalid, mismatched to `{page_id}`, or expired
+
 ---
 
 ### Email configuration

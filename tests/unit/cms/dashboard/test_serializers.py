@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from wagtail.api.v2.views import PageSerializer
 from wagtail.models import Page
@@ -9,6 +10,46 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer
 
 
 class TestCMSDraftPagesSerializer:
+    def test_fields_can_be_constructed_without_serializer_class_errors(self):
+        serializer = CMSDraftPagesSerializer()
+
+        assert "latest_revision" in serializer.fields
+        assert "type" not in serializer.fields
+        assert "detail_url" not in serializer.fields
+        assert "parent" not in serializer.fields
+        assert "alias_of" not in serializer.fields
+
+    def test_build_relational_field_falls_back_for_unmapped_fields(self):
+        serializer = CMSDraftPagesSerializer()
+        relation_info = mock.Mock()
+        relation_info.model_field.null = True
+
+        field_class, field_kwargs = serializer.build_relational_field(
+            field_name="latest_revision", relation_info=relation_info
+        )
+
+        assert field_class is serializers.PrimaryKeyRelatedField
+        assert field_kwargs == {"read_only": True, "allow_null": True}
+
+    @mock.patch.object(PageSerializer, "build_relational_field")
+    def test_build_relational_field_uses_page_serializer_for_mapped_fields(
+        self, spy_page_serializer_build_relational_field: mock.MagicMock
+    ):
+        spy_page_serializer_build_relational_field.return_value = (
+            mock.sentinel.field_class,
+            {"mapped": True},
+        )
+        serializer = CMSDraftPagesSerializer()
+        serializer.child_serializer_classes = {"latest_revision": object()}
+
+        field_class, field_kwargs = serializer.build_relational_field(
+            field_name="latest_revision", relation_info=mock.Mock()
+        )
+
+        assert field_class is mock.sentinel.field_class
+        assert field_kwargs == {"mapped": True}
+        spy_page_serializer_build_relational_field.assert_called_once()
+
     def test_to_representation_raises_error_if_page_has_no_unpublished_changes(self):
         """
         Given a mocked `Page` which has no unpublished changes

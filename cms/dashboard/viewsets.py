@@ -1,12 +1,18 @@
+from django.conf import settings
 from django.urls import path
 from django.urls.resolvers import RoutePattern
+from django.utils import timezone
+from django.core.signing import loads
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
+
+PAGE_PREVIEWS_TOKEN_SALT = getattr(settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token")
 
 
 @extend_schema(tags=["cms"])
@@ -64,6 +70,24 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
 
         **Note:** this only returns `published` pages with `unpublished` changes.
         """
+        auth = request.headers.get("Authorization", "")
+        if not auth or not auth.lower().startswith("bearer "):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        token = auth.split(" ", 1)[1].strip()
+        try:
+            payload = loads(token, salt=PAGE_PREVIEWS_TOKEN_SALT)
+        except Exception:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        payload_page_id = payload.get("page_id")
+        if payload_page_id is None or int(payload_page_id) != int(pk):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        exp = payload.get("exp")
+        if exp is None or timezone.now().timestamp() > exp:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         instance = self.get_object()
         instance = instance.get_latest_revision_as_object()
         serializer = self.get_serializer(instance)
