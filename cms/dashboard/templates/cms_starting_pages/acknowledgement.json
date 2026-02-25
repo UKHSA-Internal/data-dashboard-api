@@ -1,0 +1,32 @@
+{
+  "id": 30,
+  "meta": {
+    "seo_title": "Accessing official sensitive data | UKHSA data dashboard",
+    "search_description": "Acknowledgement required to access the dashboard",
+    "type": "common.AcknowledgementPage",
+    "detail_url": "http://localhost/api/pages/30/",
+    "html_url": null,
+    "slug": "acknowledgement",
+    "show_in_menus": false,
+    "first_published_at": "2026-02-18T15:32:35.177836+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "cms.acknowledgement",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Data Dashboard Acknowledgement"
+    }
+  },
+  "title": "Accessing official sensitive data",
+  "body": "",
+  "i_agree_checkbox": "I agree to the terms of service",
+  "terms_of_service_link_text": "Read the terms of service",
+  "terms_of_service_link": "https://example.com/terms-of-service",
+  "disagree_button": "I do not agree",
+  "agree_button": "I agree",
+  "last_published_at": "2026-02-18T15:32:35.177836+01:00",
+  "related_links": []
+}
