@@ -9,19 +9,6 @@ from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 from django.conf import settings
 
-# ---------------------------------------------------------------------------
-# Edit view customization
-# ---------------------------------------------------------------------------
-# We want to keep the preview button available but we *never* want the
-# built-in side panel to appear for our headless page types.  The panel
-# causes the iframe to open (and it will throw a template-missing error when
-# loading the page content, since we don’t ship any frontend templates).
-#
-# The easiest way to suppress it is to monkey-patch
-# ``wagtail.admin.views.pages.edit.EditView.get_side_panels`` early during
-# startup, filtering out ``PreviewSidePanel`` instances when the page being
-# edited is a ``CompositePage`` subclass.  This is performed at import time
-# since the hooks module is guaranteed to be imported by wagtail on startup.
 from wagtail.admin.views.pages.edit import EditView
 from wagtail.admin.ui.side_panels import PreviewSidePanel
 from cms.composite.models import CompositePage
@@ -30,30 +17,47 @@ _original_get_side_panels = EditView.get_side_panels
 
 
 def _patched_get_side_panels(self):
+    """Suppress PreviewSidePanel for headless composite pages.
+
+    We keep the preview button available but never show the built-in side
+    panel for our headless page types. The panel causes the iframe to open,
+    which throws a template-missing error since we don't ship frontend
+    templates.
+
+    This monkey-patches ``EditView.get_side_panels`` early during startup,
+    filtering out ``PreviewSidePanel`` instances when the page being edited
+    is a ``CompositePage`` subclass. This is performed at import time since
+    the hooks module is guaranteed to be imported by Wagtail on startup.
+
+    Note:
+        Only strips the preview panel for composite pages; other page types
+        are untouched to avoid inadvertently removing panels for normal
+        Wagtail content.
+
+        Avoids touching ``.specific`` as the property may consult ContentType
+        and cause a DB query, which is disallowed in unit tests. ``isinstance``
+        is sufficient and works on the fake page class used by tests.
+
+    Args:
+        self: The EditView instance.
+
+    Returns:
+        The original panels or filtered panels with PreviewSidePanel removed
+        for CompositePage instances.
+    """
     panels = _original_get_side_panels(self)
 
-    # no-op debug section removed once functionality verified
-
-    # Only strip the preview panel for our composite pages; leave other
-    # page types untouched so we don't inadvertently remove panels for
-    # normal wagtail content.
     try:
         page_obj = getattr(self, "page", None)
-        # avoid touching ``.specific`` here; the property may consult
-        # ContentType and cause a DB query, which is disallowed in unit
-        # tests.  ``isinstance`` is sufficient for our purposes and works
-        # on the fake page class used by tests.
         if page_obj and isinstance(page_obj, CompositePage):
-            # panels behaves like an iterable
             filtered = [p for p in panels if not isinstance(p, PreviewSidePanel)]
-            panels = panels.__class__(filtered)  # rebuild same container type
+            panels = panels.__class__(filtered)
     except Exception:
-        # if anything goes wrong, just return the original panels
         pass
 
     return panels
 
-# apply patch
+
 EditView.get_side_panels = _patched_get_side_panels
 
 from django.urls import reverse
