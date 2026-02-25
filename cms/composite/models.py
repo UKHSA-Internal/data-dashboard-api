@@ -98,11 +98,6 @@ class CompositePage(UKHSAPage):
         match the documentation and behaviour.  The individual page types can
         still provide their own external preview links via hooks if required.
         """
-        # This project is headless: we don’t support the built‑in Wagtail preview
-        # panel (it would render an iframe pointing at the CMS itself). The
-        # preview button and redirects to the external frontend are handled
-        # separately via admin hooks and a small redirect view, so return
-        # False here to match the documented and tested behaviour.
         return False
 
     @property
