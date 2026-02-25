@@ -89,7 +89,9 @@ class TestCMSDraftPagesViewSet:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.parametrize("payload", [{"page_id": 1}, {"page_id": 1, "exp": 1}])
-    def test_detail_view_returns_401_for_missing_or_expired_exp(self, monkeypatch, payload):
+    def test_detail_view_returns_401_for_missing_or_expired_exp(
+        self, monkeypatch, payload
+    ):
         monkeypatch.setattr("cms.dashboard.viewsets.loads", lambda token, salt: payload)
         request = RequestFactory().get(
             "/api/drafts/1/",
@@ -100,7 +102,9 @@ class TestCMSDraftPagesViewSet:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_detail_view_returns_serialized_draft_when_token_is_valid(self, monkeypatch):
+    def test_detail_view_returns_serialized_draft_when_token_is_valid(
+        self, monkeypatch
+    ):
         class FakeInstance:
             def get_latest_revision_as_object(self):
                 return object()

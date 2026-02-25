@@ -7,7 +7,10 @@ from wagtail.admin.widgets import Button
 
 from cms.dashboard import wagtail_hooks
 from cms.dashboard.views import PreviewToFrontendRedirectView
-from cms.dashboard.management.commands.build_cms_site_helpers.pages import _add_page_to_parent
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    _add_page_to_parent,
+)
+
 
 class DummyPerms:
     def __init__(self, can_edit):
@@ -46,7 +49,9 @@ def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
     monkeypatch.setattr(wagtail_hooks, "reverse", fake_reverse)
 
     # set a custom template in settings
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?page_id={page_id}"
+    settings.FRONTEND_PREVIEW_URL_TEMPLATE = (
+        "https://frontend.test/preview?page_id={page_id}"
+    )
 
     page = FakePage(pk=123, slug="bar")
 
@@ -81,7 +86,9 @@ def test_preview_redirect_view_success(monkeypatch, settings):
     monkeypatch.setattr("cms.dashboard.views.get_object_or_404", fake_get_object_or_404)
 
     # set a known template so we can assert the redirect location
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = "https://frontend.test/preview?page_id={page_id}&t={token}"
+    settings.FRONTEND_PREVIEW_URL_TEMPLATE = (
+        "https://frontend.test/preview?page_id={page_id}&t={token}"
+    )
 
     request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
     request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
@@ -134,6 +141,7 @@ def test_construct_page_action_menu_exception_handling(monkeypatch):
 
 def test_construct_page_action_menu_insert_exception(monkeypatch):
     """Test that exceptions during menu_items.insert are handled gracefully."""
+
     # Mock menu_items that raises on insert
     class BadMenuItems(list):
         def insert(self, index, item):
@@ -157,6 +165,3 @@ def test_add_page_to_parent_raises_when_parent_is_none():
     with pytest.raises(ValueError, match="parent_page cannot be None"):
         _add_page_to_parent(page=sentinel, parent_page=None)
     sentinel = object()
-
-
-

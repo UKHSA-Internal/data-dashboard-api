@@ -227,7 +227,11 @@ def register_admin_urls():
     `cms.dashboard.views`.
     """
     return [
-        re_path(r"^preview-to-frontend/(?P<pk>[0-9]+)/$", PreviewToFrontendRedirectView.as_view(), name="cms_preview_to_frontend"),
+        re_path(
+            r"^preview-to-frontend/(?P<pk>[0-9]+)/$",
+            PreviewToFrontendRedirectView.as_view(),
+            name="cms_preview_to_frontend",
+        ),
     ]
 
 
@@ -267,11 +271,12 @@ def add_frontend_preview_action(menu_items, request, context):
     class FrontendPreviewAction(ActionMenuItem):
         """ActionMenuItem for frontend preview with external link icon.
 
-            Attributes:
-                label: Display text for the menu item.
-                name: Unique identifier for the action.
-                icon_name: Wagtail icon name to display.
-            """
+        Attributes:
+            label: Display text for the menu item.
+            name: Unique identifier for the action.
+            icon_name: Wagtail icon name to display.
+        """
+
         label = "Preview"
         name = "action-preview"
         icon_name = "link-external"
@@ -283,12 +288,12 @@ def add_frontend_preview_action(menu_items, request, context):
         def get_url(self, parent_context):
             """Return the preview URL.
 
-                Args:
-                    parent_context: Context from parent menu.
+            Args:
+                parent_context: Context from parent menu.
 
-                Returns:
-                    The preview redirect URL.
-                """
+            Returns:
+                The preview redirect URL.
+            """
             return self._url
 
     try:

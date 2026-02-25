@@ -40,9 +40,7 @@ class TestDraftPagesAPI:
         # Given
         # Create a locale and root page for the test
         Locale.objects.get_or_create(language_code="en")
-        root = Page.get_first_root_node() or Page.add_root(
-            title="Root", slug="root"
-        )
+        root = Page.get_first_root_node() or Page.add_root(title="Root", slug="root")
 
         # Create or update the Site for the root page
         site, _ = Site.objects.get_or_create(

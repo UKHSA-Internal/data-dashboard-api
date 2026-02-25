@@ -286,7 +286,11 @@ class TestPreviewPanelSuppression:
         view.scheduled_page = None
         view.locale = None
         view.translations = []
-        view.form = type("F", (), {"show_schedule_publishing_toggle": False, "show_comments_toggle": False})
+        view.form = type(
+            "F",
+            (),
+            {"show_schedule_publishing_toggle": False, "show_comments_toggle": False},
+        )
         view.expects_json_response = False
         view.hydrate_create_view = False
 
@@ -296,9 +300,9 @@ class TestPreviewPanelSuppression:
         # Then
         # Iterate the container to get actual panel objects.
         panel_list = list(panels)
-        assert not any(isinstance(p, PreviewSidePanel) for p in panel_list), (
-            "preview panel should be stripped"
-        )
+        assert not any(
+            isinstance(p, PreviewSidePanel) for p in panel_list
+        ), "preview panel should be stripped"
 
     def test_side_panel_filtering_handles_exceptions(self):
         """
@@ -329,7 +333,9 @@ class TestPreviewPanelSuppression:
 
         # When / Then
         # Patch _original_get_side_panels to return our problematic panels.
-        with mock.patch.object(wagtail_hooks, "_original_get_side_panels", return_value=panels_mock):
+        with mock.patch.object(
+            wagtail_hooks, "_original_get_side_panels", return_value=panels_mock
+        ):
             result = wagtail_hooks._patched_get_side_panels(view)
 
             # The exception should be caught and the original panels returned.

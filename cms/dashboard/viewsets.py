@@ -13,7 +13,9 @@ from wagtail.models import Page
 from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 
-PAGE_PREVIEWS_TOKEN_SALT = getattr(settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token")
+PAGE_PREVIEWS_TOKEN_SALT = getattr(
+    settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token"
+)
 
 
 @extend_schema(tags=["cms"])

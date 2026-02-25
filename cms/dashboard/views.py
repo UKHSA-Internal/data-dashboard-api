@@ -13,7 +13,9 @@ from wagtail.models import Page
 
 # Token salt for preview tokens; configurable via Django settings to avoid
 # hard-coded strings in code.
-PAGE_PREVIEWS_TOKEN_SALT = getattr(settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token")
+PAGE_PREVIEWS_TOKEN_SALT = getattr(
+    settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token"
+)
 
 
 class PreviewToFrontendRedirectView(View):
@@ -45,7 +47,9 @@ class PreviewToFrontendRedirectView(View):
             "page_id": page.pk,
             "editor_id": request.user.pk if request.user.is_authenticated else None,
             "iat": int(now.timestamp()),
-            "exp": int((now + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()),
+            "exp": int(
+                (now + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()
+            ),
         }
 
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
