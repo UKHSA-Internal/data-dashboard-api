@@ -1,9 +1,11 @@
 name: Pipeline
 
 on: 
-  push:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
 
 env:
   APIENV: "LOCAL"
@@ -23,7 +25,6 @@ jobs:
   secret-scan:
     name: Gitleaks Secret Scan
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout PR head
@@ -44,7 +45,7 @@ jobs:
         run: |
           git fetch origin ${{ github.event.pull_request.base.sha }}
 
-      - name: Run Gitleaks (PR commits only)
+      - name: Run Gitleaks
         run: |
           echo "Scanning commits from base -> PR head"
           gitleaks detect \
