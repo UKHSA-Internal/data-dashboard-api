@@ -71,15 +71,33 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
     def get_queryset(self):
         """Returns all pages including drafts.
 
+        This endpoint uses Wagtail's `specific()` to return the concrete page
+        types so draft revisions can be serialized with their custom fields.
+
         Returns:
-            PageQuerySet: All Page objects including unpublished drafts as specific model instances
+            PageQuerySet: All Page objects, including unpublished drafts, as
+                specific model instances.
         """
         return Page.objects.all().specific()
 
     def detail_view(self, request: Request, pk: int) -> Response:
-        """This endpoint returns a page including any unpublished changes in its payload.
+        """Returns a page including any unpublished changes (draft preview).
 
-        **Note:** this only returns `published` pages with `unpublished` changes.
+        Validates the preview token from the Authorization header before returning
+        the latest revision of the requested page. This enables CMS editors to
+        preview unpublished changes while restricting access to authorized callers.
+
+        Note:
+            This only returns published pages with unpublished changes.
+
+        Args:
+            request: The HTTP request with an Authorization header containing a
+                Bearer token.
+            pk: The page ID to preview.
+
+        Returns:
+            Response: JSON payload with the latest revision, or HTTP 401 if
+                authorization fails.
         """
         auth = request.headers.get("Authorization", "")
         if not auth or not auth.lower().startswith("bearer "):
@@ -106,11 +124,12 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
 
     @classmethod
     def get_urlpatterns(cls) -> list[RoutePattern]:
-        """This returns a list of URL patterns for the viewset.
+        """Returns URL patterns for the draft pages viewset.
 
-        Notes:
-            Only the detail `/{id}` path is included.
+        Only the detail endpoint is exposed to prevent listing all drafts.
 
+        Returns:
+            list[RoutePattern]: URL pattern for the detail view at /<int:pk>/.
         """
         return [
             path("<int:pk>/", cls.as_view({"get": "detail_view"}), name="detail"),
