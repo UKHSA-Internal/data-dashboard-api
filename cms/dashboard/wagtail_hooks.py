@@ -1,5 +1,3 @@
-import logging
-
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
@@ -11,67 +9,11 @@ from wagtail import hooks
 from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.menu import MenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
-from wagtail.admin.ui.side_panels import PreviewSidePanel
-from wagtail.admin.views.pages.edit import EditView
 from wagtail.admin.widgets import Button
 from wagtail.models import Page
 from wagtail.whitelist import check_url
 
-from cms.composite.models import CompositePage
 from cms.dashboard.views import PreviewToFrontendRedirectView
-
-logger = logging.getLogger(__name__)
-
-_original_get_side_panels = EditView.get_side_panels
-
-
-def _patched_get_side_panels(self):
-    """Suppress PreviewSidePanel for headless composite pages.
-
-    We keep the preview button available but never show the built-in side
-    panel for our headless page types. The panel causes the iframe to open,
-    which throws a template-missing error since we don't ship frontend
-    templates.
-
-    This monkey-patches ``EditView.get_side_panels`` early during startup,
-    filtering out ``PreviewSidePanel`` instances when the page being edited
-    is a ``CompositePage`` subclass. This is performed at import time since
-    the hooks module is guaranteed to be imported by Wagtail on startup.
-
-    Note:
-        Only strips the preview panel for composite pages; other page types
-        are untouched to avoid inadvertently removing panels for normal
-        Wagtail content.
-
-        Avoids touching ``.specific`` as the property may consult ContentType
-        and cause a DB query, which is disallowed in unit tests. ``isinstance``
-        is sufficient and works on the fake page class used by tests.
-
-    Args:
-        self: The EditView instance.
-
-    Returns:
-        The original panels or filtered panels with PreviewSidePanel removed
-        for CompositePage instances.
-    """
-    panels = _original_get_side_panels(self)
-
-    try:
-        page_obj = getattr(self, "page", None)
-        if page_obj and isinstance(page_obj, CompositePage):
-            filtered = [p for p in panels if not isinstance(p, PreviewSidePanel)]
-            panels = panels.__class__(filtered)
-    except (AttributeError, RuntimeError, TypeError, ValueError):
-        logger.warning(
-            "Page Preview: failed to filter PreviewSidePanel; returning original side panels",
-            exc_info=True,
-        )
-        return panels
-
-    return panels
-
-
-EditView.get_side_panels = _patched_get_side_panels
 
 
 @hooks.register("insert_global_admin_css")

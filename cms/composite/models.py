@@ -92,7 +92,7 @@ class CompositePage(UKHSAPage):
     def is_previewable(cls) -> bool:
         """Returns False.
 
-        This project is head‑less: we don’t support the built‑in Wagtail preview
+        This project is headless: we don’t support the built‑in Wagtail preview
         panel (it would render an iframe pointing at the CMS itself).  The
         corresponding unit tests assume ``False`` so make the implementation
         match the documentation and behaviour.  The individual page types can
