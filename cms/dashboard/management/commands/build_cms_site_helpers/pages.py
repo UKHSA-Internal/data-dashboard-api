@@ -27,6 +27,13 @@ logger = logging.getLogger(__name__)
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
 
 
+class ParentPageMissingError(ValueError):
+    """Raised when a parent page is required but not provided."""
+
+    def __init__(self):
+        super().__init__("parent_page cannot be None")
+
+
 def open_example_page_response(*, page_name: str):
     path = f"{FILE_PATH}{page_name}.json"
     with open(path, "rb") as f:
@@ -47,7 +54,7 @@ def _create_related_links(*, related_link_class, response_data, page) -> None:
 def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
     # If caller passed a None parent, raise an error to ensure proper usage.
     if parent_page is None:
-        raise ValueError("parent_page cannot be None")
+        raise ParentPageMissingError
 
     page = parent_page.add_child(instance=page)
     page.save_revision().publish()

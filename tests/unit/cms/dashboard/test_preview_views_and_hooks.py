@@ -1,5 +1,6 @@
 import pytest
 from django.core.exceptions import PermissionDenied
+from django.urls import NoReverseMatch
 from django.test import RequestFactory
 
 from wagtail.admin.widgets import Button
@@ -40,7 +41,7 @@ def test_frontend_preview_button_non_edit_view_returns_empty():
 def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
     # cause reverse to raise so the fallback path is exercised
     def fake_reverse(name, args=None):
-        raise Exception("no reverse")
+        raise NoReverseMatch("no reverse")
 
     monkeypatch.setattr(wagtail_hooks, "reverse", fake_reverse)
 

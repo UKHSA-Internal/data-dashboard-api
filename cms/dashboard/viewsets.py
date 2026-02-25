@@ -1,13 +1,14 @@
 from django.conf import settings
+from django.core.signing import BadSignature, SignatureExpired, loads
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from django.utils import timezone
-from django.core.signing import loads
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
+from wagtail.models import Page
 
 from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
@@ -72,8 +73,6 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
             Queryset of all Page objects, including unpublished ones.
 
         """
-        from wagtail.models import Page
-
         return Page.objects.all().specific()
 
     def detail_view(self, request: Request, pk: int) -> Response:
@@ -88,7 +87,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         token = auth.split(" ", 1)[1].strip()
         try:
             payload = loads(token, salt=PAGE_PREVIEWS_TOKEN_SALT)
-        except Exception:
+        except (BadSignature, SignatureExpired, ValueError, TypeError):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         payload_page_id = payload.get("page_id")

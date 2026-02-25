@@ -1,15 +1,15 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.core.handlers.wsgi import WSGIRequest
 from django.core.signing import dumps
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.views import View
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import JsonResponse
-
-from wagtail.models import Page
 from wagtail.admin.views.chooser import BrowseView
+from wagtail.models import Page
 
 # Token salt for preview tokens; configurable via Django settings to avoid
 # hard-coded strings in code.
@@ -38,8 +38,6 @@ class PreviewToFrontendRedirectView(View):
 
         perms = page.permissions_for_user(request.user)
         if not perms.can_edit():
-            from django.core.exceptions import PermissionDenied
-
             raise PermissionDenied
 
         now = timezone.now()

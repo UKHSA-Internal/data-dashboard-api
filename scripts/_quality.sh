@@ -7,7 +7,10 @@ function _quality_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
+    echo "  all                       - run all checks"
     echo "  architecture              - check architectural constraints"
+    echo "  ruff                      - run ruff checks across codebase"
+    echo "  bandit                    - run bandit checks across codebase"
     echo
     echo "  format                    - run all formatters over codebase"
     echo "  format-check              - run all formatters over codebase, error if changes are required"
@@ -21,12 +24,30 @@ function _quality() {
     local args=(${@:2})
 
     case $verb in
+        "all") _quality_all $args ;;
         "architecture") _quality_architecture $args ;;
+        "ruff") _quality_ruff $args ;;
+        "bandit") _quality_bandit $args ;;
         "format") _quality_format $args ;;
         "format-check") _quality_format_check $args ;;
 
         *) _quality_help ;;
     esac
+}
+
+function _quality_all() {
+    _quality_ruff
+    _quality_bandit
+}
+
+function _quality_ruff() {
+    uhd venv activate
+    ruff check .
+}
+
+function _quality_bandit() {
+    uhd venv activate
+    bandit -c pyproject.toml -r .
 }
 
 function _quality_architecture() {

@@ -1,19 +1,24 @@
 import logging
 
+from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
+from django.urls import NoReverseMatch, re_path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from draftjs_exporter.dom import DOM
 from wagtail import hooks
-from wagtail.admin.menu import MenuItem
 from wagtail.admin.action_menu import ActionMenuItem
+from wagtail.admin.menu import MenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
-from django.conf import settings
-
-from wagtail.admin.views.pages.edit import EditView
 from wagtail.admin.ui.side_panels import PreviewSidePanel
+from wagtail.admin.views.pages.edit import EditView
+from wagtail.admin.widgets import Button
+from wagtail.models import Page
+from wagtail.whitelist import check_url
+
 from cms.composite.models import CompositePage
+from cms.dashboard.views import PreviewToFrontendRedirectView
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +61,7 @@ def _patched_get_side_panels(self):
         if page_obj and isinstance(page_obj, CompositePage):
             filtered = [p for p in panels if not isinstance(p, PreviewSidePanel)]
             panels = panels.__class__(filtered)
-    except Exception:
+    except (AttributeError, RuntimeError, TypeError, ValueError):
         logger.warning(
             "Page Preview: failed to filter PreviewSidePanel; returning original side panels",
             exc_info=True,
@@ -67,11 +72,6 @@ def _patched_get_side_panels(self):
 
 
 EditView.get_side_panels = _patched_get_side_panels
-
-from django.urls import reverse
-from wagtail.admin.widgets import Button
-from wagtail.models import Page
-from wagtail.whitelist import check_url
 
 
 @hooks.register("insert_global_admin_css")
@@ -176,7 +176,7 @@ def frontend_preview_button(page, user, next_url, view_name):
 
     try:
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
-    except Exception:
+    except NoReverseMatch:
         template = getattr(
             settings,
             "FRONTEND_PREVIEW_URL_TEMPLATE",
@@ -226,10 +226,6 @@ def register_admin_urls():
     redirect the user to the external frontend.  The view implementation is in
     `cms.dashboard.views`.
     """
-    from django.urls import re_path
-
-    from cms.dashboard.views import PreviewToFrontendRedirectView
-
     return [
         re_path(r"^preview-to-frontend/(?P<pk>[0-9]+)/$", PreviewToFrontendRedirectView.as_view(), name="cms_preview_to_frontend"),
     ]
@@ -259,31 +255,33 @@ def add_frontend_preview_action(menu_items, request, context):
         This method is conservative and silently returns on any exception to
         avoid breaking the editor UI.
     """
+    page = context.get("page")
+    if not page or not getattr(page, "pk", None):
+        return
+
     try:
-        page = context.get("page")
-        if not page or not getattr(page, "pk", None):
-            return
-
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
+    except (NoReverseMatch, RuntimeError):
+        return
 
-        class FrontendPreviewAction(ActionMenuItem):
-            """ActionMenuItem for frontend preview with external link icon.
+    class FrontendPreviewAction(ActionMenuItem):
+        """ActionMenuItem for frontend preview with external link icon.
 
             Attributes:
                 label: Display text for the menu item.
                 name: Unique identifier for the action.
                 icon_name: Wagtail icon name to display.
             """
-            label = "Preview"
-            name = "action-preview"
-            icon_name = "link-external"
+        label = "Preview"
+        name = "action-preview"
+        icon_name = "link-external"
 
-            def __init__(self, url: str, order: int = None):
-                super().__init__(order=order)
-                self._url = url
+        def __init__(self, url: str, order: int = None):
+            super().__init__(order=order)
+            self._url = url
 
-            def get_url(self, parent_context):
-                """Return the preview URL.
+        def get_url(self, parent_context):
+            """Return the preview URL.
 
                 Args:
                     parent_context: Context from parent menu.
@@ -291,9 +289,10 @@ def add_frontend_preview_action(menu_items, request, context):
                 Returns:
                     The preview redirect URL.
                 """
-                return self._url
+            return self._url
 
+    try:
         preview_item = FrontendPreviewAction(admin_url, order=0)
         menu_items.insert(0, preview_item)
-    except Exception:
+    except RuntimeError:
         return
