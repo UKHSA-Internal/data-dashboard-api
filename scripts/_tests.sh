@@ -14,7 +14,6 @@ function _tests_help() {
     echo
     echo "  coverage                  - run test coverage"
     echo "  all                       - run all tests regardless of type"
-    echo "  preview [page_id]           - run draft preview integration test"
 
     return 0
 }
@@ -66,11 +65,6 @@ function _tests_all() {
     uhd tests integration
     uhd tests system
     uhd tests migrations
-}
-
-function _tests_preview() {
-    uhd venv activate >/dev/null
-    pytest tests/integration/cms/test_api.py -k draft_preview
 }
 
 function test-page-previews() {
