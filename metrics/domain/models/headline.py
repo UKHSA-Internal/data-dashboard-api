@@ -1,10 +1,13 @@
 from collections.abc import Iterable
 
+from pydantic import ConfigDict
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
 
 class HeadlineParameters(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     topic: str
     metric: str
     stratum: str
@@ -13,9 +16,6 @@ class HeadlineParameters(BaseModel):
     sex: str
     age: str
     request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @property
     def topic_name(self) -> str:

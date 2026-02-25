@@ -1,6 +1,7 @@
 import datetime
 from collections.abc import Iterable
 
+from pydantic import ConfigDict
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
@@ -38,15 +39,14 @@ class MapAccompanyingPoint(BaseModel):
 
 
 class MapsParameters(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     date_from: datetime.date
     date_to: datetime.date
     parameters: MapMainParameters
     accompanying_points: list[MapAccompanyingPoint]
 
     request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
