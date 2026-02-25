@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.signing import dumps
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -40,9 +41,16 @@ class PreviewToFrontendRedirectView(View):
 
         token = dumps(payload, salt="preview-token")
 
-        # Build the frontend URL.  Adjust this to match your frontend's expected
-        # query params (token name, slug, etc.).
-        frontend_url = f"https://example.com?page={page.slug}&draft=true&t={token}"
+        # Build the frontend URL using a configurable template. The template
+        # should include placeholders for `{slug}` and `{token}`. A default
+        # value is provided to preserve previous behaviour.
+        template = getattr(
+            settings,
+            "FRONTEND_PREVIEW_URL_TEMPLATE",
+            "https://example.com?page={slug}&draft=true&t={token}",
+        )
+
+        frontend_url = template.format(slug=page.slug, token=token)
 
         return redirect(frontend_url)
 from django.core.handlers.wsgi import WSGIRequest

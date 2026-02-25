@@ -7,6 +7,7 @@ from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
+from django.conf import settings
 
 # ---------------------------------------------------------------------------
 # Edit view customization
@@ -153,7 +154,15 @@ def frontend_preview_button(page, user, next_url, view_name):
     try:
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
     except Exception:
-        admin_url = f"https://example.com?page={page.slug}&draft=true"
+        # Fallback to a configurable frontend preview URL template. The
+        # template may include `{slug}` and any other placeholders; the
+        # default matches the previous behaviour.
+        template = getattr(
+            settings,
+            "FRONTEND_PREVIEW_URL_TEMPLATE",
+            "https://example.com?page={slug}&draft=true",
+        )
+        admin_url = template.format(slug=page.slug)
 
     return [Button("Preview", url=admin_url, priority=10)]
 
