@@ -56,28 +56,29 @@ def test_register_icons_returns_correct_list_of_icons():
 
 def test_construct_page_action_menu_inserts_preview_action():
     """
-    The ``construct_page_action_menu`` hook should prepend an action that
-    points to our admin redirect endpoint.
+    Given a composite page and an empty page action menu
+    When the ``add_frontend_preview_action`` hook is called
+    Then a preview action is prepended with the expected redirect URL
     """
-    from wagtail.admin.menu import MenuItem
     from tests.fakes.factories.cms.composite_page_factory import (
         FakeCompositePageFactory,
     )
 
-    # build a fake page with pk so reverse() works
+    # Given
+    # Build a fake page with pk so reverse() works.
     page = FakeCompositePageFactory.build_blank_page(slug="foo")
     page.pk = 99
-
-    # start with empty menu and dummy request/context
     menu_items: list = []
     request = mock.Mock()
     context = {"page": page}
 
+    # When
     wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
 
+    # Then
     assert menu_items, "hook should add at least one item"
     first = menu_items[0]
-    # verify it's an action item with our name and correct URL
+    # Verify it is an action item with our name and correct URL.
     assert first.name == "action-preview"
     assert "/preview-to-frontend/99/" in first.get_url(context)
 
@@ -257,8 +258,9 @@ class TestBuildLinkProps:
 class TestPreviewPanelSuppression:
     def test_edit_view_removes_preview_side_panel(self):
         """
-        Ensure our monkey patch causes ``EditView.get_side_panels`` to
-        strip out ``PreviewSidePanel`` instances for composite pages.
+        Given an EditView bound to a composite page
+        When ``get_side_panels()`` is called
+        Then ``PreviewSidePanel`` instances are removed from the result
         """
         from django.test import RequestFactory
         from wagtail.admin.views.pages.edit import EditView
@@ -267,12 +269,13 @@ class TestPreviewPanelSuppression:
             FakeCompositePageFactory,
         )
 
-        # build a minimal edit view context with a fake composite page (no DB)
+        # Given
+        # Build a minimal edit view context with a fake composite page (no DB).
         request = RequestFactory().get("/fake")
         request.user = mock.Mock()
         page = FakeCompositePageFactory.build_blank_page(title="X", slug="x")
-        # the original get_side_panels implementation attempts to reverse a
-        # URL using ``page.id``; our fake factory doesn’t populate this, so
+        # The original get_side_panels implementation attempts to reverse a
+        # URL using ``page.id``; our fake factory does not populate this, so
         # provide a dummy value to keep the call happy.
         page.id = 123
 
@@ -287,8 +290,11 @@ class TestPreviewPanelSuppression:
         view.expects_json_response = False
         view.hydrate_create_view = False
 
+        # When
         panels = view.get_side_panels()
-        # iterate the container to get actual panel objects
+
+        # Then
+        # Iterate the container to get actual panel objects.
         panel_list = list(panels)
         assert not any(isinstance(p, PreviewSidePanel) for p in panel_list), (
             "preview panel should be stripped"
@@ -296,32 +302,35 @@ class TestPreviewPanelSuppression:
 
     def test_side_panel_filtering_handles_exceptions(self):
         """
-        Ensure that if an exception occurs during side panel filtering,
-        the original panels are returned unchanged (exception is caught).
+        Given side panel iteration raises an exception for a composite page
+        When ``_patched_get_side_panels()`` is called
+        Then the original panels are returned unchanged
         """
         from tests.fakes.factories.cms.composite_page_factory import (
             FakeCompositePageFactory,
         )
 
-        # Create a fake page
+        # Given
+        # Create a fake page.
         page = FakeCompositePageFactory.build_blank_page(title="X", slug="x")
         page.id = 123
 
         # The _patched_get_side_panels function catches exceptions.
         # Create a view mock and mock the original_get_side_panels to return
-        # panels that will raise during iteration
+        # panels that will raise during iteration.
         from cms.dashboard import wagtail_hooks
 
         view = mock.Mock()
         view.page = page
 
-        # Create mock panels that will fail when iterated
+        # Create mock panels that will fail when iterated.
         panels_mock = mock.Mock()
         panels_mock.__iter__ = mock.Mock(side_effect=RuntimeError("iteration failed"))
 
-        # Patch _original_get_side_panels to return our problematic panels
+        # When / Then
+        # Patch _original_get_side_panels to return our problematic panels.
         with mock.patch.object(wagtail_hooks, "_original_get_side_panels", return_value=panels_mock):
             result = wagtail_hooks._patched_get_side_panels(view)
 
-            # The exception should be caught and the original panels returned
-            assert result is panels_mock  # function returns original panels on exception
+            # The exception should be caught and the original panels returned.
+            assert result is panels_mock
