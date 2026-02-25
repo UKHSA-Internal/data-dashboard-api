@@ -26,53 +26,34 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     detail_only_fields = []
 
     def get_queryset(self):
-        """Returns the queryset as per the individual models
+        """Returns the queryset as per the individual models.
 
-        Notes:
-            The base class `UKHSAPage` sits between
-            Wagtail's `Page` and our page models.
-            This includes custom logic for building URLs.
-            To give the list endpoint the know-how to build URLs,
-            the queryset should be returned as per the individual models.
-            Since the models reimplement `get_url_parts()` by virtue
-            of the base abstract class `UKHSAPage`
+        The base class `UKHSAPage` sits between Wagtail's `Page` and our page models,
+        implementing custom logic for building URLs. The queryset must return specific
+        model instances (e.g., LandingPage, TopicPage) rather than generic Page objects
+        so the API can access the custom `get_url_parts()` method defined in UKHSAPage.
 
-            The use of `specific()` here is horribly inefficient.
-            But we already cache this endpoint in Redis,
-            so we only pay the penalty once per cache flush.
+        The use of `specific()` here is horribly inefficient, causing N+1 queries or
+        expensive JOINs. However, this endpoint is cached in Redis with @cache_response(),
+        so we only pay the penalty once per cache flush.
 
         Returns:
-            Queryset of each page model.
-            E.g.
-                `<PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
-
+            PageQuerySet: A queryset of specific page model instances.
+                Example: <PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>
         """
         queryset = super().get_queryset()
         return queryset.specific()
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:
-        """Returns a list of published pages from the CMS.
-
-        Args:
-            request: The HTTP request object
-
-        Returns:
-            Response: JSON payload with page title, id, and metadata for each page
+        """This endpoint returns a list of published pages from the CMS (Wagtail).
+        The payload includes page `title`, `id` and `meta` data about each page.
         """
         return super().listing_view(request=request)
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
-        """Returns a single page from the CMS by ID.
-
-        Args:
-            request: The HTTP request object
-            pk: The page ID to retrieve
-
-        Returns:
-            Response: JSON payload with page details
-        """
+        """This end point returns a page from the CMS based on a Page `ID`."""
         return super().detail_view(request=request, pk=pk)
 
 
@@ -131,12 +112,11 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
 
     @classmethod
     def get_urlpatterns(cls) -> list[RoutePattern]:
-        """Returns URL patterns for the draft pages viewset.
+        """This returns a list of URL patterns for the viewset.
 
-        Only the detail endpoint is exposed (no list view for drafts).
+        Notes:
+            Only the detail `/{id}` path is included.
 
-        Returns:
-            list[RoutePattern]: URL pattern for the detail view at /<int:pk>/
         """
         return [
             path("<int:pk>/", cls.as_view({"get": "detail_view"}), name="detail"),
