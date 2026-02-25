@@ -5,8 +5,11 @@ from django.core.signing import dumps
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.views import View
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import JsonResponse
 
 from wagtail.models import Page
+from wagtail.admin.views.chooser import BrowseView
 
 
 class PreviewToFrontendRedirectView(View):
@@ -53,9 +56,6 @@ class PreviewToFrontendRedirectView(View):
         frontend_url = template.format(slug=page.slug, token=token)
 
         return redirect(frontend_url)
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import JsonResponse
-from wagtail.admin.views.chooser import BrowseView
 
 
 class LinkBrowseView(BrowseView):
