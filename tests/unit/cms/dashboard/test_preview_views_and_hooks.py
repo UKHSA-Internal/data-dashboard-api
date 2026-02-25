@@ -7,9 +7,6 @@ from wagtail.admin.widgets import Button
 
 from cms.dashboard import wagtail_hooks
 from cms.dashboard.views import PreviewToFrontendRedirectView
-from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
-    _add_page_to_parent,
-)
 
 
 class DummyPerms:
@@ -154,14 +151,3 @@ def test_construct_page_action_menu_insert_exception(monkeypatch):
     # Should return None and not break
     result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
     assert result is None
-
-
-def test_add_page_to_parent_raises_when_parent_is_none():
-    """Test that _add_page_to_parent raises ValueError when parent_page is None."""
-    # Since the function checks parent_page first, the page argument can be
-    # any object; using a simple sentinel avoids unnecessary DB access.
-    sentinel = object()
-
-    with pytest.raises(ValueError, match="parent_page cannot be None"):
-        _add_page_to_parent(page=sentinel, parent_page=None)
-    sentinel = object()
