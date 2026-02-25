@@ -1,3 +1,50 @@
+from datetime import timedelta
+
+from django.core.signing import dumps
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.views import View
+
+from wagtail.models import Page
+
+
+class PreviewToFrontendRedirectView(View):
+    """Generate a signed preview token and redirect to the frontend.
+
+    This view is intentionally simple: it performs a permission check on the
+    requested page, builds a small payload, signs it using Django's signing
+    utilities and then redirects the browser to the frontend with the token as
+    a query parameter.  The frontend is responsible for validating the token
+    and fetching any draft content.
+    """
+
+    # token lifetime in seconds
+    TOKEN_TTL_SECONDS = 60 * 15
+
+    def get(self, request, pk):
+        page = get_object_or_404(Page, pk=pk).specific
+
+        perms = page.permissions_for_user(request.user)
+        if not perms.can_edit():
+            from django.core.exceptions import PermissionDenied
+
+            raise PermissionDenied
+
+        now = timezone.now()
+        payload = {
+            "slug": page.slug,
+            "editor_id": request.user.pk if request.user.is_authenticated else None,
+            "iat": int(now.timestamp()),
+            "exp": int((now + timedelta(seconds=self.TOKEN_TTL_SECONDS)).timestamp()),
+        }
+
+        token = dumps(payload, salt="preview-token")
+
+        # Build the frontend URL.  Adjust this to match your frontend's expected
+        # query params (token name, slug, etc.).
+        frontend_url = f"https://example.com?page={page.slug}&draft=true&t={token}"
+
+        return redirect(frontend_url)
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from wagtail.admin.views.chooser import BrowseView

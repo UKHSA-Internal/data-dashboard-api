@@ -5,7 +5,58 @@ from django.utils.safestring import SafeString
 from draftjs_exporter.dom import DOM
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
+
+# ---------------------------------------------------------------------------
+# Edit view customization
+# ---------------------------------------------------------------------------
+# We want to keep the preview button available but we *never* want the
+# built-in side panel to appear for our headless page types.  The panel
+# causes the iframe to open (and it will throw a template-missing error when
+# loading the page content, since we don’t ship any frontend templates).
+#
+# The easiest way to suppress it is to monkey-patch
+# ``wagtail.admin.views.pages.edit.EditView.get_side_panels`` early during
+# startup, filtering out ``PreviewSidePanel`` instances when the page being
+# edited is a ``CompositePage`` subclass.  This is performed at import time
+# since the hooks module is guaranteed to be imported by wagtail on startup.
+from wagtail.admin.views.pages.edit import EditView
+from wagtail.admin.ui.side_panels import PreviewSidePanel
+from cms.composite.models import CompositePage
+
+_original_get_side_panels = EditView.get_side_panels
+
+
+def _patched_get_side_panels(self):
+    panels = _original_get_side_panels(self)
+
+    # no-op debug section removed once functionality verified
+
+    # Only strip the preview panel for our composite pages; leave other
+    # page types untouched so we don't inadvertently remove panels for
+    # normal wagtail content.
+    try:
+        page_obj = getattr(self, "page", None)
+        # avoid touching ``.specific`` here; the property may consult
+        # ContentType and cause a DB query, which is disallowed in unit
+        # tests.  ``isinstance`` is sufficient for our purposes and works
+        # on the fake page class used by tests.
+        if page_obj and isinstance(page_obj, CompositePage):
+            # panels behaves like an iterable
+            filtered = [p for p in panels if not isinstance(p, PreviewSidePanel)]
+            panels = panels.__class__(filtered)  # rebuild same container type
+    except Exception:
+        # if anything goes wrong, just return the original panels
+        pass
+
+    return panels
+
+# apply patch
+EditView.get_side_panels = _patched_get_side_panels
+
+from django.urls import reverse
+from wagtail.admin.widgets import Button
 from wagtail.models import Page
 from wagtail.whitelist import check_url
 
@@ -88,6 +139,25 @@ def register_icons(icons: list[str]) -> list[str]:
     return icons + ADDITIONAL_CUSTOM_ICONS
 
 
+@hooks.register("register_page_header_buttons")
+def frontend_preview_button(page, user, next_url, view_name):
+    """Header button linking to a redirecting admin view that signs a token.
+
+    The admin view will create a signed token and then redirect to the
+    frontend.  We reverse the admin URL by name; if reversing fails we fall
+    back to a direct frontend URL.
+    """
+    if view_name != "edit":
+        return []
+
+    try:
+        admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
+    except Exception:
+        admin_url = f"https://example.com?page={page.slug}&draft=true"
+
+    return [Button("Preview", url=admin_url, priority=10)]
+
+
 def link_entity_with_href(props: dict):
     link_props = _build_link_props(props=props)
     return DOM.create_element("a", link_props, props["children"])
@@ -119,8 +189,61 @@ def _get_page_url(page_id: int) -> str:
     return page.full_url
 
 
+@hooks.register("register_admin_urls")
+def register_admin_urls():
+    """Register admin URLs for CMS dashboard views.
+
+    We register a simple redirect endpoint that will sign a preview token and
+    redirect the user to the external frontend.  The view implementation is in
+    `cms.dashboard.views`.
+    """
+    from django.urls import re_path
+
+    from cms.dashboard.views import PreviewToFrontendRedirectView
+
+    return [
+        re_path(r"^preview-to-frontend/(?P<pk>[0-9]+)/$", PreviewToFrontendRedirectView.as_view(), name="cms_preview_to_frontend"),
+    ]
+
+
 @hooks.register("register_rich_text_features", order=1)
 def register_link_props(features):
     rule = features.converter_rules_by_converter["contentstate"]["link"]
     rule["to_database_format"]["entity_decorators"]["LINK"] = link_entity_with_href
     features.register_converter_rule("contentstate", "link", rule)
+
+
+@hooks.register("construct_page_action_menu")
+def add_frontend_preview_action(menu_items, request, context):
+    """Insert a top-level "Preview" action that redirects to the frontend.
+
+    We add this to the page action menu so it appears as a primary action in
+    the page editor header (rather than being buried in a dropdown).  If the
+    page has no primary key (create view) we skip adding it.
+    """
+    try:
+        page = context.get("page")
+        if not page or not getattr(page, "pk", None):
+            return
+
+        admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
+        # Create an ActionMenuItem so it implements `render_html()` and
+        # `media` as expected by Wagtail's PageActionMenu.
+        class FrontendPreviewAction(ActionMenuItem):
+            label = "Preview"
+            name = "action-preview"
+            icon_name = "link-external"
+
+            def __init__(self, url: str, order: int = None):
+                super().__init__(order=order)
+                self._url = url
+
+            def get_url(self, parent_context):
+                return self._url
+
+        preview_item = FrontendPreviewAction(admin_url, order=0)
+        # insert at the front so it becomes the default (primary) action
+        menu_items.insert(0, preview_item)
+    except Exception:
+        # Be conservative: if anything goes wrong don't break the editor
+        return

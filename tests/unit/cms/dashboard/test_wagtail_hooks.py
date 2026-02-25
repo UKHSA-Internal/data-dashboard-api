@@ -54,6 +54,34 @@ def test_register_icons_returns_correct_list_of_icons():
     assert registered_icons == expected_icons
 
 
+def test_construct_page_action_menu_inserts_preview_action():
+    """
+    The ``construct_page_action_menu`` hook should prepend an action that
+    points to our admin redirect endpoint.
+    """
+    from wagtail.admin.menu import MenuItem
+    from tests.fakes.factories.cms.composite_page_factory import (
+        FakeCompositePageFactory,
+    )
+
+    # build a fake page with pk so reverse() works
+    page = FakeCompositePageFactory.build_blank_page(slug="foo")
+    page.pk = 99
+
+    # start with empty menu and dummy request/context
+    menu_items: list = []
+    request = mock.Mock()
+    context = {"page": page}
+
+    wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
+
+    assert menu_items, "hook should add at least one item"
+    first = menu_items[0]
+    # verify it's an action item with our name and correct URL
+    assert first.name == "action-preview"
+    assert "/preview-to-frontend/99/" in first.get_url(context)
+
+
 def test_hide_default_menu_items():
     """
     Given a list of default core menu items (documents and images)
@@ -224,3 +252,44 @@ class TestBuildLinkProps:
         # Then the correct link properties are returned
         expected_props = {"href": "", "id": 123, "linktype": "page"}
         assert link_props == expected_props
+
+
+class TestPreviewPanelSuppression:
+    def test_edit_view_removes_preview_side_panel(self):
+        """
+        Ensure our monkey patch causes ``EditView.get_side_panels`` to
+        strip out ``PreviewSidePanel`` instances for composite pages.
+        """
+        from django.test import RequestFactory
+        from wagtail.admin.views.pages.edit import EditView
+        from wagtail.admin.ui.side_panels import PreviewSidePanel
+        from tests.fakes.factories.cms.composite_page_factory import (
+            FakeCompositePageFactory,
+        )
+
+        # build a minimal edit view context with a fake composite page (no DB)
+        request = RequestFactory().get("/fake")
+        request.user = mock.Mock()
+        page = FakeCompositePageFactory.build_blank_page(title="X", slug="x")
+        # the original get_side_panels implementation attempts to reverse a
+        # URL using ``page.id``; our fake factory doesn’t populate this, so
+        # provide a dummy value to keep the call happy.
+        page.id = 123
+
+        view = EditView()
+        view.page = page
+        view.request = request
+        view.real_page_record = page
+        view.scheduled_page = None
+        view.locale = None
+        view.translations = []
+        view.form = type("F", (), {"show_schedule_publishing_toggle": False, "show_comments_toggle": False})
+        view.expects_json_response = False
+        view.hydrate_create_view = False
+
+        panels = view.get_side_panels()
+        # iterate the container to get actual panel objects
+        panel_list = list(panels)
+        assert not any(isinstance(p, PreviewSidePanel) for p in panel_list), (
+            "preview panel should be stripped"
+        )

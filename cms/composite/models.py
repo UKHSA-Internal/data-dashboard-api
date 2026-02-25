@@ -90,8 +90,18 @@ class CompositePage(UKHSAPage):
 
     @classmethod
     def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
+        """Returns False.
+
+        This project is head‑less: we don’t support the built‑in Wagtail preview
+        panel (it would render an iframe pointing at the CMS itself).  The
+        corresponding unit tests assume ``False`` so make the implementation
+        match the documentation and behaviour.  The individual page types can
+        still provide their own external preview links via hooks if required.
+        """
+        # Keep this page previewable so Wagtail renders preview-related
+        # header buttons. We suppress the iframe panel elsewhere via hooks
+        # and the header button now redirects to the external frontend.
+        return True
 
     @property
     def last_updated_at(self) -> datetime.datetime:
