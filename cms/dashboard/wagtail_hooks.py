@@ -64,6 +64,7 @@ from wagtail.whitelist import check_url
 
 @hooks.register("insert_global_admin_css")
 def global_admin_css() -> SafeString:
+
     return format_html(
         '<link rel="stylesheet" type="text/css" href="{}">', static("css/theme.css")
     )
@@ -142,11 +143,21 @@ def register_icons(icons: list[str]) -> list[str]:
 
 @hooks.register("register_page_header_buttons")
 def frontend_preview_button(page, user, next_url, view_name):
-    """Header button linking to a redirecting admin view that signs a token.
+    """Add a preview button to the page header that redirects to the frontend.
 
     The admin view will create a signed token and then redirect to the
-    frontend.  We reverse the admin URL by name; if reversing fails we fall
+    frontend. We reverse the admin URL by name; if reversing fails we fall
     back to a direct frontend URL.
+
+    Args:
+        page: The page being edited.
+        user: The current user.
+        next_url: The next URL after action.
+        view_name: The current view name (e.g., 'edit').
+
+    Returns:
+        List of Button instances for the page header, or empty list if not
+        in edit view.
     """
     if view_name != "edit":
         return []
@@ -154,9 +165,6 @@ def frontend_preview_button(page, user, next_url, view_name):
     try:
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
     except Exception:
-        # Fallback to a configurable frontend preview URL template. The
-        # template may include `{page_id}` and any other placeholders; the
-        # default matches the previous behaviour.
         template = getattr(
             settings,
             "FRONTEND_PREVIEW_URL_TEMPLATE",
@@ -224,11 +232,20 @@ def register_link_props(features):
 
 @hooks.register("construct_page_action_menu")
 def add_frontend_preview_action(menu_items, request, context):
-    """Insert a top-level "Preview" action that redirects to the frontend.
+    """Insert a top-level Preview action that redirects to the frontend.
 
     We add this to the page action menu so it appears as a primary action in
-    the page editor header (rather than being buried in a dropdown).  If the
+    the page editor header (rather than being buried in a dropdown). If the
     page has no primary key (create view) we skip adding it.
+
+    Args:
+        menu_items: List of menu items to modify in place.
+        request: The current HTTP request.
+        context: Context dictionary containing the page being edited.
+
+    Note:
+        This method is conservative and silently returns on any exception to
+        avoid breaking the editor UI.
     """
     try:
         page = context.get("page")
@@ -236,9 +253,15 @@ def add_frontend_preview_action(menu_items, request, context):
             return
 
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
-        # Create an ActionMenuItem so it implements `render_html()` and
-        # `media` as expected by Wagtail's PageActionMenu.
+
         class FrontendPreviewAction(ActionMenuItem):
+            """ActionMenuItem for frontend preview with external link icon.
+
+            Attributes:
+                label: Display text for the menu item.
+                name: Unique identifier for the action.
+                icon_name: Wagtail icon name to display.
+            """
             label = "Preview"
             name = "action-preview"
             icon_name = "link-external"
@@ -248,11 +271,17 @@ def add_frontend_preview_action(menu_items, request, context):
                 self._url = url
 
             def get_url(self, parent_context):
+                """Return the preview URL.
+
+                Args:
+                    parent_context: Context from parent menu.
+
+                Returns:
+                    The preview redirect URL.
+                """
                 return self._url
 
         preview_item = FrontendPreviewAction(admin_url, order=0)
-        # insert at the front so it becomes the default (primary) action
         menu_items.insert(0, preview_item)
     except Exception:
-        # Be conservative: if anything goes wrong don't break the editor
         return
