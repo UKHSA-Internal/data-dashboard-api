@@ -100,7 +100,7 @@ class TestBuildTimeSeriesDTOFromSource:
         "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
         new=True,
     )
-    def test_defaults_is_public_to_true_when_not_provided(
+    def test_defaults_is_public_to_true_when_not_provided_and_override_on(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
@@ -208,6 +208,23 @@ class TestBuildTimeSeriesDTOFromSource:
         # Given
         source_data = example_time_series_data
         source_data["time_series"][0].pop("embargo")
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
+            build_time_series_dto_from_source(source_data=source_data)
+    
+    def test_raises_error_when_is_public_is_missing_from_source_data(
+        self, example_time_series_data: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming source data
+            which contains a field with a None value
+        When `build_time_series_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_time_series_data
+        source_data["time_series"][0].pop("is_public")
 
         # When / Then
         with pytest.raises(MissingFieldError):
@@ -421,6 +438,23 @@ class TestBuildHeadlineDTOFromSource:
         # Given
         source_data = example_headline_data
         source_data.pop(field)
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
+            build_headline_dto_from_source(source_data=source_data)
+    
+    def test_raises_error_when_is_public_is_missing_from_source_data(
+        self, example_headline_data: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming headline source data
+            which contains a field with a None value
+        When `build_headline_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_headline_data
+        source_data["data"][0].pop("is_public")
 
         # When / Then
         with pytest.raises(MissingFieldError):
