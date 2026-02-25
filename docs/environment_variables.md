@@ -162,17 +162,27 @@ To fetch preview content from the private drafts API:
 - Method: `GET`
 - Header: `Authorization: Bearer {token}`
 
-Example:
-
-Sample bash call - generates a token and makes the API call to show CMS draft page:
-
-```bash
-uhd tests preview 123
-```
-
 Request behavior:
 - Returns `200` with draft payload when token is valid and unexpired
 - Returns `401` when token is missing, invalid, mismatched to `{page_id}`, or expired
+
+#### Testing preview integration
+
+The integration test validates the complete preview flow:
+
+```bash
+uhd tests preview
+```
+
+This test:
+- Creates a test page with published content
+- Makes unpublished changes (creates a draft)
+- Generates a valid Bearer token with `page_id` and `exp` claims
+- Calls `/api/drafts/{id}/` with the token
+- Validates the response contains the unpublished changes
+- Verifies `/api/pages/{id}/` still returns the older published version
+
+The test uses Django's `APIClient` (in-process, no server required) and creates its own test data, making it fully self-contained and repeatable.
 
 ---
 

@@ -65,6 +65,17 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
     base_serializer_class = CMSDraftPagesSerializer
     permission_classes = []
 
+    def get_queryset(self):
+        """Returns all pages including drafts.
+
+        Returns:
+            Queryset of all Page objects, including unpublished ones.
+
+        """
+        from wagtail.models import Page
+
+        return Page.objects.all().specific()
+
     def detail_view(self, request: Request, pk: int) -> Response:
         """This endpoint returns a page including any unpublished changes in its payload.
 
