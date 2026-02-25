@@ -124,12 +124,11 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
 
     @classmethod
     def get_urlpatterns(cls) -> list[RoutePattern]:
-        """Returns URL patterns for the draft pages viewset.
+        """This returns a list of URL patterns for the viewset.
 
-        Only the detail endpoint is exposed to prevent listing all drafts.
+        Notes:
+            Only the detail `/{id}` path is included.
 
-        Returns:
-            list[RoutePattern]: URL pattern for the detail view at /<int:pk>/.
         """
         return [
             path("<int:pk>/", cls.as_view({"get": "detail_view"}), name="detail"),
