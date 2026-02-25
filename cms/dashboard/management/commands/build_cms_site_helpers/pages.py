@@ -45,6 +45,10 @@ def _create_related_links(*, related_link_class, response_data, page) -> None:
 
 
 def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
+    # If caller passed a None parent, raise an error to ensure proper usage.
+    if parent_page is None:
+        raise ValueError("parent_page cannot be None")
+
     page = parent_page.add_child(instance=page)
     page.save_revision().publish()
 

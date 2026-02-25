@@ -293,3 +293,35 @@ class TestPreviewPanelSuppression:
         assert not any(isinstance(p, PreviewSidePanel) for p in panel_list), (
             "preview panel should be stripped"
         )
+
+    def test_side_panel_filtering_handles_exceptions(self):
+        """
+        Ensure that if an exception occurs during side panel filtering,
+        the original panels are returned unchanged (exception is caught).
+        """
+        from tests.fakes.factories.cms.composite_page_factory import (
+            FakeCompositePageFactory,
+        )
+
+        # Create a fake page
+        page = FakeCompositePageFactory.build_blank_page(title="X", slug="x")
+        page.id = 123
+
+        # The _patched_get_side_panels function catches exceptions.
+        # Create a view mock and mock the original_get_side_panels to return
+        # panels that will raise during iteration
+        from cms.dashboard import wagtail_hooks
+
+        view = mock.Mock()
+        view.page = page
+
+        # Create mock panels that will fail when iterated
+        panels_mock = mock.Mock()
+        panels_mock.__iter__ = mock.Mock(side_effect=RuntimeError("iteration failed"))
+
+        # Patch _original_get_side_panels to return our problematic panels
+        with mock.patch.object(wagtail_hooks, "_original_get_side_panels", return_value=panels_mock):
+            result = wagtail_hooks._patched_get_side_panels(view)
+
+            # The exception should be caught and the original panels returned
+            assert result is panels_mock  # function returns original panels on exception
