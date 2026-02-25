@@ -1,3 +1,5 @@
+import logging
+
 from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -12,6 +14,8 @@ from django.conf import settings
 from wagtail.admin.views.pages.edit import EditView
 from wagtail.admin.ui.side_panels import PreviewSidePanel
 from cms.composite.models import CompositePage
+
+logger = logging.getLogger(__name__)
 
 _original_get_side_panels = EditView.get_side_panels
 
@@ -53,7 +57,11 @@ def _patched_get_side_panels(self):
             filtered = [p for p in panels if not isinstance(p, PreviewSidePanel)]
             panels = panels.__class__(filtered)
     except Exception:
-        pass
+        logger.warning(
+            "Page Preview: failed to filter PreviewSidePanel; returning original side panels",
+            exc_info=True,
+        )
+        return panels
 
     return panels
 
