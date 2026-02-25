@@ -32,7 +32,7 @@ class PreviewToFrontendRedirectView(View):
     PREVIEW_TOKEN_TTL_SECONDS = getattr(
         settings,
         "FRONTEND_PREVIEW_TOKEN_TTL_SECONDS",
-        60 * 15,
+        120,
     )
 
     def get(self, request, pk):

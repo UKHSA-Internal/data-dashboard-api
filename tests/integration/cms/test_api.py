@@ -23,7 +23,7 @@ class TestDraftPagesAPI:
             {
                 "page_id": page_id,
                 "iat": int(now.timestamp()),
-                "exp": int((now.timestamp()) + (60 * 15)),
+                "exp": int((now.timestamp()) + 120),
             },
             salt="preview-token",
         )
