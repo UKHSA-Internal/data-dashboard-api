@@ -22,6 +22,7 @@ class FakePage:
         self.pk = pk
         self.slug = slug
         self._can_edit = can_edit
+        self.specific_class = self.__class__
 
     @property
     def specific(self):
@@ -50,13 +51,24 @@ def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
         "https://frontend.test/preview?page_id={page_id}"
     )
 
-    page = FakePage(pk=123, slug="bar")
+    class CompositePage(FakePage):
+        pass
+
+    page = CompositePage(pk=123, slug="bar")
 
     buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
     assert isinstance(buttons, list) and buttons, "should return a non-empty list"
     btn = buttons[0]
     assert isinstance(btn, Button)
     assert "https://frontend.test/preview?page_id=123" == btn.url
+
+
+def test_frontend_preview_button_non_enabled_page_returns_empty():
+    page = FakePage(pk=123, slug="bar")
+
+    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
+
+    assert buttons == []
 
 
 def test_preview_redirect_view_permission_denied(monkeypatch):
@@ -122,7 +134,10 @@ def test_construct_page_action_menu_exception_handling(monkeypatch):
     """Test that exceptions during action menu construction are handled gracefully."""
     menu_items = []
     request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
-    context = {"page": FakePage(pk=1, slug="test")}
+    class CompositePage(FakePage):
+        pass
+
+    context = {"page": CompositePage(pk=1, slug="test")}
 
     # Patch reverse to raise an exception to test the except block
     def raise_error(*args, **kwargs):
@@ -146,8 +161,64 @@ def test_construct_page_action_menu_insert_exception(monkeypatch):
 
     menu_items = BadMenuItems()
     request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
-    context = {"page": FakePage(pk=1, slug="test")}
+    class CompositePage(FakePage):
+        pass
+
+    context = {"page": CompositePage(pk=1, slug="test")}
 
     # Should return None and not break
     result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
     assert result is None
+
+
+def test_construct_page_action_menu_non_enabled_noop():
+    menu_items = []
+    request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+    context = {"page": FakePage(pk=1, slug="test")}
+
+    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
+
+    assert result is None
+    assert menu_items == []
+
+
+@pytest.mark.parametrize(
+    "page_type_name,enabled",
+    list(wagtail_hooks.PagePreviewEnabled.items()),
+)
+def test_only_enabled_page_types_get_preview_actions(monkeypatch, page_type_name, enabled):
+    class FakeEnabledPage(FakePage):
+        pass
+
+    FakeEnabledPage.__name__ = page_type_name
+    page = FakeEnabledPage(pk=42, slug="preview-target")
+
+    monkeypatch.setattr(
+        wagtail_hooks,
+        "reverse",
+        lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/",
+    )
+
+    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
+
+    menu_items = []
+    wagtail_hooks.add_frontend_preview_action(menu_items, None, {"page": page})
+
+    assert (len(buttons) > 0) is enabled
+    assert (len(menu_items) > 0) is enabled
+
+
+def test_page_preview_enabled_contains_expected_page_type_keys():
+    expected_keys = {
+        "UKHSARootPage",
+        "LandingPage",
+        "TopicPage",
+        "CommonPage",
+        "CompositePage",
+        "FormPage",
+        "MetricsDocumentationParentPage",
+        "MetricsDocumentationChildEntry",
+        "WhatsNewParentPage",
+        "WhatsNewChildEntry",
+    }
+    assert set(wagtail_hooks.PagePreviewEnabled.keys()) == expected_keys

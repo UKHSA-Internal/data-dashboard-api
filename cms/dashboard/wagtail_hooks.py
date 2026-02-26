@@ -16,6 +16,37 @@ from wagtail.whitelist import check_url
 from cms.dashboard.views import PreviewToFrontendRedirectView
 
 
+PagePreviewEnabled: dict[str, bool] = {
+    "UKHSARootPage": False,
+    "LandingPage": True,
+    "TopicPage": True,
+    "CommonPage": False,
+    "CompositePage": True,
+    "FormPage": True,
+    "MetricsDocumentationParentPage": True,
+    "MetricsDocumentationChildEntry": True,
+    "WhatsNewParentPage": True,
+    "WhatsNewChildEntry": True,
+}
+
+
+def _is_preview_enabled_page(page: Page) -> bool:
+    for page_class in page.__class__.mro():
+        page_type_name = page_class.__name__
+        if page_type_name in PagePreviewEnabled:
+            return PagePreviewEnabled[page_type_name]
+
+    try:
+        specific_class = page.specific_class
+    except RuntimeError:
+        specific_class = None
+
+    if specific_class:
+        return PagePreviewEnabled.get(specific_class.__name__, False)
+
+    return False
+
+
 @hooks.register("insert_global_admin_css")
 def global_admin_css() -> SafeString:
     return format_html(
@@ -115,6 +146,9 @@ def frontend_preview_button(page, user, next_url, view_name):
     if view_name != "edit":
         return []
 
+    if not _is_preview_enabled_page(page):
+        return []
+
     try:
         admin_url = reverse("cms_preview_to_frontend", args=[page.pk])
     except NoReverseMatch:
@@ -163,9 +197,10 @@ def _get_page_url(page_id: int) -> str:
 def register_admin_urls():
     """Register admin URLs for CMS dashboard views.
 
-    We register a simple redirect endpoint that will sign a preview token and
-    redirect the user to the external frontend.  The view implementation is in
-    `cms.dashboard.views`.
+    We register an admin redirect endpoint 
+    (`/admin/preview-to-frontend/<pk>/`) that signs a short-lived 
+    preview token and redirects the user to the external frontend. 
+    The redirect logic is implemented in `cms.dashboard.views`.
     """
     return [
         re_path(
@@ -202,6 +237,9 @@ def add_frontend_preview_action(menu_items, request, context):
     """
     page = context.get("page")
     if not page or not getattr(page, "pk", None):
+        return
+
+    if not _is_preview_enabled_page(page):
         return
 
     try:

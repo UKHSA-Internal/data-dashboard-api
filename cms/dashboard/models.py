@@ -91,6 +91,11 @@ class UKHSAPage(Page):
     class Meta:
         abstract = True
 
+    @classmethod
+    def is_previewable(cls) -> bool:
+        """Disable built-in Wagtail preview for all headless dashboard pages."""
+        return False
+
     def _raise_error_if_slug_not_unique(self) -> None:
         """Compares the provided slug against all pages to confirm the slug's `uniqueness`
             this is against all pages and not just siblings, which is the default behavior of wagtail.
