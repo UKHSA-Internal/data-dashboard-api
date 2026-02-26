@@ -128,7 +128,7 @@ The port number of the postgresql database. Typically, this is set to 5432.
 This is the secret key used by Django to provide cryptographically signing.
 See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECRET_KEY) for more information.
 
-#### `FRONTEND_PREVIEW_URL_TEMPLATE`
+#### `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE`
 
 Template URL used by the CMS preview button redirect flow.
 

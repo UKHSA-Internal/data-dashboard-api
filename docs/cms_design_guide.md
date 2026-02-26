@@ -122,7 +122,7 @@ The frontend uses these parameters to fetch draft content:
 2. The API validates the token signature, `page_id` match, and expiration
 3. Returns the latest draft revision including unpublished changes
 
-The preview URL template is configurable via `FRONTEND_PREVIEW_URL_TEMPLATE` environment variable (defaults to `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`).
+The preview URL template is configurable via `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE` environment variable (defaults to `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`).
 
 Token validation:
 - Verifies signature using `PAGE_PREVIEWS_TOKEN_SALT` (default: `preview-token`)

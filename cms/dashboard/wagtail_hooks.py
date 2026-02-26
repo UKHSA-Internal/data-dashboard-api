@@ -154,7 +154,7 @@ def frontend_preview_button(page, user, next_url, view_name):
     except NoReverseMatch:
         template = getattr(
             settings,
-            "FRONTEND_PREVIEW_URL_TEMPLATE",
+            "PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE",
             "http://localhost:3000/preview?page_id={page_id}&draft=true",
         )
         admin_url = template.format(page_id=page.pk)

@@ -74,10 +74,10 @@ class PreviewToFrontendRedirectView(View):
         # Build the frontend URL using a configurable template. The template
         # should include placeholders for `{page_id}` and `{token}`. A default
         # value is provided to preserve previous behaviour.
-        # See docs/environment_variables.md for FRONTEND_PREVIEW_URL_TEMPLATE format.
+        # See docs/environment_variables.md for PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE format.
         template = getattr(
             settings,
-            "FRONTEND_PREVIEW_URL_TEMPLATE",
+            "PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE",
             "http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}",
         )
 

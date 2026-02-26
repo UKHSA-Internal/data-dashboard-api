@@ -47,7 +47,7 @@ def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
     monkeypatch.setattr(wagtail_hooks, "reverse", fake_reverse)
 
     # set a custom template in settings
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = (
+    settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
         "https://frontend.test/preview?page_id={page_id}"
     )
 
@@ -95,7 +95,7 @@ def test_preview_redirect_view_success(monkeypatch, settings):
     monkeypatch.setattr("cms.dashboard.views.get_object_or_404", fake_get_object_or_404)
 
     # set a known template so we can assert the redirect location
-    settings.FRONTEND_PREVIEW_URL_TEMPLATE = (
+    settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
         "https://frontend.test/preview?page_id={page_id}&t={token}"
     )
 
