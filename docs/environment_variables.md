@@ -156,6 +156,8 @@ Signing salt used when issuing and validating preview tokens.  If omitted, the b
 
 Preview token time-to-live (TTL) in seconds. If omitted, the backend default is 120 seconds.
 
+---
+
 ### Email configuration
 
 #### `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
