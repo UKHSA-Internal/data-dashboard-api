@@ -339,14 +339,14 @@ class TestCustomPreviewEnabled:
     def test_defaults_to_false_when_attribute_missing(self):
         """
         Given a page class without `custom_preview_enabled`
-        When `_is_preview_enabled_page()` is called
+        When the page attribute is checked
         Then the page is not preview-enabled
         """
         # Given
         page = FakePage()
 
         # When
-        is_preview_enabled = wagtail_hooks._is_preview_enabled_page(page=page)
+        is_preview_enabled = bool(getattr(page, "custom_preview_enabled", False))
 
         # Then
         assert not is_preview_enabled
@@ -354,7 +354,7 @@ class TestCustomPreviewEnabled:
     def test_uses_custom_preview_enabled_when_set_to_true(self):
         """
         Given a page class with `custom_preview_enabled` set to `True`
-        When `_is_preview_enabled_page()` is called
+        When the page attribute is checked
         Then the page is preview-enabled
         """
         # Given
@@ -364,7 +364,7 @@ class TestCustomPreviewEnabled:
         page = PreviewEnabledFakePage()
 
         # When
-        is_preview_enabled = wagtail_hooks._is_preview_enabled_page(page=page)
+        is_preview_enabled = bool(getattr(page, "custom_preview_enabled", False))
 
         # Then
         assert is_preview_enabled

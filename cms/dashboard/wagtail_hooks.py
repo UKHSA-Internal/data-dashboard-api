@@ -18,30 +18,6 @@ from wagtail.whitelist import check_url
 from cms.dashboard.views import PreviewToFrontendRedirectView
 
 
-def _is_preview_enabled_page(page: Page) -> bool:
-    def _class_or_parent_has_custom_preview_enabled(page_class: type[Page]) -> bool:
-        return any(
-            getattr(parent_class, "custom_preview_enabled", False)
-            for parent_class in page_class.mro()
-        )
-
-    for page_class in page.__class__.mro():
-        if _class_or_parent_has_custom_preview_enabled(page_class=page_class):
-            return True
-
-    try:
-        specific_class = page.specific_class
-    except RuntimeError:
-        specific_class = None
-
-    if specific_class and _class_or_parent_has_custom_preview_enabled(
-        page_class=specific_class
-    ):
-        return True
-
-    return False
-
-
 @hooks.register("insert_global_admin_css")
 def global_admin_css() -> SafeString:
     return format_html(
@@ -146,7 +122,7 @@ def frontend_preview_button(
     if view_name != "edit":
         return []
 
-    if not _is_preview_enabled_page(page):
+    if not bool(getattr(page, "custom_preview_enabled", False)):
         return []
 
     try:
@@ -243,7 +219,7 @@ def add_frontend_preview_action(
     if not page or not getattr(page, "pk", None):
         return
 
-    if not _is_preview_enabled_page(page):
+    if not bool(getattr(page, "custom_preview_enabled", False)):
         return
 
     try:
