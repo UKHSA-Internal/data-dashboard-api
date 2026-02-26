@@ -54,13 +54,27 @@ class TestCMSDraftPagesViewSet:
         assert permission_classes == []
 
     def test_detail_view_returns_401_without_valid_bearer_authorization(self):
+        """
+        Given a request with no bearer authorization header
+        When `detail_view()` is called
+        Then HTTP 401 Unauthorized is returned
+        """
+        # Given
         request = RequestFactory().get("/api/drafts/1/")
 
+        # When
         response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
 
+        # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_detail_view_returns_401_when_token_cannot_be_loaded(self, monkeypatch):
+        """
+        Given a request with a bearer token that cannot be decoded
+        When `detail_view()` is called
+        Then HTTP 401 Unauthorized is returned
+        """
+        # Given
         def raise_bad_token(token, salt):
             raise ValueError("bad token")
 
@@ -70,11 +84,19 @@ class TestCMSDraftPagesViewSet:
             HTTP_AUTHORIZATION="Bearer token",
         )
 
+        # When
         response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
 
+        # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_detail_view_returns_401_when_page_id_does_not_match(self, monkeypatch):
+        """
+        Given a token payload whose `page_id` does not match the request id
+        When `detail_view()` is called
+        Then HTTP 401 Unauthorized is returned
+        """
+        # Given
         monkeypatch.setattr(
             "cms.dashboard.viewsets.loads",
             lambda token, salt: {"page_id": 999, "exp": 9999999999},
@@ -84,27 +106,43 @@ class TestCMSDraftPagesViewSet:
             HTTP_AUTHORIZATION="Bearer token",
         )
 
+        # When
         response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
 
+        # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.parametrize("payload", [{"page_id": 1}, {"page_id": 1, "exp": 1}])
     def test_detail_view_returns_401_for_missing_or_expired_exp(
         self, monkeypatch, payload
     ):
+        """
+        Given a token payload with missing or expired `exp`
+        When `detail_view()` is called
+        Then HTTP 401 Unauthorized is returned
+        """
+        # Given
         monkeypatch.setattr("cms.dashboard.viewsets.loads", lambda token, salt: payload)
         request = RequestFactory().get(
             "/api/drafts/1/",
             HTTP_AUTHORIZATION="Bearer token",
         )
 
+        # When
         response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
 
+        # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_detail_view_returns_serialized_draft_when_token_is_valid(
         self, monkeypatch
     ):
+        """
+        Given a valid token payload and a latest revision object
+        When `detail_view()` is called
+        Then HTTP 200 OK and serialized data are returned
+        """
+        # Given
         class FakeInstance:
             def get_latest_revision_as_object(self):
                 return object()
@@ -132,8 +170,10 @@ class TestCMSDraftPagesViewSet:
             HTTP_AUTHORIZATION="Bearer token",
         )
 
+        # When
         response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
 
+        # Then
         assert response.status_code == status.HTTP_200_OK
         assert response.data == {"ok": True}
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
@@ -126,7 +128,12 @@ def register_icons(icons: list[str]) -> list[str]:
 
 
 @hooks.register("register_page_header_buttons")
-def frontend_preview_button(page, user, next_url, view_name):
+def frontend_preview_button(
+    page: Page,
+    user: Any,
+    next_url: str | None,
+    view_name: str,
+) -> list[Button]:
     """Add a preview button to the page header that redirects to the frontend.
 
     The admin view will create a signed token and then redirect to the
@@ -219,7 +226,11 @@ def register_link_props(features):
 
 
 @hooks.register("construct_page_action_menu")
-def add_frontend_preview_action(menu_items, request, context):
+def add_frontend_preview_action(
+    menu_items: list[Any],
+    request: WSGIRequest | None,
+    context: dict[str, Any],
+) -> None:
     """Insert a top-level Preview action that redirects to the frontend.
 
     We add this to the page action menu so it appears as a primary action in

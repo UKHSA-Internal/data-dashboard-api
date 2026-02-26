@@ -29,7 +29,6 @@ function _tests() {
         "migrations") _tests_migrations $args ;;
         "coverage") _tests_coverage $args ;;
         "all") _tests_all $args ;;
-        "preview") _tests_preview $args ;;
 
         *) _tests_help ;;
     esac
@@ -65,8 +64,4 @@ function _tests_all() {
     uhd tests integration
     uhd tests system
     uhd tests migrations
-}
-
-function test-page-previews() {
-    _tests_preview "$@"
 }

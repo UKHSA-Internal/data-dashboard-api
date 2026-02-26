@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from django.core.exceptions import PermissionDenied
 from django.urls import NoReverseMatch
@@ -7,6 +9,8 @@ from wagtail.admin.widgets import Button
 
 from cms.dashboard import wagtail_hooks
 from cms.dashboard.views import PreviewToFrontendRedirectView
+
+MODULE_PATH = "cms"
 
 
 class DummyPerms:
@@ -33,192 +37,325 @@ class FakePage:
         return DummyPerms(self._can_edit)
 
 
-def test_frontend_preview_button_non_edit_view_returns_empty():
-    page = FakePage()
-    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="index")
-    assert buttons == []
+class TestFrontendPreviewButton:
+    def test_non_edit_view_returns_empty(self):
+        """
+        Given a page and a non-edit view name
+        When `frontend_preview_button()` is called
+        Then an empty list is returned
+        """
+        # Given
+        page = FakePage()
+
+        # When
+        buttons = wagtail_hooks.frontend_preview_button(
+            page=page,
+            user=None,
+            next_url=None,
+            view_name="index",
+        )
+
+        # Then
+        assert buttons == []
+
+    @mock.patch(f"{MODULE_PATH}.dashboard.wagtail_hooks.reverse")
+    def test_fallback_uses_template(
+        self,
+        spy_reverse: mock.MagicMock,
+        settings,
+    ):
+        """
+        Given URL reversing fails and a frontend template setting exists
+        When `frontend_preview_button()` is called for a preview-enabled page
+        Then the fallback frontend template URL is used
+
+        Patches:
+            `spy_reverse`: To force the fallback URL path
+        """
+        # Given
+        spy_reverse.side_effect = NoReverseMatch("no reverse")
+        settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
+            "https://frontend.test/preview?page_id={page_id}"
+        )
+
+        class CompositePage(FakePage):
+            pass
+
+        page = CompositePage(pk=123, slug="bar")
+
+        # When
+        buttons = wagtail_hooks.frontend_preview_button(
+            page=page,
+            user=None,
+            next_url=None,
+            view_name="edit",
+        )
+
+        # Then
+        assert isinstance(buttons, list) and buttons
+        button = buttons[0]
+        assert isinstance(button, Button)
+        assert button.url == "https://frontend.test/preview?page_id=123"
+
+    def test_non_enabled_page_returns_empty(self):
+        """
+        Given a page type that is not preview-enabled
+        When `frontend_preview_button()` is called
+        Then an empty list is returned
+        """
+        # Given
+        page = FakePage(pk=123, slug="bar")
+
+        # When
+        buttons = wagtail_hooks.frontend_preview_button(
+            page=page,
+            user=None,
+            next_url=None,
+            view_name="edit",
+        )
+
+        # Then
+        assert buttons == []
 
 
-def test_frontend_preview_button_fallback_uses_template(monkeypatch, settings):
-    # cause reverse to raise so the fallback path is exercised
-    def fake_reverse(name, args=None):
-        raise NoReverseMatch("no reverse")
+class TestPreviewToFrontendRedirectView:
+    @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
+    def test_permission_denied(self, spy_get_object_or_404: mock.MagicMock):
+        """
+        Given a page for which the user cannot edit
+        When `PreviewToFrontendRedirectView.get()` is called
+        Then `PermissionDenied` is raised
 
-    monkeypatch.setattr(wagtail_hooks, "reverse", fake_reverse)
+        Patches:
+            `spy_get_object_or_404`: To return a non-editable fake page
+        """
+        # Given
+        spy_get_object_or_404.return_value = FakePage(pk=1, slug="s", can_edit=False)
+        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
+        view = PreviewToFrontendRedirectView()
 
-    # set a custom template in settings
-    settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
-        "https://frontend.test/preview?page_id={page_id}"
+        # When / Then
+        with pytest.raises(PermissionDenied):
+            view.get(request=request, pk=1)
+
+    @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
+    def test_success_redirects(
+        self,
+        spy_get_object_or_404: mock.MagicMock,
+        settings,
+    ):
+        """
+        Given an editable page and a preview URL template
+        When `PreviewToFrontendRedirectView.get()` is called
+        Then the response redirects to the frontend with a token query parameter
+
+        Patches:
+            `spy_get_object_or_404`: To return an editable fake page
+        """
+        # Given
+        spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
+        settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
+            "https://frontend.test/preview?page_id={page_id}&t={token}"
+        )
+        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
+        view = PreviewToFrontendRedirectView()
+
+        # When
+        response = view.get(request=request, pk=1)
+
+        # Then
+        location = response.url if hasattr(response, "url") else response.get("Location")
+        assert location.startswith("https://frontend.test/preview?page_id=1&t=")
+
+
+class TestAddFrontendPreviewAction:
+    def test_missing_page_or_pk_returns_none(self):
+        """
+        Given missing or unsaved page context
+        When `add_frontend_preview_action()` is called
+        Then no action is added and `None` is returned
+        """
+        # Given
+        request = None
+
+        # When
+        menu_items = []
+        result_missing_page = wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items,
+            request=request,
+            context={},
+        )
+
+        menu_items_for_unsaved_page = []
+        result_missing_pk = wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items_for_unsaved_page,
+            request=request,
+            context={"page": FakePage(pk=None)},
+        )
+
+        # Then
+        assert result_missing_page is None
+        assert menu_items == []
+        assert result_missing_pk is None
+        assert menu_items_for_unsaved_page == []
+
+    @mock.patch(f"{MODULE_PATH}.dashboard.wagtail_hooks.reverse")
+    def test_exception_from_reverse_is_handled(
+        self,
+        spy_reverse: mock.MagicMock,
+    ):
+        """
+        Given a preview-enabled page and reverse raises an exception
+        When `add_frontend_preview_action()` is called
+        Then no menu item is added and `None` is returned
+
+        Patches:
+            `spy_reverse`: To simulate URL generation failure
+        """
+        # Given
+        spy_reverse.side_effect = RuntimeError("reverse failed")
+        menu_items = []
+        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+
+        class CompositePage(FakePage):
+            pass
+
+        context = {"page": CompositePage(pk=1, slug="test")}
+
+        # When
+        result = wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items,
+            request=request,
+            context=context,
+        )
+
+        # Then
+        assert result is None
+        assert menu_items == []
+
+    def test_insert_exception_is_handled(self):
+        """
+        Given a menu collection that raises on `insert`
+        When `add_frontend_preview_action()` is called
+        Then the function returns `None` without raising
+        """
+        # Given
+        class BadMenuItems(list):
+            def insert(self, index, item):
+                raise RuntimeError("insert failed")
+
+        menu_items = BadMenuItems()
+        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+
+        class CompositePage(FakePage):
+            pass
+
+        context = {"page": CompositePage(pk=1, slug="test")}
+
+        # When
+        result = wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items,
+            request=request,
+            context=context,
+        )
+
+        # Then
+        assert result is None
+
+    def test_non_enabled_page_is_noop(self):
+        """
+        Given a page type that is not preview-enabled
+        When `add_frontend_preview_action()` is called
+        Then the menu remains unchanged
+        """
+        # Given
+        menu_items = []
+        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+        context = {"page": FakePage(pk=1, slug="test")}
+
+        # When
+        result = wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items,
+            request=request,
+            context=context,
+        )
+
+        # Then
+        assert result is None
+        assert menu_items == []
+
+    @pytest.mark.parametrize(
+        "page_type_name,enabled",
+        list(wagtail_hooks.PagePreviewEnabled.items()),
     )
+    def test_only_enabled_page_types_get_preview_actions(
+        self,
+        monkeypatch,
+        page_type_name,
+        enabled,
+    ):
+        """
+        Given each configured page type in `PagePreviewEnabled`
+        When preview actions are constructed
+        Then only enabled types receive preview button and menu actions
+        """
+        # Given
+        class FakeEnabledPage(FakePage):
+            pass
 
-    class CompositePage(FakePage):
-        pass
+        FakeEnabledPage.__name__ = page_type_name
+        page = FakeEnabledPage(pk=42, slug="preview-target")
 
-    page = CompositePage(pk=123, slug="bar")
+        monkeypatch.setattr(
+            wagtail_hooks,
+            "reverse",
+            lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/",
+        )
 
-    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
-    assert isinstance(buttons, list) and buttons, "should return a non-empty list"
-    btn = buttons[0]
-    assert isinstance(btn, Button)
-    assert "https://frontend.test/preview?page_id=123" == btn.url
+        # When
+        buttons = wagtail_hooks.frontend_preview_button(
+            page=page,
+            user=None,
+            next_url=None,
+            view_name="edit",
+        )
+        menu_items = []
+        wagtail_hooks.add_frontend_preview_action(
+            menu_items=menu_items,
+            request=None,
+            context={"page": page},
+        )
 
-
-def test_frontend_preview_button_non_enabled_page_returns_empty():
-    page = FakePage(pk=123, slug="bar")
-
-    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
-
-    assert buttons == []
-
-
-def test_preview_redirect_view_permission_denied(monkeypatch):
-    # patch get_object_or_404 to return a FakePage that is not editable
-    def fake_get_object_or_404(klass, pk):
-        return FakePage(pk=pk, slug="s", can_edit=False)
-
-    monkeypatch.setattr("cms.dashboard.views.get_object_or_404", fake_get_object_or_404)
-
-    request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
-    request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-
-    view = PreviewToFrontendRedirectView()
-
-    with pytest.raises(PermissionDenied):
-        view.get(request, pk=1)
-
-
-def test_preview_redirect_view_success(monkeypatch, settings):
-    # patch get_object_or_404 to return a FakePage that is editable
-    def fake_get_object_or_404(klass, pk):
-        return FakePage(pk=pk, slug="cover", can_edit=True)
-
-    monkeypatch.setattr("cms.dashboard.views.get_object_or_404", fake_get_object_or_404)
-
-    # set a known template so we can assert the redirect location
-    settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
-        "https://frontend.test/preview?page_id={page_id}&t={token}"
-    )
-
-    request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
-    request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-
-    view = PreviewToFrontendRedirectView()
-    resp = view.get(request, pk=1)
-
-    # response is an HttpResponseRedirect; ensure location contains expected values
-    location = resp.url if hasattr(resp, "url") else resp.get("Location")
-    assert location.startswith("https://frontend.test/preview?page_id=1&t=")
+        # Then
+        assert (len(buttons) > 0) is enabled
+        assert (len(menu_items) > 0) is enabled
 
 
-def test_construct_page_action_menu_missing_page():
-    """Test that missing page or pk in context is handled gracefully."""
-    # Test with missing page
-    menu_items = []
-    context = {}
-    request = None
+class TestPagePreviewEnabled:
+    def test_contains_expected_page_type_keys(self):
+        """
+        Given the page preview feature map
+        When its keys are inspected
+        Then they match the expected page type names
+        """
+        # Given
+        expected_keys = {
+            "UKHSARootPage",
+            "LandingPage",
+            "TopicPage",
+            "CommonPage",
+            "CompositePage",
+            "FormPage",
+            "MetricsDocumentationParentPage",
+            "MetricsDocumentationChildEntry",
+            "WhatsNewParentPage",
+            "WhatsNewChildEntry",
+        }
 
-    # Should return None gracefully, not raise
-    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
-    assert result is None
-    assert menu_items == []  # Should not modify menu_items
+        # When
+        actual_keys = set(wagtail_hooks.PagePreviewEnabled.keys())
 
-    # Test with page but no pk (create view)
-    menu_items = []
-    context = {"page": FakePage(pk=None)}
-    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
-    assert result is None
-    assert menu_items == []
-
-
-def test_construct_page_action_menu_exception_handling(monkeypatch):
-    """Test that exceptions during action menu construction are handled gracefully."""
-    menu_items = []
-    request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
-    class CompositePage(FakePage):
-        pass
-
-    context = {"page": CompositePage(pk=1, slug="test")}
-
-    # Patch reverse to raise an exception to test the except block
-    def raise_error(*args, **kwargs):
-        raise RuntimeError("reverse failed")
-
-    monkeypatch.setattr(wagtail_hooks, "reverse", raise_error)
-
-    # Should return None and not modify menu_items
-    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
-    assert result is None
-    assert menu_items == []  # Should not modify due to exception
-
-
-def test_construct_page_action_menu_insert_exception(monkeypatch):
-    """Test that exceptions during menu_items.insert are handled gracefully."""
-
-    # Mock menu_items that raises on insert
-    class BadMenuItems(list):
-        def insert(self, index, item):
-            raise RuntimeError("insert failed")
-
-    menu_items = BadMenuItems()
-    request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
-    class CompositePage(FakePage):
-        pass
-
-    context = {"page": CompositePage(pk=1, slug="test")}
-
-    # Should return None and not break
-    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
-    assert result is None
-
-
-def test_construct_page_action_menu_non_enabled_noop():
-    menu_items = []
-    request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
-    context = {"page": FakePage(pk=1, slug="test")}
-
-    result = wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
-
-    assert result is None
-    assert menu_items == []
-
-
-@pytest.mark.parametrize(
-    "page_type_name,enabled",
-    list(wagtail_hooks.PagePreviewEnabled.items()),
-)
-def test_only_enabled_page_types_get_preview_actions(monkeypatch, page_type_name, enabled):
-    class FakeEnabledPage(FakePage):
-        pass
-
-    FakeEnabledPage.__name__ = page_type_name
-    page = FakeEnabledPage(pk=42, slug="preview-target")
-
-    monkeypatch.setattr(
-        wagtail_hooks,
-        "reverse",
-        lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/",
-    )
-
-    buttons = wagtail_hooks.frontend_preview_button(page, None, None, view_name="edit")
-
-    menu_items = []
-    wagtail_hooks.add_frontend_preview_action(menu_items, None, {"page": page})
-
-    assert (len(buttons) > 0) is enabled
-    assert (len(menu_items) > 0) is enabled
-
-
-def test_page_preview_enabled_contains_expected_page_type_keys():
-    expected_keys = {
-        "UKHSARootPage",
-        "LandingPage",
-        "TopicPage",
-        "CommonPage",
-        "CompositePage",
-        "FormPage",
-        "MetricsDocumentationParentPage",
-        "MetricsDocumentationChildEntry",
-        "WhatsNewParentPage",
-        "WhatsNewChildEntry",
-    }
-    assert set(wagtail_hooks.PagePreviewEnabled.keys()) == expected_keys
+        # Then
+        assert actual_keys == expected_keys
