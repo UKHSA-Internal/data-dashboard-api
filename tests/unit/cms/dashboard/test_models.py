@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from cms.dashboard.models import UKHSAPage
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.composite_page_factory import FakeCompositePageFactory
+from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
 from tests.fakes.factories.cms.metrics_documentation_factory import (
     FakeMetricsDocumentationParentPageFactory,
 )
@@ -19,6 +20,36 @@ from tests.fakes.factories.cms.whats_new_parent_page_factory import (
 
 
 class TestUKHSAPage:
+    @pytest.mark.parametrize(
+        "fake_page",
+        [
+            FakeTopicPageFactory.build_influenza_page_from_template(),
+            FakeCommonPageFactory.build_blank_page(),
+            FakeCompositePageFactory.build_page_from_template(
+                page_name="access_our_data_getting_started"
+            ),
+            FakeLandingPageFactory.build_blank_page(),
+            FakeMetricsDocumentationParentPageFactory.build_page_from_template(),
+            FakeWhatsNewChildEntryFactory.build_page_from_template(),
+            FakeWhatsNewParentPageFactory.build_page_from_template(),
+        ],
+    )
+    def test_is_previewable_is_inherited_from_ukhsa_page(self, fake_page: UKHSAPage):
+        """
+        Given a page model which inherits from `UKHSAPage`
+        When checking the `is_previewable` implementation
+        Then the method is inherited from `UKHSAPage` and returns `False`
+        """
+        # Given
+        child_page = fake_page
+
+        # When
+        page_is_previewable = child_page.is_previewable()
+
+        # Then
+        assert page_is_previewable is False
+        assert type(child_page).is_previewable is UKHSAPage.is_previewable
+
     @pytest.mark.parametrize(
         "fake_page",
         [
@@ -103,10 +134,17 @@ class TestUKHSAPage:
         And no `seo_title` field was set
         When the `clean()` method is called
         Then a `ValidationError` is raised
+
+        Patches:
+            `spy_raise_error_if_slug_not_unique`: Prevents unrelated slug uniqueness
+                validation from affecting this assertion.
         """
         # Given
         fake_page.seo_title = None
 
-        # When / Then
-        with pytest.raises(ValidationError):
+        # When
+        with pytest.raises(ValidationError) as error:
             fake_page.clean()
+
+        # Then
+        assert error.type is ValidationError

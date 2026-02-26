@@ -22,6 +22,8 @@ from cms.dynamic_content.announcements import Announcement
 
 
 class CompositePage(UKHSAPage):
+    custom_preview_enabled: bool = True
+
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
         features=[],
@@ -87,11 +89,6 @@ class CompositePage(UKHSAPage):
     )
 
     objects = CompositePageManager()
-
-    @classmethod
-    def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
 
     @property
     def last_updated_at(self) -> datetime.datetime:

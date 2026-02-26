@@ -14,6 +14,8 @@ from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 
 class WhatsNewParentPage(UKHSAPage):
+    custom_preview_enabled: bool = True
+
     date_posted = models.DateField(null=False)
     show_pagination = models.BooleanField(
         default=True,

@@ -29,6 +29,8 @@ DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
 class TopicPage(UKHSAPage):
+    custom_preview_enabled: bool = True
+
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -103,11 +105,6 @@ class TopicPage(UKHSAPage):
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
-
-    @classmethod
-    def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
 
     @property
     def selected_topics(self) -> set[str]:

@@ -18,33 +18,26 @@ from wagtail.whitelist import check_url
 from cms.dashboard.views import PreviewToFrontendRedirectView
 
 
-PagePreviewEnabled: dict[str, bool] = {
-    "UKHSARootPage": False,
-    "LandingPage": True,
-    "TopicPage": True,
-    "CommonPage": False,
-    "CompositePage": True,
-    "FormPage": True,
-    "MetricsDocumentationParentPage": True,
-    "MetricsDocumentationChildEntry": True,
-    "WhatsNewParentPage": True,
-    "WhatsNewChildEntry": True,
-}
-
-
 def _is_preview_enabled_page(page: Page) -> bool:
+    def _class_or_parent_has_custom_preview_enabled(page_class: type[Page]) -> bool:
+        return any(
+            getattr(parent_class, "custom_preview_enabled", False)
+            for parent_class in page_class.mro()
+        )
+
     for page_class in page.__class__.mro():
-        page_type_name = page_class.__name__
-        if page_type_name in PagePreviewEnabled:
-            return PagePreviewEnabled[page_type_name]
+        if _class_or_parent_has_custom_preview_enabled(page_class=page_class):
+            return True
 
     try:
         specific_class = page.specific_class
     except RuntimeError:
         specific_class = None
 
-    if specific_class:
-        return PagePreviewEnabled.get(specific_class.__name__, False)
+    if specific_class and _class_or_parent_has_custom_preview_enabled(
+        page_class=specific_class
+    ):
+        return True
 
     return False
 

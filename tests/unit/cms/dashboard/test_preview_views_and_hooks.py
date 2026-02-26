@@ -22,6 +22,8 @@ class DummyPerms:
 
 
 class FakePage:
+    custom_preview_enabled = False
+
     def __init__(self, pk=1, slug="foo", can_edit=True):
         self.pk = pk
         self.slug = slug
@@ -79,7 +81,7 @@ class TestFrontendPreviewButton:
         )
 
         class CompositePage(FakePage):
-            pass
+            custom_preview_enabled = True
 
         page = CompositePage(pk=123, slug="bar")
 
@@ -220,7 +222,7 @@ class TestAddFrontendPreviewAction:
         request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
 
         class CompositePage(FakePage):
-            pass
+            custom_preview_enabled = True
 
         context = {"page": CompositePage(pk=1, slug="test")}
 
@@ -250,7 +252,7 @@ class TestAddFrontendPreviewAction:
         request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
 
         class CompositePage(FakePage):
-            pass
+            custom_preview_enabled = True
 
         context = {"page": CompositePage(pk=1, slug="test")}
 
@@ -287,17 +289,16 @@ class TestAddFrontendPreviewAction:
         assert menu_items == []
 
     @pytest.mark.parametrize(
-        "page_type_name,enabled",
-        list(wagtail_hooks.PagePreviewEnabled.items()),
+        "custom_preview_enabled",
+        [False, True],
     )
     def test_only_enabled_page_types_get_preview_actions(
         self,
         monkeypatch,
-        page_type_name,
-        enabled,
+        custom_preview_enabled,
     ):
         """
-        Given each configured page type in `PagePreviewEnabled`
+        Given a page type with configured `custom_preview_enabled`
         When preview actions are constructed
         Then only enabled types receive preview button and menu actions
         """
@@ -305,7 +306,8 @@ class TestAddFrontendPreviewAction:
         class FakeEnabledPage(FakePage):
             pass
 
-        FakeEnabledPage.__name__ = page_type_name
+        FakeEnabledPage.custom_preview_enabled = custom_preview_enabled
+
         page = FakeEnabledPage(pk=42, slug="preview-target")
 
         monkeypatch.setattr(
@@ -329,33 +331,40 @@ class TestAddFrontendPreviewAction:
         )
 
         # Then
-        assert (len(buttons) > 0) is enabled
-        assert (len(menu_items) > 0) is enabled
+        assert (len(buttons) > 0) is custom_preview_enabled
+        assert (len(menu_items) > 0) is custom_preview_enabled
 
 
-class TestPagePreviewEnabled:
-    def test_contains_expected_page_type_keys(self):
+class TestCustomPreviewEnabled:
+    def test_defaults_to_false_when_attribute_missing(self):
         """
-        Given the page preview feature map
-        When its keys are inspected
-        Then they match the expected page type names
+        Given a page class without `custom_preview_enabled`
+        When `_is_preview_enabled_page()` is called
+        Then the page is not preview-enabled
         """
         # Given
-        expected_keys = {
-            "UKHSARootPage",
-            "LandingPage",
-            "TopicPage",
-            "CommonPage",
-            "CompositePage",
-            "FormPage",
-            "MetricsDocumentationParentPage",
-            "MetricsDocumentationChildEntry",
-            "WhatsNewParentPage",
-            "WhatsNewChildEntry",
-        }
+        page = FakePage()
 
         # When
-        actual_keys = set(wagtail_hooks.PagePreviewEnabled.keys())
+        is_preview_enabled = wagtail_hooks._is_preview_enabled_page(page=page)
 
         # Then
-        assert actual_keys == expected_keys
+        assert not is_preview_enabled
+
+    def test_uses_custom_preview_enabled_when_set_to_true(self):
+        """
+        Given a page class with `custom_preview_enabled` set to `True`
+        When `_is_preview_enabled_page()` is called
+        Then the page is preview-enabled
+        """
+        # Given
+        class PreviewEnabledFakePage(FakePage):
+            custom_preview_enabled = True
+
+        page = PreviewEnabledFakePage()
+
+        # When
+        is_preview_enabled = wagtail_hooks._is_preview_enabled_page(page=page)
+
+        # Then
+        assert is_preview_enabled

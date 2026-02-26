@@ -42,6 +42,8 @@ class UKHSAPage(Page):
 
     """
 
+    custom_preview_enabled: bool = False
+
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
@@ -91,8 +93,7 @@ class UKHSAPage(Page):
     class Meta:
         abstract = True
 
-    @classmethod
-    def is_previewable(cls) -> bool:
+    def is_previewable(self) -> bool:
         """Disable built-in Wagtail preview for all headless dashboard pages."""
         return False
 
