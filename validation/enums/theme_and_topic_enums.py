@@ -1,5 +1,7 @@
 from enum import Enum
 
+from validation.enums.helper_enum import BaseEnum
+
 
 class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"
@@ -131,11 +133,6 @@ class _AntimicrobialResistanceTopic(Enum):
     E_FAECIUM = "E-faecium"
     E_FAECALIS = "E-faecalis"
     CARBAPENAMASE_PRODUCING_ORGANISMS = "carbapenamase-producing-organisms"
-
-
-class BaseEnum(Enum):
-    def return_list(self):
-        return [e.value for e in self.value]
 
 
 class ParentTheme(Enum):
