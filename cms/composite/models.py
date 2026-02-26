@@ -90,14 +90,7 @@ class CompositePage(UKHSAPage):
 
     @classmethod
     def is_previewable(cls) -> bool:
-        """Returns False.
-
-        This project is headless: we don’t support the built‑in Wagtail preview
-        panel, and instead have a custom preview implementation that works 
-        with the frontend. By returning False here, we hide the built‑in 
-        preview button in the Wagtail. 
-        See the change-log CDD-1379.page-previews.md for more details.
-        """
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
 
     @property
