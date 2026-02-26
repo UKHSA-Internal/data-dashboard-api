@@ -29,13 +29,13 @@ class PreviewToFrontendRedirectView(View):
 
     Attributes:
         PREVIEW_TOKEN_TTL_SECONDS: Token lifetime in seconds (configurable via
-            FRONTEND_PREVIEW_TOKEN_TTL_SECONDS setting, defaults to 120)
+            PAGE_PREVIEWS_TOKEN_TTL_SECONDS setting, defaults to 120)
     """
 
     # token lifetime in seconds (configurable via settings)
     PREVIEW_TOKEN_TTL_SECONDS = getattr(
         settings,
-        "FRONTEND_PREVIEW_TOKEN_TTL_SECONDS",
+        "PAGE_PREVIEWS_TOKEN_TTL_SECONDS",
         120,
     )
 

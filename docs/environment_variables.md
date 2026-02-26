@@ -142,49 +142,15 @@ Example:
 Local default template used by the backend:
 - `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`
 
-If omitted, a local default template is used by the backend.
+If omitted, the local default template is used.
 
 #### `PAGE_PREVIEWS_TOKEN_SALT`
 
-Optional signing salt used when issuing and validating preview tokens.
-If omitted, the backend uses `preview-token`.
+Signing salt used when issuing and validating preview tokens.  If omitted, the backend uses `preview-token`.
 
-#### `FRONTEND_PREVIEW_TOKEN_TTL_SECONDS`
+#### `PAGE_PREVIEWS_TOKEN_TTL_SECONDS`
 
-Optional preview token TTL in seconds.
-If omitted, the backend default is 15 minutes.
-
-### Frontend preview integration
-
-To fetch preview content from the private drafts API:
-
-- Endpoint: `/api/drafts/{page_id}/`
-- Method: `GET`
-- Header: `Authorization: Bearer {token}`
-
-Request behavior:
-- Returns `200` with draft payload when token is valid and unexpired
-- Returns `401` when token is missing, invalid, mismatched to `{page_id}`, or expired
-
-#### Testing preview integration
-
-The integration test validates the complete preview flow:
-
-```bash
-uhd tests preview
-```
-
-This test:
-- Creates a test page with published content
-- Makes unpublished changes (creates a draft)
-- Generates a valid Bearer token with `page_id` and `exp` claims
-- Calls `/api/drafts/{id}/` with the token
-- Validates the response contains the unpublished changes
-- Verifies `/api/pages/{id}/` still returns the older published version
-
-The test uses Django's `APIClient` (in-process, no server required) and creates its own test data, making it fully self-contained and repeatable.
-
----
+Preview token time-to-live (TTL) in seconds. If omitted, the backend default is 120 seconds.
 
 ### Email configuration
 
