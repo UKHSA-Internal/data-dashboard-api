@@ -132,6 +132,8 @@ See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-se
 
 ### CMS Page previews configuration
 
+Wagtail Content Management System (CMS) allows users to preview pages in the configured front-end.  The following environment variables are supported:
+
 #### `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE`
 
 Template URL used by the CMS preview button redirect flow.
