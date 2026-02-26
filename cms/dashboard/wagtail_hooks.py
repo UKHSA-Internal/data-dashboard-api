@@ -18,7 +18,6 @@ from cms.dashboard.views import PreviewToFrontendRedirectView
 
 @hooks.register("insert_global_admin_css")
 def global_admin_css() -> SafeString:
-
     return format_html(
         '<link rel="stylesheet" type="text/css" href="{}">', static("css/theme.css")
     )
