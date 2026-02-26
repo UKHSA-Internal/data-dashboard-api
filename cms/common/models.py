@@ -8,8 +8,6 @@ from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
 from cms.dashboard.enums import (
-
-
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )

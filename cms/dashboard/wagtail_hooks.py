@@ -173,9 +173,9 @@ def _get_page_url(page_id: int) -> str:
 def register_admin_urls():
     """Register admin URLs for CMS dashboard views.
 
-    We register an admin redirect endpoint 
-    (`/admin/preview-to-frontend/<pk>/`) that signs a short-lived 
-    preview token and redirects the user to the external frontend. 
+    We register an admin redirect endpoint
+    (`/admin/preview-to-frontend/<pk>/`) that signs a short-lived
+    preview token and redirects the user to the external frontend.
     The redirect logic is implemented in `cms.dashboard.views`.
     """
     return [
