@@ -29,8 +29,6 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
 
 
 class MetricsDocumentationParentPage(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     show_pagination = models.BooleanField(
         default=True,
         help_text=help_texts.SHOW_PAGINATION_FIELD,

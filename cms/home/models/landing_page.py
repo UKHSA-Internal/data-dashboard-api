@@ -11,8 +11,6 @@ from cms.home.managers import LandingPageManager
 
 
 class LandingPage(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     is_creatable = True
     max_count = 1
     sub_title = models.CharField(max_length=255)

@@ -52,8 +52,6 @@ class FormField(AbstractFormField):
 
 
 class FormPage(AbstractFormUKHSAPage):
-    custom_preview_enabled: bool = True
-
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES, blank=True)
 
     confirmation_slug = TextField(

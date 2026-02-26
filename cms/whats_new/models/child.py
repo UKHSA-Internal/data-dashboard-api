@@ -12,8 +12,6 @@ from cms.whats_new.serializers import BadgeSerializer
 
 
 class WhatsNewChildEntry(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     date_posted = models.DateField(null=False, blank=False)
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,

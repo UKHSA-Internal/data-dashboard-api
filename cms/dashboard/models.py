@@ -42,7 +42,7 @@ class UKHSAPage(Page):
 
     """
 
-    custom_preview_enabled: bool = False
+    custom_preview_enabled: bool = True
 
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(

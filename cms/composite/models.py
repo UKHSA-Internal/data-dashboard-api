@@ -22,8 +22,6 @@ from cms.dynamic_content.announcements import Announcement
 
 
 class CompositePage(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
         features=[],

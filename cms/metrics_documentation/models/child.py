@@ -24,8 +24,6 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 
 
 class MetricsDocumentationChildEntry(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     is_public = models.BooleanField(

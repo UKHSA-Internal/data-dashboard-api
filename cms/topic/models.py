@@ -29,8 +29,6 @@ DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
 class TopicPage(UKHSAPage):
-    custom_preview_enabled: bool = True
-
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
