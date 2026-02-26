@@ -136,7 +136,7 @@ Wagtail Content Management System (CMS) allows users to preview pages in the con
 
 #### `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE`
 
-Template URL used by the CMS preview button redirect flow.
+Template URL for the front-end.  When the user clicks the Preview button, the browser will be redirected to the specified front-end URL as below:
 
 Expected placeholders:
 - `{page_id}`: the Wagtail page ID (used to call the drafts endpoint at `/api/drafts/{id}/`)
