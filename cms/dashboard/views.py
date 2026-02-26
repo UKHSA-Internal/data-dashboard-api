@@ -87,24 +87,9 @@ class PreviewToFrontendRedirectView(View):
 
 
 class LinkBrowseView(BrowseView):
-    """Custom browse view for link selection with external link types disabled.
-
-    Extends Wagtail's BrowseView to intercept requests and disable email/phone
-    link options in the page chooser interface.
-    """
-
     def get(
         self, request: WSGIRequest, parent_page_id: int | None = None
     ) -> JsonResponse:
-        """Handle GET request with modified query parameters to disable extra link types.
-
-        Args:
-            request: The WSGI HTTP request object
-            parent_page_id: Optional parent page ID for filtering browse results
-
-        Returns:
-            JsonResponse: JSON response from parent BrowseView with browse results
-        """
         request: WSGIRequest = self._intercept_request_and_switch_off_extra_links(
             request=request
         )
@@ -114,14 +99,6 @@ class LinkBrowseView(BrowseView):
     def _intercept_request_and_switch_off_extra_links(
         cls, request: WSGIRequest
     ) -> WSGIRequest:
-        """Modify request query parameters to disable email and phone link options.
-
-        Args:
-            request: The WSGI HTTP request object to modify
-
-        Returns:
-            WSGIRequest: Modified request with email and phone links disabled
-        """
         intercepted_query_params = request.GET.copy()
         intercepted_query_params["allow_email_link"] = False
         intercepted_query_params["allow_phone_link"] = False
