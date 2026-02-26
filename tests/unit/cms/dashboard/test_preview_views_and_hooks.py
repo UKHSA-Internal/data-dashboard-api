@@ -292,15 +292,19 @@ class TestAddFrontendPreviewAction:
         "custom_preview_enabled",
         [False, True],
     )
+    @mock.patch(f"{MODULE_PATH}.dashboard.wagtail_hooks.reverse")
     def test_only_enabled_page_types_get_preview_actions(
         self,
-        monkeypatch,
+        spy_reverse: mock.MagicMock,
         custom_preview_enabled,
     ):
         """
         Given a page type with configured `custom_preview_enabled`
         When preview actions are constructed
         Then only enabled types receive preview button and menu actions
+
+        Patches:
+            `spy_reverse`: To provide a deterministic preview admin URL.
         """
         # Given
         class FakeEnabledPage(FakePage):
@@ -310,10 +314,8 @@ class TestAddFrontendPreviewAction:
 
         page = FakeEnabledPage(pk=42, slug="preview-target")
 
-        monkeypatch.setattr(
-            wagtail_hooks,
-            "reverse",
-            lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/",
+        spy_reverse.side_effect = (
+            lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/"
         )
 
         # When

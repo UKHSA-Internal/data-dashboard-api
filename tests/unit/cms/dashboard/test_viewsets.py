@@ -1,9 +1,13 @@
+from unittest import mock
+
 import pytest
 from django.test import RequestFactory
 from rest_framework import status
 
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
+
+MODULE_PATH = "cms.dashboard.viewsets"
 
 
 class TestCMSDraftPagesViewSet:
@@ -68,17 +72,20 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_detail_view_returns_401_when_token_cannot_be_loaded(self, monkeypatch):
+    @mock.patch(f"{MODULE_PATH}.loads")
+    def test_detail_view_returns_401_when_token_cannot_be_loaded(
+        self, spy_loads: mock.MagicMock
+    ):
         """
         Given a request with a bearer token that cannot be decoded
         When `detail_view()` is called
         Then HTTP 401 Unauthorized is returned
+
+        Patches:
+            `spy_loads`: To force token loading failure.
         """
         # Given
-        def raise_bad_token(token, salt):
-            raise ValueError("bad token")
-
-        monkeypatch.setattr("cms.dashboard.viewsets.loads", raise_bad_token)
+        spy_loads.side_effect = ValueError("bad token")
         request = RequestFactory().get(
             "/api/drafts/1/",
             HTTP_AUTHORIZATION="Bearer token",
@@ -90,17 +97,20 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_detail_view_returns_401_when_page_id_does_not_match(self, monkeypatch):
+    @mock.patch(f"{MODULE_PATH}.loads")
+    def test_detail_view_returns_401_when_page_id_does_not_match(
+        self, spy_loads: mock.MagicMock
+    ):
         """
         Given a token payload whose `page_id` does not match the request id
         When `detail_view()` is called
         Then HTTP 401 Unauthorized is returned
+
+        Patches:
+            `spy_loads`: To return a payload with mismatched `page_id`.
         """
         # Given
-        monkeypatch.setattr(
-            "cms.dashboard.viewsets.loads",
-            lambda token, salt: {"page_id": 999, "exp": 9999999999},
-        )
+        spy_loads.return_value = {"page_id": 999, "exp": 9999999999}
         request = RequestFactory().get(
             "/api/drafts/1/",
             HTTP_AUTHORIZATION="Bearer token",
@@ -113,16 +123,22 @@ class TestCMSDraftPagesViewSet:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.parametrize("payload", [{"page_id": 1}, {"page_id": 1, "exp": 1}])
+    @mock.patch(f"{MODULE_PATH}.loads")
     def test_detail_view_returns_401_for_missing_or_expired_exp(
-        self, monkeypatch, payload
+        self,
+        spy_loads: mock.MagicMock,
+        payload,
     ):
         """
         Given a token payload with missing or expired `exp`
         When `detail_view()` is called
         Then HTTP 401 Unauthorized is returned
+
+        Patches:
+            `spy_loads`: To return payloads with missing/expired `exp`.
         """
         # Given
-        monkeypatch.setattr("cms.dashboard.viewsets.loads", lambda token, salt: payload)
+        spy_loads.return_value = payload
         request = RequestFactory().get(
             "/api/drafts/1/",
             HTTP_AUTHORIZATION="Bearer token",
@@ -134,13 +150,24 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+    @mock.patch.object(CMSDraftPagesViewSet, "get_serializer")
+    @mock.patch.object(CMSDraftPagesViewSet, "get_object")
+    @mock.patch(f"{MODULE_PATH}.loads")
     def test_detail_view_returns_serialized_draft_when_token_is_valid(
-        self, monkeypatch
+        self,
+        spy_loads: mock.MagicMock,
+        spy_get_object: mock.MagicMock,
+        spy_get_serializer: mock.MagicMock,
     ):
         """
         Given a valid token payload and a latest revision object
         When `detail_view()` is called
         Then HTTP 200 OK and serialized data are returned
+
+        Patches:
+            `spy_loads`: To return a valid token payload.
+            `spy_get_object`: To return a fake instance with a latest revision object.
+            `spy_get_serializer`: To return a serializer with deterministic data.
         """
         # Given
         class FakeInstance:
@@ -150,20 +177,9 @@ class TestCMSDraftPagesViewSet:
         class FakeSerializer:
             data = {"ok": True}
 
-        monkeypatch.setattr(
-            "cms.dashboard.viewsets.loads",
-            lambda token, salt: {"page_id": 1, "exp": 9999999999},
-        )
-        monkeypatch.setattr(
-            CMSDraftPagesViewSet,
-            "get_object",
-            lambda self: FakeInstance(),
-        )
-        monkeypatch.setattr(
-            CMSDraftPagesViewSet,
-            "get_serializer",
-            lambda self, instance: FakeSerializer(),
-        )
+        spy_loads.return_value = {"page_id": 1, "exp": 9999999999}
+        spy_get_object.return_value = FakeInstance()
+        spy_get_serializer.return_value = FakeSerializer()
 
         request = RequestFactory().get(
             "/api/drafts/1/",
