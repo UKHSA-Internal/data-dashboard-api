@@ -35,6 +35,15 @@ class TestCMSDraftPagesSerializer:
     def test_build_relational_field_uses_page_serializer_for_mapped_fields(
         self, spy_page_serializer_build_relational_field: mock.MagicMock
     ):
+        """
+        Given a mapped relational field in `CMSDraftPagesSerializer`
+        When `build_relational_field()` is called
+        Then the call delegates to `PageSerializer.build_relational_field`
+
+        Patches:
+            `spy_page_serializer_build_relational_field`: For the main assertion.
+                To verify call delegation and return-value passthrough.
+        """
         spy_page_serializer_build_relational_field.return_value = (
             mock.sentinel.field_class,
             {"mapped": True},
