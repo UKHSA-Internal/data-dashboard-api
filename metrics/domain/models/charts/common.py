@@ -2,14 +2,11 @@ from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import ConfigDict
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
 
 class BaseChartRequestParams(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
     chart_height: int
@@ -23,6 +20,9 @@ class BaseChartRequestParams(BaseModel):
     request: Request | None = None
     confidence_intervals: bool | None = False
     confidence_colour: str | None = ""
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:

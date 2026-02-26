@@ -2,7 +2,6 @@ from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import ConfigDict
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
@@ -13,13 +12,14 @@ OPTIONAL_STRING = str | None
 
 
 class Subplots(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     subplot_title: str
     x_axis: str
     y_axis: str
     plots: list[PlotParameters]
     request: Request | None = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
@@ -32,8 +32,6 @@ This collection of models are the model definitions for a `Request` for a subplo
 
 
 class SubplotChartRequestParameters(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
     chart_height: int
@@ -46,6 +44,9 @@ class SubplotChartRequestParameters(BaseModel):
     request: Request | None = None
 
     subplots: list[Subplots]
+
+    class Config:
+        arbitrary_types_allowed = True
 
     def _extract_all_distinct_group_values(
         self, attribute_to_group_by: str
