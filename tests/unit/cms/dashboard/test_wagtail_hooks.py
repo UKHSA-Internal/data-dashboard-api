@@ -142,10 +142,6 @@ def test_register_link_props(spy_link_entity_with_href: mock.MagicMock):
     Then the `link_entity_with_href()` function
         is set on the link entity decorators
         via the `register_converter_rule()` call
-
-    Patches:
-        `spy_link_entity_with_href`: For the main assertion.
-            To verify the LINK decorator is assigned to this callable.
     """
     # Given
     fake_rule = {"to_database_format": {"entity_decorators": {"LINK": {}}}}
@@ -177,12 +173,6 @@ class TestLinkEntityWithHref:
         Then the call is delegated
             to `_build_link_props()` to make the initial props
             which are then passed to `DOM.create_element()`
-
-        Patches:
-            `spy_build_link_props`: For the main assertion.
-                To verify props construction is delegated correctly.
-            `spy_dom_create_element`: For the main assertion.
-                To verify DOM element creation receives expected arguments.
         """
         # Given
         mocked_children = mock.Mock()
@@ -208,10 +198,6 @@ class TestBuildLinkProps:
         When `_build_link_props()` is called
         Then the returned props
             also contain the page full URL
-
-        Patches:
-            `mocked_page_model_manager`: To isolate page lookup behaviour.
-                Returns a fake page with a deterministic `full_url`.
         """
         # Given
         page_id = 1
@@ -235,10 +221,6 @@ class TestBuildLinkProps:
         When `_build_link_props()` is called
         Then the returned props
             contain only the page URL
-
-        Patches:
-            `spy_check_url`: For the main assertion.
-                Ensures URL sanitisation is delegated to `check_url`.
         """
         # Given
         url = "https://test-ukhsa-dashboard.com/covid-19"
@@ -261,10 +243,6 @@ class TestBuildLinkProps:
         When `_build_link_props()` is called
         Then the returned props
             contains an empty string for the URL
-
-        Patches:
-            `mocked_page_manager`: To simulate missing page lookups.
-                Raises `Page.DoesNotExist` for deterministic fallback behaviour.
         """
         # Given
         mocked_page_manager.get.side_effect = Page.DoesNotExist

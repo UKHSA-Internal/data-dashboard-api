@@ -134,17 +134,10 @@ class TestUKHSAPage:
         And no `seo_title` field was set
         When the `clean()` method is called
         Then a `ValidationError` is raised
-
-        Patches:
-            `spy_raise_error_if_slug_not_unique`: Prevents unrelated slug uniqueness
-                validation from affecting this assertion.
         """
         # Given
         fake_page.seo_title = None
 
-        # When
-        with pytest.raises(ValidationError) as error:
+        # When / Then
+        with pytest.raises(ValidationError):
             fake_page.clean()
-
-        # Then
-        assert error.type is ValidationError
