@@ -176,30 +176,28 @@ class TestAddFrontendPreviewAction:
         """
         Given missing or unsaved page context
         When `add_frontend_preview_action()` is called
-        Then no action is added and `None` is returned
+        Then no action is added
         """
         # Given
         request = None
 
         # When
         menu_items = []
-        result_missing_page = wagtail_hooks.add_frontend_preview_action(
+        wagtail_hooks.add_frontend_preview_action(
             menu_items=menu_items,
             request=request,
             context={},
         )
 
         menu_items_for_unsaved_page = []
-        result_missing_pk = wagtail_hooks.add_frontend_preview_action(
+        wagtail_hooks.add_frontend_preview_action(
             menu_items=menu_items_for_unsaved_page,
             request=request,
             context={"page": FakePage(pk=None)},
         )
 
         # Then
-        assert result_missing_page is None
         assert menu_items == []
-        assert result_missing_pk is None
         assert menu_items_for_unsaved_page == []
 
     @mock.patch(f"{MODULE_PATH}.dashboard.wagtail_hooks.reverse")
@@ -210,7 +208,7 @@ class TestAddFrontendPreviewAction:
         """
         Given a preview-enabled page and reverse raises an exception
         When `add_frontend_preview_action()` is called
-        Then no menu item is added and `None` is returned
+        Then no menu item is added
 
         Patches:
             `spy_reverse`: To simulate URL generation failure
@@ -226,21 +224,20 @@ class TestAddFrontendPreviewAction:
         }
 
         # When
-        result = wagtail_hooks.add_frontend_preview_action(
+        wagtail_hooks.add_frontend_preview_action(
             menu_items=menu_items,
             request=request,
             context=context,
         )
 
         # Then
-        assert result is None
         assert menu_items == []
 
     def test_insert_exception_is_handled(self):
         """
         Given a menu collection that raises on `insert`
         When `add_frontend_preview_action()` is called
-        Then the function returns `None` without raising
+        Then the function does not raise
         """
 
         # Given
@@ -256,14 +253,11 @@ class TestAddFrontendPreviewAction:
         }
 
         # When
-        result = wagtail_hooks.add_frontend_preview_action(
+        wagtail_hooks.add_frontend_preview_action(
             menu_items=menu_items,
             request=request,
             context=context,
         )
-
-        # Then
-        assert result is None
 
     def test_non_enabled_page_is_noop(self):
         """
@@ -278,14 +272,13 @@ class TestAddFrontendPreviewAction:
         context = {"page": FakePage(pk=1, slug="test")}
 
         # When
-        result = wagtail_hooks.add_frontend_preview_action(
+        wagtail_hooks.add_frontend_preview_action(
             menu_items=menu_items,
             request=request,
             context=context,
         )
 
         # Then
-        assert result is None
         assert menu_items == []
 
     @pytest.mark.parametrize(
