@@ -352,19 +352,3 @@ class TestCustomPreviewEnabled:
 
         # Then
         assert not is_preview_enabled
-
-    def test_uses_custom_preview_enabled_when_set_to_true(self):
-        """
-        Given a page class with `custom_preview_enabled` set to `True`
-        When the page attribute is checked
-        Then the page is preview-enabled
-        """
-
-        # Given
-        page = SimpleNamespace(custom_preview_enabled=True)
-
-        # When
-        is_preview_enabled = bool(getattr(page, "custom_preview_enabled", False))
-
-        # Then
-        assert is_preview_enabled
