@@ -4,6 +4,7 @@ from collections.abc import Callable
 
 from wagtail.models import Page
 
+from cms.acknowledgement.models import AcknowledgementPage
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import (
@@ -131,6 +132,26 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         response_data=data,
         page=page,
     )
+
+    return page
+
+
+def create_acknowledgement_page(*, name: str, parent_page: Page) -> AcknowledgementPage:
+    data = open_example_page_response(page_name=name)
+
+    page = AcknowledgementPage(
+        body=data.get("body", ""),
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        i_agree_checkbox=data.get("i_agree_checkbox", ""),
+        terms_of_service_link_text=data.get("terms_of_service_link_text", ""),
+        terms_of_service_link=data.get("terms_of_service_link", ""),
+        disagree_button=data.get("disagree_button", ""),
+        agree_button=data.get("agree_button", ""),
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
 
     return page
 

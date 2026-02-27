@@ -50,6 +50,7 @@ if config.APP_MODE != "INGESTION":
         "rest_framework",
         "drf_spectacular",
         "metrics.api",
+        "cms.acknowledgement",
         "cms.home",
         "cms.topic",
         "cms.dashboard",
