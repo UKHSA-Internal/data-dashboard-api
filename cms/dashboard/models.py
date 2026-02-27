@@ -19,6 +19,7 @@ BOLD: str = "bold"
 BULLET_POINTS: str = "ul"
 LINKS: str = "link"
 
+
 AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
     HEADING_2,
     HEADING_3,
@@ -29,6 +30,9 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 ]
 
 MAXIMUM_URL_FIELD_LENGTH: int = 400
+
+
+
 
 
 class UKHSAPage(Page):
