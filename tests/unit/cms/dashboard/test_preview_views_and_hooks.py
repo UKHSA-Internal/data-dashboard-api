@@ -1,4 +1,5 @@
 from unittest import mock
+from types import SimpleNamespace
 
 import pytest
 from django.core.exceptions import PermissionDenied
@@ -221,7 +222,9 @@ class TestAddFrontendPreviewAction:
         # Given
         spy_reverse.side_effect = RuntimeError("reverse failed")
         menu_items = []
-        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+        
+        # request.user.pk == 5
+        request = SimpleNamespace(user=SimpleNamespace(pk=5))
 
         class CompositePage(FakePage):
             custom_preview_enabled = True
@@ -252,7 +255,11 @@ class TestAddFrontendPreviewAction:
                 raise RuntimeError("insert failed")
 
         menu_items = BadMenuItems()
-        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+        # Shape:
+        # request.user.pk == 5
+        # request -> SimpleNamespace(user=SimpleNamespace(pk=5))
+        # request = type("Fake_Request", (), {"user": type("Fake_User", (), {"pk": 5})()})()
+        request = SimpleNamespace(user=SimpleNamespace(pk=5))
 
         class CompositePage(FakePage):
             custom_preview_enabled = True
@@ -277,7 +284,11 @@ class TestAddFrontendPreviewAction:
         """
         # Given
         menu_items = []
-        request = type("R", (), {"user": type("U", (), {"pk": 5})()})()
+        # Shape:
+        # request.user.pk == 5
+        # request -> SimpleNamespace(user=SimpleNamespace(pk=5))
+        # request = type("Fake_Request", (), {"user": type("Fake_User", (), {"pk": 5})()})()
+        request = SimpleNamespace(user=SimpleNamespace(pk=5))
         context = {"page": FakePage(pk=1, slug="test")}
 
         # When
