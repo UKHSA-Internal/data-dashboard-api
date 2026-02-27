@@ -1,5 +1,6 @@
 import datetime
 from decimal import Decimal
+from typing import override
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -93,6 +94,7 @@ class UKHSAPage(Page):
     class Meta:
         abstract = True
 
+    @override
     def is_previewable(self) -> bool:
         """Disable built-in Wagtail preview for all headless dashboard pages."""
         return False

@@ -14,8 +14,8 @@ class TestCMSDraftPagesSerializer:
         """
         Given a `CMSDraftPagesSerializer` instance
         When the serializer fields are accessed
-        Then only expected fields are exposed 
-          (thus obviating Django REST Framework 
+        Then only expected fields are exposed
+          (thus obviating Django REST Framework
           trying to construct fields for unmapped relational fields)
         """
         # Given

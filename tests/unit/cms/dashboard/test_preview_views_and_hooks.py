@@ -168,7 +168,9 @@ class TestPreviewToFrontendRedirectView:
         response = view.get(request=request, pk=1)
 
         # Then
-        location = response.url if hasattr(response, "url") else response.get("Location")
+        location = (
+            response.url if hasattr(response, "url") else response.get("Location")
+        )
         assert location.startswith("https://frontend.test/preview?page_id=1&t=")
 
 
@@ -243,6 +245,7 @@ class TestAddFrontendPreviewAction:
         When `add_frontend_preview_action()` is called
         Then the function returns `None` without raising
         """
+
         # Given
         class BadMenuItems(list):
             def insert(self, index, item):
@@ -306,6 +309,7 @@ class TestAddFrontendPreviewAction:
         Patches:
             `spy_reverse`: To provide a deterministic preview admin URL.
         """
+
         # Given
         class FakeEnabledPage(FakePage):
             pass
@@ -359,6 +363,7 @@ class TestCustomPreviewEnabled:
         When the page attribute is checked
         Then the page is preview-enabled
         """
+
         # Given
         class PreviewEnabledFakePage(FakePage):
             custom_preview_enabled = True

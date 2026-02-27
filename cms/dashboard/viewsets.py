@@ -1,3 +1,5 @@
+from typing import override
+
 from django.conf import settings
 from django.core.signing import BadSignature, SignatureExpired, loads
 from django.urls import path
@@ -25,6 +27,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
     detail_only_fields = []
 
+    @override
     def get_queryset(self):
         """Returns the queryset as per the individual models
 
@@ -68,6 +71,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
     base_serializer_class = CMSDraftPagesSerializer
     permission_classes = []
 
+    @override
     def get_queryset(self):
         """Returns all pages including drafts.
 

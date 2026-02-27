@@ -169,6 +169,7 @@ class TestCMSDraftPagesViewSet:
             `spy_get_object`: To return a fake instance with a latest revision object.
             `spy_get_serializer`: To return a serializer with deterministic data.
         """
+
         # Given
         class FakeInstance:
             def get_latest_revision_as_object(self):
