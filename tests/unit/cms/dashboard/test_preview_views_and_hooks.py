@@ -218,7 +218,7 @@ class TestAddFrontendPreviewAction:
         # Given
         spy_reverse.side_effect = RuntimeError("reverse failed")
         menu_items = []
-        
+
         # request.user.pk == 5
         request = SimpleNamespace(user=SimpleNamespace(pk=5))
         context = {

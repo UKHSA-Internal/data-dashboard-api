@@ -39,7 +39,7 @@ class TestUKHSAPage:
         Given a page model which inherits from `UKHSAPage`
         When checking the `is_previewable` implementation
         Then the method is inherited from `UKHSAPage` and matches current expected preview configuration
-           Note: the expected previewability of each page type is currently `False` 
+           Note: the expected previewability of each page type is currently `False`
              as we have implemented a custom preview view which does not rely on Wagtail's preview mechanism
         """
         # Given
@@ -86,8 +86,8 @@ class TestUKHSAPage:
         Given a page model which inherits from `UKHSAPage`
         When checking the `custom_preview_enabled` attribute
         Then the inherited/customised value matches current expected per-page configuration
-            Note: the expected value of `custom_preview_enabled` for each page type 
-            is based on whether the page type is currently configured to use the 
+            Note: the expected value of `custom_preview_enabled` for each page type
+            is based on whether the page type is currently configured to use the
             custom preview view.
         """
         # Given
