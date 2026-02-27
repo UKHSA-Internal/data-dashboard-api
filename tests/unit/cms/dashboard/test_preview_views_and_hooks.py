@@ -80,11 +80,7 @@ class TestFrontendPreviewButton:
         settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
             "https://frontend.test/preview?page_id={page_id}"
         )
-
-        class CompositePage(FakePage):
-            custom_preview_enabled = True
-
-        page = CompositePage(pk=123, slug="bar")
+        page = SimpleNamespace(pk=123, slug="bar", custom_preview_enabled=True)
 
         # When
         buttons = wagtail_hooks.frontend_preview_button(
@@ -225,11 +221,9 @@ class TestAddFrontendPreviewAction:
         
         # request.user.pk == 5
         request = SimpleNamespace(user=SimpleNamespace(pk=5))
-
-        class CompositePage(FakePage):
-            custom_preview_enabled = True
-
-        context = {"page": CompositePage(pk=1, slug="test")}
+        context = {
+            "page": SimpleNamespace(pk=1, slug="test", custom_preview_enabled=True)
+        }
 
         # When
         result = wagtail_hooks.add_frontend_preview_action(
@@ -257,11 +251,9 @@ class TestAddFrontendPreviewAction:
         menu_items = BadMenuItems()
         # request.user.pk == 5
         request = SimpleNamespace(user=SimpleNamespace(pk=5))
-
-        class CompositePage(FakePage):
-            custom_preview_enabled = True
-
-        context = {"page": CompositePage(pk=1, slug="test")}
+        context = {
+            "page": SimpleNamespace(pk=1, slug="test", custom_preview_enabled=True)
+        }
 
         # When
         result = wagtail_hooks.add_frontend_preview_action(
@@ -316,12 +308,11 @@ class TestAddFrontendPreviewAction:
         """
 
         # Given
-        class FakeEnabledPage(FakePage):
-            pass
-
-        FakeEnabledPage.custom_preview_enabled = custom_preview_enabled
-
-        page = FakeEnabledPage(pk=42, slug="preview-target")
+        page = SimpleNamespace(
+            pk=42,
+            slug="preview-target",
+            custom_preview_enabled=custom_preview_enabled,
+        )
 
         spy_reverse.side_effect = (
             lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/"
@@ -370,10 +361,7 @@ class TestCustomPreviewEnabled:
         """
 
         # Given
-        class PreviewEnabledFakePage(FakePage):
-            custom_preview_enabled = True
-
-        page = PreviewEnabledFakePage()
+        page = SimpleNamespace(custom_preview_enabled=True)
 
         # When
         is_preview_enabled = bool(getattr(page, "custom_preview_enabled", False))
