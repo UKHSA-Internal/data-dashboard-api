@@ -4,7 +4,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, ValidationError
 from wagtail.models import Orderable
 from wagtail.search import index
 
@@ -15,6 +15,7 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
     MAXIMUM_URL_FIELD_LENGTH,
+    DataClassificationLevels,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
@@ -38,10 +39,25 @@ class TopicPage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
+
     is_public = models.BooleanField(
         default=False,
         verbose_name="enable public page",
     )
+
+    page_classification = models.CharField(
+        max_length=50,
+        choices=DataClassificationLevels.choices,
+        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        help_text=help_texts.PAGE_CLASSIFICATION,
+        blank = True
+    )
+    
+    
+    class Media:
+        js = ['js/page_classification_field_visibility.js']
+
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -202,6 +218,15 @@ class TopicPage(UKHSAPage):
         timestamps.append(self.last_published_at)
         timestamps = [timestamp for timestamp in timestamps if timestamp]
         return max(timestamps)
+
+    
+    def clean(self):
+        super().clean()
+        if not self.is_public and not self.page_classification:
+            raise ValidationError({
+                "page_classification": "Page Classification is required when the page is non public."
+            })
+
 
 
 class TopicPageRelatedLink(Orderable):
