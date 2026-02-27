@@ -2,7 +2,7 @@ import datetime
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface, WagtailAdminPageForm
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
@@ -27,6 +27,19 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
+class DataClassificationLevels(models.TextChoices):
+    OFFICIAL = "ABCDEFG"
+    OFFICIAL_SENSITIVE = "official_sensitive"
+    PM_NOT_SET = "protective_marking_not_set'"
+    SECRET = "secret"  # noqa
+    TOP_SECRET = "top_secret"  # noqa
+
+
+class TopicPageAdminForm(WagtailAdminPageForm):
+    class Media:
+        js = ["topic/js/classification_toggle.js"]
+
+
 class TopicPage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
@@ -37,10 +50,25 @@ class TopicPage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
+
     is_public = models.BooleanField(
         default=False,
         verbose_name="enable public page",
     )
+
+    page_classification = models.CharField(
+        max_length=50,
+        choices=DataClassificationLevels.choices,
+        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        help_text=help_texts.PAGE_CLASSIFICATION,
+        blank=True,
+        null=True
+    )
+
+    class Media:
+        js = ['topic/js/disable_page_classification.js']
+        css = ['topic/css/disable_page_classification.css']
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -51,7 +79,8 @@ class TopicPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     # Search index configuration
@@ -63,6 +92,7 @@ class TopicPage(UKHSAPage):
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("enable_area_selector"),
         FieldPanel("is_public"),
+        FieldPanel("page_classification"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
@@ -77,6 +107,7 @@ class TopicPage(UKHSAPage):
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("is_public"),
+        APIField("page_classification"),
         APIField("selected_topics"),
     ]
 
@@ -85,7 +116,8 @@ class TopicPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -201,6 +233,20 @@ class TopicPage(UKHSAPage):
         timestamps.append(self.last_published_at)
         timestamps = [timestamp for timestamp in timestamps if timestamp]
         return max(timestamps)
+
+    def clean(self):
+        super().clean()
+
+        # If is_public is true, automatically clear classification
+        if self.is_public:
+            self.page_classification = None
+        else:
+            # If not public, classification must be chosen
+            if not self.page_classification:
+                from django.core.exceptions import ValidationError
+                raise ValidationError({
+                    "page_classification": "Please select a classification level for this non-public page"
+                })
 
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):
