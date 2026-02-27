@@ -38,16 +38,27 @@ class TestUKHSAPage:
         """
         Given a page model which inherits from `UKHSAPage`
         When checking the `is_previewable` implementation
-        Then the method is inherited from `UKHSAPage` and returns `False`
+        Then the method is inherited from `UKHSAPage` and matches current expected preview configuration
         """
         # Given
         child_page = fake_page
+        current_expected_previewability = {
+            "FakeTopicPage": False,
+            "FakeCommonPage": False,
+            "FakeCompositePage": False,
+            "FakeLandingPage": False,
+            "FakeMetricsDocumentationParentPage": False,
+            "FakeWhatsNewChildEntry": False,
+            "FakeWhatsNewParentPage": False,
+        }
+        page_type = type(child_page).__name__
 
         # When
         page_is_previewable = child_page.is_previewable()
 
         # Then
-        assert page_is_previewable is False
+        assert page_type in current_expected_previewability
+        assert page_is_previewable is current_expected_previewability[page_type]
         assert type(child_page).is_previewable is UKHSAPage.is_previewable
 
     @pytest.mark.parametrize(
