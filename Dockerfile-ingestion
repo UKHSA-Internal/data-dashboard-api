@@ -6,7 +6,7 @@ ENV PATH=/venv/bin:$PATH
 ENV DJANGO_SETTINGS_MODULE="metrics.api.settings"
 
 # Copy the production-only dependencies into place for the ingestion component
-# COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
+COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
 # Main build process
 RUN pip install --upgrade pip \
