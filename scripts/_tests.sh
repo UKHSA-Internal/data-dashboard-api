@@ -36,22 +36,22 @@ function _tests() {
 
 function _tests_unit() {
     uhd venv activate
-    pytest tests/unit
+    pytest tests/unit "$@"
 }
 
 function _tests_integration() {
     uhd venv activate
-    python -m pytest tests/integration
+    python -m pytest tests/integration "$@"
 }
 
 function _tests_system() {
     uhd venv activate
-    pytest tests/system
+    pytest tests/system "$@"
 }
 
 function _tests_migrations() {
     uhd venv activate
-    pytest tests/migrations
+    pytest tests/migrations "$@"
 }
 
 function _tests_coverage() {
