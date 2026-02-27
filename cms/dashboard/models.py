@@ -32,12 +32,7 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
-class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "official"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PM_NOT_SET = "pm_not_set"
-    SECRET = "secret"
-    TOP_SECRET = "top_secret"
+
 
 
 class UKHSAPage(Page):
