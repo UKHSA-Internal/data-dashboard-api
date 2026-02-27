@@ -255,10 +255,7 @@ class TestAddFrontendPreviewAction:
                 raise RuntimeError("insert failed")
 
         menu_items = BadMenuItems()
-        # Shape:
         # request.user.pk == 5
-        # request -> SimpleNamespace(user=SimpleNamespace(pk=5))
-        # request = type("Fake_Request", (), {"user": type("Fake_User", (), {"pk": 5})()})()
         request = SimpleNamespace(user=SimpleNamespace(pk=5))
 
         class CompositePage(FakePage):
@@ -284,10 +281,7 @@ class TestAddFrontendPreviewAction:
         """
         # Given
         menu_items = []
-        # Shape:
         # request.user.pk == 5
-        # request -> SimpleNamespace(user=SimpleNamespace(pk=5))
-        # request = type("Fake_Request", (), {"user": type("Fake_User", (), {"pk": 5})()})()
         request = SimpleNamespace(user=SimpleNamespace(pk=5))
         context = {"page": FakePage(pk=1, slug="test")}
 
