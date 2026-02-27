@@ -1,6 +1,8 @@
 from unittest import mock
+from typing import Any
 
 from draftjs_exporter.dom import DOM
+from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.site_summary import SummaryItem
 from wagtail.models import Page
 
@@ -68,9 +70,9 @@ def test_construct_page_action_menu_inserts_preview_action():
     # Build a fake page with pk so reverse() works.
     page = FakeCompositePageFactory.build_blank_page(slug="foo")
     page.pk = 99
-    menu_items: list = []
+    menu_items: list[ActionMenuItem] = []
     request = mock.Mock()
-    context = {"page": page}
+    context: dict[str, Any] = {"page": page}
 
     # When
     wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
