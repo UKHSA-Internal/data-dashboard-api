@@ -1,6 +1,11 @@
 name: Pipeline
 
-on: push
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
 
 env:
   APIENV: "LOCAL"
@@ -12,12 +17,35 @@ permissions:
   contents: read # This is required for actions/checkout
 
 jobs:
+
+  ###############################################################################
+  # Secret Scan
+  ###############################################################################
+
+  secret-scan:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: >
+            detect
+            --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+            --exit-code 1
+
   ###############################################################################
   # Install dependencies & build packages
   ###############################################################################
 
   build:
     name: Build
+    needs: [secret-scan]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
