@@ -1,7 +1,7 @@
 import datetime
 
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel,
@@ -14,13 +14,13 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
-from cms.dashboard.models import DataClassificationLevels
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
+    DataClassificationLevels,
     UKHSAPage,
     UKHSAPageRelatedLink,
 )
@@ -252,6 +252,7 @@ class TopicPage(UKHSAPage):
                     "page_classification": "Please select a classification level for this non-public page"
                 }
             )
+
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(

@@ -12,8 +12,7 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.search import index
 
-from cms.dashboard.models import DataClassificationLevels
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import DataClassificationLevels, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
