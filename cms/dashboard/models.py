@@ -36,8 +36,8 @@ class DataClassificationLevels(models.TextChoices):
     OFFICIAL = "official"
     OFFICIAL_SENSITIVE = "official_sensitive"
     protective_marking_not_set = "protective_marking_not_set"
-    SECRET = "secret"  # noqa: S105
-    TOP_SECRET = "top_secret"  # noqa: S105
+    SECRET = "secret"  # nosec #noqa: S105
+    TOP_SECRET = "top_secret"  # nosec #noqa: S105
 
 
 class UKHSAPage(Page):
