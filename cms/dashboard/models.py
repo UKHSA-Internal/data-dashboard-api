@@ -32,9 +32,6 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
-
-
-
 class UKHSAPage(Page):
     """Abstract base class for all page types
 

@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel,
@@ -10,7 +11,7 @@ from wagtail.admin.panels import (
     WagtailAdminPageForm,
 )
 from wagtail.api import APIField
-from wagtail.fields import RichTextField, ValidationError
+from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 from wagtail.search import index
 
@@ -235,16 +236,13 @@ class TopicPage(UKHSAPage):
         # If is_public is true, automatically clear classification
         if self.is_public:
             self.page_classification = None
-        else:
-            # If not public page, classification must be chosen
-            if not self.page_classification:
-                from django.core.exceptions import ValidationError
-
-                raise ValidationError(
-                    {
-                        "page_classification": "Please select a classification level for this non-public page"
-                    }
-                )
+        # If not public page, classification must be chosen
+        elif not self.page_classification:
+            raise ValidationError(
+                {
+                    "page_classification": "Please select a classification level for this non-public page"
+                }
+            )
 
 
 class TopicPageRelatedLink(Orderable):

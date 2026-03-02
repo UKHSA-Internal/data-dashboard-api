@@ -1,5 +1,6 @@
 import logging
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -10,8 +11,6 @@ from wagtail.admin.panels import (
 )
 from wagtail.api import APIField
 from wagtail.search import index
-
-from django.core.exceptions import ValidationError
 
 from cms.common.models import DataClassificationLevels
 from cms.dashboard.models import UKHSAPage
@@ -171,14 +170,13 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         # If is_public is true, automatically clear classification
         if self.is_public:
             self.page_classification = None
-        else:
-            # If not public page, classification must be chosen
-            if not self.page_classification:
-                raise ValidationError(
-                    {
-                        "page_classification": "Please select a classification level for this non-public page"
-                    }
-                )
+        # If not public page, classification must be chosen
+        elif not self.page_classification:
+            raise ValidationError(
+                {
+                    "page_classification": "Please select a classification level for this non-public page"
+                }
+            )
 
 
 class MetricsDocumentationChildPageAnnouncement(Announcement):
