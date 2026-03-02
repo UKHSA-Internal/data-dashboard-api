@@ -39,7 +39,6 @@ class DataClassificationLevels(models.TextChoices):
     SECRET = "secret"  # nosec #noqa: S105
     TOP_SECRET = "top_secret"  # nosec #noqa: S105
 
-
 class UKHSAPage(Page):
     """Abstract base class for all page types
 
