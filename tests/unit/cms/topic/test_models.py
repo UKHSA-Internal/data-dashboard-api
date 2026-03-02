@@ -661,6 +661,7 @@ class TestTemplateOtherRespiratoryVirusesPage:
         }
         assert selected_metrics == expected_metrics
 
+
 class TestCleanMethod:
     @mock.patch(
         f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
@@ -681,9 +682,7 @@ class TestCleanMethod:
         Then a `ValidationError` is raised.
         """
         # Given
-        fake_covid_topic_page = (
-            FakeTopicPageFactory.build_covid_19_page_from_template()
-        )
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
 
         fake_covid_topic_page.is_public = False
         fake_covid_topic_page.page_classification = None
@@ -711,9 +710,7 @@ class TestCleanMethod:
         Then the page classification level is cleared.
         """
         # Given
-        fake_covid_topic_page = (
-            FakeTopicPageFactory.build_covid_19_page_from_template()
-        )
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
 
         fake_covid_topic_page.is_public = True
         fake_covid_topic_page.page_classification = "official"
@@ -743,9 +740,7 @@ class TestCleanMethod:
         Then the page classification level is kept.
         """
         # Given
-        fake_covid_topic_page = (
-            FakeTopicPageFactory.build_covid_19_page_from_template()
-        )
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
 
         fake_covid_topic_page.is_public = False
         fake_covid_topic_page.page_classification = "official"
@@ -754,7 +749,4 @@ class TestCleanMethod:
         fake_covid_topic_page.clean()
 
         # Then
-        assert (
-            fake_covid_topic_page.page_classification
-            == "official"
-        )
+        assert fake_covid_topic_page.page_classification == "official"
