@@ -1,6 +1,12 @@
 name: Pipeline
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
 
 env:
   APIENV: "LOCAL"
@@ -173,6 +179,23 @@ jobs:
           uhd tests coverage
 
   ###############################################################################
+  # Docker build check (PR validation)
+  ###############################################################################
+
+  docker-build-check:
+    name: Docker Build Check
+    needs: [build]
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build main API Docker image
+        run: docker build -t be-main-test -f Dockerfile .
+
+      - name: Build ingestion Docker image
+        run: docker build -t be-ingestion-test -f Dockerfile-ingestion .
+
+  ###############################################################################
   # Build image
   ###############################################################################
 
@@ -187,7 +210,8 @@ jobs:
       test-coverage,
       dependency-checks,
       vulnerability-checks,
-      architecture-checks
+      architecture-checks,
+      docker-build-check
     ]
     runs-on: ubuntu-22.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -212,7 +236,8 @@ jobs:
       test-coverage,
       dependency-checks,
       vulnerability-checks,
-      architecture-checks
+      architecture-checks,
+      docker-build-check
     ]
     runs-on: ubuntu-22.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
