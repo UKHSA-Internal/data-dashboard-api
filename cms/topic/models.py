@@ -2,11 +2,18 @@ import datetime
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface, WagtailAdminPageForm
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
+    WagtailAdminPageForm,
+)
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
+from cms.common.models import DataClassificationLevels
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -37,10 +44,11 @@ class DataClassificationLevels(models.TextChoices):
 
 class TopicPageAdminForm(WagtailAdminPageForm):
     class Media:
-        js = ["topic/js/classification_toggle.js"]
+        js = ["js/classification_toggle.js"]
 
 
 class TopicPage(UKHSAPage):
+    base_form_class = TopicPageAdminForm
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -64,10 +72,6 @@ class TopicPage(UKHSAPage):
         blank=True,
         null=True
     )
-
-    class Media:
-        js = ['topic/js/disable_page_classification.js']
-        css = ['topic/css/disable_page_classification.css']
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -241,13 +245,15 @@ class TopicPage(UKHSAPage):
         if self.is_public:
             self.page_classification = None
         else:
-            # If not public, classification must be chosen
+            # If not public page, classification must be chosen
             if not self.page_classification:
                 from django.core.exceptions import ValidationError
-                raise ValidationError({
-                    "page_classification": "Please select a classification level for this non-public page"
-                })
 
+                raise ValidationError(
+                    {
+                        "page_classification": "Please select a classification level for this non-public page"
+                    }
+                )
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
