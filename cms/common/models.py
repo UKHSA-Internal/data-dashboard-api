@@ -19,14 +19,6 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement
 
 
-class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "official"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    protective_marking_not_set = "protective_marking_not_set"
-    SECRET = "secret"  # noqa: S105
-    TOP_SECRET = "top_secret"  # noqa: S105
-
-
 class CommonPage(UKHSAPage):
     related_links_layout = models.CharField(
         verbose_name="Layout",
