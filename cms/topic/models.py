@@ -2,12 +2,19 @@ import datetime
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface, WagtailAdminPageForm
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
+    WagtailAdminPageForm,
+)
 from wagtail.api import APIField
 from wagtail.fields import RichTextField, ValidationError
 from wagtail.models import Orderable
 from wagtail.search import index
 
+from cms.common.models import DataClassificationLevels
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -28,19 +35,13 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "ABCDEFG"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PM_NOT_SET = "protective_marking_not_set'"
-    SECRET = "secret"  # noqa
-    TOP_SECRET = "top_secret"  # noqa
-    
 class TopicPageAdminForm(WagtailAdminPageForm):
     class Media:
-        js = ["topic/js/classification_toggle.js"]
+        js = ["common/js/classification_toggle.js"]
 
 
 class TopicPage(UKHSAPage):
+    base_form_class = TopicPageAdminForm
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -61,13 +62,9 @@ class TopicPage(UKHSAPage):
         choices=DataClassificationLevels.choices,
         default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
-        blank = True,
-        null = True
+        blank=True,
+        null=True,
     )
-
-    class Media:
-        js = ['topic/js/disable_page_classification.js']
-        css = ['topic/css/disable_page_classification.css']
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -232,8 +229,6 @@ class TopicPage(UKHSAPage):
         timestamps = [timestamp for timestamp in timestamps if timestamp]
         return max(timestamps)
 
-    
-
     def clean(self):
         super().clean()
 
@@ -241,13 +236,15 @@ class TopicPage(UKHSAPage):
         if self.is_public:
             self.page_classification = None
         else:
-            # If not public, classification must be chosen
+            # If not public page, classification must be chosen
             if not self.page_classification:
                 from django.core.exceptions import ValidationError
-                raise ValidationError({
-                    "page_classification": "Please select a classification level for this non-public page"
-                })
 
+                raise ValidationError(
+                    {
+                        "page_classification": "Please select a classification level for this non-public page"
+                    }
+                )
 
 
 class TopicPageRelatedLink(Orderable):

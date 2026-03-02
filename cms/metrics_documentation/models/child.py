@@ -2,11 +2,13 @@ import logging
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, WagtailAdminPageForm
 from wagtail.api import APIField
 from wagtail.search import index
 
+from cms.common.models import DataClassificationLevels
 from cms.dashboard.models import UKHSAPage
+from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
 from cms.metrics_interface.field_choices_callables import (
@@ -22,13 +24,25 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         message = f"The `{topic}` is not available for selected metric of `{metric}`"
         super().__init__(message)
 
-
+class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
+    class Media:
+        js = ["common/js/classification_toggle.js"]
+        
 class MetricsDocumentationChildEntry(UKHSAPage):
+    base_form_class = MetricsDocumentationChildEntryAdminForm
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     is_public = models.BooleanField(
         default=False,
         verbose_name="enable public page",
+    )
+    page_classification = models.CharField(
+        max_length=50,
+        choices=DataClassificationLevels.choices,
+        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        help_text=help_texts.PAGE_CLASSIFICATION,
+        blank = True,
+        null = True
     )
     topic = models.CharField(
         max_length=255,
@@ -47,6 +61,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("is_public"),
+        FieldPanel("page_classification"),
         FieldPanel("body"),
     ]
 
@@ -57,6 +72,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("topic"),
         APIField("metric_group"),
         APIField("is_public"),
+        APIField("page_classification"),
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),

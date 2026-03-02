@@ -1,6 +1,0 @@
-
-/* Make it look visually disabled like other admin fields */
-.disabled-classification {
-    opacity: 0.5;
-    pointer-events: none;
-}
