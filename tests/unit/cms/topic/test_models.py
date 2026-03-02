@@ -664,11 +664,11 @@ class TestTemplateOtherRespiratoryVirusesPage:
 
 class TestCleanMethod:
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     def test_public_error_raised_if_invalid_classification(
@@ -692,11 +692,11 @@ class TestCleanMethod:
             fake_covid_topic_page.clean()
 
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     def test_public_page_clears_page_classification(
@@ -722,11 +722,11 @@ class TestCleanMethod:
         assert fake_covid_topic_page.page_classification is None
 
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     def test_non_public_page_doesnt_clean_page_classification(
