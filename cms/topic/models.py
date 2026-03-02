@@ -1,7 +1,7 @@
 import datetime
 
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel,
@@ -15,7 +15,6 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 from wagtail.search import index
 
-from cms.dashboard.models import DataClassificationLevels
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -23,6 +22,7 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
     MAXIMUM_URL_FIELD_LENGTH,
+    DataClassificationLevels,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
