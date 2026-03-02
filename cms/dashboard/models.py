@@ -9,6 +9,7 @@ from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Page, SiteRootPath
+from wagtail.search import index
 
 from cms import seo
 
@@ -86,6 +87,12 @@ class UKHSAPage(Page):
 
     announcement_content_panels = [
         InlinePanel("announcements", heading="Announcements", label="Announcement"),
+    ]
+
+    search_fields = Page.search_fields + [
+        index.SearchField("body"),
+        index.SearchField("title"),
+        index.SearchField("search_description"),
     ]
 
     class Meta:

@@ -11,6 +11,34 @@ from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties im
 )
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
+from wagtail.search.index import SearchField
+
+
+class TestTopicPage:
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "page_description",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `TopicPage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        blank_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        # When
+        search_fields: list[SearchField] = blank_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields
 
 
 class TestTemplateCOVID19Page:

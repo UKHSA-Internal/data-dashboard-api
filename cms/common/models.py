@@ -4,7 +4,6 @@ from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInte
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
-from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
 from cms.dashboard.enums import (
@@ -27,10 +26,6 @@ class CommonPage(UKHSAPage):
         max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
         choices=RelatedLinksLayoutEnum.choices(),
     )
-
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("body"),
-    ]
 
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("body"),
