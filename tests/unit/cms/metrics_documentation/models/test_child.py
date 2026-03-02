@@ -239,11 +239,11 @@ class TestMetricsDocumentationChildEntry:
             fake_metrics_documentation_child_entry_page.find_topic(topics=fake_topics)
 
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
@@ -273,11 +273,11 @@ class TestMetricsDocumentationChildEntry:
             fake_metrics_documentation_child_entry_page.clean()
 
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
@@ -309,11 +309,11 @@ class TestMetricsDocumentationChildEntry:
         assert fake_metrics_documentation_child_entry_page.page_classification is None
 
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
         return_value=None,
     )
     @mock.patch(
-        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
