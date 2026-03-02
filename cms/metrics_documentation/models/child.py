@@ -2,7 +2,12 @@ import logging
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, WagtailAdminPageForm
+from wagtail.admin.panels import (
+    FieldPanel,
+    ObjectList,
+    TabbedInterface,
+    WagtailAdminPageForm,
+)
 from wagtail.api import APIField
 from wagtail.search import index
 
@@ -24,10 +29,12 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         message = f"The `{topic}` is not available for selected metric of `{metric}`"
         super().__init__(message)
 
+
 class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
     class Media:
         js = ["common/js/classification_toggle.js"]
-        
+
+
 class MetricsDocumentationChildEntry(UKHSAPage):
     base_form_class = MetricsDocumentationChildEntryAdminForm
     page_description = models.TextField()
@@ -41,8 +48,8 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         choices=DataClassificationLevels.choices,
         default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
-        blank = True,
-        null = True
+        null=True,
+        blank=True,
     )
     topic = models.CharField(
         max_length=255,
@@ -155,6 +162,23 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
+
+    def clean(self):
+        super().clean()
+
+        # If is_public is true, automatically clear classification
+        if self.is_public:
+            self.page_classification = None
+        else:
+            # If not public page, classification must be chosen
+            if not self.page_classification:
+                from django.core.exceptions import ValidationError
+
+                raise ValidationError(
+                    {
+                        "page_classification": "Please select a classification level for this non-public page"
+                    }
+                )
 
 
 class MetricsDocumentationChildPageAnnouncement(Announcement):

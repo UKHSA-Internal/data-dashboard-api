@@ -62,8 +62,8 @@ class TopicPage(UKHSAPage):
         choices=DataClassificationLevels.choices,
         default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
-        blank=True,
         null=True,
+        blank=True,
     )
 
     related_links_layout = models.CharField(
