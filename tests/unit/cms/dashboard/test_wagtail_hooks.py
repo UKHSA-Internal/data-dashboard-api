@@ -1,6 +1,8 @@
 from unittest import mock
+from typing import Any
 
 from draftjs_exporter.dom import DOM
+from wagtail.admin.action_menu import ActionMenuItem
 from wagtail.admin.site_summary import SummaryItem
 from wagtail.models import Page
 
@@ -52,6 +54,35 @@ def test_register_icons_returns_correct_list_of_icons():
     # Then
     expected_icons = original_icons + wagtail_hooks.ADDITIONAL_CUSTOM_ICONS
     assert registered_icons == expected_icons
+
+
+def test_construct_page_action_menu_inserts_preview_action():
+    """
+    Given a composite page and an empty page action menu
+    When the ``add_frontend_preview_action`` hook is called
+    Then a preview action is prepended with the expected redirect URL
+    """
+    from tests.fakes.factories.cms.composite_page_factory import (
+        FakeCompositePageFactory,
+    )
+
+    # Given
+    # Build a fake page with pk so reverse() works.
+    page = FakeCompositePageFactory.build_blank_page(slug="foo")
+    page.pk = 99
+    menu_items: list[ActionMenuItem] = []
+    request = mock.Mock()
+    context: dict[str, Any] = {"page": page}
+
+    # When
+    wagtail_hooks.add_frontend_preview_action(menu_items, request, context)
+
+    # Then
+    assert menu_items, "hook should add at least one item"
+    first = menu_items[0]
+    # Verify it is an action item with our name and correct URL.
+    assert first.name == "action-preview"
+    assert "/preview-to-frontend/99/" in first.get_url(context)
 
 
 def test_hide_default_menu_items():

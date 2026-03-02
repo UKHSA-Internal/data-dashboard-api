@@ -36,11 +36,6 @@ class LandingPage(UKHSAPage):
 
     objects = LandingPageManager()
 
-    @classmethod
-    def is_previewable(cls):
-        """Returns False. This is a headline CMS, preview panel is not supported ."""
-        return False
-
     def get_url_parts(self, request=None) -> tuple[int, str, str]:
         """Builds the full URL for the home page
 

@@ -130,6 +130,36 @@ See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-se
 
 ---
 
+### CMS Page previews configuration
+
+Wagtail Content Management System (CMS) allows users to preview pages in the configured front-end.  The following environment variables are supported:
+
+#### `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE`
+
+Template URL for the front-end.  When the user clicks the Preview button, the browser will be redirected to the specified front-end URL as below:
+
+Expected placeholders:
+- `{page_id}`: the Wagtail page ID (used to call the drafts endpoint at `/api/drafts/{id}/`)
+- `{token}`: short-lived signed preview token
+
+Example:
+- `https://frontend.example/preview?page_id={page_id}&t={token}`
+
+Local default template used by the backend:
+- `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`
+
+If omitted, the local default template is used.
+
+#### `PAGE_PREVIEWS_TOKEN_SALT`
+
+Signing salt used when issuing and validating preview tokens.  If omitted, the backend uses `preview-token`.
+
+#### `PAGE_PREVIEWS_TOKEN_TTL_SECONDS`
+
+Preview token time-to-live (TTL) in seconds. If omitted, the backend default is 120 seconds.
+
+---
+
 ### Email configuration
 
 #### `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
@@ -141,7 +171,7 @@ The email address to send feedback suggestions emails to.
 The email address to send feedback suggestions emails from.
 Note that this is expected to be a registered AWS SES domain.
 
----
+ ---
 
 ### Caching configuration
 
