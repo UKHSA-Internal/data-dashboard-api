@@ -15,7 +15,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 from wagtail.search import index
 
-from cms.common.models import DataClassificationLevels
+from cms.dashboard.models import DataClassificationLevels
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
