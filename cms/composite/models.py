@@ -6,16 +6,14 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
-from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
 from cms.composite.managers import CompositePageManager
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import UKHSAPage, UKHSAPageRelatedLink
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 from cms.dynamic_content.announcements import Announcement
@@ -118,30 +116,14 @@ class CompositePage(UKHSAPage):
         return max(timestamps)
 
 
-class CompositeRelatedLink(Orderable):
+class CompositeRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
         CompositePage,
         on_delete=models.SET_NULL,
         null=True,
         related_name="related_links",
     )
-    title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[], blank=True)
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("url"),
-        FieldPanel("body"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("url"),
-        APIField("body"),
-    ]
 
 
 class CompositePageAnnouncement(Announcement):
