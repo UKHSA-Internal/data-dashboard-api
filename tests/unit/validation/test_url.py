@@ -22,7 +22,7 @@ class TestValidateHTTPScheme:
         with pytest.raises(ValidationError) as exc_info:
             validate_https_scheme("http://example.com")
         assert exc_info.value.code == self.error_code
-        assert self.error_message in str(exc_info.value)
+        assert self.error_message == exc_info.value.message
 
     def test_validate_https_scheme_https_scheme(self):
         """Should not raise for https scheme."""
@@ -33,7 +33,7 @@ class TestValidateHTTPScheme:
         with pytest.raises(ValidationError) as exc_info:
             validate_https_scheme("HTTP://example.com")
         assert exc_info.value.code == self.error_code
-        assert self.error_message in str(exc_info.value)
+        assert self.error_message == exc_info.value.message
 
     def test_validate_https_scheme_mixed_case_https(self):
         """Should not raise for mixed case https scheme."""
