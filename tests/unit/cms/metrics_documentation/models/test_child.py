@@ -1,5 +1,6 @@
 from unittest import mock
 
+from django.core.exceptions import ValidationError
 import pytest
 from wagtail.admin.panels import FieldPanel
 from wagtail.api.conf import APIField
@@ -28,6 +29,7 @@ class TestMetricsDocumentationChildEntry:
             "last_published_at",
             "page_description",
             "is_public",
+            "page_classification",
         ],
     )
     @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
@@ -235,3 +237,112 @@ class TestMetricsDocumentationChildEntry:
         # When / Then
         with pytest.raises(InvalidTopicForChosenMetricForChildEntryError):
             fake_metrics_documentation_child_entry_page.find_topic(topics=fake_topics)
+
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
+    def test_public_error_raised_if_invalid_classification(
+        self,
+        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
+        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When no page classification is given.
+        Then a `ValidationError` is raised.
+        """
+        # Given
+        fake_metrics_documentation_child_entry_page = (
+            FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
+        )
+
+        fake_metrics_documentation_child_entry_page.is_public = False
+        fake_metrics_documentation_child_entry_page.page_classification = None
+
+        # When/Then
+        with pytest.raises(ValidationError):
+            fake_metrics_documentation_child_entry_page.clean()
+
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
+    def test_public_page_clears_page_classification(
+        self,
+        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
+        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is True (i.e the page is a public page).
+        When a page classification is given.
+        Then the page classification level is cleared.
+        """
+        # Given
+        fake_metrics_documentation_child_entry_page = (
+            FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
+        )
+
+        fake_metrics_documentation_child_entry_page.is_public = True
+        fake_metrics_documentation_child_entry_page.page_classification = "official"
+
+        # When
+        fake_metrics_documentation_child_entry_page.clean()
+
+        # Then
+        assert fake_metrics_documentation_child_entry_page.page_classification is None
+
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        f"cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
+    def test_non_public_page_doesnt_clean_page_classification(
+        self,
+        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
+        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When a page classification is given.
+        Then the page classification level is kept.
+        """
+        # Given
+        fake_metrics_documentation_child_entry_page = (
+            FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
+        )
+
+        fake_metrics_documentation_child_entry_page.is_public = False
+        fake_metrics_documentation_child_entry_page.page_classification = "official"
+
+        # When
+        fake_metrics_documentation_child_entry_page.clean()
+
+        # Then
+        assert (
+            fake_metrics_documentation_child_entry_page.page_classification
+            == "official"
+        )
