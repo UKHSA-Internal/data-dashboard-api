@@ -552,3 +552,7 @@ CONFIDENCE_INTERVALS_DESCRIPTION: str = """
 An optional body of text to accompany this block.
 This text will be displayed above the metrics table if confidence intervals is enabled.
 """
+
+PAGE_CLASSIFICATION: str = """
+The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
+"""

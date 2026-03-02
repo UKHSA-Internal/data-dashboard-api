@@ -2,11 +2,18 @@ import logging
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import (
+    FieldPanel,
+    ObjectList,
+    TabbedInterface,
+    WagtailAdminPageForm,
+)
 from wagtail.api import APIField
 from wagtail.search import index
 
+from cms.common.models import DataClassificationLevels
 from cms.dashboard.models import UKHSAPage
+from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
 from cms.metrics_interface.field_choices_callables import (
@@ -23,12 +30,26 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         super().__init__(message)
 
 
+class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
+    class Media:
+        js = ["common/js/classification_toggle.js"]
+
+
 class MetricsDocumentationChildEntry(UKHSAPage):
+    base_form_class = MetricsDocumentationChildEntryAdminForm
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     is_public = models.BooleanField(
         default=False,
         verbose_name="enable public page",
+    )
+    page_classification = models.CharField(
+        max_length=50,
+        choices=DataClassificationLevels.choices,
+        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        help_text=help_texts.PAGE_CLASSIFICATION,
+        null=True,
+        blank=True,
     )
     topic = models.CharField(
         max_length=255,
@@ -47,6 +68,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("is_public"),
+        FieldPanel("page_classification"),
         FieldPanel("body"),
     ]
 
@@ -57,6 +79,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("topic"),
         APIField("metric_group"),
         APIField("is_public"),
+        APIField("page_classification"),
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),
@@ -139,6 +162,23 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
+
+    def clean(self):
+        super().clean()
+
+        # If is_public is true, automatically clear classification
+        if self.is_public:
+            self.page_classification = None
+        else:
+            # If not public page, classification must be chosen
+            if not self.page_classification:
+                from django.core.exceptions import ValidationError
+
+                raise ValidationError(
+                    {
+                        "page_classification": "Please select a classification level for this non-public page"
+                    }
+                )
 
 
 class MetricsDocumentationChildPageAnnouncement(Announcement):
