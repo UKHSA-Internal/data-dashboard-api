@@ -52,6 +52,7 @@ if config.APP_MODE != "INGESTION":
         "metrics.api",
         "cms.home",
         "cms.topic",
+        "cms.topics_list",
         "cms.dashboard",
         "cms.common",
         "cms.composite",
