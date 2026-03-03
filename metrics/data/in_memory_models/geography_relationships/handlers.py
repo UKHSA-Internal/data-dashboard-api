@@ -10,7 +10,15 @@ from metrics.data.in_memory_models.geography_relationships.region_to_nation impo
 from metrics.data.in_memory_models.geography_relationships.utla_to_region import (
     UTLA_TO_REGION_LOOKUP,
 )
-from validation.enums import GeographyType
+from validation.enums import (
+    GeographyType,
+    GovOfficeRegionUTLAs,
+    UKHSARegionUTLAs,
+    UTLAtoLTLA,
+)
+from validation.enums.gov_office_region_enums import GovOfficeRegion
+from validation.enums.ukhsa_region_enums import UKHSARegion
+from validation.enums.utla_ltla_enums import LTLAs, UTLAs
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 
 
@@ -119,3 +127,75 @@ def get_upstream_relationships_for_geography(
         return _get_upstream_relationships_for_utla(geography_code=geography_code)
 
     return None
+
+
+def _get_ltla_from_utlas(utlas: list):
+    ltlas = []
+    for ltla in utlas:
+        ltlas.extend(UTLAtoLTLA[ltla.upper()].return_list())
+
+    return ltlas
+
+
+def get_downstream_relationships_for_geography(
+    geography_type: str, geography_name: str
+):
+    """Gets the downstream/child geographies which are related to the given geography
+
+    Notes:
+        For a given geography this will get the geographies
+        which sit within this given geography.
+        For example, given either the name or geography code associated
+        with the `UKHSA Region` of `London`, all London UTLAs and LTLAs
+        will be returned.
+
+    If the geography type is not supported, then `None` will be returned
+
+    Returns:
+        An object containing lists of all downstream geographies
+        Or None if the geography type is not supported.
+
+    """
+
+    if geography_type not in {t.value for t in GeographyType}:
+        return None
+
+    ukhsa_regions = []
+    government_office_regions = []
+    nhs_regions = []
+    nhs_trusts = []
+    upper_tier_local_authorities = []
+    lower_tier_local_authorities = []
+
+    key = geography_name.replace(" ", "_").upper()
+
+    try:
+        match geography_type:
+            case "UKHSA Region":
+                ukhsa_regions.append(UKHSARegion[key].value)
+                utlas = UKHSARegionUTLAs[key].return_list()
+                utla_names = UKHSARegionUTLAs[key].return_name_list()
+                upper_tier_local_authorities.extend(utlas)
+                lower_tier_local_authorities.extend(_get_ltla_from_utlas(utla_names))
+            case "Government Office Region":
+                government_office_regions.append(GovOfficeRegion[key].value)
+                utlas = GovOfficeRegionUTLAs[key].return_list()
+                utla_names = GovOfficeRegionUTLAs[key].return_name_list()
+                upper_tier_local_authorities.extend(utlas)
+                lower_tier_local_authorities.extend(_get_ltla_from_utlas(utla_names))
+            case "Upper Tier Local Authority":
+                upper_tier_local_authorities.extend(UTLAs[key].value)
+                lower_tier_local_authorities.extend(_get_ltla_from_utlas([key]))
+            case "Lower Tier Local Authority":
+                lower_tier_local_authorities.extend(LTLAs[key].value)
+    except KeyError:
+        return None
+
+    return {
+        "ukhsa_regions": ukhsa_regions,
+        "government_office_regions": government_office_regions,
+        "nhs_regions": nhs_regions,
+        "nhs_trusts": nhs_trusts,
+        "upper_tier_local_authorities": upper_tier_local_authorities,
+        "lower_tier_local_authorities": lower_tier_local_authorities,
+    }

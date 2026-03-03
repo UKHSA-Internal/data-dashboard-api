@@ -111,7 +111,7 @@ UTLA_TO_REGION_LOOKUP: dict[str, str] = {
     "E09000011": "London",                          # Greenwich
     "E09000012": "London",                          # Hackney
     "E09000013": "London",                          # Hammersmith and Fulham
-    "E09000014": "London",                          # Harringey
+    "E09000014": "London",                          # Haringey
     "E09000015": "London",                          # Harrow
     "E09000016": "London",                          # Havering
     "E09000017": "London",                          # Hillingdon
