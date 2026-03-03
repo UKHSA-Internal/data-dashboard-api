@@ -64,10 +64,12 @@ class TestCMSDraftPagesViewSet:
         Then HTTP 401 Unauthorized is returned
         """
         # Given
-        request = RequestFactory().get("/api/drafts/1/")
+        request = RequestFactory().get("/api/drafts/test-page/")
 
         # When
-        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(
+            request, slug="test-page"
+        )
 
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -87,19 +89,24 @@ class TestCMSDraftPagesViewSet:
         # Given
         spy_loads.side_effect = ValueError("bad token")
         request = RequestFactory().get(
-            "/api/drafts/1/",
+            "/api/drafts/test-page/",
             HTTP_AUTHORIZATION="Bearer token",
         )
 
         # When
-        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(
+            request, slug="test-page"
+        )
 
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+    @mock.patch.object(CMSDraftPagesViewSet, "get_object")
     @mock.patch(f"{MODULE_PATH}.loads")
     def test_detail_view_returns_401_when_page_id_does_not_match(
-        self, spy_loads: mock.MagicMock
+        self,
+        spy_loads: mock.MagicMock,
+        spy_get_object: mock.MagicMock,
     ):
         """
         Given a token payload whose `page_id` does not match the request id
@@ -110,14 +117,17 @@ class TestCMSDraftPagesViewSet:
             `spy_loads`: To return a payload with mismatched `page_id`.
         """
         # Given
+        spy_get_object.return_value = mock.Mock(pk=1)
         spy_loads.return_value = {"page_id": 999, "exp": 9999999999}
         request = RequestFactory().get(
-            "/api/drafts/1/",
+            "/api/drafts/test-page/",
             HTTP_AUTHORIZATION="Bearer token",
         )
 
         # When
-        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(
+            request, slug="test-page"
+        )
 
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -140,12 +150,14 @@ class TestCMSDraftPagesViewSet:
         # Given
         spy_loads.return_value = payload
         request = RequestFactory().get(
-            "/api/drafts/1/",
+            "/api/drafts/test-page/",
             HTTP_AUTHORIZATION="Bearer token",
         )
 
         # When
-        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(
+            request, slug="test-page"
+        )
 
         # Then
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -172,6 +184,8 @@ class TestCMSDraftPagesViewSet:
 
         # Given
         class FakeInstance:
+            pk = 1
+
             def get_latest_revision_as_object(self):
                 return object()
 
@@ -183,12 +197,14 @@ class TestCMSDraftPagesViewSet:
         spy_get_serializer.return_value = FakeSerializer()
 
         request = RequestFactory().get(
-            "/api/drafts/1/",
+            "/api/drafts/test-page/",
             HTTP_AUTHORIZATION="Bearer token",
         )
 
         # When
-        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(request, pk=1)
+        response = CMSDraftPagesViewSet.as_view({"get": "detail_view"})(
+            request, slug="test-page"
+        )
 
         # Then
         assert response.status_code == status.HTTP_200_OK

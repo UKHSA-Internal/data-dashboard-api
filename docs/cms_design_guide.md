@@ -116,10 +116,10 @@ The CMS integrates with the frontend via a REST API using a token-based preview 
 When a CMS user clicks the preview button, they are redirected to the frontend with:
 - `page_id`: the Wagtail page ID
 - `slug_name`: the Wagtail page slug
-- `token`: a short-lived signed token (default 15 minutes TTL)
+- `token`: a short-lived signed token (default 120 seconds TTL; 15 minutes in local dev)
 
 The frontend uses these parameters to fetch draft content:
-1. Call `/api/drafts/{page_id}/` with `Authorization: Bearer {token}` header
+1. Call `/api/drafts/{slug_name}/` with `Authorization: Bearer {token}` header
 2. The API validates the token signature, `page_id` match, and expiration
 3. Returns the latest draft revision including unpublished changes
 

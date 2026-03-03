@@ -34,7 +34,7 @@ class TestDraftPagesAPI:
         """
         Given an APIClient
         And a `Page` record which has unpublished changes
-        When the detail `GET /api/drafts/{id}/` endpoint is hit
+        When the detail `GET /api/drafts/{slug}/` endpoint is hit
         Then an HTTP 200 OK response is returned
         """
         # Given
@@ -74,7 +74,7 @@ class TestDraftPagesAPI:
 
         # When
         response_from_drafts_endpoint: Response = api_client.get(
-            path=f"{self.path}/{page.pk}/",
+            path=f"{self.path}/{page.slug}/",
             format="json",
             **authorization_header,
         )
@@ -87,7 +87,7 @@ class TestDraftPagesAPI:
         assert response_from_drafts_endpoint.status_code == HTTPStatus.OK
         assert response_from_pages_endpoint.status_code == HTTPStatus.OK
 
-        # Get the more recent unpublished `title` from the `api/drafts/{id}` response
+        # Get the more recent unpublished `title` from the `api/drafts/{slug}` response
         title_field_from_drafts_endpoint: str = response_from_drafts_endpoint.data[
             "title"
         ]
@@ -96,7 +96,7 @@ class TestDraftPagesAPI:
             "title"
         ]
 
-        # Check the `title` from the `api/drafts/{id}`
+        # Check the `title` from the `api/drafts/{slug}`
         # is the more recent unpublished value
         # and not the older published value
         assert (

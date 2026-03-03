@@ -139,7 +139,7 @@ Wagtail Content Management System (CMS) allows users to preview pages in the con
 Template URL for the front-end.  When the user clicks the Preview button, the browser will be redirected to the specified front-end URL as below:
 
 Expected placeholders:
-- `{page_id}`: the Wagtail page ID (used to call the drafts endpoint at `/api/drafts/{id}/`)
+- `{page_id}`: the Wagtail page ID (validated against the draft endpoint request)
 - `{slug_name}`: the Wagtail page slug used by the frontend route/query handling
 - `{token}`: short-lived signed preview token
 
@@ -158,6 +158,9 @@ Signing salt used when issuing and validating preview tokens.  If omitted, the b
 #### `PAGE_PREVIEWS_TOKEN_TTL_SECONDS`
 
 Preview token time-to-live (TTL) in seconds. If omitted, the backend default is 120 seconds.
+
+Local development override:
+- When running with `APIENV=LOCAL`, settings override this to 900 seconds (15 minutes).
 
 ---
 

@@ -70,6 +70,8 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 class CMSDraftPagesViewSet(PagesAPIViewSet):
     base_serializer_class = CMSDraftPagesSerializer
     permission_classes = []
+    lookup_field = "slug"
+    lookup_url_kwarg = "slug"
 
     @override
     def get_queryset(self):
@@ -84,7 +86,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         """
         return Page.objects.all().specific()
 
-    def detail_view(self, request: Request, pk: int) -> Response:
+    def detail_view(self, request: Request, slug: str) -> Response:
         """Returns a page including any unpublished changes (draft preview).
 
         Validates the preview token from the Authorization header before returning
@@ -97,7 +99,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         Args:
             request: The HTTP request with an Authorization header containing a
                 Bearer token.
-            pk: The page ID to preview.
+            slug: The page slug to preview.
 
         Returns:
             Response: JSON payload with the latest revision, or HTTP 401 if
@@ -113,15 +115,16 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         except (BadSignature, SignatureExpired, ValueError, TypeError):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        payload_page_id = payload.get("page_id")
-        if payload_page_id is None or int(payload_page_id) != int(pk):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
         exp = payload.get("exp")
         if exp is None or timezone.now().timestamp() > exp:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         instance = self.get_object()
+
+        payload_page_id = payload.get("page_id")
+        if payload_page_id is None or int(payload_page_id) != int(instance.pk):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         instance = instance.get_latest_revision_as_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -131,9 +134,9 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         """This returns a list of URL patterns for the viewset.
 
         Notes:
-            Only the detail `/{id}` path is included.
+            Only the detail `/{slug}` path is included.
 
         """
         return [
-            path("<int:pk>/", cls.as_view({"get": "detail_view"}), name="detail"),
+            path("<slug:slug>/", cls.as_view({"get": "detail_view"}), name="detail"),
         ]

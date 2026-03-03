@@ -291,6 +291,9 @@ WAGTAILADMIN_BASE_URL = "http://example.com"
 # Set to None for no limit.
 WAGTAILAPI_LIMIT_MAX = None
 
+# CMS preview token TTL default (seconds)
+PAGE_PREVIEWS_TOKEN_TTL_SECONDS = 120
+
 
 CSRF_TRUSTED_ORIGINS = ["https://*.ukhsa-dashboard.data.gov.uk"]
 CSRF_COOKIE_SECURE = True
