@@ -131,9 +131,9 @@ def frontend_preview_button(
         template = getattr(
             settings,
             "PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE",
-            "http://localhost:3000/preview?page_id={page_id}&draft=true",
+            "http://localhost:3000/preview?page_id={page_id}&slug_name={slug_name}&draft=true",
         )
-        admin_url = template.format(page_id=page.pk)
+        admin_url = template.format(page_id=page.pk, slug_name=page.slug)
 
     return [Button("Preview", url=admin_url, priority=10)]
 

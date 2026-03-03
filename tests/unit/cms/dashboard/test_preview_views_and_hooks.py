@@ -78,7 +78,7 @@ class TestFrontendPreviewButton:
         # Given
         spy_reverse.side_effect = NoReverseMatch("no reverse")
         settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
-            "https://frontend.test/preview?page_id={page_id}"
+            "https://frontend.test/preview?page_id={page_id}&slug_name={slug_name}"
         )
         page = SimpleNamespace(pk=123, slug="bar", custom_preview_enabled=True)
 
@@ -94,7 +94,7 @@ class TestFrontendPreviewButton:
         assert isinstance(buttons, list) and buttons
         button = buttons[0]
         assert isinstance(button, Button)
-        assert button.url == "https://frontend.test/preview?page_id=123"
+        assert button.url == "https://frontend.test/preview?page_id=123&slug_name=bar"
 
     def test_non_enabled_page_returns_empty(self):
         """
@@ -155,7 +155,7 @@ class TestPreviewToFrontendRedirectView:
         # Given
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
         settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
-            "https://frontend.test/preview?page_id={page_id}&t={token}"
+            "https://frontend.test/preview?page_id={page_id}&slug_name={slug_name}&t={token}"
         )
         request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
@@ -168,7 +168,9 @@ class TestPreviewToFrontendRedirectView:
         location = (
             response.url if hasattr(response, "url") else response.get("Location")
         )
-        assert location.startswith("https://frontend.test/preview?page_id=1&t=")
+        assert location.startswith(
+            "https://frontend.test/preview?page_id=1&slug_name=cover&t="
+        )
 
 
 class TestAddFrontendPreviewAction:

@@ -115,6 +115,7 @@ The CMS integrates with the frontend via a REST API using a token-based preview 
 
 When a CMS user clicks the preview button, they are redirected to the frontend with:
 - `page_id`: the Wagtail page ID
+- `slug_name`: the Wagtail page slug
 - `token`: a short-lived signed token (default 15 minutes TTL)
 
 The frontend uses these parameters to fetch draft content:
@@ -122,7 +123,7 @@ The frontend uses these parameters to fetch draft content:
 2. The API validates the token signature, `page_id` match, and expiration
 3. Returns the latest draft revision including unpublished changes
 
-The preview URL template is configurable via `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE` environment variable (defaults to `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`).
+The preview URL template is configurable via `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE` environment variable (defaults to `http://localhost:3000/preview?page_id={page_id}&slug_name={slug_name}&draft=true&t={token}`).
 
 Token validation:
 - Verifies signature using `PAGE_PREVIEWS_TOKEN_SALT` (default: `preview-token`)

@@ -72,16 +72,21 @@ class PreviewToFrontendRedirectView(View):
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
 
         # Build the frontend URL using a configurable template. The template
-        # should include placeholders for `{page_id}` and `{token}`. A default
+        # should include placeholders for `{page_id}`, `{slug_name}` and `{token}`.
+        # A default
         # value is provided to preserve previous behaviour.
         # See docs/environment_variables.md for PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE format.
         template = getattr(
             settings,
             "PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE",
-            "http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}",
+            "http://localhost:3000/preview?page_id={page_id}&slug_name={slug_name}&draft=true&t={token}",
         )
 
-        frontend_url = template.format(page_id=page.pk, token=token)
+        frontend_url = template.format(
+            page_id=page.pk,
+            slug_name=page.slug,
+            token=token,
+        )
 
         return redirect(frontend_url)
 

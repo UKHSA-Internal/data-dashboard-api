@@ -140,13 +140,14 @@ Template URL for the front-end.  When the user clicks the Preview button, the br
 
 Expected placeholders:
 - `{page_id}`: the Wagtail page ID (used to call the drafts endpoint at `/api/drafts/{id}/`)
+- `{slug_name}`: the Wagtail page slug used by the frontend route/query handling
 - `{token}`: short-lived signed preview token
 
 Example:
-- `https://frontend.example/preview?page_id={page_id}&t={token}`
+- `https://frontend.example/preview?page_id={page_id}&slug_name={slug_name}&t={token}`
 
 Local default template used by the backend:
-- `http://localhost:3000/preview?page_id={page_id}&draft=true&t={token}`
+- `http://localhost:3000/preview?page_id={page_id}&slug_name={slug_name}&draft=true&t={token}`
 
 If omitted, the local default template is used.
 
