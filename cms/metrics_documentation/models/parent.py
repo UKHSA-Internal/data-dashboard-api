@@ -4,7 +4,6 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
 
 from cms.dashboard.models import (
     UKHSAPage,
@@ -41,11 +40,6 @@ class MetricsDocumentationParentPage(UKHSAPage):
             MinValueValidator(5),
         ],
     )
-
-    # Fields to index for searching within the CMS application
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("body"),
-    ]
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [

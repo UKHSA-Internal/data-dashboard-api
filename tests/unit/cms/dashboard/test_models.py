@@ -3,6 +3,8 @@ from unittest import mock
 import pytest
 from django.core.exceptions import ValidationError
 
+from wagtail.search.index import SearchField
+
 from cms.dashboard.models import UKHSAPage
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.composite_page_factory import FakeCompositePageFactory
@@ -110,3 +112,30 @@ class TestUKHSAPage:
         # When / Then
         with pytest.raises(ValidationError):
             fake_page.clean()
+
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "body",
+            "title",
+            "page_description",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `UKHSAPage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        blank_page = FakeCompositePageFactory.build_blank_page()
+
+        # When
+        search_fields: list[SearchField] = blank_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields

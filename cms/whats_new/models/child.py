@@ -31,7 +31,6 @@ class WhatsNewChildEntry(UKHSAPage):
 
     # Fields to index for searching within the CMS application
     search_fields = UKHSAPage.search_fields + [
-        index.SearchField("body"),
         index.SearchField("badge"),
     ]
 

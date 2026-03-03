@@ -36,7 +36,6 @@ class WhatsNewParentPage(UKHSAPage):
     # Content panels to render for editing within the CMS application
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("date_posted"),
-        FieldPanel("body"),
         FieldPanel("show_pagination"),
         FieldPanel("pagination_size"),
     ]

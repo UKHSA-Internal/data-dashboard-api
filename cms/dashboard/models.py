@@ -91,7 +91,6 @@ class UKHSAPage(Page):
 
     search_fields = Page.search_fields + [
         index.SearchField("body"),
-        index.SearchField("title"),
         index.SearchField("search_description"),
     ]
 

@@ -47,7 +47,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("is_public"),
-        FieldPanel("body"),
     ]
 
     # Sets which fields to expose on the API.
