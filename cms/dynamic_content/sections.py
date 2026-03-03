@@ -58,10 +58,13 @@ class SectionWithLink(StructBlock):
         help_text=help_texts.INDEX_PAGE_FIELD,
     )
     content = ContentCardsSectionWithLink(help_text=help_texts.CONTENT_ROW_CARDS)
+    footer = blocks.FooterBanner(
+        required=False,
+    )
 
     class Meta:
         icon = "thumbtack"
-
+   
 
 class TextSection(StructBlock):
     title = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)

@@ -100,6 +100,9 @@ BODY_FIELD_ABOVE_BLOCK: str = f"""
 HEADING_BLOCK: str = """
 The text you add here will be used as the heading for this section. 
 """
+SECTION_FOOTER: str = """
+This text will be displayed as the footer text in a section with link
+"""
 
 CONTENT_ROW_CARDS: str = """
 Here you can add any number of content row cards for this section.

@@ -97,3 +97,4 @@ class TrendNumberComponent(elements.BaseMetricsElement):
 class PercentageNumberComponent(HeadlineNumberComponent):
     class Meta:
         icon = "percentage"
+        

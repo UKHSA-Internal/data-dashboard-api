@@ -161,3 +161,13 @@ class RelatedLink(blocks.StructBlock):
 
 class RelatedLinkBlock(blocks.StreamBlock):
     related_link = RelatedLink()
+
+
+
+class FooterBanner(blocks.StructBlock):
+    badge_label = blocks.CharBlock(help_text='hfjdksfjksadl', required=True)
+    text = blocks.CharBlock(help_text=help_texts.SECTION_FOOTER, required=True)
+    link = InternalPageLinks(required=True) # External link potential also, see Taiwo's upcoming PR
+
+    class Meta:
+        icon = ""
