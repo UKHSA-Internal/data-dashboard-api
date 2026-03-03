@@ -159,7 +159,6 @@ class TestInboundHeadlineSpecificFields:
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
 
-
     @pytest.mark.parametrize("is_public", [True, False])
     @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     def test_validates_public_or_private_data_when_auth_enabled_is_true(

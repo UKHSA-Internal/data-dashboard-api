@@ -1,12 +1,11 @@
 import datetime
-from typing import Self
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator
 from pydantic.fields import Field
 
 import validation
 from ingestion.utils import type_hints
-from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD, AUTH_ENABLED
+from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD
 from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
 )
