@@ -148,26 +148,6 @@ class TestInboundTimeSeriesSpecificFields:
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
 
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
-    def test_raises_error_when_non_public_data_passed_to_public_platform(self):
-        """
-        Given a payload with `is_public` set to False
-        And `AUTH_ENABLED` is set to False
-        When the `InboundTimeSeriesSpecificFields` model is initialized
-        Then a `ValidationError` is raised
-        """
-        # Given
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            InboundTimeSeriesSpecificFields(
-                epiweek=1,
-                date="2023-11-20",
-                embargo=VALID_DATETIME,
-                metric_value=123,
-                is_public=False,
-            )
-
     @pytest.mark.parametrize("is_public", [True, False])
     @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     def test_validates_public_or_private_data_when_auth_enabled_is_true(

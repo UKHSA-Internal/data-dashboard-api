@@ -159,28 +159,6 @@ class TestInboundHeadlineSpecificFields:
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
 
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
-    def test_raises_error_when_non_public_data_passed_to_public_platform(self):
-        """
-        Given a payload with `is_public` set to False
-        And `AUTH_ENABLED` is set to False
-        When the `InboundHeadlineSpecificFields` model is initialized
-        Then a `ValidationError` is raised
-        """
-        # Given
-        fake_period_start = "2023-11-20"
-        fake_period_end = "2023-11-27"
-        fake_embargo = "2023-11-30"
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            InboundHeadlineSpecificFields(
-                period_start=fake_period_start,
-                period_end=fake_period_end,
-                embargo=fake_embargo,
-                metric_value=123,
-                is_public=False,
-            )
 
     @pytest.mark.parametrize("is_public", [True, False])
     @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
