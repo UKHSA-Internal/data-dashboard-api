@@ -15,7 +15,6 @@ MODULE_PATH = "ingestion.data_transfer_models.time_series"
 
 
 class TestInboundTimeSeriesSpecificFields:
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
     def test_validates_payload(self):
         """
         Given a payload containing valid values
@@ -147,38 +146,6 @@ class TestInboundTimeSeriesSpecificFields:
         assert validated_embargo.hour == 0
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
-
-    @pytest.mark.parametrize("is_public", [True, False])
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_validates_public_or_private_data_when_auth_enabled_is_true(
-        self, is_public: bool
-    ):
-        """
-        Given a payload containing `is_public` as True or False
-        And `AUTH_ENABLED` is set to True
-        When the `InboundTimeSeriesSpecificFields` model is initialized
-        Then model is deemed valid
-        """
-        # Given
-        fake_embargo = VALID_DATETIME
-        fake_metric_value = 123
-
-        # When
-        inbound_time_series_specific_fields_validation = (
-            InboundTimeSeriesSpecificFields(
-                epiweek=46,
-                date="2023-11-01",
-                embargo=fake_embargo,
-                metric_value=fake_metric_value,
-                is_public=is_public,
-            )
-        )
-
-        # Then
-        inbound_time_series_specific_fields_validation.model_validate(
-            inbound_time_series_specific_fields_validation,
-            strict=True,
-        )
 
 
 class TestTimeSeriesDTO:

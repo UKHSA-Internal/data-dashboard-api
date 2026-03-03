@@ -159,36 +159,6 @@ class TestInboundHeadlineSpecificFields:
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
 
-    @pytest.mark.parametrize("is_public", [True, False])
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_validates_public_or_private_data_when_auth_enabled_is_true(
-        self, is_public: bool
-    ):
-        """
-        Given a payload containing `is_public` as True or False
-        And `AUTH_ENABLED` is set to True
-        When the `InboundHeadlineSpecificFields` model is initialized
-        Then model is deemed valid
-        """
-        # Given
-        fake_period_start = "2023-11-20"
-        fake_period_end = VALID_DATETIME
-
-        # When
-        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
-            period_start=fake_period_start,
-            period_end=fake_period_end,
-            metric_value=123,
-            embargo=None,
-            is_public=is_public,
-        )
-
-        # Then
-        inbound_headline_specific_fields_validation.model_validate(
-            inbound_headline_specific_fields_validation,
-            strict=True,
-        )
-
 
 class TestHeadlineDTO:
     def test_casts_upper_and_lower_level_fields(
