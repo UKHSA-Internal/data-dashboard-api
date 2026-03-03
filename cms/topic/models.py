@@ -35,14 +35,6 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "ABCDEFG"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PM_NOT_SET = "protective_marking_not_set'"
-    SECRET = "secret"  # noqa
-    TOP_SECRET = "top_secret"  # noqa
-
-
 class TopicPageAdminForm(WagtailAdminPageForm):
     class Media:
         js = ["js/classification_toggle.js"]
