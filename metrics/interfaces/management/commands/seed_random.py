@@ -61,8 +61,10 @@ class Command(BaseCommand):
         scale: str = options["scale"]
         truncate_first: bool = options["truncate_first"]
 
-        selected_seed = options["seed"] if options["seed"] is not None else int(time.time())
-        random.seed(selected_seed)
+        selected_seed = (
+            options["seed"] if options["seed"] is not None else int(time.time())
+        )
+        random.seed(selected_seed)  # nosec B311
         self.stdout.write(f"Seed used: {selected_seed}")
 
         should_seed_cms = dataset in {"cms", "both"}
@@ -98,7 +100,9 @@ class Command(BaseCommand):
         )
 
     @classmethod
-    def _seed_metrics_data(cls, *, scale_config: dict[str, int], truncate_first: bool) -> dict[str, int]:
+    def _seed_metrics_data(
+        cls, *, scale_config: dict[str, int], truncate_first: bool
+    ) -> dict[str, int]:
         if truncate_first:
             cls._truncate_metrics_data()
 
@@ -111,7 +115,9 @@ class Command(BaseCommand):
             sub_themes = cls._bulk_create(
                 SubTheme,
                 [
-                    SubTheme(name=f"SubTheme {index + 1}", theme=themes[index % len(themes)])
+                    SubTheme(
+                        name=f"SubTheme {index + 1}", theme=themes[index % len(themes)]
+                    )
                     for index in range(6)
                 ],
             )
@@ -119,7 +125,10 @@ class Command(BaseCommand):
             topics = cls._bulk_create(
                 Topic,
                 [
-                    Topic(name=f"Topic {index + 1}", sub_theme=sub_themes[index % len(sub_themes)])
+                    Topic(
+                        name=f"Topic {index + 1}",
+                        sub_theme=sub_themes[index % len(sub_themes)],
+                    )
                     for index in range(12)
                 ],
             )
@@ -127,7 +136,10 @@ class Command(BaseCommand):
             metrics = cls._bulk_create(
                 Metric,
                 [
-                    Metric(name=f"Random Metric {index + 1}", topic=topics[index % len(topics)])
+                    Metric(
+                        name=f"Random Metric {index + 1}",
+                        topic=topics[index % len(topics)],
+                    )
                     for index in range(scale_config["metrics"])
                 ],
             )
@@ -207,8 +219,10 @@ class Command(BaseCommand):
             for geography in geographies:
                 for day_offset in range(days):
                     current_date = start_date + timedelta(days=day_offset)
-                    base_value = random.uniform(5.0, 250.0)  # noqa: S311
-                    metric_value = round(base_value + random.uniform(-10.0, 10.0), 2)  # noqa: S311
+                    base_value = random.uniform(5.0, 250.0)  # nosec B311
+                    metric_value = round(
+                        base_value + random.uniform(-10.0, 10.0), 2
+                    )  # nosec B311
                     epidemiological_week = current_date.isocalendar().week
 
                     core_rows.append(
@@ -229,7 +243,9 @@ class Command(BaseCommand):
                     )
 
                     if len(core_rows) >= batch_size:
-                        CoreTimeSeries.objects.bulk_create(core_rows, batch_size=batch_size)
+                        CoreTimeSeries.objects.bulk_create(
+                            core_rows, batch_size=batch_size
+                        )
                         core_count += len(core_rows)
                         core_rows = []
 
@@ -257,7 +273,9 @@ class Command(BaseCommand):
                     )
 
                     if len(api_rows) >= batch_size:
-                        APITimeSeries.objects.bulk_create(api_rows, batch_size=batch_size)
+                        APITimeSeries.objects.bulk_create(
+                            api_rows, batch_size=batch_size
+                        )
                         api_count += len(api_rows)
                         api_rows = []
 
