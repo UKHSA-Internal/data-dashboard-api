@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-22.04-arm
 
     steps:
-      # Checkout PR HEAD commit (not the merge commit)
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
