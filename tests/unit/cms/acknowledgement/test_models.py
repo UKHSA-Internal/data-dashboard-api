@@ -5,7 +5,9 @@ from cms.acknowledgement.models import AcknowledgementPage
 
 
 class TestAcknowledgementPage:
-    # Every test starts with a blank `AcknowledgementPage` model
+    """
+    Given a blank acknowledgement page (for every test)
+    """
     blank_page = AcknowledgementPage
 
     @pytest.mark.parametrize(
@@ -14,6 +16,7 @@ class TestAcknowledgementPage:
             "title",
             "body",
             "terms_of_service_link",
+            "terms_of_service_error",
             "i_agree_checkbox",
             "disagree_button",
             "agree_button",
@@ -21,9 +24,8 @@ class TestAcknowledgementPage:
     )
     def test_has_correct_api_fields(self, expected_field_name: str):
         """
-        Given a blank `AcknowledgementPage` model
-        When `api_fields` is accessed
-        Then the expected names are on the returned `APIField` objects
+        When the declared API fields of the page are accessed
+        Then the expected API fields are present
         """
         # When
         api_fields: list[APIField] = self.blank_page.api_fields
@@ -37,6 +39,7 @@ class TestAcknowledgementPage:
         [
             "body",
             "terms_of_service_link",
+            "terms_of_service_error",
             "i_agree_checkbox",
             "disagree_button",
             "agree_button",
@@ -44,9 +47,8 @@ class TestAcknowledgementPage:
     )
     def test_has_correct_content_panels(self, expected_content_panel_field_name: str):
         """
-        Given a blank `AcknowledgementPage` model
-        When `content_panels` is accessed
-        Then the expected field names exist on the `FieldPanel` definitions
+        When the declared content panels of the page are accessed
+        Then the expected content panels are present
         """
         # When
         content_panels = self.blank_page.content_panels
@@ -61,9 +63,8 @@ class TestAcknowledgementPage:
 
     def test_is_previewable_returns_false(self):
         """
-        Given a blank `AcknowledgementPage` model
-        When `is_previewable()` is called
-        Then False is returned
+        When the declared preview behavior of the page is accessed
+        Then false is returned
         """
         # When
         page_is_previewable: bool = self.blank_page.is_previewable()
@@ -80,9 +81,8 @@ class TestAcknowledgementPage:
     )
     def test_inherits_expected_seo_fields(self, expected_seo_field_name: str):
         """
-        Given a blank `AcknowledgementPage` model
-        When checking for SEO fields defined on the base class
-        Then the expected fields exist on the concrete page model
+        When checking for the declared SEO fields of the page
+        Then the expected SEO fields are present
         """
         # When / Then
         assert hasattr(self.blank_page, expected_seo_field_name)

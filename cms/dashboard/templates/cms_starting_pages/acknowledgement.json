@@ -25,6 +25,7 @@
   "i_agree_checkbox": "I agree to the terms of service",
   "terms_of_service_link_text": "Read the terms of service",
   "terms_of_service_link": "https://example.com/terms-of-service",
+  "terms_of_service_error": "Please accept the terms of service",
   "disagree_button": "I do not agree",
   "agree_button": "I agree",
   "last_published_at": "2026-02-18T15:32:35.177836+01:00",

@@ -12,9 +12,9 @@ class TestAcknowledgementPageManager:
     @pytest.mark.django_db
     def test_get_live_pages(self):
         """
-        Given 2 `AcknowledgementPage` records of which only 1 is live
-        When `get_live_pages()` is called from the `AcknowledgementPageManager`
-        Then the correct `AcknowledgementPage` record is returned
+        Given 2 acknowledgement pages of which only 1 is live
+        When `get_live_pages()` is called
+        Then the correct acknowledgement page is returned
         """
         # Given
         live_page = AcknowledgementPage.objects.create(
@@ -27,6 +27,7 @@ class TestAcknowledgementPageManager:
             i_agree_checkbox="I agree",
             terms_of_service_link_text="Terms of service",
             terms_of_service_link="https://example.com/terms",
+            terms_of_service_error="Please accept the terms of service",
             disagree_button="I do not agree",
             agree_button="I agree",
         )
@@ -40,6 +41,7 @@ class TestAcknowledgementPageManager:
             i_agree_checkbox="I agree",
             terms_of_service_link_text="Terms of service",
             terms_of_service_link="https://example.com/terms",
+            terms_of_service_error="Please accept the terms of service",
             disagree_button="I do not agree",
             agree_button="I agree",
         )
@@ -56,8 +58,8 @@ class TestCreateAcknowledgementPage:
     @pytest.mark.django_db
     def test_create_acknowledgement_page_sets_expected_fields(self):
         """
-        Given an example acknowledgement page response payload
-        When `create_acknowledgement_page()` is called
+        Given the hard-coded JSON CMS acknowledgement page example
+        When a new CMS acknowledgement page is created
         Then the expected content fields are set on the created page
         """
         # Given
@@ -82,6 +84,9 @@ class TestCreateAcknowledgementPage:
         assert page.terms_of_service_link == expected_data.get(
             "terms_of_service_link", ""
         )
+        assert page.terms_of_service_error == expected_data.get(
+            "terms_of_service_error", ""
+        )
         assert page.disagree_button == expected_data.get("disagree_button", "")
         assert page.agree_button == expected_data.get("agree_button", "")
 
@@ -89,8 +94,8 @@ class TestCreateAcknowledgementPage:
     def test_create_acknowledgement_page_is_live_child_of_parent(self):
         """
         Given a root page
-        When `create_acknowledgement_page()` is called
-        Then the created page is published and attached to the parent page
+        When a new CMS acknowledgement page is created as a child of the root page
+        Then the created page is published
         """
         # Given
         root_page = Page.get_first_root_node()
