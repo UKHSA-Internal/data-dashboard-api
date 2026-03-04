@@ -114,8 +114,8 @@ It is **not** currently ordered based on weighting of end user clicks.
 The CMS integrates with the frontend via a REST API using a token-based preview flow.
 
 When a CMS user clicks the preview button, they are redirected to the frontend with:
-- `slug`: the Wagtail page slug
-- `token`: a short-lived signed token (default 120 seconds TTL; 15 minutes in local dev)
+- `slug`: the Wagtail route slug (can be nested, e.g. `parent/child`)
+- `t`: a short-lived signed token query value (default 120 seconds TTL; 24 hours in local dev)
 
 The frontend uses these parameters to fetch draft content:
 1. Call `/api/drafts/{slug}/` with `Authorization: Bearer {token}` header
