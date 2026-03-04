@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("home", "0026_alter_landingpage_body"),
+        ("home", "0027_alter_landingpage_new_chart_row_blocks"),
     ]
 
     operations = [
