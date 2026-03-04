@@ -22,19 +22,17 @@ jobs:
   # Secret Scan
   ###############################################################################
 
-  gitleaks:
+  secret-scan:
     name: Gitleaks Secret Scan
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout PR HEAD commit (not the merge commit)
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      # Install latest Gitleaks
       - name: Install Gitleaks
         run: |
           VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
@@ -43,13 +41,11 @@ jobs:
           sudo mv gitleaks /usr/local/bin/
           gitleaks version
 
-      # Fetch base branch commit
       - name: Fetch base branch
         run: |
           git fetch origin ${{ github.event.pull_request.base.sha }}
 
-      # Scan ONLY commits introduced in this PR
-      - name: Run Gitleaks (PR commits only)
+      - name: Run Gitleaks
         run: |
           echo "Scanning commits from base -> PR head"
           gitleaks detect \
