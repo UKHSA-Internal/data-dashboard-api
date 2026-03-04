@@ -53,6 +53,7 @@ if config.APP_MODE != "INGESTION":
         "cms.acknowledgement",
         "cms.home",
         "cms.topic",
+        "cms.topics_list",
         "cms.dashboard",
         "cms.common",
         "cms.composite",
