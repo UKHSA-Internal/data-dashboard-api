@@ -20,6 +20,8 @@ from cms.dynamic_content.announcements import Announcement
 
 
 class CommonPage(UKHSAPage):
+    custom_preview_enabled: bool = False
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -59,11 +61,6 @@ class CommonPage(UKHSAPage):
     )
 
     objects = CommonPageManager()
-
-    @classmethod
-    def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
 
 
 class CommonPageRelatedLink(Orderable):

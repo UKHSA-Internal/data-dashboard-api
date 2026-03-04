@@ -88,11 +88,6 @@ class CompositePage(UKHSAPage):
 
     objects = CompositePageManager()
 
-    @classmethod
-    def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
-
     @property
     def last_updated_at(self) -> datetime.datetime:
         """Takes the most recent update of this page and any of its children

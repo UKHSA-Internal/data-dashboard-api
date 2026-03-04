@@ -104,11 +104,6 @@ class TopicPage(UKHSAPage):
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
 
-    @classmethod
-    def is_previewable(cls) -> bool:
-        """Returns False. Since this is a headless CMS the preview panel is not supported"""
-        return False
-
     @property
     def selected_topics(self) -> set[str]:
         """Extracts a set of the selected topics from all the headline & chart blocks in the `body`

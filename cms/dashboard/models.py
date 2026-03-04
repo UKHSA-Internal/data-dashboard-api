@@ -1,5 +1,6 @@
 import datetime
 from decimal import Decimal
+from typing import override
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -41,6 +42,8 @@ class UKHSAPage(Page):
         across multiple page types / tables.
 
     """
+
+    custom_preview_enabled: bool = True
 
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(
@@ -90,6 +93,11 @@ class UKHSAPage(Page):
 
     class Meta:
         abstract = True
+
+    @override
+    def is_previewable(self) -> bool:
+        """Disable built-in Wagtail preview for all headless dashboard pages."""
+        return False
 
     def _raise_error_if_slug_not_unique(self) -> None:
         """Compares the provided slug against all pages to confirm the slug's `uniqueness`
