@@ -219,10 +219,12 @@ class Command(BaseCommand):
             for geography in geographies:
                 for day_offset in range(days):
                     current_date = start_date + timedelta(days=day_offset)
-                    base_value = random.uniform(5.0, 250.0)  # nosec B311
+                    base_value = random.uniform(5.0, 250.0)  # noqa: S311  # nosec B311
                     metric_value = round(
-                        base_value + random.uniform(-10.0, 10.0), 2
-                    )  # nosec B311
+                        base_value
+                        + random.uniform(-10.0, 10.0),  # noqa: S311  # nosec B311
+                        2,
+                    )
                     epidemiological_week = current_date.isocalendar().week
 
                     core_rows.append(
