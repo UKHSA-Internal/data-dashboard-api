@@ -3,6 +3,7 @@ import time
 from collections.abc import Iterable
 from datetime import date, timedelta
 from decimal import Decimal
+from typing import override
 
 from django.core.management import CommandParser, call_command
 from django.core.management.base import BaseCommand
@@ -30,6 +31,7 @@ SCALE_CONFIGS = {
 
 
 class Command(BaseCommand):
+    @override
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--dataset",
@@ -63,8 +65,8 @@ class Command(BaseCommand):
         random.seed(selected_seed)
         self.stdout.write(f"Seed used: {selected_seed}")
 
-        should_seed_cms = dataset in ("cms", "both")
-        should_seed_metrics = dataset in ("metrics", "both")
+        should_seed_cms = dataset in {"cms", "both"}
+        should_seed_metrics = dataset in {"metrics", "both"}
 
         counts: dict[str, int] = {
             "Theme": 0,
@@ -205,8 +207,8 @@ class Command(BaseCommand):
             for geography in geographies:
                 for day_offset in range(days):
                     current_date = start_date + timedelta(days=day_offset)
-                    base_value = random.uniform(5.0, 250.0)
-                    metric_value = round(base_value + random.uniform(-10.0, 10.0), 2)
+                    base_value = random.uniform(5.0, 250.0)  # noqa: S311
+                    metric_value = round(base_value + random.uniform(-10.0, 10.0), 2)  # noqa: S311
                     epidemiological_week = current_date.isocalendar().week
 
                     core_rows.append(
