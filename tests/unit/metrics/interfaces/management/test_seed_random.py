@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
+from django.core.management.base import CommandError
 from django.core.management import CommandParser
 
 from metrics.interfaces.management.commands.seed_random import Command, SCALE_CONFIGS
@@ -343,5 +344,5 @@ def test_add_arguments_rejects_invalid_dataset_value():
     parser = CommandParser(prog="manage.py seed_random")
     Command().add_arguments(parser)
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(CommandError):
         parser.parse_args(["--dataset", "invalid"])
