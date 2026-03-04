@@ -1,6 +1,6 @@
 name: Pipeline
 
-on: 
+on:
   pull_request:
     types: [opened, synchronize, reopened]
   push:
@@ -17,7 +17,6 @@ permissions:
   contents: read # This is required for actions/checkout
 
 jobs:
-
   ###############################################################################
   # Secret Scan
   ###############################################################################
@@ -27,8 +26,11 @@ jobs:
     runs-on: ubuntu-22.04-arm
 
     steps:
-      - uses: actions/checkout@v4
+      # Checkout PR HEAD commit (not the merge commit)
+      - name: Checkout PR head
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Run Gitleaks
@@ -37,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-            
+
   ###############################################################################
   # Install dependencies & build packages
   ###############################################################################
@@ -56,7 +58,7 @@ jobs:
 
   dependency-checks:
     name: Dependency checks
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -72,7 +74,7 @@ jobs:
 
   vulnerability-checks:
     name: Vulnerability checks
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +91,7 @@ jobs:
 
   quality-checks:
     name: Linting
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +108,7 @@ jobs:
 
   architecture-checks:
     name: Architecture checks
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -123,7 +125,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -140,7 +142,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -157,7 +159,7 @@ jobs:
 
   system-tests:
     name: System tests
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -174,7 +176,7 @@ jobs:
 
   migration-tests:
     name: Migration tests
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -191,7 +193,7 @@ jobs:
 
   test-coverage:
     name: Test coverage
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -263,18 +265,19 @@ jobs:
 
   publish-main-image:
     name: Publish main image to central ECR
-    needs: [
-      quality-checks,
-      unit-tests,
-      integration-tests,
-      system-tests,
-      migration-tests,
-      test-coverage,
-      dependency-checks,
-      vulnerability-checks,
-      architecture-checks,
-      docker-build-check
-    ]
+    needs:
+      [
+        quality-checks,
+        unit-tests,
+        integration-tests,
+        system-tests,
+        migration-tests,
+        test-coverage,
+        dependency-checks,
+        vulnerability-checks,
+        architecture-checks,
+        docker-build-check,
+      ]
     runs-on: ubuntu-22.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
@@ -289,18 +292,19 @@ jobs:
 
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
-    needs: [
-      quality-checks,
-      unit-tests,
-      integration-tests,
-      system-tests,
-      migration-tests,
-      test-coverage,
-      dependency-checks,
-      vulnerability-checks,
-      architecture-checks,
-      docker-build-check
-    ]
+    needs:
+      [
+        quality-checks,
+        unit-tests,
+        integration-tests,
+        system-tests,
+        migration-tests,
+        test-coverage,
+        dependency-checks,
+        vulnerability-checks,
+        architecture-checks,
+        docker-build-check,
+      ]
     runs-on: ubuntu-22.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -321,10 +325,7 @@ jobs:
 
   trigger-deployments:
     name: Trigger deployments
-    needs: [
-      publish-main-image,
-      publish-ingestion-image
-    ]
+    needs: [publish-main-image, publish-ingestion-image]
     runs-on: ubuntu-22.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch
