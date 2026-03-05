@@ -45,7 +45,7 @@ function _venv_deactivate() {
 }
 
 function _venv_create() {
-    local python_version=`cat .python-version`
+    local python_version=$(cat .python-version | cut -d'.' -f1-2)
     python${python_version} -m venv --upgrade-deps .venv
     _venv_activate
     pip install -r requirements.txt
