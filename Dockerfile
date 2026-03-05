@@ -6,7 +6,7 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.13
 
-FROM python:${PYTHON_VERSION} AS build
+FROM python:${PYTHON_VERSION}-slim AS build
 
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
@@ -18,7 +18,7 @@ COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 # Main build process
 RUN apt-get update \
     # Update the database of available packages
-    && apt-get -y install libpq-dev gcc \
+    && apt-get -y install libpq-dev gcc libnss3-dev libexpat1-dev\
     # Install toolchain needed for C libraries like `psycopg2`
     && python3 -m venv /venv \
     # Create the python virtual environment
@@ -35,7 +35,7 @@ COPY . code
 ###############################################################################
 # Production stage
 ###############################################################################
-FROM python:${PYTHON_VERSION} AS production
+FROM python:${PYTHON_VERSION}-slim AS production
 
 # Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
@@ -55,7 +55,7 @@ EXPOSE 8000
 # Reinstall system libraries required for PostgreSQL drivers
 RUN apt-get update \
     # Update the database of available packages
-    && apt-get -y install libpq-dev \
+    && apt-get -y install libpq-dev libnss3-dev libexpat1-dev\
     # Reinstall the C library needed for `psycopg2`
     && chmod +x entrypoint.sh
     # Add execution permission for the entrypoint shell script
