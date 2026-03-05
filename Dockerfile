@@ -6,7 +6,7 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.13
 
-FROM python:${PYTHON_VERSION}-slim AS build
+FROM python:${PYTHON_VERSION} AS build
 
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
@@ -35,7 +35,7 @@ COPY . code
 ###############################################################################
 # Production stage
 ###############################################################################
-FROM python:${PYTHON_VERSION}-slim AS production
+FROM python:${PYTHON_VERSION} AS production
 
 # Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
