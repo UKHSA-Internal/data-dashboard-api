@@ -21,7 +21,7 @@ class TestAcknowledgementPageManager:
             path="abc",
             depth=1,
             title="abc",
-            body="",
+            body="Test content",
             live=True,
             seo_title="ABC",
             i_agree_checkbox="I agree",
@@ -35,7 +35,7 @@ class TestAcknowledgementPageManager:
             path="def",
             depth=1,
             title="def",
-            body="",
+            body="Test content",
             live=False,
             seo_title="DEF",
             i_agree_checkbox="I agree",
@@ -76,19 +76,27 @@ class TestCreateAcknowledgementPage:
         assert page.slug == expected_data["meta"]["slug"]
         assert page.seo_title == expected_data["meta"]["seo_title"]
         assert page.search_description == expected_data["meta"]["search_description"]
-        assert page.body == expected_data.get("body", "")
-        assert page.i_agree_checkbox == expected_data.get("i_agree_checkbox", "")
-        assert page.terms_of_service_link_text == expected_data.get(
-            "terms_of_service_link_text", ""
+        # Verify body is set (either from JSON or default if JSON is empty)
+        assert page.body == (
+            expected_data.get("body") or "Acknowledgement body required"
         )
-        assert page.terms_of_service_link == expected_data.get(
-            "terms_of_service_link", ""
+        # Verify other fields are set
+        assert page.i_agree_checkbox == (
+            expected_data.get("i_agree_checkbox") or "I agree"
         )
-        assert page.terms_of_service_error == expected_data.get(
-            "terms_of_service_error", ""
+        assert page.terms_of_service_link_text == (
+            expected_data.get("terms_of_service_link_text") or "Terms"
         )
-        assert page.disagree_button == expected_data.get("disagree_button", "")
-        assert page.agree_button == expected_data.get("agree_button", "")
+        assert page.terms_of_service_link == (
+            expected_data.get("terms_of_service_link") or "https://example.com/"
+        )
+        assert page.terms_of_service_error == (
+            expected_data.get("terms_of_service_error") or "Please accept terms"
+        )
+        assert page.disagree_button == (
+            expected_data.get("disagree_button") or "Disagree"
+        )
+        assert page.agree_button == (expected_data.get("agree_button") or "Agree")
 
     @pytest.mark.django_db
     def test_create_acknowledgement_page_is_live_child_of_parent(self):

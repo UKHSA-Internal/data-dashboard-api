@@ -149,16 +149,17 @@ def create_acknowledgement_page(*, name: str, parent_page: Page) -> Acknowledgem
     data = open_example_page_response(page_name=name)
 
     page = AcknowledgementPage(
-        body=data.get("body", ""),
+        body=data.get("body") or "Acknowledgement body required",
         title=data["title"],
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        i_agree_checkbox=data.get("i_agree_checkbox", ""),
-        terms_of_service_link_text=data.get("terms_of_service_link_text", ""),
-        terms_of_service_link=data.get("terms_of_service_link", ""),
-        disagree_button=data.get("disagree_button", ""),
-        agree_button=data.get("agree_button", ""),
+        i_agree_checkbox=data.get("i_agree_checkbox") or "I agree",
+        terms_of_service_link_text=data.get("terms_of_service_link_text") or "Terms",
+        terms_of_service_link=data.get("terms_of_service_link") or "https://example.com/",
+        terms_of_service_error=data.get("terms_of_service_error") or "Please accept terms",
+        disagree_button=data.get("disagree_button") or "Disagree",
+        agree_button=data.get("agree_button") or "Agree",
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
