@@ -1,6 +1,7 @@
 import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.api.conf import APIField
+from wagtail.search.index import SearchField
 
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 
@@ -90,3 +91,29 @@ class TestBlankCommonPage:
 
         # Then
         assert not page_is_previewable
+
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "body",
+            "title",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `CommonPage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        blank_page = FakeCommonPageFactory.build_blank_page()
+
+        # When
+        search_fields: list[SearchField] = blank_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields
