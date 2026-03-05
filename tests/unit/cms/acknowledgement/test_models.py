@@ -8,6 +8,7 @@ class TestAcknowledgementPage:
     """
     Given a blank acknowledgement page (for every test)
     """
+
     blank_page = AcknowledgementPage
 
     @pytest.mark.parametrize(
