@@ -287,11 +287,6 @@ class ChartCard(blocks.StructBlock):
         default=False,
         required=False,
     )
-    date_prefix = blocks.CharBlock(
-        required=True,
-        default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
-        help_text=help_texts.CHART_DATE_PREFIX,
-    )
     show_timeseries_filter = blocks.BooleanBlock(
         help_text=help_texts.CHART_TIMESERIES_FILTER,
         default=False,
@@ -304,7 +299,16 @@ class ChartCard(blocks.StructBlock):
         icon = "standalone_chart"
 
 
-class ChartWithDescriptionCard(ChartCard):
+class ChartWithDescriptionCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    sub_title = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    topic_page = PageLinkChooserBlock(
+        page_type="topic.TopicPage",
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
+    )
     description = blocks.TextBlock(
         required=True,
         help_text=help_texts.CHART_DESCRIPTION,
@@ -313,6 +317,47 @@ class ChartWithDescriptionCard(ChartCard):
         required=False,
         help_text=help_texts.SOURCE_LINK_INTERNAL_OR_EXTERNAL,
     )
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
+    x_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_X_AXIS,
+    )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
+    y_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
+    )
+
+    chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
     class Meta:
         icon = "standalone_chart"
@@ -361,15 +406,51 @@ class HeadlineChartCard(ChartCard):
         icon = "standalone_chart"
 
 
-class HeadlineChartWithDescriptionCard(HeadlineChartCard):
+class HeadlineChartWithDescriptionCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    sub_title = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    topic_page = PageLinkChooserBlock(
+        page_type="topic.TopicPage",
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
+    )
     description = blocks.TextBlock(
         required=True,
         help_text=help_texts.HEADLINE_CHART_DESCRIPTION,
+    )
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
+    x_axis = blocks.ChoiceBlock(
+        required=True,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.REQUIRED_CHART_X_AXIS,
+    )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
     )
     source = SourceLinkBlock(
         required=False,
         help_text=help_texts.SOURCE_LINK_INTERNAL_OR_EXTERNAL,
     )
+
+    chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
 
     class Meta:
         icon = "standalone_chart"
@@ -484,7 +565,6 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
     chart_with_description_card = ChartWithDescriptionCard()
     headline_chart_card = HeadlineChartCard()
-    headline_chart_with_description_card = HeadlineChartWithDescriptionCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
     dual_category_chart_card = DualCategoryChartCard()
@@ -502,7 +582,6 @@ class ChartRowCard(blocks.StructBlock):
 
 
 class ChartCardSection(blocks.StructBlock):
-
     cards = ChartRowBlockTypes(
         min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         help_text=help_texts.CHART_ROW_CARD_COLUMN_WIDTH_THREE,
