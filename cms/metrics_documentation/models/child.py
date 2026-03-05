@@ -39,7 +39,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     # Fields to index for searching within the CMS application.
     search_fields = UKHSAPage.search_fields + [
         index.SearchField("metric"),
-        index.SearchField("body"),
     ]
 
     # Content panels to render for editing within the CMS application.
@@ -47,6 +46,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("is_public"),
+        FieldPanel("body"),
     ]
 
     # Sets which fields to expose on the API.

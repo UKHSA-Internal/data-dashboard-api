@@ -3,7 +3,6 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
 
 from cms.dashboard.models import (
     UKHSAPage,
@@ -28,14 +27,10 @@ class WhatsNewParentPage(UKHSAPage):
         ],
     )
 
-    # Fields to index for searching within the CMS application
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("body"),
-    ]
-
     # Content panels to render for editing within the CMS application
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("date_posted"),
+        FieldPanel("body"),
         FieldPanel("show_pagination"),
         FieldPanel("pagination_size"),
     ]
