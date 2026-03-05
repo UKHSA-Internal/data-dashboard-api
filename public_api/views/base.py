@@ -31,6 +31,14 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
+        
+        try:
+            is_public = request.query_params["is-public"]
+        except KeyError:
+            is_public = "True"
+            
+        # TODO: as part of CDD-3173, the JWT will need validating, and it should be confirmed that, if is_public is false, there is a valid JWT before returning non public data
+        
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
         )
@@ -39,4 +47,10 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         )
 
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
-        return Response(serializer.data)
+        response = Response(data=serializer.data)
+
+        # if valid_jwt and not is_public :
+        if is_public == "False" :
+             response.headers["Cache-Control"] = "private, no-cache"
+            
+        return response
