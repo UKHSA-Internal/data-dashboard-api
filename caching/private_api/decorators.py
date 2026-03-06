@@ -1,6 +1,7 @@
 import os
 from functools import wraps
 
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -55,9 +56,7 @@ def cache_response(
         def wrapped_view(*args, **kwargs) -> Response:
 
             request = args[1]
-            has_jwt = getattr(request, "has_jwt", False)
-
-            is_public = not (has_jwt)
+            is_public = not (_check_if_valid_non_public_request(request=request))
 
             return _retrieve_response_from_cache_or_calculate(
                 view_function,
@@ -71,6 +70,20 @@ def cache_response(
         return wrapped_view
 
     return decorator
+
+
+def _check_if_valid_non_public_request(request):
+    try:
+        is_non_public = request.query_params["is-public"].lower() == "false"
+    except KeyError:
+        is_non_public = False
+
+    try:
+        is_authenticated = request.auth()
+    except TypeError:
+        is_authenticated = False
+
+    return is_non_public and is_authenticated
 
 
 def _retrieve_response_from_cache_or_calculate(
@@ -103,10 +116,12 @@ def _retrieve_response_from_cache_or_calculate(
     """
     request: Request = args[1]
     if not is_public:
-        return _calculate_response_from_view(view_function, *args, **kwargs)
+        return _calculate_response_from_view(view_function, is_public=is_public, *args, **kwargs)
 
     if is_caching_v2_enabled() and not is_reserved_namespace:
-        return _calculate_response_from_view(view_function, *args, **kwargs)
+        return _calculate_response_from_view(
+            view_function, is_public=is_public, *args, **kwargs
+        )
 
     cache_management = kwargs.pop(
         "cache_management",
@@ -135,7 +150,7 @@ def _retrieve_response_from_cache_or_calculate(
 def _calculate_response_and_save_in_cache(
     view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
 ) -> Response:
-    response: Response = _calculate_response_from_view(view_function, *args, **kwargs)
+    response: Response = _calculate_response_from_view(view_function, is_public=True, *args, **kwargs)
     if timeout == 0:
         return response
 
@@ -145,5 +160,11 @@ def _calculate_response_and_save_in_cache(
     return response
 
 
-def _calculate_response_from_view(view_function, *args, **kwargs) -> Response:
-    return view_function(*args, **kwargs)
+def _calculate_response_from_view(
+    view_function, *args, is_public: bool = True, **kwargs
+) -> Response:
+    # Add is_public to response here, and then set header?
+    response = view_function(*args, **kwargs)
+    if not (is_public):
+        response["Cache-Control"] = "private, no-cache"
+    return response
