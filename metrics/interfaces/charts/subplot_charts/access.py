@@ -1,7 +1,7 @@
 import datetime
 import io
 
-import plotly.graph_objects
+import plotly.graph_objects as go
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
@@ -117,7 +117,7 @@ class SubplotChartsInterface:
     @staticmethod
     def _build_chart_figure(
         chart_generation_payload: SubplotChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
+    ) -> go.Figure:
         """Build a plotly chart `Figure` object for a `Subplot` chart.
 
         Args:
@@ -167,7 +167,7 @@ class SubplotChartsInterface:
             plots_data += sub_plot.subplot_data
         return plots_data
 
-    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
+    def write_figure(self, *, figure: go.Figure) -> bytes:
         """
         Convert a figure to a static image and write to a file in the desired image format
 
