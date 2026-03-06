@@ -1,6 +1,7 @@
 import os
 from functools import wraps
 
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -14,7 +15,11 @@ def is_caching_v2_enabled() -> bool:
     return os.environ.get("CACHING_V2_ENABLED", "").lower() in {"true", "1"}
 
 
-def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = False):
+def cache_response(
+    *,
+    timeout: int | None = None,
+    is_reserved_namespace: bool = False,
+):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
     Notes:
@@ -49,8 +54,17 @@ def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = 
     def decorator(view_function):
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
+
+            request = args[1]
+            is_public = not (_check_if_valid_non_public_request(request=request))
+
             return _retrieve_response_from_cache_or_calculate(
-                view_function, timeout, is_reserved_namespace, *args, **kwargs
+                view_function,
+                timeout,
+                is_reserved_namespace,
+                is_public,
+                *args,
+                **kwargs,
             )
 
         return wrapped_view
@@ -58,8 +72,22 @@ def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = 
     return decorator
 
 
+def _check_if_valid_non_public_request(request):
+    try:
+        is_non_public = request.query_params["is-public"].lower() == "false"
+    except KeyError:
+        is_non_public = False
+
+    try:
+        is_authenticated = request.auth()
+    except TypeError:
+        is_authenticated = False
+
+    return is_non_public and is_authenticated
+
+
 def _retrieve_response_from_cache_or_calculate(
-    view_function, timeout, is_reserved_namespace, *args, **kwargs
+    view_function, timeout, is_reserved_namespace, is_public, *args, **kwargs
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
@@ -67,6 +95,10 @@ def _retrieve_response_from_cache_or_calculate(
         If the `CACHING_V2_ENABLED` env variable is set to "true",
         then the response will always be recalculated from the server
         and no caching will take place.
+
+        If data is not public (i.e. is_public is set to "false"), then the
+        response will always be recalculated from the server and no caching
+        will take place.
 
     Args:
         view_function: The view associated with the endpoint
@@ -83,9 +115,13 @@ def _retrieve_response_from_cache_or_calculate(
 
     """
     request: Request = args[1]
+    if not is_public:
+        return _calculate_response_from_view(view_function, is_public=is_public, *args, **kwargs)
 
     if is_caching_v2_enabled() and not is_reserved_namespace:
-        return _calculate_response_from_view(view_function, *args, **kwargs)
+        return _calculate_response_from_view(
+            view_function, is_public=is_public, *args, **kwargs
+        )
 
     cache_management = kwargs.pop(
         "cache_management",
@@ -114,7 +150,7 @@ def _retrieve_response_from_cache_or_calculate(
 def _calculate_response_and_save_in_cache(
     view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
 ) -> Response:
-    response: Response = _calculate_response_from_view(view_function, *args, **kwargs)
+    response: Response = _calculate_response_from_view(view_function, is_public=True, *args, **kwargs)
     if timeout == 0:
         return response
 
@@ -124,5 +160,11 @@ def _calculate_response_and_save_in_cache(
     return response
 
 
-def _calculate_response_from_view(view_function, *args, **kwargs) -> Response:
-    return view_function(*args, **kwargs)
+def _calculate_response_from_view(
+    view_function, *args, is_public: bool = True, **kwargs
+) -> Response:
+    # Add is_public to response here, and then set header?
+    response = view_function(*args, **kwargs)
+    if not (is_public):
+        response["Cache-Control"] = "private, no-cache"
+    return response

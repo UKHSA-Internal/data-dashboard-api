@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -29,8 +30,24 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializer(context=serializer_context)
 
+    @staticmethod
+    def _is_valid_non_public_request(request: Request) -> bool:
+
+        try:
+            is_non_public = request.query_params["is-public"].lower() == "false"
+        except KeyError:
+            is_non_public = False
+
+        try:
+            is_authenticated = request.auth()
+        except TypeError:
+            is_authenticated = False
+
+        return is_non_public and is_authenticated
+
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
+
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
         )
@@ -39,4 +56,10 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         )
 
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
-        return Response(serializer.data)
+        response = Response(data=serializer.data)
+
+        is_valid_non_public_request = self._is_valid_non_public_request(request=request)
+        if is_valid_non_public_request:
+            response["Cache-Control"] = "private, no-cache"
+
+        return response
