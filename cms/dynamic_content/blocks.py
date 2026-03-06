@@ -13,6 +13,10 @@ from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
+
+MINIMUM_POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
+MAXIMUM_POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
+
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
@@ -39,6 +43,26 @@ class MetricNumberBlockTypes(blocks.StructBlock):
         min_num=MINIMUM_ROWS_NUMBER_BLOCK_COUNT,
         max_num=MAXIMUM_ROWS_NUMBER_BLOCK_COUNT,
         help_text=help_texts.NUMBERS_ROW_FIELD.format(MAXIMUM_ROWS_NUMBER_BLOCK_COUNT),
+    )
+
+    class Meta:
+        icon = "table"
+
+
+class PopularTopicsMetricNumberBlockTypes(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    date_prefix = blocks.TextBlock(
+        required=True,
+        default=METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT,
+        help_text=help_texts.HEADLINE_DATE_PREFIX,
+    )
+    rows = HeadlineNumberBlockTypes(
+        required=True,
+        min_num=MINIMUM_POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT,
+        max_num=MAXIMUM_POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_NUMBERS_ROW_FIELD.format(
+            MAXIMUM_POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT
+        ),
     )
 
     class Meta:

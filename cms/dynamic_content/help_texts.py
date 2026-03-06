@@ -4,6 +4,28 @@ The columns are ordered from left to right, top to bottom respectively.
 So by moving 1 column component above the other, that component will be rendered in the column left of the other. 
 """
 
+POPULAR_TOPICS_LEFT_COLUMN: str = """
+This will be used to display a full height card on the left column.
+Choose either a weather health alerts card or a chart card with description.
+"""
+
+POPULAR_TOPICS_RIGHT_COLUMN_TOP_ROW: str = """
+This will be used to display a chart card in the top row of the second (right) column.
+Exactly one chart style card must be added here.
+"""
+
+POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW: str = """
+This will be used to display the two headline metric cards with trend data in the bottom right 
+row of the second column.
+"""
+
+POPULAR_TOPICS_NUMBERS_ROW_FIELD: str = """
+This row only allows {} columns to be added within this component.
+Each columns can be used to add a number block. 
+This can be a headline number or a trend number.
+The two column block will be rendered on the bottom right of the popular topics component.
+"""
+
 HEADLINE_COLUMNS_IN_CHART_CARD: str = """
 Add up to {} headline or trend number column components within this space.
 Note that these figures will be displayed within the card, and above the chart itself.

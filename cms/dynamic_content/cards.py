@@ -12,6 +12,7 @@ from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
     PageLinkChooserBlock,
+    PopularTopicsMetricNumberBlockTypes,
     RelatedLinkBlock,
     SourceLinkBlock,
 )
@@ -45,6 +46,15 @@ MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
 
 MINIMUM_SEGMENTS_COUNT: int = 1
+
+MINIMUM_POPULAR_TOPICS_FIRST_COLUMN_COUNT: int = 1
+MAXIMUM_POPULAR_TOPICS_FIRST_COLUMN_COUNT: int = 1
+
+MINIMUM_POPULAR_TOPICS_TOP_RIGHT_CHART_COUNT: int = 1
+MAXIMUM_POPULAR_TOPICS_TOP_RIGHT_CHART_COUNT: int = 1
+
+MINIMUM_POPULAR_TOPICS_BOTTOM_ROW_COLUMNS_COUNT: int = 1
+MAXIMUM_POPULAR_TOPICS_BOTTOM_ROW_COLUMNS_COUNT: int = 1
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
@@ -488,6 +498,49 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
     dual_category_chart_card = DualCategoryChartCard()
+
+
+class PopularTopicsLeftColumnBlockTypes(blocks.StreamBlock):
+    weather_health_alert_card = WeatherHealthAlertsCard()
+    chart_card_with_description = ChartWithDescriptionCard()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
+class PopularTopicsRightColumnTopRowBlockTypes(blocks.StreamBlock):
+    chart_card = ChartCard()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
+class PopularTopicsRightColumnBottomRowBlockTypes(blocks.StreamBlock):
+    headline_metric_card = PopularTopicsMetricNumberBlockTypes()
+
+    class Meta:
+        icon = "table"
+
+
+class PopularTopicsCard(blocks.StructBlock):
+    left_column = PopularTopicsLeftColumnBlockTypes(
+        min_num=MINIMUM_POPULAR_TOPICS_FIRST_COLUMN_COUNT,
+        max_num=MAXIMUM_POPULAR_TOPICS_FIRST_COLUMN_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_LEFT_COLUMN,
+    )
+    right_column_top_row = PopularTopicsRightColumnTopRowBlockTypes(
+        min_num=MINIMUM_POPULAR_TOPICS_TOP_RIGHT_CHART_COUNT,
+        max_num=MAXIMUM_POPULAR_TOPICS_TOP_RIGHT_CHART_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_RIGHT_COLUMN_TOP_ROW,
+    )
+    right_column_bottom_row = PopularTopicsRightColumnBottomRowBlockTypes(
+        min_num=MINIMUM_POPULAR_TOPICS_BOTTOM_ROW_COLUMNS_COUNT,
+        max_num=MAXIMUM_POPULAR_TOPICS_BOTTOM_ROW_COLUMNS_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW,
+    )
+
+    class Meta:
+        icon = "standalone_chart"
 
 
 class ChartRowCard(blocks.StructBlock):

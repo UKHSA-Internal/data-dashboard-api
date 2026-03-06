@@ -18,6 +18,7 @@ class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
+    popular_topics_card = cards.PopularTopicsCard()
     global_filter_card = GlobalFilterCard(
         help_text=help_texts.GLOBAL_FILTER_COMPONENT,
     )
@@ -40,6 +41,7 @@ class ContentCardsSectionWithLink(StreamBlock):
     chart_card_section = cards.ChartCardSection()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()
+    popular_topics_card = cards.PopularTopicsCard()
 
 
 class Section(StructBlock):
