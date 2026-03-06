@@ -13,7 +13,10 @@ class TestBlankLandingPage:
         (
             "title",
             "sub_title",
+            "page_description",
             "body",
+            "related_links_layout",
+            "related_links",
             "last_published_at",
             "seo_title",
             "search_description",
@@ -38,7 +41,17 @@ class TestBlankLandingPage:
         api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert expected_api_field_name in api_field_names
 
-    @pytest.mark.parametrize("expected_content_panel", ["title", "sub_title", "body"])
+    @pytest.mark.parametrize(
+        "expected_content_panel",
+        [
+            "title",
+            "sub_title",
+            "page_description",
+            "body",
+            "related_links",
+            "related_links_layout",
+        ],
+    )
     def test_has_correct_content_panels(
         self,
         expected_content_panel: str,

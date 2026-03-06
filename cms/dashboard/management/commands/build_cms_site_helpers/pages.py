@@ -15,6 +15,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.landing_page impor
 )
 from cms.forms.models import FormField, FormPage
 from cms.home.models import LandingPage
+from cms.home.models.landing_page import LandingPageRelatedLink
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
@@ -57,12 +58,20 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
     page = LandingPage(
         title=data["title"],
         sub_title=data["sub_title"],
+        page_description=data["page_description"],
         body=landing_page_body,
+        related_links_layout=data["related_links_layout"],
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=LandingPageRelatedLink,
+        response_data=data,
+        page=page,
+    )
 
     return page
 
