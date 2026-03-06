@@ -23,13 +23,11 @@ jobs:
 
   secret-scan:
     name: Gitleaks Secret Scan
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout PR head
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Run Gitleaks
