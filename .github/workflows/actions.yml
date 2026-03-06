@@ -195,6 +195,44 @@ jobs:
       - name: Build ingestion Docker image
         run: docker build -t be-ingestion-test -f Dockerfile-ingestion .
 
+      - name: Run main API container
+        run: docker run -d --name be-main-test-container be-main-test
+
+      - name: Health check main API container
+        run: |
+          echo "Waiting for main API container to start..."
+          sleep 10
+
+          if [ "$(docker inspect -f '{{.State.Running}}' be-main-test-container)" != "true" ]; then
+            echo "Main API container failed to start"
+            docker logs be-main-test-container
+            exit 1
+          fi
+
+          echo "Main API container is running successfully"
+
+      - name: Run ingestion container
+        run: docker run -d --name be-ingestion-test-container be-ingestion-test
+
+      - name: Health check ingestion container
+        run: |
+          echo "Waiting for ingestion container to start..."
+          sleep 10
+
+          if [ "$(docker inspect -f '{{.State.Running}}' be-ingestion-test-container)" != "true" ]; then
+            echo "Ingestion container failed to start"
+            docker logs be-ingestion-test-container
+            exit 1
+          fi
+
+          echo "Ingestion container is running successfully"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f be-main-test-container || true
+          docker rm -f be-ingestion-test-container || true
+
   ###############################################################################
   # Build image
   ###############################################################################
