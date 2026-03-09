@@ -4,24 +4,24 @@ import pytest
 from django.conf import settings
 
 
-def pytest_configure():
-    settings.configure(
-        COGNITO_AWS_REGION="eu-central-1",
-        COGNITO_USER_POOL="bla",
-        COGNITO_AUDIENCE="my-client-id",
-        INSTALLED_APPS=["django.contrib.auth", "django.contrib.contenttypes"],
-        MIDDLEWARE_CLASSES=[],
-        CACHES={
-            "default": {
-                "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-                "LOCATION": "unique-snowflake",
-            }
-        },
-        DATABASES={
-            "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "db.sqlite"}
-        },
-        ROOT_URLCONF="urls",
-    )
+@pytest.fixture(autouse=True)
+def cognito_settings(settings):
+    settings.COGNITO_AWS_REGION = "eu-central-1"
+    settings.COGNITO_USER_POOL = "bla"
+    settings.COGNITO_AUDIENCE = "my-client-id"
+    settings.COGNITO_PUBLIC_KEYS_CACHING_ENABLED = False
+    settings.INSTALLED_APPS = [
+        "django.contrib.auth",
+        "django.contrib.contenttypes"
+    ]
+    settings.MIDDLEWARE_CLASSES = []
+    settings.CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
+    settings.ROOT_URLCONF = "urls"
 
 
 def _private_to_public_key(private_key):
