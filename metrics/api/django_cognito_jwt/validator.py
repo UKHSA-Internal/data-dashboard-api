@@ -20,14 +20,13 @@ class TokenValidator:
 
     @cached_property
     def pool_url(self):
-        return "https://cognito-idp.%s.amazonaws.com/%s" % (
-            self.aws_region,
-            self.aws_user_pool,
+        return (
+            f"https://cognito-idp.{self.aws_region}.amazonaws.com/{self.aws_user_pool}"
         )
 
     @cached_property
     def _json_web_keys(self):
-        response = requests.get(self.pool_url + "/.well-known/jwks.json")
+        response = requests.get(self.pool_url + "/.well-known/jwks.json", timeout=10)
         response.raise_for_status()
         json_data = response.json()
         return {item["kid"]: json.dumps(item) for item in json_data["keys"]}
@@ -36,10 +35,10 @@ class TokenValidator:
         try:
             headers = jwt.get_unverified_header(token)
         except jwt.DecodeError as exc:
-            raise TokenError(str(exc))
+            raise TokenError(str(exc)) from exc
 
         if getattr(settings, "COGNITO_PUBLIC_KEYS_CACHING_ENABLED", False):
-            cache_key = "django_cognito_jwt:%s" % headers["kid"]
+            cache_key = "django_cognito_jwt:{}".format(headers["kid"])
             jwk_data = cache.get(cache_key)
 
             if not jwk_data:
@@ -51,11 +50,13 @@ class TokenValidator:
 
         if jwk_data:
             return RSAAlgorithm.from_jwk(jwk_data)
+        return None
 
     def validate(self, token):
         public_key = self._get_public_key(token)
         if not public_key:
-            raise TokenError("No key found for this token")
+            msg = "No key found for this token"
+            raise TokenError(msg)
 
         try:
             jwt_data = jwt.decode(
@@ -70,5 +71,5 @@ class TokenValidator:
             jwt.ExpiredSignatureError,
             jwt.DecodeError,
         ) as exc:
-            raise TokenError(str(exc))
+            raise TokenError(str(exc)) from exc
         return jwt_data
