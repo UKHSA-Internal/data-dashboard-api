@@ -111,11 +111,16 @@ TEMPLATES = [
     },
 ]
 
+COGNITO_AWS_REGION = 'eu-west-2'
+COGNITO_USER_POOL = 'eu-west-2_l0q9q8h4I'
+COGNITO_PUBLIC_KEYS_CACHING_ENABLED = True
+COGNITO_PUBLIC_KEYS_CACHING_TIMEOUT = 60*60*24  # 24h caching, default is 300s
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
+        "metrics.api.django_cognito_jwt.JSONWebTokenAuthentication",
     ],
 }
 
