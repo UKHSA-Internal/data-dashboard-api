@@ -2,8 +2,6 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
@@ -12,8 +10,8 @@ from cms.dashboard.enums import (
     RelatedLinksLayoutEnum,
 )
 from cms.dashboard.models import (
-    MAXIMUM_URL_FIELD_LENGTH,
     UKHSAPage,
+    UKHSAPageRelatedLink,
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement
@@ -66,27 +64,10 @@ class CommonPage(UKHSAPage):
         return False
 
 
-class CommonPageRelatedLink(Orderable):
+class CommonPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
         CommonPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
-    title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
-    body = RichTextField(features=[])
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("url"),
-        FieldPanel("body"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("url"),
-        APIField("body"),
-    ]
 
 
 class CommonPageAnnouncement(Announcement):
