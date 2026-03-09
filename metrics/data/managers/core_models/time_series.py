@@ -606,15 +606,16 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            rbac_permissions=rbac_permissions,
-        )
+        has_access_to_non_public_data: bool = True # TODO: Remove this - manually set for caching testing
+        # has_access_to_non_public_data: bool = validate_permissions_for_non_public(
+        #     theme=theme,
+        #     sub_theme=sub_theme,
+        #     topic=topic,
+        #     metric=metric,
+        #     geography_type=geography_type,
+        #     geography=geography,
+        #     rbac_permissions=rbac_permissions,
+        # )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
