@@ -63,7 +63,7 @@ class TopicPage(UKHSAPage):
         default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
         blank=True,
-        null=True
+        null=True,
     )
 
     related_links_layout = models.CharField(
@@ -76,8 +76,7 @@ class TopicPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links",
-                    label="Related link"),
+        InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
     # Search index configuration
@@ -113,8 +112,7 @@ class TopicPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(UKHSAPage.announcement_content_panels,
-                       heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
