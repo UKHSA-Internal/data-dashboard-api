@@ -320,8 +320,12 @@ class TestSeedRandomCommand:
         assert api_count == 1
         spy_core_time_series.objects.bulk_create.assert_called_once()
         spy_api_time_series.objects.bulk_create.assert_called_once()
-        progress_messages = [call.args[0] for call in spy_progress_callback.call_args_list]
-        assert any(message.startswith("Processed 1/1 metrics") for message in progress_messages)
+        progress_messages = [
+            call.args[0] for call in spy_progress_callback.call_args_list
+        ]
+        assert any(
+            message.startswith("Processed 1/1 metrics") for message in progress_messages
+        )
         assert any(message.startswith("Inserted ") for message in progress_messages)
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
@@ -415,7 +419,21 @@ def test_build_theme_hierarchy_records_contains_expected_real_values():
 
     assert "infectious_disease" in theme_names
     assert any(sub_theme == "respiratory" for sub_theme, _ in sub_theme_rows)
-    assert any(topic == "COVID-19" and sub_theme == "respiratory" for topic, sub_theme, _ in topic_rows)
+    assert any(
+        topic == "COVID-19" and sub_theme == "respiratory"
+        for topic, sub_theme, _ in topic_rows
+    )
+
+
+def test_build_theme_hierarchy_records_skips_unmatched_topic_group():
+    fake_topic_group = mock.Mock()
+    fake_topic_group.name = "DOES_NOT_MATCH_CHILD_THEME"
+    fake_topic_group.return_list.return_value = ["dummy-topic"]
+
+    with mock.patch(f"{MODULE_PATH}.validation_enums.Topic", [fake_topic_group]):
+        _, _, topic_rows = Command._build_theme_hierarchy_records()
+
+    assert topic_rows == []
 
 
 def test_build_geography_seed_values_returns_required_count():
