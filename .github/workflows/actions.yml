@@ -34,13 +34,13 @@ jobs:
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        with:
-          args: >
+          GITLEAKS_ARGS: >
             detect
             --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
-            --exit-code 1
-
+            --exit-code=1
+            
   ###############################################################################
   # Install dependencies & build packages
   ###############################################################################
