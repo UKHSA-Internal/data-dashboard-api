@@ -4,12 +4,15 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
-from django.core.management.base import CommandError
 from django.core.management import CommandParser
+from django.core.management.base import CommandError
 
-from metrics.interfaces.management.commands.seed_random import Command, SCALE_CONFIGS
+from metrics.interfaces.management.commands.seed_random import SCALE_CONFIGS, Command
 
 MODULE_PATH = "metrics.interfaces.management.commands.seed_random"
+FULL_BATCH_DAYS = 5000
+SMALL_GEO_COUNT = 3
+LARGE_GEO_COUNT = 7
 
 
 def _fake_metric_hierarchy() -> SimpleNamespace:
@@ -70,6 +73,7 @@ class TestSeedRandomCommand:
         spy_seed_metrics_data.assert_called_once_with(
             scale_config=SCALE_CONFIGS["small"],
             truncate_first=True,
+            progress_callback=mock.ANY,
         )
         spy_call_command.assert_not_called()
         spy_print_summary.assert_called_once_with(
@@ -121,55 +125,87 @@ class TestSeedRandomCommand:
 
     @mock.patch.object(Command, "_truncate_metrics_data")
     @mock.patch.object(Command, "_seed_time_series_rows")
+    @mock.patch.object(Command, "_build_geography_seed_values")
+    @mock.patch.object(Command, "_build_theme_hierarchy_records")
     @mock.patch.object(Command, "_bulk_create")
     @mock.patch(f"{MODULE_PATH}.Geography")
     @mock.patch(f"{MODULE_PATH}.Metric")
     @mock.patch(f"{MODULE_PATH}.Topic")
     @mock.patch(f"{MODULE_PATH}.SubTheme")
     @mock.patch(f"{MODULE_PATH}.Theme")
+    @mock.patch(f"{MODULE_PATH}.GeographyType")
     @mock.patch(f"{MODULE_PATH}.transaction.atomic")
-    @mock.patch(f"{MODULE_PATH}.GeographyType.objects.create")
     @mock.patch(f"{MODULE_PATH}.Stratum.objects.create")
     @mock.patch(f"{MODULE_PATH}.Age.objects.create")
     def test_seed_metrics_data_builds_expected_counts_and_calls(
         self,
         spy_age_create: mock.MagicMock,
         spy_stratum_create: mock.MagicMock,
-        spy_geography_type_create: mock.MagicMock,
         spy_atomic: mock.MagicMock,
+        spy_geography_type: mock.MagicMock,
         spy_theme: mock.MagicMock,
         spy_sub_theme: mock.MagicMock,
         spy_topic: mock.MagicMock,
         spy_metric: mock.MagicMock,
         spy_geography: mock.MagicMock,
         spy_bulk_create: mock.MagicMock,
+        spy_build_theme_hierarchy_records: mock.MagicMock,
+        spy_build_geography_seed_values: mock.MagicMock,
         spy_seed_time_series_rows: mock.MagicMock,
         spy_truncate: mock.MagicMock,
     ):
+        spy_progress_callback = mock.MagicMock()
         spy_atomic.return_value = nullcontext()
-        spy_theme.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
-        spy_sub_theme.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
-        spy_topic.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
-        spy_metric.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
-        spy_geography.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
-        spy_geography_type_create.return_value = SimpleNamespace(name="Nation")
+        spy_geography_type.side_effect = SimpleNamespace
+        spy_theme.side_effect = SimpleNamespace
+        spy_sub_theme.side_effect = SimpleNamespace
+        spy_topic.side_effect = SimpleNamespace
+        spy_metric.side_effect = SimpleNamespace
+        spy_geography.side_effect = SimpleNamespace
         spy_stratum_create.return_value = SimpleNamespace(name="All")
         spy_age_create.return_value = SimpleNamespace(name="All ages")
         spy_seed_time_series_rows.return_value = (77, 88)
+        spy_build_theme_hierarchy_records.return_value = (
+            ["infectious_disease", "climate_and_environment"],
+            [
+                ("respiratory", "infectious_disease"),
+                ("vectors", "climate_and_environment"),
+            ],
+            [
+                ("COVID-19", "respiratory", "infectious_disease"),
+                ("ticks", "vectors", "climate_and_environment"),
+            ],
+        )
+        spy_build_geography_seed_values.return_value = [
+            {
+                "name": "England",
+                "geography_code": "E92000001",
+                "geography_type": "Nation",
+            },
+            {
+                "name": "Area 2",
+                "geography_code": "E09000002",
+                "geography_type": "Lower Tier Local Authority",
+            },
+        ]
 
-        themes = [SimpleNamespace(name=f"Theme {index + 1}") for index in range(3)]
+        themes = [
+            SimpleNamespace(name="infectious_disease"),
+            SimpleNamespace(name="climate_and_environment"),
+        ]
         sub_themes = [
-            SimpleNamespace(
-                name=f"SubTheme {index + 1}", theme=themes[index % len(themes)]
-            )
-            for index in range(6)
+            SimpleNamespace(name="respiratory", theme=themes[0]),
+            SimpleNamespace(name="vectors", theme=themes[1]),
         ]
         topics = [
             SimpleNamespace(
-                name=f"Topic {index + 1}",
-                sub_theme=sub_themes[index % len(sub_themes)],
-            )
-            for index in range(12)
+                name="COVID-19",
+                sub_theme=sub_themes[0],
+            ),
+            SimpleNamespace(
+                name="ticks",
+                sub_theme=sub_themes[1],
+            ),
         ]
         metrics = [
             SimpleNamespace(
@@ -177,25 +213,41 @@ class TestSeedRandomCommand:
             )
             for index in range(4)
         ]
+        geography_types = [
+            SimpleNamespace(name="Nation"),
+            SimpleNamespace(name="Lower Tier Local Authority"),
+        ]
         geographies = [
             SimpleNamespace(
-                name=f"Area {index + 1}",
-                geography_code=f"RND{index + 1:04d}",
-                geography_type=spy_geography_type_create.return_value,
-            )
-            for index in range(2)
+                name="England",
+                geography_code="E92000001",
+                geography_type=geography_types[0],
+            ),
+            SimpleNamespace(
+                name="Area 2",
+                geography_code="E09000002",
+                geography_type=geography_types[1],
+            ),
         ]
-        spy_bulk_create.side_effect = [themes, sub_themes, topics, metrics, geographies]
+        spy_bulk_create.side_effect = [
+            themes,
+            sub_themes,
+            topics,
+            metrics,
+            geography_types,
+            geographies,
+        ]
 
         result = Command._seed_metrics_data(
             scale_config={"geographies": 2, "metrics": 4, "days": 9},
             truncate_first=True,
+            progress_callback=spy_progress_callback,
         )
 
         assert result == {
-            "Theme": 3,
-            "SubTheme": 6,
-            "Topic": 12,
+            "Theme": 2,
+            "SubTheme": 2,
+            "Topic": 2,
             "Metric": 4,
             "Geography": 2,
             "CoreTimeSeries": 77,
@@ -208,7 +260,12 @@ class TestSeedRandomCommand:
             stratum=spy_stratum_create.return_value,
             age=spy_age_create.return_value,
             days=9,
+            progress_callback=spy_progress_callback,
         )
+        spy_progress_callback.assert_any_call(
+            "Preparing metric taxonomy and geography records..."
+        )
+        spy_progress_callback.assert_any_call("Generating Core/API time series rows...")
 
     def test_truncate_metrics_data_deletes_from_all_models(self):
         model_names = [
@@ -248,6 +305,7 @@ class TestSeedRandomCommand:
     ):
         spy_core_time_series.side_effect = lambda **kwargs: kwargs
         spy_api_time_series.side_effect = lambda **kwargs: kwargs
+        spy_progress_callback = mock.MagicMock()
 
         core_count, api_count = Command._seed_time_series_rows(
             metrics=[_fake_metric_hierarchy()],
@@ -255,12 +313,16 @@ class TestSeedRandomCommand:
             stratum=SimpleNamespace(name="All"),
             age=SimpleNamespace(name="All ages"),
             days=1,
+            progress_callback=spy_progress_callback,
         )
 
         assert core_count == 1
         assert api_count == 1
         spy_core_time_series.objects.bulk_create.assert_called_once()
         spy_api_time_series.objects.bulk_create.assert_called_once()
+        progress_messages = [call.args[0] for call in spy_progress_callback.call_args_list]
+        assert any(message.startswith("Processed 1/1 metrics") for message in progress_messages)
+        assert any(message.startswith("Inserted ") for message in progress_messages)
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
     @mock.patch(f"{MODULE_PATH}.CoreTimeSeries")
@@ -277,11 +339,11 @@ class TestSeedRandomCommand:
             geographies=[_fake_geography()],
             stratum=SimpleNamespace(name="All"),
             age=SimpleNamespace(name="All ages"),
-            days=5000,
+            days=FULL_BATCH_DAYS,
         )
 
-        assert core_count == 5000
-        assert api_count == 5000
+        assert core_count == FULL_BATCH_DAYS
+        assert api_count == FULL_BATCH_DAYS
         spy_core_time_series.objects.bulk_create.assert_called_once()
         spy_api_time_series.objects.bulk_create.assert_called_once()
 
@@ -346,3 +408,30 @@ def test_add_arguments_rejects_invalid_dataset_value():
 
     with pytest.raises(CommandError):
         parser.parse_args(["--dataset", "invalid"])
+
+
+def test_build_theme_hierarchy_records_contains_expected_real_values():
+    theme_names, sub_theme_rows, topic_rows = Command._build_theme_hierarchy_records()
+
+    assert "infectious_disease" in theme_names
+    assert any(sub_theme == "respiratory" for sub_theme, _ in sub_theme_rows)
+    assert any(topic == "COVID-19" and sub_theme == "respiratory" for topic, sub_theme, _ in topic_rows)
+
+
+def test_build_geography_seed_values_returns_required_count():
+    small_geographies = Command._build_geography_seed_values(count=SMALL_GEO_COUNT)
+    larger_geographies = Command._build_geography_seed_values(count=LARGE_GEO_COUNT)
+
+    assert len(small_geographies) == SMALL_GEO_COUNT
+    assert len(larger_geographies) == LARGE_GEO_COUNT
+    assert small_geographies[0]["name"] == "United Kingdom"
+    assert larger_geographies[-1]["geography_type"] in {
+        "Nation",
+        "Lower Tier Local Authority",
+    }
+
+
+def test_format_enum_name_replaces_underscores_and_title_cases():
+    assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == (
+        "Lower Tier Local Authority"
+    )
