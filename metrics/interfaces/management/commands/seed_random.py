@@ -3,6 +3,7 @@ import time
 from collections.abc import Callable, Iterable
 from datetime import date, timedelta
 from decimal import Decimal
+from operator import itemgetter
 from typing import override
 
 from django.core.management import CommandParser, call_command
@@ -120,7 +121,7 @@ class Command(BaseCommand):
         scale_config: dict[str, int],
         truncate_first: bool,
         progress_callback: Callable[[str], None] | None = None,
-    ) -> dict[str, int]:
+    ) -> dict[str, int]:  # noqa: PLR0914
         """Seed supporting metric models and time series rows for the selected scale."""
         if progress_callback is not None:
             progress_callback("Preparing metric taxonomy and geography records...")
@@ -251,7 +252,7 @@ class Command(BaseCommand):
         age: Age,
         days: int,
         progress_callback: Callable[[str], None] | None = None,
-    ) -> tuple[int, int]:
+    ) -> tuple[int, int]:  # noqa: PLR0914
         frequency = TimePeriod.Weekly.value
         today = date.today()
         start_date = today - timedelta(days=days - 1)
@@ -399,13 +400,15 @@ class Command(BaseCommand):
 
             parent_theme_name = child_to_parent[sub_theme_name]
             sub_theme_pairs.add((sub_theme_name, parent_theme_name))
-            for topic_value in topic_group.return_list():
-                topic_rows.append((topic_value, sub_theme_name, parent_theme_name))
+            topic_rows.extend(
+                (topic_value, sub_theme_name, parent_theme_name)
+                for topic_value in topic_group.return_list()
+            )
 
         theme_names = sorted({parent_name for _, parent_name in sub_theme_pairs})
         sub_theme_rows = sorted(
             sub_theme_pairs,
-            key=lambda value: (value[1], value[0]),
+            key=itemgetter(1, 0),
         )
         return theme_names, sub_theme_rows, topic_rows
 
