@@ -18,6 +18,7 @@ class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
+    popular_topics_card = cards.PopularTopicsCard()
     global_filter_card = GlobalFilterCard(
         help_text=help_texts.GLOBAL_FILTER_COMPONENT,
     )
