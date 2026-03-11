@@ -28,12 +28,12 @@ class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
     ) -> APITimeSeriesRequestSerializerv2:
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializerv2(context=serializer_context)
-    
+
     @staticmethod
     @staticmethod
     def _is_valid_non_public_request(request: Request) -> bool:
 
-        #TODO: this will be set to None if no valid JWT, this is done in middleware and prior to this functionality
+        # TODO: this will be set to None if no valid JWT, this is done in middleware and prior to this functionality
         has_valid_jwt = request.auth
 
         return has_valid_jwt
@@ -53,5 +53,5 @@ class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
         is_valid_non_public_request = self._is_valid_non_public_request(request=request)
         if is_valid_non_public_request:
             response["Cache-Control"] = "private, no-cache"
-            
+
         return response

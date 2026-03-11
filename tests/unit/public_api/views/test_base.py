@@ -78,14 +78,16 @@ class TestIsValidNonPublicRequest:
         result = base_view._is_valid_non_public_request(mocked_request)
 
         assert result is False
-        
-        
+
+
 class TestGetAddsPrivateHeaderForNonPublicRequests:
     """
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
     """
 
-    @mock.patch("public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request")
+    @mock.patch(
+        "public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request"
+    )
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
     def test_private_header_added_when_is_valid_non_public_request_is_true(
@@ -128,7 +130,9 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         )
         assert response == mocked_response
 
-    @mock.patch("public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request")
+    @mock.patch(
+        "public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request"
+    )
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
@@ -171,4 +175,3 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         spy_is_valid_non_public_request.assert_called_once_with(request=mocked_request)
         mocked_response.__setitem__.assert_not_called()
         assert response == mocked_response
-
