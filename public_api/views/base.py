@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -33,7 +32,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
     @staticmethod
     def _is_valid_non_public_request(request: Request) -> bool:
 
-        #TODO: this will be set to None if no valid JWT, this is done in middleware and prior to this functionality
+        # TODO: this will be set to None if no valid JWT, this is done in middleware and prior to this functionality
         has_valid_jwt = request.auth
 
         return has_valid_jwt

@@ -280,7 +280,7 @@ class TestCalculateResponseAndSaveInCache:
 
         # Then
         spy_calculate_response_from_view.assert_called_once_with(
-            mocked_view_function, *mocked_args, is_public = True, **mocked_kwargs
+            mocked_view_function, *mocked_args, is_public=True, **mocked_kwargs
         )
         assert response == spy_calculate_response_from_view.return_value
 
@@ -445,4 +445,3 @@ class TestIsPublicBehaviourInCalculateResponseFromView:
         # Then
         assert returned_response is mocked_response
         mocked_response.__setitem__.assert_not_called()
-
