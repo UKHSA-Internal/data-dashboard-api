@@ -74,16 +74,11 @@ def cache_response(
 
 def _check_if_valid_non_public_request(request):
     try:
-        is_non_public = request.query_params["is-public"].lower() == "false"
-    except KeyError:
-        is_non_public = False
-
-    try:
         is_authenticated = request.auth()
     except TypeError:
         is_authenticated = False
 
-    return is_non_public and is_authenticated
+    return is_authenticated
 
 
 def _retrieve_response_from_cache_or_calculate(
