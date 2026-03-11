@@ -70,29 +70,8 @@ class TestIsValidNonPublicRequest:
 
         assert result is False
 
-    def test_returns_false_when_is_public_true_even_if_authenticated(self):
-        mocked_request = mock.MagicMock()
-        mocked_request.query_params = {"is-public": "true"}
-        mocked_request.auth = mock.MagicMock(return_value=True)
-        base_view = BaseNestedAPITimeSeriesView()
-
-        result = base_view._is_valid_non_public_request(mocked_request)
-
-        assert result is False
-
-    def test_returns_false_when_is_public_missing(self):
-        mocked_request = mock.MagicMock()
-        mocked_request.query_params = {}
-        mocked_request.auth = mock.MagicMock(return_value=True)
-        base_view = BaseNestedAPITimeSeriesView()
-
-        result = base_view._is_valid_non_public_request(mocked_request)
-
-        assert result is False
-
     def test_returns_false_when_auth_returns_false(self):
         mocked_request = mock.MagicMock()
-        mocked_request.query_params = {"is-public": "false"}
         mocked_request.auth = mock.MagicMock(return_value=False)
         base_view = BaseNestedAPITimeSeriesView()
 
@@ -101,7 +80,6 @@ class TestIsValidNonPublicRequest:
         assert result is False
         
         
-
 class TestGetAddsPrivateHeaderForNonPublicRequests:
     """
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
@@ -125,7 +103,6 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         spy_is_valid_non_public_request.return_value = True
 
         mocked_request = mock.MagicMock()
-        mocked_request.query_params = {}
 
         mocked_slice = [mock.MagicMock()]
         mock_request_serializer = mock.MagicMock()
@@ -169,7 +146,6 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         spy_is_valid_non_public_request.return_value = False
 
         mocked_request = mock.MagicMock()
-        mocked_request.query_params = {}
 
         # Mock DTO slice creation
         mocked_slice = [mock.MagicMock()]

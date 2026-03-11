@@ -34,16 +34,11 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
     def _is_valid_non_public_request(request: Request) -> bool:
 
         try:
-            is_non_public = request.query_params["is-public"].lower() == "false"
-        except KeyError:
-            is_non_public = False
-
-        try:
             is_authenticated = request.auth()
         except TypeError:
             is_authenticated = False
 
-        return is_non_public and is_authenticated
+        return is_authenticated
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
