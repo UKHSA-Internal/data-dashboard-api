@@ -33,12 +33,10 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
     @staticmethod
     def _is_valid_non_public_request(request: Request) -> bool:
 
-        try:
-            is_authenticated = request.auth()
-        except TypeError:
-            is_authenticated = False
+        #TODO: this will be set to None if no valid JWT, this is done in middleware and prior to this functionality
+        has_valid_jwt = request.auth
 
-        return is_authenticated
+        return has_valid_jwt
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
