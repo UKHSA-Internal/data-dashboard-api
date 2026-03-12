@@ -3,6 +3,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.search import index
+from wagtail.fields import RichTextField
 
 from cms.error.managers import ErrorPageManager
 from cms.dashboard.enums import (
@@ -10,6 +11,7 @@ from cms.dashboard.enums import (
     RelatedLinksLayoutEnum,
 )
 from cms.dashboard.models import (
+    AVAILABLE_RICH_TEXT_FEATURES,
     UKHSAPage,
     UKHSAPageRelatedLink,
 )
@@ -18,6 +20,21 @@ from cms.dynamic_content.announcements import Announcement
 
 
 class ErrorPage(UKHSAPage):
+    body = models.TextField(null=True, blank=True)
+    error_line = models.TextField(
+        help_text=help_texts.ERROR_PAGE_LINE_FIELD, blank=True, null=True)
+    error_text = RichTextField(
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        blank=True,
+        null=True,
+        help_text=help_texts.ERROR_PAGE_TEXT_FIELD,
+    )
+    sub_text = RichTextField(
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        blank=True,
+        null=True,
+        help_text=help_texts.ERROR_PAGE_SUB_TEXT_FIELD,
+    )
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -31,7 +48,9 @@ class ErrorPage(UKHSAPage):
     ]
 
     content_panels = UKHSAPage.content_panels + [
-        FieldPanel("body"),
+        FieldPanel("error_line"),
+        FieldPanel("error_text"),
+        FieldPanel("sub_text")
     ]
 
     sidebar_content_panels = [
@@ -42,6 +61,9 @@ class ErrorPage(UKHSAPage):
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
+        APIField("error_line"),
+        APIField("error_text"),
+        APIField("sub_text"),
         APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),
