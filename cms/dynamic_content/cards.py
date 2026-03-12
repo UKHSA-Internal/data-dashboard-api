@@ -287,6 +287,11 @@ class ChartCard(blocks.StructBlock):
         default=False,
         required=False,
     )
+    date_prefix = blocks.CharBlock(
+        requried=True,
+        default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
+        help_texts=help_texts.CHART_DATE_PREFIX,
+    )
     show_timeseries_filter = blocks.BooleanBlock(
         help_text=help_texts.CHART_TIMESERIES_FILTER,
         default=False,
