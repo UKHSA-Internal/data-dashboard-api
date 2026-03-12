@@ -4,9 +4,13 @@ from django.db import models
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 
+from validation.enums.theme_and_topic_enums import ParentTheme
+
 
 class PermissionSet(models.Model):
-    theme = models.CharField(max_length=255)
+    theme = models.CharField(
+        choices=[(e.value, e.name.replace("_", " ").title()) for e in ParentTheme]
+    )
     sub_theme = models.CharField(max_length=255)
     topic = models.CharField(max_length=255)
     metric = models.CharField(max_length=255)
