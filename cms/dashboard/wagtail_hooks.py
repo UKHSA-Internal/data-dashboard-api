@@ -8,6 +8,11 @@ from wagtail.admin.menu import MenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 from wagtail.models import Page
 from wagtail.whitelist import check_url
+from wagtail import hooks
+from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.admin.viewsets.model import ModelViewSetGroup
+
+from auth_content.models import AuthFeature
 
 
 @hooks.register("insert_global_admin_css")
@@ -124,3 +129,21 @@ def register_link_props(features):
     rule = features.converter_rules_by_converter["contentstate"]["link"]
     rule["to_database_format"]["entity_decorators"]["LINK"] = link_entity_with_href
     features.register_converter_rule("contentstate", "link", rule)
+
+# Initial feature to test out new menu section
+class AuthFeatureViewSet(SnippetViewSet):
+    model = AuthFeature
+    menu_label = "Features"
+    icon = "key"
+
+
+class AuthGroup(ModelViewSetGroup):
+    items = (AuthFeatureViewSet,)
+    menu_label = "Auth"
+    menu_icon = "lock"
+    menu_order = 300
+
+
+@hooks.register("register_admin_viewset")
+def register_auth_viewset():
+    return AuthGroup()

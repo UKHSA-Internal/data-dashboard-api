@@ -76,6 +76,7 @@ if config.APP_MODE != "INGESTION":
         "wagtail_trash",
         "modelcluster",
         "taggit",
+        "auth_content",
     ]
 
 MIDDLEWARE = [
