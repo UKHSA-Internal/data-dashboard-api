@@ -12,7 +12,7 @@ from wagtail import hooks
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.viewsets.model import ModelViewSetGroup
 
-from auth_content.models import AuthFeature
+from auth_content.models import PermissionSet
 
 
 @hooks.register("insert_global_admin_css")
@@ -131,14 +131,14 @@ def register_link_props(features):
     features.register_converter_rule("contentstate", "link", rule)
 
 # Initial feature to test out new menu section
-class AuthFeatureViewSet(SnippetViewSet):
-    model = AuthFeature
-    menu_label = "Features"
+class PermissionSetViewSet(SnippetViewSet):
+    model = PermissionSet
+    menu_label = "Permission Sets"
     icon = "key"
 
 
 class AuthGroup(ModelViewSetGroup):
-    items = (AuthFeatureViewSet,)
+    items = (PermissionSetViewSet,)
     menu_label = "Auth"
     menu_icon = "lock"
     menu_order = 300
