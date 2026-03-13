@@ -1,7 +1,7 @@
 HEADLINE_COLUMNS_FIELD: str = """
-Add up to {} number column components within this row. 
-The columns are ordered from left to right, top to bottom respectively. 
-So by moving 1 column component above the other, that component will be rendered in the column left of the other. 
+Add up to {} number column components within this row.
+The columns are ordered from left to right, top to bottom respectively.
+So by moving 1 column component above the other, that component will be rendered in the column left of the other.
 """
 
 HEADLINE_COLUMNS_IN_CHART_CARD: str = """
@@ -22,15 +22,15 @@ of a row equally, creating either a 2 or 3 column layout.
 
 NUMBERS_ROW_FIELD: str = """
 Here you can add up to {} rows within this column component.
-Each row can be used to add a number block. 
+Each row can be used to add a number block.
 This can be a headline number, a trend number or a percentage number.
 If you only add 1 row, then that block will be rendered on the upper half of the column.
 And the bottom row of the column will remain empty.
 """
 
 CHART_BLOCK_FIELD: str = """
-Add the plots required for your chart. 
-Within each plot, you will be required to add a set of fields which will be used to fetch the supporting data 
+Add the plots required for your chart.
+Within each plot, you will be required to add a set of fields which will be used to fetch the supporting data
 for that plot.
 """
 
@@ -57,7 +57,7 @@ E.g. "Patients admitted"
 """
 TREND_BLOCK_FIELD: str = """
 This component will display a trend number type metric.
-This will display an arrow pointing in the direction of the metric change 
+This will display an arrow pointing in the direction of the metric change
 as well as colouring of the block to indicate the context of the change.
 You can also optionally add a body of text to accompany that headline number.
 E.g. "Last 7 days"
@@ -90,7 +90,7 @@ And another headline number type metric will be shown on the bottom half of the 
 """
 
 TEXT_CARD: str = """
-This section of text will comprise this card. 
+This section of text will comprise this card.
 Note that this card will span the length of the available page width if sufficient text content is provided.
 """
 BODY_FIELD: str = "The section of text which will accommodate this block."
@@ -98,7 +98,7 @@ BODY_FIELD_ABOVE_BLOCK: str = f"""
 {BODY_FIELD} Note that this text will be placed above the main content of the block.
 """
 HEADING_BLOCK: str = """
-The text you add here will be used as the heading for this section. 
+The text you add here will be used as the heading for this section.
 """
 
 CONTENT_ROW_CARDS: str = """
@@ -126,23 +126,23 @@ If nothing is provided, then no filtering will be applied for this field.
 """
 
 TREND_METRIC_FIELD: str = """
-The name of the trend type metric to pull data e.g. "COVID-19_headline_ONSdeaths_7daychange". 
+The name of the trend type metric to pull data e.g. "COVID-19_headline_ONSdeaths_7daychange".
 Note that only 'change' type metrics are available for selection for this field type.
 """
 TREND_PERCENTAGE_METRIC_FIELD: str = """
-The name of the accompanying percentage trend type metric to pull data 
-e.g. "COVID-19_headline_ONSdeaths_7daypercentchange". 
+The name of the accompanying percentage trend type metric to pull data
+e.g. "COVID-19_headline_ONSdeaths_7daypercentchange".
 Note that only 'percent' type metrics are available for selection for this field type.
 """
 CHART_TYPE_FIELD: str = """
 The name of the type of chart which you want to create e.g. bar
 """
 DATE_FROM_FIELD: str = """
-The date from which to begin the supporting plot data. 
+The date from which to begin the supporting plot data.
 Note that if nothing is provided, a default of 1 year ago from the current date will be applied.
 """
 DATE_TO_FIELD: str = """
-The date to which to end the supporting plot data. 
+The date to which to end the supporting plot data.
 Note that if nothing is provided, a default of the current date will be applied.
 """
 SEX_FIELD: str = """
@@ -179,7 +179,7 @@ Defaults to False.
 """
 
 TITLE_FIELD: str = """
-The title to display for this component. 
+The title to display for this component.
 Note that this will be shown in the hex colour #505A5F
 """
 SUB_TITLE_FIELD: str = """
@@ -216,7 +216,7 @@ A required body of text to accompany this block.
 """
 
 PAGE_DESCRIPTION_FIELD: str = """
-An optional body of text which will be rendered at the top of the page. 
+An optional body of text which will be rendered at the top of the page.
 This text will be displayed after the title of the page and before any of the main content.
 """
 
@@ -258,7 +258,7 @@ be overridden and the value from the dataset will be used.
 CHART_Y_AXIS_MAXIMUM_VALUE: str = """
 This field allows you to set the last value in the chart's y-axis range. Please
 note that a value provided here, which is lower than the highest value in the data will
-be overridden and the value from the dataset will be used. 
+be overridden and the value from the dataset will be used.
 """
 
 REQUIRED_CHART_Y_AXIS: str = """
@@ -267,7 +267,7 @@ A required choice of what to display along the y-axis of the chart.
 
 USE_SMOOTH_LINES: str = """
 If set to true, draws the plot as a spline line, resulting in smooth curves between data points.
-If set to false, draws the plot as a linear line, 
+If set to false, draws the plot as a linear line,
 resulting in linear point-to-point lines being drawn between data points.
 This is only applicable to line-type charts.
 """
@@ -308,13 +308,13 @@ The type to associate with the banner. Defaults to `Information`.
 """
 
 GLOBAL_BANNER_IS_ACTIVE: str = """
-Whether to activate this banner across every page in the dashboard. 
+Whether to activate this banner across every page in the dashboard.
 Multiple banners can be active across the dashboard.
 Note: Warning banners are prioritised across the dashboard and will be displayed above information banners.
 """
 
 TAG_MANAGER_EVENT_ID_FIELD: str = """
-The ID to associate with this component. 
+The ID to associate with this component.
 This allows for tracking of events when users interact with this component.
 Note that changing this multiple times will result in the recording of different groups of events.
 """
@@ -344,7 +344,7 @@ This is an optional short description of the page you're linking to.
 """
 
 HEADLINE_DATE_PREFIX: str = """
-This is the accompanying text for headline column dates Eg: `Up to` 27 Oct 2024 
+This is the accompanying text for headline column dates Eg: `Up to` 27 Oct 2024
 """
 
 CHART_DATE_PREFIX: str = """
@@ -370,8 +370,8 @@ The type to associate with the announcement. Defaults to `Information`.
 """
 
 ANNOUNCEMENT_BANNER_IS_ACTIVE: str = """
-Whether to activate this banner only on this individual page. 
-Note that multiple page banners can be active on one page. Consider 
+Whether to activate this banner only on this individual page.
+Note that multiple page banners can be active on one page. Consider
 carefully if you need multiple announcements to be active at once as
 this can have an impact on user experience of the dashboard page.
 """
@@ -398,7 +398,7 @@ should be the age group for this segment.
 
 GLOBAL_FILTER_COMPONENT: str = """
 The global filter component enables a user of the dashboard to create a variable number of filters
-which can be applied across multi components on a dashboard page. This CMS component can be used to configure 
+which can be applied across multi components on a dashboard page. This CMS component can be used to configure
 those options.
 """
 
@@ -406,13 +406,13 @@ GLOBAL_FILTER_TIME_RANGE: str = """
 This mandatory time range is used to set the time range that a user can navigate through when
 interacting with a filter linked chart or map card. Eg. Year selection can include a range of
 years as dates that can be displayed and navigated between.
-When entering multiple periods in the time filter each proceeding `date_from` must be 1 day after the `date_to` 
+When entering multiple periods in the time filter each proceeding `date_from` must be 1 day after the `date_to`
 that came before it to maintain sequence order.
 """
 
 GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD: str = """
 This field is used to provide a start date for the current time range option. Its date
-must be earlier than the date provided for the corresponding `date_to`field. 
+must be earlier than the date provided for the corresponding `date_to`field.
 """
 
 GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD: str = """
@@ -500,25 +500,25 @@ in the global filter component to represent this data geographically.
 
 FILTER_LINKED_SUB_PLOT_CHART_TEMPLATE: str = """
 This filter linked sub plot chart can be used to display metric data configured through a data filter
-in the global filter component. 
-This template will render a new chart for each geography selected by the user 
+in the global filter component.
+This template will render a new chart for each geography selected by the user
 for the selected entities according to the data filter.
 """
 
 FILTER_LINKED_SUB_PLOT_CHART_LEGEND_TITLE: str = """
-This legend title will be used for the title of the sub plot chart legends. 
+This legend title will be used for the title of the sub plot chart legends.
 Eg. the colours associated with the geographies from global filter.
 """
 
 FILTER_LINKED_TIME_SERIES_CHART_TEMPLATE: str = """
 This filter linked time series chart can be used to display metric data configured through a data filter
-in the global filter component. 
-This template will render a new chart for each geography selected by the user 
+in the global filter component.
+This template will render a new chart for each geography selected by the user
 for the selected entities according to the data filter.
 """
 
 FILTER_LINKED_TIME_SERIES_CHART_LEGEND_TITLE: str = """
-This legend title will be used for the title of the time series chart legends. 
+This legend title will be used for the title of the time series chart legends.
 Eg. the colours associated with the selected data entities from global filter.
 """
 
@@ -587,4 +587,20 @@ For linking to external url. (Only one of page or external_url must be filled no
 
 PAGE_CLASSIFICATION: str = """
 The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
+"""
+
+SECTION_FOOTER_BLOCKS: str = """
+This is an optional footer for content sections to allow additional supporting information to be linked too. (E.g. a link to furhter information about how we define an outbreak)
+"""
+SECTION_FOOTER: str = """
+This is an optional footer for a section to provide a link to further information.
+"""
+SECTION_FOOTER_BADGE_LABEL: str = """
+This is the label used for the a section footer link badge"
+"""
+SECTION_FOOTER_LINK_TEXT: str = """
+This is the text to displayed along side a link in a the sections footer link.
+"""
+SECTION_FOOTER_LINK: str = """
+This is a link component that allows the user to setup an internal or external link along with a short description of the link's content.
 """
