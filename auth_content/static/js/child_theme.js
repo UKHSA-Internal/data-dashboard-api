@@ -9,11 +9,7 @@
 
     if (!theme || !sub_theme) return
 
-    try {
-      themeMapping = window.PERMISSIONSET_THEME_MAP
-    } catch (e) {
-      console.error("Invalid theme map")
-    }
+    themeMapping = window.PERMISSIONSET_THEME_MAP
 
     if (!theme.value) {
       clearSubTheme()
@@ -21,6 +17,7 @@
       populateSubThemeDropDown()
     }
   }
+
   function populateSubThemeDropDown() {
     sub_theme.disabled = false
     sub_theme.innerHTML = ""
