@@ -73,6 +73,11 @@ class Command(BaseCommand):
         build_cms_site_helpers.create_feedback_page(
             name="feedback", parent_page=root_page
         )
+
+        build_cms_site_helpers.create_authentication_error_page(
+            name="auth_error_page", parent_page=root_page
+        )
+
         build_cms_site_helpers.create_menu_snippet()
 
     @classmethod
@@ -137,8 +142,10 @@ class Command(BaseCommand):
         other_respiratory_viruses_page.move(
             target=respiratory_viruses_index_page, pos="last-child"
         )
-        influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
-        covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
+        influenza_page.move(
+            target=respiratory_viruses_index_page, pos="last-child")
+        covid_19_page.move(
+            target=respiratory_viruses_index_page, pos="last-child")
 
     @classmethod
     def _build_cover_section(cls, root_page: UKHSARootPage) -> None:
@@ -152,18 +159,21 @@ class Command(BaseCommand):
             name="childhood_vaccinations_index", parent_page=root_page
         )
 
-        childhood_vaccinations_page.move(target=cover_index_page, pos="last-child")
+        childhood_vaccinations_page.move(
+            target=cover_index_page, pos="last-child")
 
     @classmethod
     def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
-        build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
+        build_cms_site_helpers.create_common_page(
+            name="about", parent_page=root_page)
         build_cms_site_helpers.create_common_page(
             name="location_based_data", parent_page=root_page
         )
         build_cms_site_helpers.create_common_page(
             name="whats_coming", parent_page=root_page
         )
-        build_cms_site_helpers.create_common_page(name="cookies", parent_page=root_page)
+        build_cms_site_helpers.create_common_page(
+            name="cookies", parent_page=root_page)
         build_cms_site_helpers.create_common_page(
             name="accessibility_statement", parent_page=root_page
         )
@@ -176,4 +186,5 @@ class Command(BaseCommand):
         # Wipe the existing site, pages & badges
         Site.objects.all().delete()
         Badge.objects.all().delete()
-        Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
+        # Wagtail welcome page and all others
+        Page.objects.filter(pk__gte=2).delete()
