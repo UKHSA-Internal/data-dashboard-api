@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ),
                 ("title", models.CharField(max_length=255)),
                 ("url", models.URLField(max_length=400, verbose_name="URL")),
-                ("body", wagtail.fields.RichTextField(blank=True, null=True)),
+                ("body", wagtail.fields.RichTextField()),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
