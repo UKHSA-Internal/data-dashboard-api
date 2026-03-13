@@ -13,6 +13,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
     create_landing_page_body_wih_page_links,
 )
+from cms.error.models import ErrorPage, ErrorPageRelatedLink
 from cms.forms.models import FormField, FormPage
 from cms.home.models import LandingPage
 from cms.home.models.landing_page import LandingPageRelatedLink
@@ -21,7 +22,6 @@ from cms.snippets.data_migrations.operations import (
 )
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
-from cms.error.models import ErrorPage, ErrorPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 logger = logging.getLogger(__name__)

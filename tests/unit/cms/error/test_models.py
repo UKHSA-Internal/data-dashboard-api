@@ -40,12 +40,7 @@ class TestBlankErrorPage:
 
     @pytest.mark.parametrize(
         "expected_content_panel_name",
-        [
-            "title",
-            "error_text",
-            "error_line",
-            "sub_text"
-        ],
+        ["title", "error_text", "error_line", "sub_text"],
     )
     def test_has_correct_content_panels(self, expected_content_panel_name: str):
         """

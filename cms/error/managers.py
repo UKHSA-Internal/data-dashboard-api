@@ -39,4 +39,3 @@ class ErrorPageManager(PageManager):
                     `<ErrorPageQuerySet [<ErrorPage: About>, <ErrorPage: Compliance>, ...]>`
         """
         return self.get_queryset().get_live_pages()
-   

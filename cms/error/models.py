@@ -2,10 +2,9 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
 from wagtail.fields import RichTextField
+from wagtail.search import index
 
-from cms.error.managers import ErrorPageManager
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -17,12 +16,14 @@ from cms.dashboard.models import (
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement
+from cms.error.managers import ErrorPageManager
 
 
 class ErrorPage(UKHSAPage):
     body = models.TextField(null=True, blank=True)
     error_line = models.TextField(
-        help_text=help_texts.ERROR_PAGE_LINE_FIELD, blank=True, null=True)
+        help_text=help_texts.ERROR_PAGE_LINE_FIELD, blank=True, null=True
+    )
     error_text = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -50,13 +51,12 @@ class ErrorPage(UKHSAPage):
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("error_line"),
         FieldPanel("error_text"),
-        FieldPanel("sub_text")
+        FieldPanel("sub_text"),
     ]
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links",
-                    label="Related link"),
+        InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
     # Sets which fields to expose on the API
@@ -74,8 +74,7 @@ class ErrorPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(UKHSAPage.announcement_content_panels,
-                       heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )

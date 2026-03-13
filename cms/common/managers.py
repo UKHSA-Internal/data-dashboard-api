@@ -39,4 +39,3 @@ class CommonPageManager(PageManager):
                     `<CommonPageQuerySet [<CommonPage: About>, <CommonPage: Compliance>, ...]>`
         """
         return self.get_queryset().get_live_pages()
-   
