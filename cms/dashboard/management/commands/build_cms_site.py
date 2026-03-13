@@ -75,7 +75,7 @@ class Command(BaseCommand):
         )
 
         build_cms_site_helpers.create_authentication_error_page(
-            name="feedback", parent_page=root_page
+            name="auth_error_page", parent_page=root_page
         )
 
         build_cms_site_helpers.create_menu_snippet()
