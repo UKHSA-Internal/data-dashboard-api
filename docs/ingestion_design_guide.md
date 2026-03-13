@@ -61,7 +61,7 @@ to the `processed/` or the `failed/` folder within the s3 bucket, depending on t
 It should be noted that the `source_data/` directory at the root level of the project contains a number of 
 source data files which are used to populate databases in development environments.
 
-These files are ran through and handled by the same `Consumer` class 
+These files are run through and handled by the same `Consumer` class 
 as the ingestion lambda function in deployed environments.
 The only exception being, we consume the test dataset with multiprocessing.
 
