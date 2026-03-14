@@ -6,6 +6,12 @@ from dotenv import load_dotenv
 
 from ingestion.secrets_manager import get_database_password
 
+def _parse_bool_env(var_name, default=False):
+    val = os.environ.get(var_name)
+    if val is None:
+        return default
+    return str(val).lower() in ("1", "true", "yes", "on")
+
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
@@ -74,3 +80,4 @@ POSTGRES_PORT: int = os.environ.get("POSTGRES_PORT", 5432)
 # easy way to inject secrets into serverless lambda functions
 if APP_MODE == "INGESTION":
     POSTGRES_PASSWORD = get_database_password()
+

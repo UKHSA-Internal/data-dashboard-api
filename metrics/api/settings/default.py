@@ -292,10 +292,15 @@ WAGTAILADMIN_BASE_URL = "http://example.com"
 # Set to None for no limit.
 WAGTAILAPI_LIMIT_MAX = None
 
-
 CSRF_TRUSTED_ORIGINS = ["https://*.ukhsa-dashboard.data.gov.uk"]
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+PAGE_PREVIEWS_ENABLED = False
+PAGE_PREVIEWS_FRONTEND_BASE_URL = 'http://localhost:3000'
+PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = "http://localhost:3000/preview?slug={slug}&t={token}"
+PAGE_PREVIEWS_TOKEN_TTL_SECONDS = 86400
+PAGE_PREVIEWS_TOKEN_SALT = 'preview-token'

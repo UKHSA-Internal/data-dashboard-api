@@ -111,11 +111,26 @@ It is **not** currently ordered based on weighting of end user clicks.
 
 ### Previews
 
-Because the CMS integrates with the frontend via a REST API. 
-Out of the box, the CMS does not therefore have the ability to render content as it would be seen by the end user.
+The CMS integrates with the frontend via a REST API using a token-based preview flow.
 
-As such, when the CMS user hits the `Live` button for a page, only a rudimentary HTML view of the page will be rendered.
+When a CMS user clicks the preview button, they are redirected to the frontend with:
+- `slug`: the Wagtail route slug (can be nested, e.g. `parent/child`)
+- `t`: a short-lived signed token query value (default 120 seconds TTL; 24 hours in local dev)
 
-In the future, the CMS can potentially be 
-[configured to point to the frontend URL ](https://github.com/torchbox/wagtail-headless-preview)
-and effectively ask it for a rendered view.
+The frontend uses these parameters to fetch draft content:
+1. Call `/api/drafts/{slug}/` with `Authorization: Bearer {token}` header
+2. The API validates the token signature, `page_id` match, and expiration
+3. Returns the latest draft revision including unpublished changes
+
+Note: the draft endpoint route is slug-based (`/api/drafts/{slug}/`), while
+authorization still requires a token containing `page_id` that must match the
+resolved page.
+
+The preview URL template is configurable via `PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE` environment variable (defaults to `http://localhost:3000/preview?slug={slug}&t={token}`).
+
+Token validation:
+- Verifies signature using `PAGE_PREVIEWS_TOKEN_SALT` (default: `preview-token`)
+- Checks `page_id` claim matches the requested page
+- Ensures token hasn't expired (`exp` claim)
+
+See the [environment variables documentation](environment_variables.md#frontend-preview-integration) for frontend integration details and testing.
