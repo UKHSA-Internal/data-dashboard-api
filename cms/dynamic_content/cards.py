@@ -12,6 +12,7 @@ from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
     PageLinkChooserBlock,
+    PopularTopicsRightColumnBottomRowBlockTypes,
     RelatedLinkBlock,
     SourceLinkBlock,
 )
@@ -45,6 +46,9 @@ MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
 
 MINIMUM_SEGMENTS_COUNT: int = 1
+
+POPULAR_TOPICS_SEGMENT_COUNT: int = 1
+POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT: int = 2
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
@@ -573,6 +577,44 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
     dual_category_chart_card = DualCategoryChartCard()
+
+
+class PopularTopicsLeftColumnBlockTypes(blocks.StreamBlock):
+    weather_health_alert_card = WeatherHealthAlertsCard()
+    chart_card_with_description = ChartWithDescriptionCard()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
+class PopularTopicsRightColumnTopRowBlockTypes(blocks.StreamBlock):
+    chart_card = ChartCard()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
+class PopularTopicsCard(blocks.StructBlock):
+    left_column = PopularTopicsLeftColumnBlockTypes(
+        min_num=POPULAR_TOPICS_SEGMENT_COUNT,
+        max_num=POPULAR_TOPICS_SEGMENT_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_LEFT_COLUMN,
+    )
+    right_column_top_row = PopularTopicsRightColumnTopRowBlockTypes(
+        min_num=POPULAR_TOPICS_SEGMENT_COUNT,
+        max_num=POPULAR_TOPICS_SEGMENT_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_RIGHT_COLUMN_TOP_ROW,
+    )
+    right_column_bottom_row = PopularTopicsRightColumnBottomRowBlockTypes(
+        min_num=POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT,
+        max_num=POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT,
+        help_text=help_texts.POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW.format(
+            POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT
+        ),
+    )
+
+    class Meta:
+        icon = "standalone_chart"
 
 
 class ChartRowCard(blocks.StructBlock):
