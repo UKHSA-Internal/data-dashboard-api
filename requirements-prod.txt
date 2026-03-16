@@ -55,7 +55,7 @@ packaging==26.0
 pathspec==1.0.4
 pbr==7.0.3
 Pillow==12.1.1
-platformdirs==4.9.2
+platformdirs==4.9.4
 plotly==6.5.2
 pluggy==1.6.0
 pyparsing==3.3.2
@@ -71,7 +71,7 @@ ruamel.yaml==0.19.1
 ruamel.yaml.clib==0.2.15
 SQLAlchemy==2.0.48
 scour==0.38.2
-setuptools==82.0.0
+setuptools==82.0.1
 simplejson==3.20.2
 six==1.17.0
 sortedcontainers==2.4.0
