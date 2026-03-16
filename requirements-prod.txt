@@ -29,7 +29,7 @@ filelock==3.25.0
 grimp==3.14
 gunicorn==25.1.0
 html5lib==1.1
-identify==2.6.16
+identify==2.6.18
 idna==3.11
 importlib-metadata==8.7.1
 inflection==0.5.1
