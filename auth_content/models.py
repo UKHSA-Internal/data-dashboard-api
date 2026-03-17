@@ -3,7 +3,8 @@ from django.db import models
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 
-from validation.enums.theme_and_topic_enums import ChildTheme, ParentTheme
+from validation.enums.theme_and_topic_enums import ChildTheme, ParentTheme, Topic
+
 
 def get_theme_child_map():
     """Returns an object of all parent to child mappings
@@ -21,19 +22,45 @@ def get_theme_child_map():
         # It has been assumed for now that validation and ingestion will catch if any parent name are not used in ChildTheme
         theme_mapping[parent.value] = ChildTheme[parent.name].return_tuple_list()
 
+    print(theme_mapping)
     return theme_mapping
+
+
+def get_sub_theme_child_map():
+    """Returns an object of all parent to child mappings
+    e.g.
+    {
+        infectious_disease: [vaccine_preventable, respiratory ....],
+        extreme_event: [weather_alert, mortality_report...]
+        ...
+    }
+
+    """
+
+    sub_theme_mapping = {}
+    for topic in Topic:
+        print("item: ", topic.value)
+
+        # It has been assumed for now that validation and ingestion will catch if any parent name are not used in ChildTheme
+        sub_theme_mapping[topic.name.lower(
+        )] = Topic[topic.name].return_tuple_list()
+
+    print(sub_theme_mapping)
+
+    return sub_theme_mapping
+
 
 class PermissionSet(models.Model):
     theme = models.CharField(
-        choices=[(e.value, e.name.replace("_", " ").title()) for e in ParentTheme]
+        choices=[(e.value, e.name.replace("_", " ").title())
+                 for e in ParentTheme]
     )
     sub_theme = models.CharField(max_length=255, choices=[])
-    topic = models.CharField(max_length=255)
-    metric = models.CharField(max_length=255)
-    geography_type = models.CharField(max_length=255)
-    geography = models.CharField(max_length=255)
+    topic = models.CharField(max_length=255, choices=[])
+    metric = models.CharField(max_length=255, choices=[])
+    geography_type = models.CharField(max_length=255, choices=[])
+    geography = models.CharField(max_length=255, choices=[])
 
-    
     panels = [
         FieldPanel("theme"),
         FieldPanel("sub_theme"),
@@ -42,6 +69,6 @@ class PermissionSet(models.Model):
         FieldPanel("geography_type"),
         FieldPanel("geography"),
     ]
-    
+
     def __str__(self):
         return self.theme
