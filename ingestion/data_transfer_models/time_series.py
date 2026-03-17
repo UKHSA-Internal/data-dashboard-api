@@ -1,15 +1,13 @@
 import datetime
-from typing import Self
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator
 from pydantic.fields import Field
 
 import validation
 from ingestion.utils import type_hints
-from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD
 from validation.data_transfer_models.base import (
     IncomingBaseDataModel,
-    NonPublicDataSentToPublicIngestionError,
 )
 
 
@@ -42,14 +40,6 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 
         """
         return validation.cast_date_to_uk_timezone(date_value=embargo)
-
-    @model_validator(mode="after")
-    def invalidate_non_public_data_for_public_ingestion(self) -> Self:
-        """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
-        if not AUTH_ENABLED and not self.is_public:
-            raise NonPublicDataSentToPublicIngestionError
-
-        return self
 
 
 class TimeSeriesDTO(IncomingBaseDataModel):
@@ -128,7 +118,11 @@ def _build_enriched_time_series_specific_fields(
                 "in_reporting_delay_period", False
             ),
             force_write=individual_time_series.get("force_write", False),
-            is_public=individual_time_series.get("is_public", True),
+            is_public=(
+                individual_time_series["is_public"]
+                if not ALLOW_MISSING_IS_PUBLIC_FIELD
+                else individual_time_series.get("is_public", True)
+            ),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None
