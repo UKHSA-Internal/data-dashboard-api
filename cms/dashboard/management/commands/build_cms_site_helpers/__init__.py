@@ -1,4 +1,5 @@
 from .pages import (
+    create_acknowledgement_page,
     create_common_page,
     create_topic_page,
     create_composite_page,
