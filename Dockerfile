@@ -30,10 +30,11 @@ RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
 # Production stage (distroless, root)
+# NOTE:
+#   The distroless base image is pinned to a specific digest for reproducible
+#   builds. When updating, refresh the digest via `docker pull` + `docker inspect`.
 ###############################################################################
-FROM gcr.io/distroless/cc-debian12 AS production
-
-ARG PYTHON_VERSION=3.12.6
+FROM gcr.io/distroless/cc-debian12@sha256:5b75ef3081b4f1b52e64bbf5bf39e7c1f251c6b42c6aff001844c80c95ea5d1c AS production
 
 WORKDIR /code
 

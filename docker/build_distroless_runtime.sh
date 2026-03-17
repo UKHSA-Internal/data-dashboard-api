@@ -3,7 +3,7 @@ set -eu
 
 #
 # Build-time script for producing a minimal runtime bundle suitable for
-# gcr.io/distroless/cc-debian12:nonroot.
+# gcr.io/distroless/cc-debian12@sha256:5b75ef3081b4f1b52e64bbf5bf39e7c1f251c6b42c6aff001844c80c95ea5d1c.
 #
 # Prepares:
 # - /code/.venv with production dependencies (for entrypoint/scripts _venv.sh)
