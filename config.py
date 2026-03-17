@@ -6,6 +6,14 @@ from dotenv import load_dotenv
 
 from ingestion.secrets_manager import get_database_password
 
+
+def _parse_bool_env(var_name, *, default=False):
+    val = os.environ.get(var_name)
+    if val is None:
+        return default
+    return str(val).lower() in {"1", "true", "yes", "on"}
+
+
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 

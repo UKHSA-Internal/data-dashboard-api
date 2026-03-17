@@ -57,7 +57,7 @@ function _quality_format_check() {
     if [ -n "${changed_files}"  ]; then
       echo "Some files appear to be un-formatted. Please rectify by running 'uhd quality format' and committing the changes."
       echo "${changed_files}"
-      exit 1
+            return 1
     else
         echo "No changes, the files are okay to be checked into the repo."
     fi
