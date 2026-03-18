@@ -70,6 +70,9 @@ class Command(BaseCommand):
 
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
 
+        build_cms_site_helpers.create_acknowledgement_page(
+            name="acknowledgement", parent_page=root_page
+        )
         build_cms_site_helpers.create_feedback_page(
             name="feedback", parent_page=root_page
         )

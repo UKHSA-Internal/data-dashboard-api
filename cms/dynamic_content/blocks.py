@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.snippets.blocks import SnippetChooserBlock
@@ -8,6 +9,7 @@ from cms.dynamic_content.components import (
     PercentageNumberComponent,
     TrendNumberComponent,
 )
+from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
@@ -161,3 +163,38 @@ class RelatedLink(blocks.StructBlock):
 
 class RelatedLinkBlock(blocks.StreamBlock):
     related_link = RelatedLink()
+
+
+class SourceLinkBlock(blocks.StructBlock):
+    """Source link supporting internal (page) or external (URL) links."""
+
+    link_display_text = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_TEXT,
+    )
+    page = PageLinkChooserBlock(
+        target_model=["topic.TopicPage"],
+        required=False,
+        help_text=help_texts.SOURCE_LINK_PAGE,
+    )
+    external_url = blocks.URLBlock(
+        required=False,
+        help_text=help_texts.SOURCE_LINK_URL,
+        validators=[validate_https_scheme],
+    )
+
+    def clean(self, value: blocks.StructValue):
+        self._validate_only_one_of_page_or_external_url(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_only_one_of_page_or_external_url(
+        cls, *, value: blocks.StructValue
+    ) -> None:
+        """Validate that only one of the page or external_url fields is set if provided."""
+        page = value.get("page")
+        external_url = value.get("external_url")
+
+        if page and external_url:
+            error_message = "Use either page OR external_url, not both."
+            raise ValidationError(error_message)
