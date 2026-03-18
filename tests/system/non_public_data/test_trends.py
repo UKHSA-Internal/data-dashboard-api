@@ -123,7 +123,10 @@ class TestNonPublicDataTrendsAPI:
             == expected_main_record.period_end
         )
 
-        assert results["percentage_metric_value"] == expected_percentage_record.metric_value
+        assert (
+            results["percentage_metric_value"]
+            == expected_percentage_record.metric_value
+        )
         assert (
             results["percentage_metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
             == expected_percentage_record.period_end

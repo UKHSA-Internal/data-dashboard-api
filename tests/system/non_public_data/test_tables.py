@@ -84,7 +84,9 @@ class TestNonPublicDataTablesAPI:
         if auth.ENFORCE_PUBLIC_DATA_ONLY:
             assert len(results) == 1
             assert results[0]["reference"] == public_record.date
-            assert results[0]["values"][0]["value"] == f"{public_record.metric_value:.4f}"
+            assert (
+                results[0]["values"][0]["value"] == f"{public_record.metric_value:.4f}"
+            )
             return
 
         assert len(results) == 2

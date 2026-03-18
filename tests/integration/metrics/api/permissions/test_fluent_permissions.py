@@ -327,7 +327,9 @@ class TestFluentPermissions:
         "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
         True,
     )
-    def test_validate_permissions_for_non_public_returns_false_when_public_only_enforcement_is_enabled(self):
+    def test_validate_permissions_for_non_public_returns_false_when_public_only_enforcement_is_enabled(
+        self,
+    ):
         """
         Given requested data parameters and a matching permission
         When `validate_permissions_for_non_public()` is called
@@ -362,7 +364,9 @@ class TestFluentPermissions:
         "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
         False,
     )
-    def test_validate_permissions_for_non_public_returns_true_for_matching_permission_when_public_only_enforcement_is_disabled(self):
+    def test_validate_permissions_for_non_public_returns_true_for_matching_permission_when_public_only_enforcement_is_disabled(
+        self,
+    ):
         """
         Given requested data parameters and a matching permission
         And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
@@ -392,4 +396,3 @@ class TestFluentPermissions:
 
         # Then
         assert has_access_to_non_public_data
-

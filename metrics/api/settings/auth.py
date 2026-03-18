@@ -2,10 +2,7 @@ import os
 
 
 def is_auth_enabled() -> bool:
-    return str(os.environ.get("AUTH_ENABLED", "")).lower() in {
-        "true",
-        "1"
-    }
+    return str(os.environ.get("AUTH_ENABLED", "")).lower() in {"true", "1"}
 
 
 def is_allow_missing_is_public_field() -> bool:

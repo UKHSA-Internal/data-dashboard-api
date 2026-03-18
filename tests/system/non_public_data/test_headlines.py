@@ -101,4 +101,7 @@ class TestNonPublicDataHeadlinesAPI:
         # Without matching permission, the public record should be returned in both modes
         result = response.data
         assert result["value"] == public_record.metric_value
-        assert result["period_end"].strftime(EXPECTED_DATE_FORMAT) == public_record.period_end
+        assert (
+            result["period_end"].strftime(EXPECTED_DATE_FORMAT)
+            == public_record.period_end
+        )
