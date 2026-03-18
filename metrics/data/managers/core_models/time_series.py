@@ -16,6 +16,7 @@ from django.utils import timezone
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
+from metrics.api.settings import auth
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -466,9 +467,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                         [Row(geography__name='England', geography__geography_type__name='Nation')]>`
 
         """
+        queryset = self.filter(metric__topic__name=topic)
+
+        if auth.ENFORCE_PUBLIC_DATA_ONLY:
+            queryset = queryset.filter(is_public=True)
+            queryset = self._exclude_data_under_embargo(queryset=queryset)
+
         return (
-            self.filter(metric__topic__name=topic)
-            .values_list(
+            queryset.values_list(
                 "geography__name",
                 "geography__geography_type__name",
                 "geography__geography_code",

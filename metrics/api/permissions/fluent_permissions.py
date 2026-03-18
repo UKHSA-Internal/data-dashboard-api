@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from metrics.api.settings import auth
 from metrics.data.models.rbac_models import RBACPermission
 
 
@@ -22,6 +23,9 @@ def validate_permissions_for_non_public(
         False otherwise.
 
     """
+    if auth.ENFORCE_PUBLIC_DATA_ONLY:
+        return False
+
     requested_data_parameters = RequestedDataParameters(
         theme=theme,
         sub_theme=sub_theme,
