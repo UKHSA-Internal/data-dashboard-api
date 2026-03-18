@@ -36,7 +36,7 @@ def test_authenticate_valid(
         USER_MODEL.objects, "get_or_create_for_cognito", func, raising=False
     )
 
-    request = rf.get("/", HTTP_AUTHORIZATION=b"bearer %s" % token.encode("utf8"))
+    request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer %s" % token.encode("utf8"))
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
     assert user
@@ -54,7 +54,7 @@ def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):
         },
     )
 
-    request = rf.get("/", HTTP_AUTHORIZATION=b"bearer %s" % token.encode("utf8"))
+    request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer %s" % token.encode("utf8"))
     auth = backend.JSONWebTokenAuthentication()
 
     with pytest.raises(AuthenticationFailed):
@@ -62,7 +62,7 @@ def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):
 
 
 def test_authenticate_error_segments(rf):
-    request = rf.get("/", HTTP_AUTHORIZATION=b"bearer randomiets")
+    request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer randomiets")
     auth = backend.JSONWebTokenAuthentication()
 
     with pytest.raises(AuthenticationFailed):
@@ -70,7 +70,7 @@ def test_authenticate_error_segments(rf):
 
 
 def test_authenticate_error_invalid_header(rf):
-    request = rf.get("/", HTTP_AUTHORIZATION=b"bearer")
+    request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer")
     auth = backend.JSONWebTokenAuthentication()
 
     with pytest.raises(AuthenticationFailed):
@@ -78,7 +78,7 @@ def test_authenticate_error_invalid_header(rf):
 
 
 def test_authenticate_error_spaces(rf):
-    request = rf.get("/", HTTP_AUTHORIZATION=b"bearer random iets")
+    request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer random iets")
     auth = backend.JSONWebTokenAuthentication()
 
     with pytest.raises(AuthenticationFailed):
@@ -87,6 +87,6 @@ def test_authenticate_error_spaces(rf):
 
 def test_authenticate_error_response_code():
     client = Client()
-    resp = client.get("/", HTTP_AUTHORIZATION=b"bearer random iets")
+    resp = client.get("/", HTTP_X_UHD_AUTH=b"bearer random iets")
 
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
