@@ -5,7 +5,6 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.dashboard.enums import (
@@ -14,8 +13,8 @@ from cms.dashboard.enums import (
 )
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
-    MAXIMUM_URL_FIELD_LENGTH,
     UKHSAPage,
+    UKHSAPageRelatedLink,
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
@@ -56,9 +55,7 @@ class TopicPage(UKHSAPage):
     ]
 
     # Search index configuration
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("title"),
-    ]
+    search_fields = UKHSAPage.search_fields + [index.SearchField("page_description")]
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
@@ -204,27 +201,10 @@ class TopicPage(UKHSAPage):
         return max(timestamps)
 
 
-class TopicPageRelatedLink(Orderable):
+class TopicPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
-    title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
-    body = RichTextField(features=[])
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("url"),
-        FieldPanel("body"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("url"),
-        APIField("body"),
-    ]
 
 
 class TopicPageAnnouncement(Announcement):

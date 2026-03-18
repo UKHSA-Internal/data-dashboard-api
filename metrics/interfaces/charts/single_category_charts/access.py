@@ -2,7 +2,7 @@ import io
 import urllib.parse
 from datetime import datetime
 
-import plotly.graph_objects
+import plotly.graph_objects as go
 from django.db.models import Manager
 from scour import scour
 
@@ -146,7 +146,7 @@ class ChartsInterface:
 
     def _build_chart_figure(
         self, chart_generation_payload: ChartGenerationPayload
-    ) -> plotly.graph_objects.Figure:
+    ) -> go.Figure:
         """Builds a Plotly chart `Figure` object based on the chart type
 
         Args:
@@ -191,7 +191,7 @@ class ChartsInterface:
         cls,
         *,
         chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
+    ) -> go.Figure:
         """Creates a `common` chart or a combination of multiple `common` charts
 
         Note:
@@ -214,7 +214,7 @@ class ChartsInterface:
         cls,
         *,
         chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
+    ) -> go.Figure:
         """Creates a simplified line chart with only 4 tick labels displayed for the first
             and last values on each axis
 
@@ -332,7 +332,7 @@ class ChartsInterface:
             "chart_width": chart_width,
         }
 
-    def create_optimized_svg(self, *, figure: plotly.graph_objects.Figure) -> str:
+    def create_optimized_svg(self, *, figure: go.Figure) -> str:
         """Convert figure to a `svg` then optimize the size of it
 
         Args:
@@ -346,7 +346,7 @@ class ChartsInterface:
         )
         return scour.scourString(in_string=svg_image)
 
-    def encode_figure(self, *, figure: plotly.graph_objects.Figure) -> str:
+    def encode_figure(self, *, figure: go.Figure) -> str:
         """
         URI Encode the supplied chart figure
 
@@ -366,7 +366,7 @@ class ChartsInterface:
 
         return encoded_chart
 
-    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
+    def write_figure(self, *, figure: go.Figure) -> bytes:
         """
         Convert a figure to a static image and write to a file in the desired image format
 

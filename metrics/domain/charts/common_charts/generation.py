@@ -1,4 +1,4 @@
-import plotly.graph_objects
+import plotly.graph_objects as go
 
 from metrics.domain.charts.chart_settings import single_category
 from metrics.domain.charts.common_charts.plots.bar.plot import create_bar_plot
@@ -13,7 +13,7 @@ from metrics.domain.models.plots import ChartGenerationPayload
 def generate_chart_figure(
     *,
     chart_generation_payload: ChartGenerationPayload,
-) -> plotly.graph_objects.Figure:
+) -> go.Figure:
     """Creates a `Figure` object for the given `values` as a `common` chart type
 
     Note:
@@ -27,7 +27,7 @@ def generate_chart_figure(
     Returns:
         Plotly Figure object.
     """
-    figure = plotly.graph_objects.Figure()
+    figure = go.Figure()
     settings = single_category.SingleCategoryChartSettings(
         chart_generation_payload=chart_generation_payload,
     )

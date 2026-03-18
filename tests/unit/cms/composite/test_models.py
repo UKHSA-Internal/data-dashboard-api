@@ -2,6 +2,7 @@ import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
+from wagtail.search.index import SearchField
 
 from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
     open_example_page_response,
@@ -152,3 +153,28 @@ class TestCompositePage:
             response["code_snippet"]["language"] == template["code_snippet"]["language"]
         )
         assert response["code_snippet"]["code"] == template["code_snippet"]["code"]
+
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "page_description",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `CompositePage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        blank_page = FakeCompositePageFactory.build_blank_page()
+
+        # When
+        search_fields: list[SearchField] = blank_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields

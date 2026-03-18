@@ -4,6 +4,7 @@ from collections.abc import Callable
 
 from wagtail.models import Page
 
+from cms.acknowledgement.models import AcknowledgementPage
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import (
@@ -15,6 +16,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.landing_page impor
 )
 from cms.forms.models import FormField, FormPage
 from cms.home.models import LandingPage
+from cms.home.models.landing_page import LandingPageRelatedLink
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
@@ -57,12 +59,20 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
     page = LandingPage(
         title=data["title"],
         sub_title=data["sub_title"],
+        page_description=data["page_description"],
         body=landing_page_body,
+        related_links_layout=data["related_links_layout"],
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=LandingPageRelatedLink,
+        response_data=data,
+        page=page,
+    )
 
     return page
 
@@ -131,6 +141,27 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         response_data=data,
         page=page,
     )
+
+    return page
+
+
+def create_acknowledgement_page(*, name: str, parent_page: Page) -> AcknowledgementPage:
+    data = open_example_page_response(page_name=name)
+
+    page = AcknowledgementPage(
+        body=data.get("body") or "Acknowledgement body required",
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        i_agree_checkbox=data.get("i_agree_checkbox") or "I agree",
+        terms_of_service_link_text=data.get("terms_of_service_link_text") or "Terms",
+        terms_of_service_link=data.get("terms_of_service_link") or "https://example.com/",
+        terms_of_service_error=data.get("terms_of_service_error") or "Please accept terms",
+        disagree_button=data.get("disagree_button") or "Disagree",
+        agree_button=data.get("agree_button") or "Agree",
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
 
     return page
 
