@@ -758,6 +758,6 @@
   ],
   "enable_area_selector": false,
   "is_public": true,
-  "data_classification": null,
+  "page_classification": null,
   "selected_topics": []
 }

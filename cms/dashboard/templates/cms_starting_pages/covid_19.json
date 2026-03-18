@@ -1030,6 +1030,6 @@
   "last_published_at": "2024-10-25T14:05:39.327926+01:00",
   "enable_area_selector": false,
   "is_public": true,
-  "data_classification": null,
+  "page_classification": null,
   "selected_topics": ["COVID-19"]
 }

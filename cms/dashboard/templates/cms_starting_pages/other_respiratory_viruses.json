@@ -610,7 +610,7 @@
   "last_published_at": "2024-10-25T14:12:46.381960+01:00",
   "enable_area_selector": false,
   "is_public": true,
-  "data_classification": null,
+  "page_classification": null,
   "selected_topics": [
     "Adenovirus",
     "Rhinovirus",
