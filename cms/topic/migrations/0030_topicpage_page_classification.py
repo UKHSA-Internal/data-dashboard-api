@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
                 max_length=50,
                 null=True,
             ),
-            preserve_default=False
+            preserve_default=False,
         ),
     ]
