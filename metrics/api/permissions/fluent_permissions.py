@@ -5,6 +5,11 @@ from metrics.api.settings import auth
 from metrics.data.models.rbac_models import RBACPermission
 
 
+def is_public_data_only_enforced() -> bool:
+    """Whether public-only data is currently enforced."""
+    return auth.ENFORCE_PUBLIC_DATA_ONLY
+
+
 def validate_permissions_for_non_public(
     *,
     theme: str,
@@ -23,7 +28,7 @@ def validate_permissions_for_non_public(
         False otherwise.
 
     """
-    if auth.ENFORCE_PUBLIC_DATA_ONLY:
+    if is_public_data_only_enforced():
         return False
 
     requested_data_parameters = RequestedDataParameters(

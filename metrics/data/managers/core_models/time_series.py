@@ -14,9 +14,9 @@ from django.db.models.query_utils import Q
 from django.utils import timezone
 
 from metrics.api.permissions.fluent_permissions import (
+    is_public_data_only_enforced,
     validate_permissions_for_non_public,
 )
-from metrics.api.settings import auth
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -469,7 +469,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         """
         queryset = self.filter(metric__topic__name=topic)
 
-        if auth.ENFORCE_PUBLIC_DATA_ONLY:
+        if is_public_data_only_enforced():
             queryset = queryset.filter(is_public=True)
             queryset = self._exclude_data_under_embargo(queryset=queryset)
 

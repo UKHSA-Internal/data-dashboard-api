@@ -15,15 +15,12 @@ def is_allow_missing_is_public_field() -> bool:
 AUTH_ENABLED = is_auth_enabled()
 ALLOW_MISSING_IS_PUBLIC_FIELD = is_allow_missing_is_public_field()
 
+# If False, non-authorized RBAC paths return only public headline/time-series rows,
+#           while authorized RBAC paths can include non-public rows when permitted.
+# If True, RBAC non-public row access is suppressed and only public dashboard API
+#          row data is returned, except:
+#          a) `/api/audit/*` endpoints can still return public and non-public
+#              diagnostics.
+#          b) Metadata/master-table endpoints (not headline/time-series rows)
+#             remain unfiltered.
 ENFORCE_PUBLIC_DATA_ONLY = True
-"""
-If False, the non-authorized RBAC (Role-Based Access Control) paths will return public rows of 
-          headline/time-series data and the authorized RBAC paths can include non-public rows 
-          when permitted.
-
-If True, this RBAC functionality will be suppressed and only public dashboard API data will be 
-         returned. Exceptions are:
-         a) The API endpoints /api/audit/* can still return public and non-public diagnostic data.
-         b) Any API endpoints that serve metadata/master-table style data (not headline/time-series 
-         row payloads) remain unfiltered too.
-"""
