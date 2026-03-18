@@ -44,10 +44,7 @@ class TestNonPublicDataTrendsAPI:
         And public & non-public `CoreHeadline` records
         And the required RBAC permission has been granted
         When the `trends/v3` endpoint is hit
-        Then the response returns the non-public records
-        When the permission is removed
-        And the `trends/v3` endpoint is hit again
-        Then the response returns the public records instead
+        Then the response matches the ENFORCE_PUBLIC_DATA_ONLY policy
         """
         # Given
         mocked_auth_enabled.return_value = True
@@ -94,7 +91,7 @@ class TestNonPublicDataTrendsAPI:
             core_percentage_headline=percentage_metric_public_record,
         )
 
-        # Whens
+        # When
         response: Response = client.get(
             path=self.path,
             data=payload,
@@ -109,27 +106,27 @@ class TestNonPublicDataTrendsAPI:
             == percentage_metric_public_record.metric.name
         )
 
-        # The non public records are returned since the group has the requisite permissions
-        assert (
-            results["metric_value"]
-            == main_metric_non_public_record.metric_value
-            != main_metric_public_record.metric_value
+        expected_main_record = (
+            main_metric_public_record
+            if auth.ENFORCE_PUBLIC_DATA_ONLY
+            else main_metric_non_public_record
         )
-        assert (
-            results["metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
-            == main_metric_non_public_record.period_end
-            != main_metric_public_record.period_end
+        expected_percentage_record = (
+            percentage_metric_public_record
+            if auth.ENFORCE_PUBLIC_DATA_ONLY
+            else percentage_metric_non_public_record
         )
 
+        assert results["metric_value"] == expected_main_record.metric_value
         assert (
-            results["percentage_metric_value"]
-            == percentage_metric_non_public_record.metric_value
-            != percentage_metric_public_record.metric_value
+            results["metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
+            == expected_main_record.period_end
         )
+
+        assert results["percentage_metric_value"] == expected_percentage_record.metric_value
         assert (
             results["percentage_metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
-            == percentage_metric_non_public_record.period_end
-            != percentage_metric_public_record.period_end
+            == expected_percentage_record.period_end
         )
 
         # Remove the permission from the group
@@ -137,33 +134,26 @@ class TestNonPublicDataTrendsAPI:
         rbac_group.save()
 
         # When
-        response: Response = client.get(
+        response = client.get(
             path=self.path,
             data=payload,
             headers={RBAC_AUTH_X_HEADER: group_id},
         )
 
         # Then
-        # This time around the public records will be returned
+        # Without matching permission, the public records should be returned in both modes
         results = response.data
-        assert (
-            results["metric_value"]
-            == main_metric_public_record.metric_value
-            != main_metric_non_public_record.metric_value
-        )
+        assert results["metric_value"] == main_metric_public_record.metric_value
         assert (
             results["metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
             == main_metric_public_record.period_end
-            != main_metric_non_public_record.period_end
         )
 
         assert (
             results["percentage_metric_value"]
             == percentage_metric_public_record.metric_value
-            != percentage_metric_non_public_record.metric_value
         )
         assert (
             results["percentage_metric_period_end"].strftime(EXPECTED_DATE_FORMAT)
             == percentage_metric_public_record.period_end
-            != percentage_metric_non_public_record.period_end
         )

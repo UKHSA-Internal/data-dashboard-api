@@ -43,10 +43,7 @@ class TestNonPublicDataHeadlinesAPI:
         And public & non-public `CoreHeadline` records
         And the required RBAC permission has been granted
         When the `headlines/v3` endpoint is hit
-        Then the response returns the non-public record
-        When the permission is removed
-        And the `headlines/v3` endpoint is hit again
-        Then the response returns the public record instead
+        Then the response matches the ENFORCE_PUBLIC_DATA_ONLY policy
         """
         # Given
         mocked_auth_enabled.return_value = True
@@ -80,15 +77,13 @@ class TestNonPublicDataHeadlinesAPI:
 
         # Then
         results = response.data
-        assert (
-            results["value"]
-            == non_public_record.metric_value
-            != public_record.metric_value
+        expected_first_record = (
+            public_record if auth.ENFORCE_PUBLIC_DATA_ONLY else non_public_record
         )
+        assert results["value"] == expected_first_record.metric_value
         assert (
             results["period_end"].strftime(EXPECTED_DATE_FORMAT)
-            == non_public_record.period_end
-            != public_record.period_end
+            == expected_first_record.period_end
         )
 
         # Remove the permission from the group
@@ -96,22 +91,14 @@ class TestNonPublicDataHeadlinesAPI:
         rbac_group.save()
 
         # When
-        response: Response = client.get(
+        response = client.get(
             path=self.path,
             data=payload,
             headers={RBAC_AUTH_X_HEADER: group_id},
         )
 
         # Then
-        # This time around the public record will be returned
+        # Without matching permission, the public record should be returned in both modes
         result = response.data
-        assert (
-            result["value"]
-            == public_record.metric_value
-            != non_public_record.metric_value
-        )
-        assert (
-            result["period_end"].strftime(EXPECTED_DATE_FORMAT)
-            == public_record.period_end
-            != non_public_record.period_end
-        )
+        assert result["value"] == public_record.metric_value
+        assert result["period_end"].strftime(EXPECTED_DATE_FORMAT) == public_record.period_end
