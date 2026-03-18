@@ -22,10 +22,11 @@ class Migration(migrations.Migration):
                     ("secret", "Secret"),
                     ("top_secret", "Top Secret"),
                 ],
-                default="official_sensitive",
+                default=None,
                 help_text="\nThe classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.\n",
                 max_length=50,
                 null=True,
             ),
+            preserve_default=False
         ),
     ]
