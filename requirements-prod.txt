@@ -5,7 +5,7 @@ beautifulsoup4==4.14.3
 CacheControl==0.14.4
 certifi==2026.2.25
 cfgv==3.5.0
-charset-normalizer==3.4.5
+charset-normalizer==3.4.6
 click==8.3.1
 colorama==0.4.6
 coreapi==2.3.3
