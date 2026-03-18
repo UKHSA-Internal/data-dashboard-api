@@ -4,13 +4,26 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
-from rest_framework import exceptions
-from rest_framework.authentication import BaseAuthentication, get_authorization_header
+from rest_framework import HTTP_HEADER_ENCODING, exceptions
+from rest_framework.authentication import BaseAuthentication
 
 from .validator import TokenError, TokenValidator
 
 logger = logging.getLogger(__name__)
 VALID_AUTH_HEADER_LENGTH = 2
+
+
+def get_authorization_header(request):
+    """
+    Return request's 'Authorization:' header, as a bytestring.
+
+    Hide some test client ickyness where the header can be unicode.
+    """
+    auth = request.META.get('HTTP_X_UHD_AUTH', b'')
+    if isinstance(auth, str):
+        # Work around django test client oddness
+        auth = auth.encode(HTTP_HEADER_ENCODING)
+    return auth
 
 
 class JSONWebTokenAuthentication(BaseAuthentication):
