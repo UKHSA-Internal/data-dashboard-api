@@ -2,8 +2,12 @@ from unittest import mock
 
 import pytest
 
-from cms.snippets.managers.menu import MenuManager
-from cms.snippets.models.menu_builder.menu import Menu, MultipleMenusActiveError
+from cms.snippets.managers.menu import MenuManager, SimpleMenuManager
+from cms.snippets.models.menu_builder.menu import (
+    Menu,
+    MultipleMenusActiveError,
+    SimpleMenu,
+)
 
 
 class TestMenu:
@@ -135,6 +139,114 @@ class TestMenu:
         # Given
         mocked_is_menu_overriding_currently_active_menu.return_value = False
         menu = Menu(
+            internal_label="abc",
+            body={},
+            is_active=False,
+        )
+
+        # When / Then
+        menu.clean()
+
+
+class TestSimpleMenu:
+    def test_enabled_set_false_by_default(self):
+        """
+        Given a `SimpleMenu` model
+        When the object is initialized
+        Then the `is_active` field is set to False by default
+        """
+        # Given
+        internal_label = "abc"
+        body = {}
+
+        # When
+        menu = SimpleMenu(
+            internal_label=internal_label,
+            body=body,
+        )
+
+        # Then
+        assert menu.is_active is False
+
+    def test_menu_dunder_str_references_internal_label(self):
+        """
+        Given a `SimpleMenu` model
+            which has been given an `internal_label` of True
+        When the string representation is produced
+        Then the string references the `internal_label`
+        """
+        # Given
+        internal_label = "abc"
+        is_active = True
+        body = {}
+
+        # When
+        menu = SimpleMenu(
+            internal_label=internal_label,
+            body=body,
+            is_active=is_active,
+        )
+
+        # Then
+        assert str(menu) == f"(Active) - {internal_label}"
+
+    def test_inactive_menu_produces_correct_dunder_str(self):
+        """
+        Given a `SimpleMenu` model
+            which has been given an `internal_label` of False
+        When the string representation is produced
+        Then the string references the `internal_label`
+        """
+        # Given
+        internal_label = "abc"
+        body = {}
+        is_active = False
+
+        # When
+        menu = SimpleMenu(
+            internal_label=internal_label,
+            body=body,
+            is_active=is_active,
+        )
+
+        # Then
+        assert str(menu) == f"(Inactive) - {internal_label}"
+
+    @mock.patch.object(SimpleMenuManager, "is_menu_overriding_currently_active_menu")
+    def test_clean_raises_error_is_menu_overriding_currently_active_menu_returns_true(
+        self, mocked_is_menu_overriding_currently_active_menu: mock.MagicMock
+    ):
+        """
+        Given the `is_menu_overriding_currently_active_menu()` call
+            from the `SimpleMenuManager` returns True
+        When the `clean()` method is called from the `SimpleMenu`
+        Then the `MultipleMenusActiveError` is raised
+        """
+        # Given
+        mocked_is_menu_overriding_currently_active_menu.return_value = True
+        menu = SimpleMenu(
+            internal_label="abc",
+            body={},
+            is_active=True,
+        )
+
+        # When / Then
+        with pytest.raises(MultipleMenusActiveError):
+            menu.clean()
+
+    @mock.patch.object(SimpleMenuManager, "is_menu_overriding_currently_active_menu")
+    def test_clean_passes_when_current_menu_is_menu_overriding_currently_active_menu_returns_false(
+        self, mocked_is_menu_overriding_currently_active_menu: mock.MagicMock
+    ):
+        """
+        Given the `is_menu_overriding_currently_active_menu()` call
+            from the `SimpleMenuManager` returns False
+        When the `clean()` method is called from the `SimpleMenu`
+        Then no error is raised
+        """
+        # Given
+        mocked_is_menu_overriding_currently_active_menu.return_value = False
+        menu = SimpleMenu(
             internal_label="abc",
             body={},
             is_active=False,
