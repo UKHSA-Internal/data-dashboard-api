@@ -33,6 +33,16 @@ class SubThemeQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).distinct().order_by("name")
 
+    def get_filtered_unique_names_related_to_theme(self, parent_theme_id) -> models.QuerySet:
+        """Gets all available unique sub themes with id and name fields that are related to the parent theme ID.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self.filter(themeId=parent_theme_id).values("id", "name").distinct()
+
 
 class SubThemeManager(models.Manager):
     """Custom model manager class for the `SubTheme` model."""
@@ -61,3 +71,13 @@ class SubThemeManager(models.Manager):
                 `<SubThemeQuerySet ['respiratory', ...]>`
         """
         return self.get_queryset().get_all_unique_names()
+
+    def get_filtered_unique_names_related_to_theme(self, parent_theme_id: str) -> SubThemeQuerySet:
+        """Gets all available themes with id and name fields.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self.get_queryset().get_filtered_unique_names_related_to_theme(parent_theme_id=parent_theme_id)
