@@ -11,6 +11,7 @@ And allowing the CMS to provide the content creator with access to the `latest` 
 """
 
 from cms.metrics_interface import MetricsAPIInterface
+from django.db.models import QuerySet
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
@@ -22,6 +23,22 @@ def _build_two_item_tuple_choices(
     *, choices: list[str]
 ) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
+
+
+def _build_id_name_tuple_choices(
+    *, choices: QuerySet
+) -> list[tuple[int, str]]:
+    """Build choices from a QuerySet containing id and name fields.
+
+    Args:
+        choices: QuerySet with 'id' and 'name' fields
+
+    Returns:
+        A list of 2-item tuples (id, name).
+        Examples:
+            [(1, "infectious_disease"), (2, "respiratory"), ...]
+    """
+    return [(choice['id'], choice['name']) for choice in choices]
 
 
 def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -276,8 +293,34 @@ def get_all_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
+    theme_names = metrics_interface.get_all_theme_names()
+    print(theme_names)
     return _build_two_item_tuple_choices(
-        choices=metrics_interface.get_all_theme_names(),
+        choices=theme_names,
+    )
+
+
+def get_all_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of theme names.
+        Examples:
+            [("Infectious_disease", "Infectious_disease"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    theme_names = metrics_interface.get_all_theme_choices()
+    print(theme_names)
+    return _build_id_name_tuple_choices(
+        choices=theme_names,
     )
 
 
@@ -576,7 +619,8 @@ def get_all_geography_choices_grouped_by_type() -> (
 
 def get_all_subcategory_choices_grouped_by_categories() -> (
     dict[
-        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str, LIST_OF_TWO_STRING_ITEM_TUPLES]
+        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str,
+                                                   LIST_OF_TWO_STRING_ITEM_TUPLES]
     ]
 ):
     """Callable to return all subcategory choices groups by categories.

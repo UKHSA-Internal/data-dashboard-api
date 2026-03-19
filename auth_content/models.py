@@ -3,6 +3,7 @@ from django.db import models
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 
+from cms.metrics_interface.field_choices_callables import get_all_theme_names_and_ids
 from validation.enums.geographies_enums import GeographyType
 from validation.enums.theme_and_topic_enums import ChildTheme, ParentTheme, Topic
 
@@ -75,9 +76,7 @@ def get_geography_type_geographies_map():
 
 class PermissionSet(models.Model):
     theme = models.CharField(
-        choices=[(e.value, e.name.replace("_", " ").title())
-                 for e in ParentTheme]
-    )
+        max_length=255, choices=get_all_theme_names_and_ids())
     sub_theme = models.CharField(max_length=255, choices=[])
     topic = models.CharField(max_length=255, choices=[])
     metric = models.CharField(max_length=255, choices=[])

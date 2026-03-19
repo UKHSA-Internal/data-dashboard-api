@@ -186,6 +186,17 @@ class MetricsAPIInterface:
         """
         return self.theme_manager.get_all_names()
 
+    def get_all_theme_choices(self) -> QuerySet:
+        """Gets all available theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual theme names.
+                Examples:
+                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+        """
+        return self.theme_manager.get_all_choices()
+
     def get_all_sub_theme_names(self) -> QuerySet:
         """Gets all available sub_theme names as a flat list queryset.
         Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
