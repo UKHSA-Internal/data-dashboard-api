@@ -40,6 +40,7 @@ class ContentCardsSectionWithLink(StreamBlock):
     chart_card_section = cards.ChartCardSection()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()
+    popular_topics_card = cards.PopularTopicsCard()
 
 
 class Section(StructBlock):
