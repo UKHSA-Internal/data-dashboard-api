@@ -14,6 +14,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
     create_landing_page_body_wih_page_links,
 )
+from cms.error.models import ErrorPage, ErrorPageRelatedLink
 from cms.forms.models import FormField, FormPage
 from cms.home.models import LandingPage
 from cms.home.models.landing_page import LandingPageRelatedLink
@@ -180,6 +181,30 @@ def create_common_page(*, name: str, parent_page: Page) -> CommonPage:
 
     _create_related_links(
         related_link_class=CommonPageRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
+def create_authentication_error_page(*, name: str, parent_page: Page) -> ErrorPage:
+    data = open_example_page_response(page_name=name)
+
+    page = ErrorPage(
+        body=data["body"],
+        error_line=data["error_line"],
+        error_text=data["error_text"],
+        sub_text=data["sub_text"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=ErrorPageRelatedLink,
         response_data=data,
         page=page,
     )
