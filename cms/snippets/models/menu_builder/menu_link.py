@@ -56,3 +56,39 @@ class MenuLink(blocks.StructBlock):
         prep_value["html_url"] = page.full_url
 
         return prep_value
+
+
+class SimpleMenuLink(blocks.StructBlock):
+    title = blocks.TextBlock(
+        required=True,
+        help_text=help_texts.MENU_LINK_HELP_TEXT,
+    )
+    page = blocks.PageChooserBlock(
+        "wagtailcore.Page",
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        icon = "link"
+
+    def get_prep_value(self, value: StructValue) -> dict[str, str | int]:
+        """Adds the `html_url` of each page to the returned value
+
+        Args:
+            `value`: The inbound enriched `StructValue`
+                containing the values associated with
+                this `SimpleMenuLink` object
+
+        Returns:
+            Dict containing the keys as dictated by the
+            `SimpleMenuLink`. With the addition of the injected
+            `html_url` value for the selected page.
+
+        """
+        prep_value: dict[str, str | int] = super().get_prep_value(value=value)
+        page: Page = value["page"]
+        page: type[UKHSAPage] = page.specific
+        prep_value["html_url"] = page.full_url
+
+        return prep_value

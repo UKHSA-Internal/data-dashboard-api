@@ -8,6 +8,7 @@ from caching.private_api.decorators import cache_response
 from cms.snippets.serializers import (
     MenuResponseSerializer,
     MenuSerializer,
+    SimpleMenuSerializer,
 )
 
 
@@ -29,4 +30,18 @@ class MenuView(APIView):
 
         """
         serializer = MenuSerializer()
+        return Response(data=serializer.data, status=HTTPStatus.OK)
+
+
+class SimpleMenuView(APIView):
+    permission_classes = []
+
+    @classmethod
+    @extend_schema(tags=["cms"], responses={HTTPStatus.OK: MenuResponseSerializer})
+    @cache_response()
+    def get(cls, request, *args, **kwargs) -> Response:
+        """
+        TODO
+        """
+        serializer = SimpleMenuSerializer()
         return Response(data=serializer.data, status=HTTPStatus.OK)

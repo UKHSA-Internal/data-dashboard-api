@@ -2,7 +2,7 @@ from django.db.models import Manager
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import ReturnDict
 
-from cms.snippets.models import Menu
+from cms.snippets.models import Menu, SimpleMenu
 
 
 class MenuResponseSerializer(serializers.ModelSerializer):
@@ -40,4 +40,33 @@ class MenuSerializer(serializers.Serializer):
         """
         active_menu = self.menu_manager.get_active_menu()
         serializer = MenuResponseSerializer(instance=active_menu)
+        return serializer.data
+
+
+class SimpleMenuResponseSerializer(MenuResponseSerializer):
+    class Meta:
+        model = SimpleMenu
+        fields = ["body"]
+
+
+class SimpleMenuSerializer(serializers.Serializer):
+    @property
+    def menu_manager(self) -> Manager:
+        return self.context.get("menu_manager", SimpleMenu.objects)
+
+    @property
+    def data(self) -> dict[str, ReturnDict[str, str] | None]:
+        """Gets the body associated with the currently active global banner information
+
+        Args:
+            `menu_manager`: The `SimpleMenuManager`
+                used to query for records
+
+        Returns:
+            Dict representation the of the active menu.
+            If no menu is active, then None is returned
+
+        """
+        active_menu = self.menu_manager.get_active_menu()
+        serializer = SimpleMenuResponseSerializer(instance=active_menu)
         return serializer.data
