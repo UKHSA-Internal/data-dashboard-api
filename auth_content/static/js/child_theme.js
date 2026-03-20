@@ -1,19 +1,16 @@
 (function () {
   "use strict";
-
-  console.log("Permission set cascading script loaded");
-
   let theme, subTheme, topic, metric;
 
   /**
    * Generic function to fetch choices from the API
    * @param {string} endpoint - The API endpoint (e.g., 'subthemes', 'topics', 'metrics')
-   * @param {string} paramValue - The ID value to pass
+   * @param {string} dataItemId - The ID value to pass
    * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
-  async function fetchChoices(endpoint, paramValue) {
+  async function fetchChoices(endpoint, dataItemId) {
     try {
-      const url = `/api/permission-set/${endpoint}/${paramValue}`;
+      const url = `/api/permission-set/${endpoint}/${dataItemId}`;
       console.log(`Fetching from: ${url}`);
 
       const response = await fetch(url);
@@ -48,16 +45,30 @@
       option.textContent = name;
       dropdown.appendChild(option);
     });
+  }
 
-    console.log(`Populated ${dropdown.name} with ${choices.length} options`);
+  function clearDropdown(dropdown, message = "Select parent first") {
+    dropdown.innerHTML = "";
+
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = message;
+    dropdown.appendChild(option);
+
+    dropdown.value = "";
+    dropdown.disabled = true;
+
+    console.log(`Cleared ${dropdown.name}: ${message}`);
   }
 
   /**
-   * Generic function to clear and disable a dropdown
-   * @param {HTMLSelectElement} dropdown - The select element to clear
-   * @param {string} message - Message to display
+   * Set dropdown to wildcard and disable it
+   * Used when parent is wildcard, cascading "all" to children
    */
-  function clearDropdown(dropdown, message = "Select parent first") {
+  function setToWildcard(
+    dropdown,
+    message = "* (All - inherited from parent)",
+  ) {
     dropdown.innerHTML = "";
 
     const option = document.createElement("option");
@@ -68,7 +79,7 @@
     dropdown.value = "-1";
     dropdown.disabled = true;
 
-    console.log(`Cleared ${dropdown.name}: ${message}`);
+    console.log(`Set ${dropdown.name} to wildcard: ${message}`);
   }
 
   /**
@@ -76,18 +87,27 @@
    */
   async function handleThemeChange() {
     const themeValue = theme.value;
-    console.log("Theme changed to:", themeValue);
 
     // Clear all dependent dropdowns
-    clearDropdown(subTheme, "Loading...");
-    clearDropdown(topic, "Select sub-theme first");
-    clearDropdown(metric, "Select topic first");
-
-    if (themeValue === "-1") {
-      console.log("Wildcard theme selected");
+    if (!themeValue || themeValue === "") {
+      console.log("No theme selected - clearing all children");
       clearDropdown(subTheme, "Select theme first");
+      clearDropdown(topic, "Select sub-theme first");
+      clearDropdown(metric, "Select topic first");
       return;
     }
+
+    if (themeValue === "-1") {
+      console.log("Wildcard theme selected - cascading to all children");
+      setToWildcard(subTheme, "* (All sub-themes)");
+      setToWildcard(topic, "* (All topics)");
+      setToWildcard(metric, "* (All metrics)");
+      return;
+    }
+
+    clearDropdown(subTheme, "--------");
+    clearDropdown(topic, "--------");
+    clearDropdown(metric, "--------");
 
     // Fetch and populate sub-themes
     const choices = await fetchChoices("subthemes", themeValue);
@@ -106,15 +126,24 @@
     const subThemeValue = subTheme.value;
     console.log("Sub-theme changed to:", subThemeValue);
 
-    // Clear dependent dropdowns
-    clearDropdown(topic, "Loading...");
-    clearDropdown(metric, "Select topic first");
-
-    if (subThemeValue === "-1") {
-      console.log("Wildcard or no sub-theme selected");
+    if (!subThemeValue || subThemeValue === "") {
+      // No sub-theme selected - clear children
       clearDropdown(topic, "Select sub-theme first");
+      clearDropdown(metric, "Select topic first");
       return;
     }
+
+    if (subThemeValue === "-1") {
+      // Wildcard sub-theme = cascade wildcard to children
+      console.log("Wildcard sub-theme selected - cascading to children");
+      setToWildcard(topic, "* (All topics)");
+      setToWildcard(metric, "* (All metrics)");
+      return;
+    }
+
+    // Clear dependent dropdowns
+    clearDropdown(topic, "--------");
+    clearDropdown(metric, "--------");
 
     // Fetch and populate topics
     const choices = await fetchChoices("topics", subThemeValue);
@@ -133,13 +162,21 @@
     const topicValue = topic.value;
     console.log("Topic changed to:", topicValue);
 
-    clearDropdown(metric, "Loading...");
-
-    if (topicValue === "-1") {
-      console.log("Wildcard or no topic selected");
+    if (!topicValue || topicValue === "") {
+      // No topic selected - clear metrics
+      console.log("No topic selected - clearing metrics");
       clearDropdown(metric, "Select topic first");
       return;
     }
+
+    if (topicValue === "-1") {
+      // Wildcard topic = cascade wildcard to metrics
+      console.log("Wildcard topic selected - cascading to metrics");
+      setToWildcard(metric, "* (All metrics)");
+      return;
+    }
+
+    clearDropdown(metric, "--------");
 
     // Fetch and populate metrics
     const choices = await fetchChoices("metrics", topicValue);
@@ -169,12 +206,10 @@
       return;
     }
 
-    console.log("Found all dropdowns: theme, sub_theme, topic, metric");
-
     // Set initial disabled state
-    clearDropdown(subTheme, "Select theme first");
-    clearDropdown(topic, "Select sub-theme first");
-    clearDropdown(metric, "Select topic first");
+    clearDropdown(subTheme, "--------");
+    clearDropdown(topic, "--------");
+    clearDropdown(metric, "--------");
 
     // Add event listeners
     theme.addEventListener("change", handleThemeChange);

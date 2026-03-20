@@ -32,17 +32,17 @@ class PermissionSetForm(WagtailAdminModelForm):
         self.fields['sub_theme'] = forms.CharField(
             required=False,
             label="Sub Theme",
-            widget=forms.Select(choices=[("-1", "Select theme first")])
+            widget=forms.Select(choices=[("", "Select theme first")])
         )
         self.fields['topic'] = forms.CharField(
             required=False,
             label="Topic",
-            widget=forms.Select(choices=[("-1", "Select sub-theme first")])
+            widget=forms.Select(choices=[("", "Select sub-theme first")])
         )
         self.fields['metric'] = forms.CharField(
             required=False,
             label="Metric",
-            widget=forms.Select(choices=[("-1", "Select topic first")])
+            widget=forms.Select(choices=[("", "Select topic first")])
         )
         self.fields['geography'] = forms.CharField(
             required=False,
@@ -54,17 +54,17 @@ class PermissionSetForm(WagtailAdminModelForm):
 
 class PermissionSet(models.Model):
     theme = models.CharField(
-        max_length=255, choices=[("-1", "* (All themes)")] + get_all_theme_names_and_ids(), blank=True, default="-1")
+        max_length=255, choices=[("", "---------"), ("-1", "* (All themes)")] + get_all_theme_names_and_ids(), blank=True, default="")
     sub_theme = models.CharField(
-        max_length=255, blank=True, default="-1")
+        max_length=255, blank=True, default="")
     topic = models.CharField(max_length=255,
-                             blank=True, default="-1")
+                             blank=True, default="")
     metric = models.CharField(
-        max_length=255, blank=True, default="-1")
+        max_length=255, blank=True, default="")
     geography_type = models.CharField(max_length=255, choices=[(
-        e.value, e.value.replace("_", " ")) for e in GeographyType], blank=True, default="-1")
+        e.value, e.value.replace("_", " ")) for e in GeographyType], blank=True, default="")
     geography = models.CharField(
-        max_length=255, blank=True, default="-1")
+        max_length=255, blank=True, default="")
 
     base_form_class = PermissionSetForm
 
@@ -78,4 +78,8 @@ class PermissionSet(models.Model):
     ]
 
     def __str__(self):
-        return self.theme
+        if self.theme and self.theme != "" and self.theme != "-1":
+            return f"Permission Set - Theme {self.theme}"
+        elif self.theme == "-1":
+            return "Permission Set - All Themes"
+        return "Permission Set - Not Configured"
