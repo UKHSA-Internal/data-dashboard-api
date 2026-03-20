@@ -39,6 +39,18 @@
     dropdown.disabled = false;
     dropdown.innerHTML = "";
 
+    //dropdown empty
+    const nullOption = document.createElement("option");
+    nullOption.value = "";
+    nullOption.textContent = "--------";
+    dropdown.appendChild(nullOption);
+
+    //dropdown wildcard choice
+    const wildcardOption = document.createElement("option");
+    wildcardOption.value = "-1";
+    wildcardOption.textContent = "* (All items)";
+    dropdown.appendChild(wildcardOption);
+
     choices.forEach(([id, name]) => {
       const option = document.createElement("option");
       option.value = id;
