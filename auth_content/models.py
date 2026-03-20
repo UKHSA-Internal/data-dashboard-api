@@ -1,11 +1,11 @@
-from django.db import models
+from django import forms
 
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 
 from cms.metrics_interface.field_choices_callables import get_all_theme_names_and_ids
 from validation.enums.geographies_enums import GeographyType
-from validation.enums.theme_and_topic_enums import ChildTheme, ParentTheme, Topic
+from wagtail.admin.forms import WagtailAdminModelForm
 
 
 def get_theme_child_map():
@@ -18,71 +18,55 @@ def get_theme_child_map():
     }
 
     """
-
     theme_mapping = {}
-    for parent in ParentTheme:
-        # It has been assumed for now that validation and ingestion will catch if any parent name are not used in ChildTheme
-        theme_mapping[parent.value] = ChildTheme[parent.name].return_tuple_list()
 
     print(theme_mapping)
     return theme_mapping
 
 
-def get_sub_theme_child_map():
-    """Returns an object of all parent to child mappings
-    e.g.
-    {
-        infectious_disease: [vaccine_preventable, respiratory ....],
-        extreme_event: [weather_alert, mortality_report...]
-        ...
-    }
+class PermissionSetForm(WagtailAdminModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    """
-
-    sub_theme_mapping = {}
-    for topic in Topic:
-        print("item: ", topic.value)
-
-        # It has been assumed for now that validation and ingestion will catch if any parent name are not used in ChildTheme
-        sub_theme_mapping[topic.name.lower(
-        )] = Topic[topic.name].return_tuple_list()
-
-    print(sub_theme_mapping)
-
-    return sub_theme_mapping
-
-
-def get_geography_type_geographies_map():
-    """Returns an object of all parent to child mappings
-    e.g.
-    {
-        infectious_disease: [vaccine_preventable, respiratory ....],
-        extreme_event: [weather_alert, mortality_report...]
-        ...
-    }
-
-    """
-
-    geographies_mapping = {}
-    for geographyType in GeographyType:
-        # It has been assumed for now that validation and ingestion will catch if any parent name are not used in ChildTheme
-        geographies_mapping[geographyType.value] = [
-            geographyType.name].return_tuple_list()
-
-    print(geographies_mapping)
-    geographies_mapping = {}
-    return geographies_mapping
+        # Use CharField with Select widget to bypass choice validation
+        self.fields['sub_theme'] = forms.CharField(
+            required=False,
+            label="Sub Theme",
+            widget=forms.Select(choices=[("-1", "Select theme first")])
+        )
+        self.fields['topic'] = forms.CharField(
+            required=False,
+            label="Topic",
+            widget=forms.Select(choices=[("-1", "Select sub-theme first")])
+        )
+        self.fields['metric'] = forms.CharField(
+            required=False,
+            label="Metric",
+            widget=forms.Select(choices=[("-1", "Select topic first")])
+        )
+        self.fields['geography'] = forms.CharField(
+            required=False,
+            label="Geography",
+            widget=forms.Select(
+                choices=[("-1", "Select geography type first")])
+        )
 
 
 class PermissionSet(models.Model):
     theme = models.CharField(
-        max_length=255, choices=get_all_theme_names_and_ids())
-    sub_theme = models.CharField(max_length=255, choices=[])
-    topic = models.CharField(max_length=255, choices=[])
-    metric = models.CharField(max_length=255, choices=[])
+        max_length=255, choices=[("-1", "* (All themes)")] + get_all_theme_names_and_ids(), blank=True, default="-1")
+    sub_theme = models.CharField(
+        max_length=255, blank=True, default="-1")
+    topic = models.CharField(max_length=255,
+                             blank=True, default="-1")
+    metric = models.CharField(
+        max_length=255, blank=True, default="-1")
     geography_type = models.CharField(max_length=255, choices=[(
-        e.value, e.value.replace("_", " ")) for e in GeographyType])
-    geography = models.CharField(max_length=255, choices=[])
+        e.value, e.value.replace("_", " ")) for e in GeographyType], blank=True, default="-1")
+    geography = models.CharField(
+        max_length=255, blank=True, default="-1")
+
+    base_form_class = PermissionSetForm
 
     panels = [
         FieldPanel("theme"),

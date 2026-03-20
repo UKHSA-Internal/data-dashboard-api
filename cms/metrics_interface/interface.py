@@ -220,6 +220,18 @@ class MetricsAPIInterface:
         """
         return self.sub_theme_manager.get_all_unique_names()
 
+    def get_filtered_unique_sub_theme_names_for_parent_theme(self, parent_theme_id) -> QuerySet:
+        """Get all unique sub_theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual sub_theme names.
+                Examples:
+                    `<SubThemeQuerySet ['respiratory', ...]>
+
+        """
+        return self.sub_theme_manager.get_filtered_unique_names_related_to_theme(parent_theme_id=parent_theme_id)
+
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.
         Note this is achieved by delegating the call to the `TopicManager` from the Metrics API
