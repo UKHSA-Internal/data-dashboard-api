@@ -558,6 +558,31 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     )
 
 
+def get_all_geography_type_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `geography_type` fields of the CMS blocks on permission sets.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Geography` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of geography type names.
+        Examples:
+            [(, "Nation"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    geography_choices = metrics_interface.get_all_geography_type_names_and_ids()
+    print(geography_choices)
+    return _build_id_name_tuple_choices(
+        choices=geography_choices
+    )
+
+
 def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `sex` fields of the CMS blocks.
 

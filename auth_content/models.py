@@ -3,7 +3,7 @@ from django import forms
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 
-from cms.metrics_interface.field_choices_callables import get_all_theme_names_and_ids
+from cms.metrics_interface.field_choices_callables import get_all_geography_type_names_and_ids, get_all_theme_names_and_ids
 from validation.enums.geographies_enums import GeographyType
 from wagtail.admin.forms import WagtailAdminModelForm
 
@@ -62,7 +62,7 @@ class PermissionSet(models.Model):
     metric = models.CharField(
         max_length=255, blank=True, default="")
     geography_type = models.CharField(max_length=255, choices=[(
-        e.value, e.value.replace("_", " ")) for e in GeographyType], blank=True, default="")
+        "", "---------"), ("-1", "* (All themes)")] + get_all_geography_type_names_and_ids(), blank=True, default="")
     geography = models.CharField(
         max_length=255, blank=True, default="")
 

@@ -55,6 +55,6 @@ class ThemeManager(models.Manager):
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self .get_queryset().get_all_choices()
