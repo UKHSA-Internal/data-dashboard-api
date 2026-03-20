@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from rest_framework import serializers
 
+from metrics.api.serializers.permission_sets import _queryset_to_id_name_tuples
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )
@@ -11,6 +12,7 @@ from metrics.data.models.core_models import (
     Geography,
     Topic,
 )
+from django.db.models import QuerySet
 
 GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
@@ -61,7 +63,8 @@ class GeographiesForTopicSerializer(serializers.Serializer):
         """
         topic: str = self.validated_data["topic"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(topic=topic)
+            self.core_time_series_manager.get_available_geographies(
+                topic=topic)
         )
         return _serialize_queryset(queryset=queryset)
 
@@ -186,6 +189,18 @@ class GeographiesResponseSerializer(serializers.ListSerializer):
     child = GeographiesResponseListSerializer()
 
 
+class GeographyChoicesResponseSerializer(serializers.Serializer):
+    """Formats the response for choice endpoints"""
+    choices = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.CharField(),
+            min_length=2,
+            max_length=2
+        ),
+        help_text="List of [id, name] pairs for dropdown options"
+    )
+
+
 MISSING_FIELD_ERROR_MESSAGE = "Either 'topic' or 'geography_type' must be provided."
 SINGLE_FIELD_ONLY_ERROR_MESSAGE = (
     "Only one of 'topic' or 'geography_type' should be provided, not both."
@@ -208,3 +223,73 @@ class GeographiesRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError(SINGLE_FIELD_ONLY_ERROR_MESSAGE)
 
         return attrs
+
+
+class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
+    geography_type_id = serializers.CharField(required=True)
+
+    @property
+    def geography_manager(self):
+        return self.context.get("geography_manager", Geography.objects)
+
+    def validate_geography_type_id(self, value):
+        """Validate theme_id is either wildcard or a valid integer"""
+        if value == "-1":
+            return value
+
+        try:
+            int(value)
+            return value
+        except ValueError:
+            raise serializers.ValidationError(
+                "Geography Type must be a number or '-1'")
+
+    def data(self) -> dict:
+        """
+        Fetch sub-themes from DB and format as response.
+
+        Returns:
+            Dict with 'choices' key containing list of [id, name] pairs
+        """
+        geography_type_id = self.validated_data['geography_type_id']
+
+        # Handle wildcard
+        if geography_type_id == "-1":
+            return {'choices': [["-1", "* (All geographies)"]]}
+
+        # Fetch from interface
+        parent_geography_type_id = int(geography_type_id)
+        geographies = self.geography_manager.get_geography_codes_and_names_by_geography_type_id(
+            parent_geography_type_id)
+        print(geographies)
+        geography_names_and_codes_tuples = _queryset_to_geography_code_name_tuples(
+            geographies)
+
+        # Format response
+        print('geography data: ', geography_names_and_codes_tuples)
+        choices = [[str(geography_code), name]
+                   for geography_code, name in geography_names_and_codes_tuples]
+
+        return {'choices': choices}
+
+
+def _queryset_to_geography_code_name_tuples(queryset: QuerySet) -> list[tuple[str, str]]:
+    """
+    Convert a QuerySet with 'id' and 'name' fields to a list of tuples.
+
+    Args:
+        queryset: QuerySet containing dicts with 'id' and 'name' keys
+
+    Returns:
+        List of (id, name) tuples
+
+    Examples:
+        >>> qs = Model.objects.values('id', 'name')
+        >>> queryset_to_id_name_tuples(qs)
+        [(1, "item1"), (2, "item2")]
+    """
+    print('received queryset: ', queryset)
+
+    for item in queryset:
+        print('item: ', item)
+    return [(item['geography_code'], item['name']) for item in queryset]

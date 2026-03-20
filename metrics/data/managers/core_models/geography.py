@@ -80,6 +80,28 @@ class GeographyQuerySet(models.QuerySet):
             .order_by("geography_code")
         )
 
+    def get_geography_codes_and_names_by_geography_type_id(
+        self,
+        geography_type_id: int,
+    ):
+        """Gets all available geography codes and names for the given `geography_type_name`
+
+        Args:
+            geography_type_name: string representation of `geography_type_name`
+
+        Returns:
+            QuerySet: A queryset of the individual geography codes
+                which are related to the given geography_type:
+                Examples:
+                    `<GeographyQuerySet [('E06000001', 'North East'), ('E06000002', 'North West')]>`
+
+        """
+        return (
+            self.filter(geography_type_id=geography_type_id)
+            .values("geography_code", "name")
+            .order_by("geography_code")
+        )
+
     def get_geographies_by_geography_type(
         self,
         geography_type_name: str,
@@ -166,6 +188,26 @@ class GeographyManager(models.Manager):
         """
         return self.get_queryset().get_geography_codes_and_names_by_geography_type(
             geography_type_name=geography_type_name
+        )
+
+    def get_geography_codes_and_names_by_geography_type_id(
+        self,
+        geography_type_id: str,
+    ):
+        """Gets all available geography codes and names for a give `geography_type`
+
+        Args:
+            geography_type_name: string representation of `geography_type_name`
+
+        Returns:
+            QuerySet: A queryset of the individual geography codes
+                which are related to the given geography_type:
+                Examples:
+                    `<GeographyQuerySet [('E06000001', 'North East'), ('E06000002', 'North West')]>`
+
+        """
+        return self.get_queryset().get_geography_codes_and_names_by_geography_type_id(
+            geography_type_id=geography_type_id
         )
 
     def get_geographies_by_geography_type(

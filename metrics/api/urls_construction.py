@@ -36,7 +36,7 @@ from metrics.api.views import (
 )
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.charts.subplot_charts import SubplotChartsView
-from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
+from metrics.api.views.geographies import GeographiesByGeographyTypeView, GeographiesView, GeographiesViewDeprecated
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
 from metrics.api.views.permission_sets import MetricsByTopicView, SubThemesByThemeView, TopicsBySubThemeView
@@ -137,6 +137,8 @@ private_api_urlpatterns = [
          TopicsBySubThemeView.as_view(), name='get_topics'),
     path(f"{API_PREFIX}permission-set/metrics/<str:topic_id>",
          MetricsByTopicView.as_view(), name='get_metrics'),
+    path(f"{API_PREFIX}permission-set/geographies/<str:geography_type_id>",
+         GeographiesByGeographyTypeView.as_view(), name='get_geographies'),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat",
          heat_alert_list, name="heat-alerts-list"),
@@ -164,6 +166,7 @@ private_api_urlpatterns = [
         GeographiesViewDeprecated.as_view(),
     ),
     re_path(f"^{API_PREFIX}geographies/v3", GeographiesView.as_view()),
+
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}maps/v1", MapsView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
