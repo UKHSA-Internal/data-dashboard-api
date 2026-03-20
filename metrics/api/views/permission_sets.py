@@ -1,38 +1,25 @@
+from http import HTTPStatus
+
 from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from metrics.api.serializers.permission_sets import PermissionSetResponseSerializer, SubThemeRequestSerializer
+
 PERMISSION_SETS_API_TAG = "data hierarchy"
 
 
-@extend_schema(tags=[PERMISSION_SETS_API_TAG])
+@extend_schema(request=PermissionSetResponseSerializer, tags=[PERMISSION_SETS_API_TAG], responses={HTTPStatus.OK.value: PermissionSetResponseSerializer})
 class SubThemesByThemeView(APIView):
     """Get sub-themes filtered by theme ID"""
     permission_classes = []
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, theme_id, *args, **kwargs):
         """API endpoint to fetch sub-themes based on selected theme."""
-        theme_id = self.kwargs['theme_id']
-
-        if not theme_id:
-            return Response({'error': 'theme_id required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if theme_id == "-1":
-            return Response({'choices': [["-1", "* (All sub-themes)"]]})
-
-        try:
-            # Your interface call here
-            return Response({
-                'choices': [
-                    ['1', 'Vaccine Preventable'],
-                    ['2', 'Respiratory'],
-                    ['3', 'Healthcare Associated Infections']
-                ],
-                'theme_id_received': theme_id
-            })
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = SubThemeRequestSerializer(data={'theme_id': theme_id})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data())
 
 
 @extend_schema(tags=[PERMISSION_SETS_API_TAG])

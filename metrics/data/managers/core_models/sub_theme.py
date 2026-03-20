@@ -41,7 +41,7 @@ class SubThemeQuerySet(models.QuerySet):
                 Examples:
                     `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self.filter(themeId=parent_theme_id).values("id", "name").distinct()
+        return self.filter(theme_id=parent_theme_id).values('id', 'name').distinct()
 
 
 class SubThemeManager(models.Manager):
