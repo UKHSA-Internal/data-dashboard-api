@@ -45,6 +45,16 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.get(name=name)
 
+    def get_filtered_unique_names_related_to_sub_theme(self, parent_sub_theme_id) -> models.QuerySet:
+        """Gets all available unique sub themes with id and name fields that are related to the parent theme ID.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self.filter(sub_theme_id=parent_sub_theme_id).values('id', 'name').distinct()
+
 
 class TopicManager(models.Manager):
     """Custom model manager class for the `Metric` model."""
@@ -93,3 +103,13 @@ class TopicManager(models.Manager):
 
         """
         return self.get_queryset().get_by_name(name=name)
+
+    def get_filtered_unique_names_related_to_sub_theme(self, parent_sub_theme_id: str) -> TopicQuerySet:
+        """Gets all available themes with id and name fields.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self.get_queryset().get_filtered_unique_names_related_to_sub_theme(parent_sub_theme_id=parent_sub_theme_id)
