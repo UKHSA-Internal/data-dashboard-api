@@ -1,9 +1,4 @@
-from wagtail.blocks import (
-    RichTextBlock,
-    StreamBlock,
-    StructBlock,
-    TextBlock,
-)
+from wagtail.blocks import RichTextBlock, StreamBlock, StructBlock, TextBlock
 
 from cms.dynamic_content import blocks, cards, help_texts
 from cms.dynamic_content.global_filter.card import GlobalFilterCard
@@ -35,6 +30,10 @@ class ContentCards(StreamBlock):
     )
 
 
+class FooterCardsSectionWithLink(StreamBlock):
+    section_link = blocks.SectionFooterLink(help_texts="testing", max_num=1)
+
+
 class ContentCardsSectionWithLink(StreamBlock):
     text_card = cards.TextCard()
     chart_card_section = cards.ChartCardSection()
@@ -58,6 +57,9 @@ class SectionWithLink(StructBlock):
         help_text=help_texts.INDEX_PAGE_FIELD,
     )
     content = ContentCardsSectionWithLink(help_text=help_texts.CONTENT_ROW_CARDS)
+    footer = FooterCardsSectionWithLink(
+        help_text=help_texts.SECTION_FOOTER, required=False
+    )
 
     class Meta:
         icon = "thumbtack"
