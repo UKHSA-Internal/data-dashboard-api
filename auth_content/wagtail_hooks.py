@@ -1,13 +1,10 @@
-import json
-
-from wagtail import hooks
-from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail.admin.viewsets.model import ModelViewSetGroup
 from django.templatetags.static import static
+from django.utils.html import format_html
+from wagtail import hooks
+from wagtail.admin.viewsets.model import ModelViewSetGroup
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from auth_content.models import PermissionSet
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 
 class PermissionSetViewSet(SnippetViewSet):
@@ -26,10 +23,6 @@ class AuthGroup(ModelViewSetGroup):
 @hooks.register("register_admin_viewset")
 def register_auth_viewset():
     return AuthGroup()
-
-# exposes the mapping of parent to child themes
-
-# exposes the mapping of parent to child themes
 
 
 @hooks.register("insert_editor_js")

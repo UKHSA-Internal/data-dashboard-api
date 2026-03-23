@@ -34,7 +34,7 @@ class SubThemeQuerySet(models.QuerySet):
         return self.all().values_list("name", flat=True).distinct().order_by("name")
 
     def get_all_names_and_ids(self) -> models.QuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available sub_themes with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
@@ -43,15 +43,17 @@ class SubThemeQuerySet(models.QuerySet):
         """
         return self.all().values("id", "name").distinct()
 
-    def get_filtered_unique_names_related_to_theme(self, parent_theme_id) -> models.QuerySet:
-        """Gets all available unique sub themes with id and name fields that are related to the parent theme ID.
+    def get_filtered_unique_names_related_to_theme(
+        self, parent_theme_id
+    ) -> models.QuerySet:
+        """Gets all available unique sub_themes with id and name fields that are related to the parent theme ID.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
                     `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self.filter(theme_id=parent_theme_id).values('id', 'name').distinct()
+        return self.filter(theme_id=parent_theme_id).values("id", "name").distinct()
 
 
 class SubThemeManager(models.Manager):
@@ -82,22 +84,26 @@ class SubThemeManager(models.Manager):
         """
         return self.get_queryset().get_all_unique_names()
 
-    def get_filtered_unique_names_related_to_theme(self, parent_theme_id: str) -> SubThemeQuerySet:
-        """Gets all available themes with id and name fields.
+    def get_filtered_unique_names_related_to_theme(
+        self, parent_theme_id: str
+    ) -> SubThemeQuerySet:
+        """Gets all available sub_themes with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
                     `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self.get_queryset().get_filtered_unique_names_related_to_theme(parent_theme_id=parent_theme_id)
+        return self.get_queryset().get_filtered_unique_names_related_to_theme(
+            parent_theme_id=parent_theme_id
+        )
 
     def get_all_names_and_ids(self) -> SubThemeQuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available sub_themes with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<SubThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self .get_queryset().get_all_names_and_ids()
+        return self.get_queryset().get_all_names_and_ids()

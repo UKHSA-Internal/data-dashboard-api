@@ -57,4 +57,4 @@ class ThemeManager(models.Manager):
                 Examples:
                     `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self .get_queryset().get_all_names_and_ids()
+        return self.get_queryset().get_all_names_and_ids()

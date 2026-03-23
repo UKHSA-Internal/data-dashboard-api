@@ -10,8 +10,9 @@ This shall ensure that the `choices` are populated from the database.
 And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
 """
 
-from cms.metrics_interface import MetricsAPIInterface
 from django.db.models import QuerySet
+
+from cms.metrics_interface import MetricsAPIInterface
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
@@ -25,9 +26,7 @@ def _build_two_item_tuple_choices(
     return [(choice, choice) for choice in choices]
 
 
-def _build_id_name_tuple_choices(
-    *, choices: QuerySet
-) -> list[tuple[str, str]]:
+def _build_id_name_tuple_choices(*, choices: QuerySet) -> list[tuple[str, str]]:
     """Build choices from a QuerySet containing id and name fields.
 
     Args:
@@ -38,7 +37,7 @@ def _build_id_name_tuple_choices(
         Examples:
             [(1, "infectious_disease"), (2, "respiratory"), ...]
     """
-    return [(str(choice['id']), choice['name']) for choice in choices]
+    return [(str(choice["id"]), choice["name"]) for choice in choices]
 
 
 def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -293,10 +292,8 @@ def get_all_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    theme_names = metrics_interface.get_all_theme_names()
-    print(theme_names)
     return _build_two_item_tuple_choices(
-        choices=theme_names,
+        choices=metrics_interface.get_all_theme_names(),
     )
 
 
@@ -314,13 +311,12 @@ def get_all_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of theme names.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "immunisation"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    theme_names = metrics_interface.get_all_theme_names_and_ids()
-    print(theme_names)
+
     return _build_id_name_tuple_choices(
-        choices=theme_names,
+        choices=metrics_interface.get_all_theme_names_and_ids()
     )
 
 
@@ -369,52 +365,22 @@ def get_all_unique_sub_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
 
 def get_all_sub_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
-    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+    """Callable for the `choices` on the `sub-theme` fields of the CMS blocks.
 
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new chart type is added.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of subtheme names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "childhood-vaccines"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    sub_theme_names_and_ids = metrics_interface.get_all_sub_theme_names_and_ids()
-    print(sub_theme_names_and_ids)
     return _build_id_name_tuple_choices(
-        choices=sub_theme_names_and_ids,
-    )
-
-
-def get_filtered_unique_sub_theme_names_for_parent_theme(parent_theme_id) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
-    """Callable for the `choices` on the `theme` fields of the CMS blocks.
-
-    Notes:
-        This callable wraps the `MetricsAPIInterface`
-        and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new chart type is added.
-        Instead, the 1-off migration is pointed at this callable.
-        So Wagtail will pull the choices by invoking this function.
-
-    Returns:
-        A list of 2-item tuples of theme names.
-        Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
-    """
-    metrics_interface = MetricsAPIInterface()
-    print("received parent_theme_id: ", parent_theme_id)
-    filtered_sub_themes = metrics_interface.get_filtered_unique_sub_theme_names_for_parent_theme(
-        parent_theme_id=parent_theme_id)
-    print("filtered_sub_themes: ", filtered_sub_themes)
-    return _build_id_name_tuple_choices(
-        choices=filtered_sub_themes,
+        choices=metrics_interface.get_all_sub_theme_names_and_ids(),
     )
 
 
@@ -462,21 +428,18 @@ def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new chart type is added.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of topic names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "6-in-1"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    topic_names_and_ids = metrics_interface.get_all_topic_names_and_ids()
-    print(topic_names_and_ids)
+
     return _build_id_name_tuple_choices(
-        choices=topic_names_and_ids,
+        choices=metrics_interface.get_all_topic_names_and_ids()
     )
 
 
@@ -492,15 +455,13 @@ def get_all_metric_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of metric names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "6-in-1_coverage_coverageByYear"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    metric_names_and_ids = metrics_interface.get_all_metric_names_and_ids()
-    print(metric_names_and_ids)
     return _build_id_name_tuple_choices(
-        choices=metric_names_and_ids,
+        choices=metrics_interface.get_all_metric_names_and_ids()
     )
 
 
@@ -636,22 +597,18 @@ def get_all_geography_type_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new `Geography` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of geography type names.
+        A list of 2-item tuples of geography type names and ids.
         Examples:
-            [(, "Nation"), ...]
+            [(1, "Nation"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()
-    geography_choices = metrics_interface.get_all_geography_type_names_and_ids()
-    print(geography_choices)
     return _build_id_name_tuple_choices(
-        choices=geography_choices
+        choices=metrics_interface.get_all_geography_type_names_and_ids()
     )
 
 
@@ -742,8 +699,7 @@ def get_all_geography_choices_grouped_by_type() -> (
 
 def get_all_subcategory_choices_grouped_by_categories() -> (
     dict[
-        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str,
-                                                   LIST_OF_TWO_STRING_ITEM_TUPLES]
+        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str, LIST_OF_TWO_STRING_ITEM_TUPLES]
     ]
 ):
     """Callable to return all subcategory choices groups by categories.

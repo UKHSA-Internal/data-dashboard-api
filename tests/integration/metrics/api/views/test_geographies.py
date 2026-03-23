@@ -265,3 +265,106 @@ class TestGeographiesView:
         assert result["geographies"][2]["geography_code"] == hackney.geography_code
 
         assert len(result["geographies"]) == 3
+
+
+class TestGeographiesByGeographyTypeView:
+    @property
+    def path(self) -> str:
+        return "/api/permission-set/geographies"
+
+    @pytest.mark.django_db
+    def test_get_geographies_by_geography_type_id_should_return_geographies(self):
+
+        client = APIClient()
+        ltla = "Lower Tier Local Authority"
+
+        bexley = GeographyFactory.create_with_geography_type(
+            name="Bexley", geography_code="E09000004", geography_type=ltla
+        )
+        arun = GeographyFactory.create_with_geography_type(
+            name="Arun", geography_code="E07000224", geography_type=ltla
+        )
+        hackney = GeographyFactory.create_with_geography_type(
+            name="Hackney", geography_code="E09000012", geography_type=ltla
+        )
+        GeographyFactory.create_with_geography_type(
+            name="England", geography_code="E92000001", geography_type="Nation"
+        )
+
+        geographyTypeId = 1
+        path = f"{self.path}/{geographyTypeId}"
+        response: Response = client.get(path=path)
+        result = response.data
+        assert len(response.data["choices"]) == 3
+        assert result["choices"][0][0] == arun.geography_code
+        assert result["choices"][0][1] == arun.name
+
+        assert result["choices"][1][0] == bexley.geography_code
+        assert result["choices"][1][1] == bexley.name
+
+        assert result["choices"][2][0] == hackney.geography_code
+        assert result["choices"][2][1] == hackney.name
+
+    @pytest.mark.django_db
+    def test_get_geographies_by_geography_type_id_should_return_wildcard(self):
+
+        client = APIClient()
+        ltla = "Lower Tier Local Authority"
+
+        bexley = GeographyFactory.create_with_geography_type(
+            name="Bexley", geography_code="E09000004", geography_type=ltla
+        )
+        arun = GeographyFactory.create_with_geography_type(
+            name="Arun", geography_code="E07000224", geography_type=ltla
+        )
+        hackney = GeographyFactory.create_with_geography_type(
+            name="Hackney", geography_code="E09000012", geography_type=ltla
+        )
+        GeographyFactory.create_with_geography_type(
+            name="England", geography_code="E92000001", geography_type="Nation"
+        )
+
+        geographyTypeId = -1
+        path = f"{self.path}/{geographyTypeId}"
+        response: Response = client.get(path=path)
+        result = response.data
+
+        # Choices length should only contain wildcard option
+        assert len(response.data["choices"]) == 1
+
+        # Should return a wildcard choice
+        assert result["choices"][0][0] == "-1"
+        assert result["choices"][0][1] == "* (All geographies)"
+
+    @pytest.mark.django_db
+    def test_get_geographies_by_geography_type_id_should_return_an_error(self):
+
+        client = APIClient()
+        ltla = "Lower Tier Local Authority"
+
+        bexley = GeographyFactory.create_with_geography_type(
+            name="Bexley", geography_code="E09000004", geography_type=ltla
+        )
+        arun = GeographyFactory.create_with_geography_type(
+            name="Arun", geography_code="E07000224", geography_type=ltla
+        )
+        hackney = GeographyFactory.create_with_geography_type(
+            name="Hackney", geography_code="E09000012", geography_type=ltla
+        )
+        GeographyFactory.create_with_geography_type(
+            name="England", geography_code="E92000001", geography_type="Nation"
+        )
+
+        geographyTypeId = "string"
+        path = f"{self.path}/{geographyTypeId}"
+        response: Response = client.get(path=path)
+        result = response.data
+
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+
+        # data should contain error
+
+        assert (
+            str(result["geography_type_id"][0])
+            == "Geography Type must be a number or '-1'"
+        )
