@@ -11,6 +11,15 @@ from metrics.api.django_cognito_jwt import backend
 USER_MODEL = get_user_model()
 
 
+def test_get_authorization_header(rf):
+    """test get_authorization_header correctly handles
+    a header that is a string not a bytestring as expected"""
+    request = rf.get("/", HTTP_X_UHD_AUTH="bearer string_token")
+    auth = backend.JSONWebTokenAuthentication()
+    with pytest.raises(AuthenticationFailed):
+        auth.authenticate(request)
+
+
 def test_authenticate_no_token(rf):
     request = rf.get("/")
     auth = backend.JSONWebTokenAuthentication()
