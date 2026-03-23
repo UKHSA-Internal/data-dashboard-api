@@ -1,25 +1,23 @@
-import logging
-
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
 from .validator import TokenError, TokenValidator
 
-logger = logging.getLogger(__name__)
 VALID_AUTH_HEADER_LENGTH = 2
 
 
 def get_authorization_header(request):
     """
-    Return request's 'Authorization:' header, as a bytestring.
+    Return request's 'X-UHD-AUTH:' header, as a bytestring.
 
     Hide some test client ickyness where the header can be unicode.
     """
-    auth = request.META.get('HTTP_X_UHD_AUTH', b'')
+    auth = request.META.get("HTTP_X_UHD_AUTH", b"")
     if isinstance(auth, str):
         # Work around django test client oddness
         auth = auth.encode(HTTP_HEADER_ENCODING)
@@ -27,7 +25,10 @@ def get_authorization_header(request):
 
 
 class JSONWebTokenAuthentication(BaseAuthentication):
-    """Token based authentication using the JSON Web Token standard."""
+    """Token based authentication using the JSON Web Token standard.
+    Based on https://github.com/labd/django-cognito-jwt and modified
+    to suit our use case
+    """
 
     def authenticate(self, request):
         """Entrypoint for Django Rest Framework"""
@@ -42,9 +43,24 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         except TokenError:
             raise exceptions.AuthenticationFailed from None
 
-        user_model = self.get_user_model()
-        user = user_model.objects.get_or_create_for_cognito(jwt_payload)
+        custom_user_manager = self.get_custom_user_manager()
+        if custom_user_manager:
+            user = custom_user_manager.get_or_create_for_cognito(jwt_payload)
+        else:
+            user_model = self.get_user_model()
+            user = user_model.objects.get_or_create_for_cognito(jwt_payload)
         return (user, jwt_token)
+
+    @staticmethod
+    def get_custom_user_manager():
+        """If COGNITO_USER_MANAGER is set, then the user object is obtained
+        via get_or_create_for_cognito on the user manager, this allows use
+        of the default unmodified Django User model"""
+        result = None
+        custom_user_manager_path = getattr(settings, "COGNITO_USER_MANAGER", False)
+        if custom_user_manager_path:
+            result = import_string(custom_user_manager_path)()
+        return result
 
     @staticmethod
     def get_user_model():

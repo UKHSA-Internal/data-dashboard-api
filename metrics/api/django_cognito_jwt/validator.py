@@ -1,4 +1,5 @@
 import json
+import logging
 
 import jwt
 import requests
@@ -6,6 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.functional import cached_property
 from jwt.algorithms import RSAAlgorithm
+
+logger = logging.getLogger(__name__)
 
 
 class TokenError(Exception):
@@ -62,10 +65,13 @@ class TokenValidator:
             "jwt": token,
             "key": public_key,
             "issuer": self.pool_url,
-            "algorithms": ["RS256"]
+            "algorithms": ["RS256"],
         }
 
+        logger.debug("JWT - %s", params)
         token_payload = jwt.decode(token, options={"verify_signature": False})
+        logger.debug("JWT decoded - %s", token_payload)
+
         if "aud" in token_payload:
             params.update({"audience": self.audience})
 
