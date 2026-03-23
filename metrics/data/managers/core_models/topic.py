@@ -55,6 +55,16 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(sub_theme_id=parent_sub_theme_id).values('id', 'name').distinct()
 
+    def get_all_names_and_ids(self) -> models.QuerySet:
+        """Gets all available themes with id and name fields.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self.all().values("id", "name").distinct()
+
 
 class TopicManager(models.Manager):
     """Custom model manager class for the `Metric` model."""
@@ -113,3 +123,13 @@ class TopicManager(models.Manager):
                     `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self.get_queryset().get_filtered_unique_names_related_to_sub_theme(parent_sub_theme_id=parent_sub_theme_id)
+
+    def get_all_names_and_ids(self) -> TopicQuerySet:
+        """Gets all available themes with id and name fields.
+
+        Returns:
+            QuerySet: A queryset containing dictionaries with id and name:
+                Examples:
+                    `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+        """
+        return self .get_queryset().get_all_names_and_ids()

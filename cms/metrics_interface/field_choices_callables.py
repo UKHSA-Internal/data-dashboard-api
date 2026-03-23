@@ -317,7 +317,7 @@ def get_all_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    theme_names = metrics_interface.get_all_theme_choices()
+    theme_names = metrics_interface.get_all_theme_names_and_ids()
     print(theme_names)
     return _build_id_name_tuple_choices(
         choices=theme_names,
@@ -365,6 +365,30 @@ def get_all_unique_sub_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
         choices=metrics_interface.get_all_unique_sub_theme_names(),
+    )
+
+
+def get_all_sub_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of theme names.
+        Examples:
+            [("Infectious_disease", "Infectious_disease"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    sub_theme_names_and_ids = metrics_interface.get_all_sub_theme_names_and_ids()
+    print(sub_theme_names_and_ids)
+    return _build_id_name_tuple_choices(
+        choices=sub_theme_names_and_ids,
     )
 
 
@@ -430,6 +454,54 @@ def get_a_list_of_all_topic_names():
     """
     metrics_interface = MetricsAPIInterface()
     return list(metrics_interface.get_all_topic_names())
+
+
+def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of theme names.
+        Examples:
+            [("Infectious_disease", "Infectious_disease"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    topic_names_and_ids = metrics_interface.get_all_topic_names_and_ids()
+    print(topic_names_and_ids)
+    return _build_id_name_tuple_choices(
+        choices=topic_names_and_ids,
+    )
+
+
+def get_all_metric_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of theme names.
+        Examples:
+            [("Infectious_disease", "Infectious_disease"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    metric_names_and_ids = metrics_interface.get_all_metric_names_and_ids()
+    print(metric_names_and_ids)
+    return _build_id_name_tuple_choices(
+        choices=metric_names_and_ids,
+    )
 
 
 def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:

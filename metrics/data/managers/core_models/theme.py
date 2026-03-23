@@ -21,7 +21,7 @@ class ThemeQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True)
 
-    def get_all_choices(self) -> models.QuerySet:
+    def get_all_names_and_ids(self) -> models.QuerySet:
         """Gets all available themes with id and name fields.
 
         Returns:
@@ -49,7 +49,7 @@ class ThemeManager(models.Manager):
         """
         return self.get_queryset().get_all_names()
 
-    def get_all_choices(self) -> ThemeQuerySet:
+    def get_all_names_and_ids(self) -> ThemeQuerySet:
         """Gets all available themes with id and name fields.
 
         Returns:
@@ -57,4 +57,4 @@ class ThemeManager(models.Manager):
                 Examples:
                     `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
-        return self .get_queryset().get_all_choices()
+        return self .get_queryset().get_all_names_and_ids()
