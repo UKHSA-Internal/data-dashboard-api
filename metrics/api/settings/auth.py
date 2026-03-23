@@ -12,6 +12,13 @@ def is_allow_missing_is_public_field() -> bool:
     }
 
 
+def is_enforce_public_data_only() -> bool:
+    return str(os.environ.get("ENFORCE_PUBLIC_DATA_ONLY", "true")).lower() in {
+        "true",
+        "1",
+    }
+
+
 AUTH_ENABLED = is_auth_enabled()
 ALLOW_MISSING_IS_PUBLIC_FIELD = is_allow_missing_is_public_field()
 
@@ -23,4 +30,7 @@ ALLOW_MISSING_IS_PUBLIC_FIELD = is_allow_missing_is_public_field()
 #              diagnostics.
 #          b) Metadata/master-table endpoints (not headline/time-series rows)
 #             remain unfiltered.
-ENFORCE_PUBLIC_DATA_ONLY = True
+#
+# Note: This flag is only used by the private API, because we are not allowing
+#       non-public data through the public API anyway.
+ENFORCE_PUBLIC_DATA_ONLY = is_enforce_public_data_only()
