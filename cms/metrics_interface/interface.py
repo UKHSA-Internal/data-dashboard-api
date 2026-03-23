@@ -186,6 +186,17 @@ class MetricsAPIInterface:
         """
         return self.theme_manager.get_all_names()
 
+    def get_all_theme_choices(self) -> QuerySet:
+        """Gets all available theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual theme names.
+                Examples:
+                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+        """
+        return self.theme_manager.get_all_choices()
+
     def get_all_sub_theme_names(self) -> QuerySet:
         """Gets all available sub_theme names as a flat list queryset.
         Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
@@ -208,6 +219,18 @@ class MetricsAPIInterface:
 
         """
         return self.sub_theme_manager.get_all_unique_names()
+
+    def get_filtered_unique_sub_theme_names_for_parent_theme(self, parent_theme_id) -> QuerySet:
+        """Get all unique sub_theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual sub_theme names.
+                Examples:
+                    `<SubThemeQuerySet ['respiratory', ...]>
+
+        """
+        return self.sub_theme_manager.get_filtered_unique_names_related_to_theme(parent_theme_id=parent_theme_id)
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.
@@ -397,3 +420,15 @@ class MetricsAPIInterface:
         return self.geography_manager.get_geography_code_for_geography(
             geography=geography, geography_type=geography_type
         )
+
+    def get_all_geography_type_names_and_ids(self) -> QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<GeographyTypeQuerySet [ 1, 'UKHSA_Region']>`
+
+        """
+        return self.geography_type_manager.get_all_names_and_ids()

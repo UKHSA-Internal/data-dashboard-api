@@ -8,6 +8,8 @@ from wagtail.admin.menu import MenuItem
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 from wagtail.models import Page
 from wagtail.whitelist import check_url
+from wagtail import hooks
+
 
 
 @hooks.register("insert_global_admin_css")

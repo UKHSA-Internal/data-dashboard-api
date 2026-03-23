@@ -23,6 +23,18 @@ class GeographyTypeQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).order_by("name")
 
+    def get_all_names_and_ids(self) -> models.QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names
+                ordered in descending ordering starting from A -> Z:
+                Examples:
+                    `<GeographyTypeQuerySet ['Nation', 'UKHSA_Region']>`
+
+        """
+        return self.all().values("id", "name")
+
 
 class GeographyTypeManager(models.Manager):
     """Custom model manager class for the `GeographyType` model."""
@@ -40,3 +52,14 @@ class GeographyTypeManager(models.Manager):
 
         """
         return self.get_queryset().get_all_names()
+
+    def get_all_names_and_ids(self) -> GeographyTypeQuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<GeographyTypeQuerySet [{'id':1, 'name': 'Nation'}, ...]>`
+
+        """
+        return self.get_queryset().get_all_names_and_ids()
