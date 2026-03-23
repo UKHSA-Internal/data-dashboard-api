@@ -62,7 +62,7 @@ class PermissionSet(models.Model):
     metric = models.CharField(
         max_length=255, blank=True, default="")
     geography_type = models.CharField(max_length=255, choices=[(
-        "", "---------"), ("-1", "* (All themes)")] + get_all_geography_type_names_and_ids(), blank=True, default="")
+        "", "---------"), ("-1", "* (All geography-types)")] + get_all_geography_type_names_and_ids(), blank=True, default="")
     geography = models.CharField(
         max_length=255, blank=True, default="")
 
@@ -76,6 +76,15 @@ class PermissionSet(models.Model):
         FieldPanel("geography_type"),
         FieldPanel("geography"),
     ]
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['theme', 'sub_theme', 'topic',
+                        'metric', 'geography_type', 'geography'],
+                name='unique_permission_set'
+            )
+        ]
 
     def __str__(self):
         if self.theme and self.theme != "" and self.theme != "-1":

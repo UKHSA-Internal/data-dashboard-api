@@ -58,7 +58,7 @@
    * @param {HTMLSelectElement} dropdown - The select element to populate
    * @param {Array} choices - Array of [id, name] tuples
    */
-  function populateDropdown(dropdown, choices) {
+  function populateDropdown(dropdown, choices, wildcardValue = "* All Items") {
     dropdown.disabled = false;
     dropdown.innerHTML = "";
 
@@ -71,7 +71,7 @@
     //dropdown wildcard choice
     const wildcardOption = document.createElement("option");
     wildcardOption.value = "-1";
-    wildcardOption.textContent = "* (All items)";
+    wildcardOption.textContent = wildcardValue;
     dropdown.appendChild(wildcardOption);
 
     choices.forEach(([id, name]) => {
@@ -148,7 +148,7 @@
     const choices = await fetchChoices("subthemes", themeValue);
 
     if (choices.length > 0) {
-      populateDropdown(subTheme, choices);
+      populateDropdown(subTheme, choices, "* All sub-themes");
     } else {
       clearDropdown(subTheme, "No sub-themes available");
     }
@@ -184,7 +184,7 @@
     const choices = await fetchChoices("topics", subThemeValue);
 
     if (choices.length > 0) {
-      populateDropdown(topic, choices);
+      populateDropdown(topic, choices, "* All topics");
     } else {
       clearDropdown(topic, "No topics available");
     }
@@ -217,7 +217,7 @@
     const choices = await fetchChoices("metrics", topicValue);
 
     if (choices.length > 0) {
-      populateDropdown(metric, choices);
+      populateDropdown(metric, choices, "* All metrics");
     } else {
       clearDropdown(metric, "No metrics available");
     }
@@ -236,7 +236,7 @@
     if (geographyTypeValue === "-1") {
       // Wildcard topic = cascade wildcard to metrics
       console.log("Wildcard geography selected - cascading to metrics");
-      setToWildcard(metric, "* (All geographies)");
+      setToWildcard(geography, "* (All geographies)");
       return;
     }
     clearDropdown(geography, "--------");
@@ -245,7 +245,7 @@
     const choices = await fetchGeographies("geographies", geographyTypeValue);
 
     if (choices.length > 0) {
-      populateDropdown(geography, choices);
+      populateDropdown(geography, choices, "* All geographies");
     } else {
       clearDropdown(geography, "No geographies available");
     }
