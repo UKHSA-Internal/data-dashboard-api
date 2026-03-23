@@ -117,9 +117,6 @@
     dropdown.appendChild(option);
 
     dropdown.value = "-1";
-    dropdown.disabled = true;
-
-    console.log(`Set ${dropdown.name} to wildcard: ${message}`);
   }
 
   /**

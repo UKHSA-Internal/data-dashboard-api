@@ -31,26 +31,59 @@ class PermissionSetForm(WagtailAdminModelForm):
 
         # Use CharField with Select widget to bypass choice validation
         self.fields['sub_theme'] = forms.CharField(
-            required=False,
+            required=True,
             label="Sub Theme",
             widget=forms.Select(choices=[("", "Select theme first")])
         )
         self.fields['topic'] = forms.CharField(
-            required=False,
+            required=True,
             label="Topic",
             widget=forms.Select(choices=[("", "Select sub-theme first")])
         )
         self.fields['metric'] = forms.CharField(
-            required=False,
+            required=True,
             label="Metric",
             widget=forms.Select(choices=[("", "Select topic first")])
         )
         self.fields['geography'] = forms.CharField(
-            required=False,
+            required=True,
             label="Geography",
             widget=forms.Select(
                 choices=[("-1", "Select geography type first")])
         )
+
+        if self.instance and self.instance.pk:
+            # Sub-theme
+            if self.instance.sub_theme:
+                self.fields['sub_theme'].widget.choices = [
+                    ("", "Select theme first"),
+                    (self.instance.sub_theme,
+                     f"Loading... (ID: {self.instance.sub_theme})")
+                ]
+
+            # Topic
+            if self.instance.topic:
+                self.fields['topic'].widget.choices = [
+                    ("", "Select sub-theme first"),
+                    (self.instance.topic,
+                     f"Loading... (ID: {self.instance.topic})")
+                ]
+
+            # Metric
+            if self.instance.metric:
+                self.fields['metric'].widget.choices = [
+                    ("", "Select topic first"),
+                    (self.instance.metric,
+                     f"Loading... (ID: {self.instance.metric})")
+                ]
+
+            # Geography
+            if self.instance.geography:
+                self.fields['geography'].widget.choices = [
+                    ("", "Select geography type first"),
+                    (self.instance.geography,
+                     f"Loading... (ID: {self.instance.geography})")
+                ]
 
     def clean(self):
         """Validate that this permission set doesn't already exist"""
