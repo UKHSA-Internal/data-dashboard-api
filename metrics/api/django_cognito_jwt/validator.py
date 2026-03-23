@@ -69,7 +69,7 @@ class TokenValidator:
         }
 
         logger.debug("JWT - %s", params)
-        token_payload = jwt.decode(token, options={"verify_signature": False})
+        token_payload = jwt.decode(token, options={"verify_signature": False})  # noqa: S5659
         logger.debug("JWT decoded - %s", token_payload)
 
         if "aud" in token_payload:
