@@ -10,8 +10,6 @@ def cognito_settings(settings):
     settings.COGNITO_USER_POOL = "bla"
     settings.COGNITO_AUDIENCE = "my-client-id"
     settings.COGNITO_PUBLIC_KEYS_CACHING_ENABLED = False
-    settings.INSTALLED_APPS = ["django.contrib.auth", "django.contrib.contenttypes"]
-    settings.MIDDLEWARE_CLASSES = []
     settings.CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
