@@ -49,7 +49,7 @@ class TestNonPublicDataChartsAPI:
         And public & non-public `CoreTimeSeries` records
         And the required RBAC permission has been granted
         When the `charts/v3` endpoint is hit
-        Then the returned response includes the non-public record
+        Then the returned response matches the ENFORCE_PUBLIC_DATA_ONLY policy
         """
         # Given
         mocked_auth_enabled.return_value = True
@@ -84,19 +84,23 @@ class TestNonPublicDataChartsAPI:
 
         # Then
         results = response.data
-        # Check that both records are referenced in the alt text
         alt_text: str = results["alt_text"]
-        assert "1.0 on 01 January 2025" in alt_text
-        assert "2.0 on 02 January 2025" in alt_text
-
-        # Check that both records are shown on the chart itself
         figure = results["figure"]
         x_axis_data: list[str] = figure["data"][0]["x"]
-        assert "2025-01-01" in x_axis_data
-        assert "2025-01-02" in x_axis_data
-
         y_axis_data: list[float] = figure["data"][0]["y"]
+
+        assert "1.0 on 01 January 2025" in alt_text
+        assert "2025-01-01" in x_axis_data
         assert 1.0 in y_axis_data
+
+        if auth.ENFORCE_PUBLIC_DATA_ONLY:
+            assert "2.0 on 02 January 2025" not in alt_text
+            assert "2025-01-02" not in x_axis_data
+            assert 2.0 not in y_axis_data
+            return
+
+        assert "2.0 on 02 January 2025" in alt_text
+        assert "2025-01-02" in x_axis_data
         assert 2.0 in y_axis_data
 
     @pytest.mark.django_db

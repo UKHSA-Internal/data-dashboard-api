@@ -266,6 +266,7 @@ class TestConsumer:
                     "date": "2024-06-17",
                     "metric_value": 71,
                     "embargo": "2024-07-16 09:30:00",
+                    "is_public": True,
                 }
             ],
         }

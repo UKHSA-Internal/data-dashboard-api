@@ -1,7 +1,13 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from metrics.api.settings import auth
 from metrics.data.models.rbac_models import RBACPermission
+
+
+def is_public_data_only_enforced() -> bool:
+    """Whether public-only data is currently enforced."""
+    return auth.ENFORCE_PUBLIC_DATA_ONLY
 
 
 def validate_permissions_for_non_public(
@@ -22,6 +28,9 @@ def validate_permissions_for_non_public(
         False otherwise.
 
     """
+    if is_public_data_only_enforced():
+        return False
+
     requested_data_parameters = RequestedDataParameters(
         theme=theme,
         sub_theme=sub_theme,
