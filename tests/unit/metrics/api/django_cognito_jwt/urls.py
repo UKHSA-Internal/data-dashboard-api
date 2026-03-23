@@ -7,7 +7,7 @@ from metrics.api.django_cognito_jwt import JSONWebTokenAuthentication
 
 @api_view(http_method_names=["GET"])
 @authentication_classes((JSONWebTokenAuthentication,))
-def sample_view(request):
+def sample_view(request):  # noqa: S3752
     return Response({"hello": "world"})
 
 
