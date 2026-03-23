@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  let theme, subTheme, topic, metric;
+  let theme, subTheme, topic, metric, geographyType, geography;
 
   /**
    * Generic function to fetch choices from the API
@@ -9,6 +9,29 @@
    * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
   async function fetchChoices(endpoint, dataItemId) {
+    try {
+      const url = `/api/permission-set/${endpoint}/${dataItemId}`;
+      console.log(`Fetching from: ${url}`);
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(`API error: ${errorData.error || "Unknown error"}`);
+        return [];
+      }
+
+      const data = await response.json();
+      console.log(`Received data from ${endpoint}:`, data);
+      return data.choices || [];
+    } catch (error) {
+      console.error(`Error fetching ${endpoint}:`, error);
+      return [];
+    }
+  }
+  async function fetchGeographies(endpoint, dataItemId) {
+    console.log("selected geography type: ", dataItemId);
+    console.log("selected endpoint: ", endpoint);
     try {
       const url = `/api/permission-set/${endpoint}/${dataItemId}`;
       console.log(`Fetching from: ${url}`);
@@ -199,6 +222,34 @@
       clearDropdown(metric, "No metrics available");
     }
   }
+  async function handleGeographyTypeChange() {
+    const geographyTypeValue = geographyType.value;
+    console.log("geography type changed to:", geographyTypeValue);
+
+    if (!geographyTypeValue || geographyTypeValue === "") {
+      // No topic selected - clear metrics
+      console.log("No geography type selected");
+      clearDropdown(geography, "Select geography type first");
+      return;
+    }
+
+    if (geographyTypeValue === "-1") {
+      // Wildcard topic = cascade wildcard to metrics
+      console.log("Wildcard geography selected - cascading to metrics");
+      setToWildcard(metric, "* (All geographies)");
+      return;
+    }
+    clearDropdown(geography, "--------");
+
+    // Fetch and populate metrics
+    const choices = await fetchGeographies("geographies", geographyTypeValue);
+
+    if (choices.length > 0) {
+      populateDropdown(geography, choices);
+    } else {
+      clearDropdown(geography, "No geographies available");
+    }
+  }
 
   /**
    * Initialize the cascading dropdowns
@@ -211,9 +262,18 @@
     subTheme = document.querySelector('select[name="sub_theme"]');
     topic = document.querySelector('select[name="topic"]');
     metric = document.querySelector('select[name="metric"]');
+    geographyType = document.querySelector('select[name="geography_type"]');
+    geography = document.querySelector('select[name="geography"]');
 
     // Exit if not on permission set page
-    if (!theme || !subTheme || !topic || !metric) {
+    if (
+      !theme ||
+      !subTheme ||
+      !topic ||
+      !metric ||
+      !geographyType ||
+      !geography
+    ) {
       console.log("Permission set dropdowns not found on this page");
       return;
     }
@@ -222,11 +282,13 @@
     clearDropdown(subTheme, "--------");
     clearDropdown(topic, "--------");
     clearDropdown(metric, "--------");
+    clearDropdown(geography, "--------");
 
     // Add event listeners
     theme.addEventListener("change", handleThemeChange);
     subTheme.addEventListener("change", handleSubThemeChange);
     topic.addEventListener("change", handleTopicChange);
+    geographyType.addEventListener("change", handleGeographyTypeChange);
 
     console.log("Event listeners attached");
 

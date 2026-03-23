@@ -349,7 +349,7 @@ class MetricsAPIInterface:
     ) -> QuerySet:
         """Gets all geography names and codes for a particular geography type, for example `Nation` or
             `Government Office Region`.
-        Note this is achived by delegating the call to the `GeographyManager` from Metrics API
+        Note this is achieved by delegating the call to the `GeographyManager` from Metrics API
 
         Returns
             QuerySet: A queryset of the geography_code and geography_names fields as a list of tuples.

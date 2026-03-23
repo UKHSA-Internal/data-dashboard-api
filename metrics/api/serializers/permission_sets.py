@@ -178,4 +178,5 @@ def _queryset_to_id_name_tuples(queryset: QuerySet) -> list[tuple[int, str]]:
         >>> queryset_to_id_name_tuples(qs)
         [(1, "item1"), (2, "item2")]
     """
+    print('received queryset: ', queryset)
     return [(item['id'], item['name']) for item in queryset]

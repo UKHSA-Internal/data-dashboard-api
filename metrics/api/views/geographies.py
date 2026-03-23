@@ -12,6 +12,8 @@ from metrics.api.serializers.geographies import (
     GeographiesRequestSerializer,
     GeographiesRequestSerializerDeprecated,
     GeographiesResponseSerializer,
+    GeographyByGeographyTypeRequestSerializer,
+    GeographyChoicesResponseSerializer,
 )
 
 GEOGRAPHIES_API_TAG = "geographies"
@@ -73,7 +75,8 @@ class GeographiesView(APIView):
         If neither are provided **or** both are provided, then a 400 `Bad Request` 400 will be returned.
 
         """
-        request_serializer = GeographiesRequestSerializer(data=request.query_params)
+        request_serializer = GeographiesRequestSerializer(
+            data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
 
         payload = request_serializer.data
@@ -104,3 +107,14 @@ class GeographiesView(APIView):
         serializer = GeographiesForGeographyTypeSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
         return serializer.data()
+
+
+@extend_schema(request=GeographyByGeographyTypeRequestSerializer, tags=[GEOGRAPHIES_API_TAG], responses={HTTPStatus.OK.value: GeographyChoicesResponseSerializer})
+class GeographiesByGeographyTypeView(APIView):
+    permission_classes = []
+
+    def get(self, request, geography_type_id, *args, **kwargs):
+        serializer = GeographyByGeographyTypeRequestSerializer(
+            data={'geography_type_id': geography_type_id})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data())
