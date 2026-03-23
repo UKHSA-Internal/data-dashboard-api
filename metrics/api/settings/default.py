@@ -111,8 +111,9 @@ TEMPLATES = [
     },
 ]
 
-COGNITO_AWS_REGION = "eu-west-2"
-COGNITO_USER_POOL = "eu-west-2_m44aoyGeK"
+COGNITO_USER_MANAGER = "metrics.api.django_cognito_jwt.user_manager.CognitoManager"
+COGNITO_AWS_REGION = config.COGNITO_AWS_REGION
+COGNITO_USER_POOL = config.COGNITO_USER_POOL
 COGNITO_AUDIENCE = None
 COGNITO_PUBLIC_KEYS_CACHING_ENABLED = True
 COGNITO_PUBLIC_KEYS_CACHING_TIMEOUT = 60 * 60 * 24  # 24h caching, default is 300s

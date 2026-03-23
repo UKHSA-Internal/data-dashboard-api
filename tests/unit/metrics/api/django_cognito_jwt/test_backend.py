@@ -17,30 +17,42 @@ def test_authenticate_no_token(rf):
     assert auth.authenticate(request) is None
 
 
+@pytest.mark.parametrize(
+    "cognito_user_manager",
+    ["metrics.api.django_cognito_jwt.user_manager.CognitoManager", None],
+)
 def test_authenticate_valid(
-    rf, monkeypatch, cognito_well_known_keys, jwk_private_key_one
+    rf, monkeypatch, cognito_well_known_keys, jwk_private_key_one, cognito_user_manager
 ):
+    settings.COGNITO_USER_MANAGER = cognito_user_manager
     token = create_jwt_token(
         jwk_private_key_one,
         {
             "iss": "https://cognito-idp.eu-central-1.amazonaws.com/bla",
             "aud": settings.COGNITO_AUDIENCE,
             "sub": "username",
+            "entraObjectId": "entraOID",
         },
     )
 
+    @staticmethod
     def func(payload):
-        return USER_MODEL(username=payload["sub"])
+        return USER_MODEL(username=payload["entraObjectId"])
 
-    monkeypatch.setattr(
-        USER_MODEL.objects, "get_or_create_for_cognito", func, raising=False
-    )
+    if cognito_user_manager:
+        monkeypatch.setattr(
+            f"{cognito_user_manager}.get_or_create_for_cognito", func, raising=False
+        )
+    else:
+        monkeypatch.setattr(
+            USER_MODEL.objects, "get_or_create_for_cognito", func, raising=False
+        )
 
     request = rf.get("/", HTTP_X_UHD_AUTH=b"bearer %s" % token.encode("utf8"))
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
     assert user
-    assert user.username == "username"
+    assert user.username == "entraOID"
     assert auth_token == token.encode("utf8")
 
 
