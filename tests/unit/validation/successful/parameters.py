@@ -167,4 +167,11 @@ VALID_PARAMETERS = [
         "lyme_cases_infectionRateByYear",
         "cases",
     ),
+    (
+        "infectious_disease",
+        "invasive_bacterial_infections",
+        "Meningococcal-disease",
+        "meningococcal-disease_cases_casesByWeek",
+        "cases",
+    ),
 ]

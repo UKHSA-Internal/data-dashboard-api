@@ -98,4 +98,11 @@ INVALID_PARAMETERS = [
         "lyme_cases_infectionRateByYear",
         "cases",  # Invalid child theme
     ),
+    (
+        "infectious_disease",
+        "invasive_bacterial_infections",
+        "meningococcal-disease",
+        "meningococcal-disease_cases_casesByWeek",
+        "cases",
+    ),  # Invalid topic name of meningococcal-disease rather than Meningococcal-disease
 ]
