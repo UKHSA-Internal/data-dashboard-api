@@ -11,4 +11,4 @@ from .pages import (
     create_whats_new_child_entry,
     create_feedback_page,
 )
-from .menu import create_menu_snippet
+from .menu import create_menu_snippet, create_simplemenu_snippet

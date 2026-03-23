@@ -61,3 +61,63 @@ class MenuManager(models.Manager):
 
         active_menu = self.get_active_menu()
         return bool(menu.is_active and menu != active_menu)
+
+
+class SimpleMenuQuerySet(models.QuerySet):
+    """Custom queryset which can be used by the `SimpleMenu"""
+
+    def get_active_menus(self) -> Self:
+        """Gets the all currently active `SimpleMenu`.
+
+        Returns:
+            QuerySet: A queryset of the active banners:
+                Examples:
+                    `<SimpleMenuQuerySet [<Menu>]>`
+        """
+        return self.filter(is_active=True)
+
+
+class SimpleMenuManager(models.Manager):
+    """Custom model manager class for the `SimpleMenu` model"""
+
+    def get_queryset(self) -> SimpleMenuQuerySet:
+        return SimpleMenuQuerySet(model=self.model, using=self.db)
+
+    def has_active_menu(self) -> bool:
+        """Checks if there is already a `SimpleMenu` which is active
+
+        Returns:
+            True if there is a `SimpleMenu` which has `is_active` set to True.
+            False otherwise.
+
+        """
+        return self.get_queryset().get_active_menus().exists()
+
+    def get_active_menu(self):
+        """Gets the currently active `SimpleMenu`.
+
+        Returns:
+            The currently active `SimpleMenu` if available.
+            If there is no `SimpleMenu` with `is_active` set to True,
+            then None is returned.
+
+        """
+        return self.get_queryset().get_active_menus().first()
+
+    def is_menu_overriding_currently_active_menu(self, menu) -> bool:
+        """Determines if the given `menu` is trying to override an existing active `SimpleMenu`
+
+        Args:
+            menu: The current `SimpleMenu` object which is being evaluated
+
+        Returns:
+            True if the given `menu` is trying to override
+            an existing active `SimpleMenu`. False otherwise.
+
+        """
+        has_existing_active_menu: bool = self.has_active_menu()
+        if not has_existing_active_menu:
+            return False
+
+        active_menu = self.get_active_menu()
+        return bool(menu.is_active and menu != active_menu)

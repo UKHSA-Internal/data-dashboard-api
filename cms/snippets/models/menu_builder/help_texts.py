@@ -45,3 +45,5 @@ A label to associate with this particular menu design.
 Note that this label is private / internal and is not used on the dashboard.
 This is purely to help identify each of the constructed menu designs.
 """
+
+SIMPLEMENU_HELP = """TODO"""

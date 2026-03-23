@@ -14,7 +14,7 @@ from wagtail.api.v2.router import WagtailAPIRouter
 import config
 from cms.dashboard.views import LinkBrowseView
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
-from cms.snippets.views import GlobalBannerView, MenuView
+from cms.snippets.views import GlobalBannerView, MenuView, SimpleMenuView
 from feedback.api.urls import construct_urlpatterns_for_feedback
 from metrics.api import enums
 from metrics.api.views import (
@@ -130,6 +130,7 @@ private_api_urlpatterns = [
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
+    path(f"{API_PREFIX}menus/v2", SimpleMenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(
         f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",

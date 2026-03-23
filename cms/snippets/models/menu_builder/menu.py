@@ -1,11 +1,13 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from wagtail import fields
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.snippets.models import register_snippet
 
 from cms.snippets.managers.menu import MenuManager
 from cms.snippets.models.menu_builder import help_texts
 from cms.snippets.models.menu_builder.dynamic_content import ALLOWABLE_BODY_CONTENT
+from cms.snippets.models.menu_builder.menu_link import SimpleMenuLink
 
 
 class MultipleMenusActiveError(ValidationError):
@@ -38,4 +40,29 @@ class Menu(models.Model):
 
     def _raise_error_if_trying_to_enable_multiple_menus(self) -> None:
         if Menu.objects.is_menu_overriding_currently_active_menu(menu=self):
+            raise MultipleMenusActiveError
+
+
+@register_snippet
+class SimpleMenu(models.Model):
+    internal_label = models.TextField(help_text=help_texts.MENU_INTERNAL_LABEL)
+    is_active = models.BooleanField(default=False, help_text=help_texts.MENU_IS_ACTIVE)
+    body = fields.StreamField(
+        block_types=[("link", SimpleMenuLink())],
+        use_json_field=True,
+        help_text=help_texts.MENU_ROW,
+    )
+
+    objects = MenuManager()
+
+    def __str__(self) -> str:
+        prefix = "Active" if self.is_active else "Inactive"
+        return f"({prefix}) - {self.internal_label}"
+
+    def clean(self) -> None:
+        super().clean()
+        self._raise_error_if_trying_to_enable_multiple_menus()
+
+    def _raise_error_if_trying_to_enable_multiple_menus(self) -> None:
+        if SimpleMenu.objects.is_menu_overriding_currently_active_menu(menu=self):
             raise MultipleMenusActiveError
