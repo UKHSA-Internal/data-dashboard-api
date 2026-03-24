@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from rest_framework import serializers
+from metrics.api.serializers import help_texts
 
 from metrics.api.serializers.permission_sets import _queryset_to_id_name_tuples
 from metrics.data.in_memory_models.geography_relationships.handlers import (
@@ -197,7 +198,7 @@ class GeographyChoicesResponseSerializer(serializers.Serializer):
             min_length=2,
             max_length=2
         ),
-        help_text="List of [id, name] pairs for dropdown options"
+        help_text=help_texts.GEOGRAPHY_TUPLE_FORMATTING
     )
 
 
@@ -246,7 +247,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
 
     def data(self) -> dict:
         """
-        Fetch sub-themes from DB and format as response.
+        Fetch geographies for specified geography type from DB and format as response.
 
         Returns:
             Dict with 'choices' key containing list of [id, name] pairs
@@ -257,16 +258,12 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         if geography_type_id == "-1":
             return {'choices': [["-1", "* (All geographies)"]]}
 
-        # Fetch from interface
         parent_geography_type_id = int(geography_type_id)
         geographies = self.geography_manager.get_geography_codes_and_names_by_geography_type_id(
             parent_geography_type_id)
-        print(geographies)
         geography_names_and_codes_tuples = _queryset_to_geography_code_name_tuples(
             geographies)
 
-        # Format response
-        print('geography data: ', geography_names_and_codes_tuples)
         choices = [[str(geography_code), name]
                    for geography_code, name in geography_names_and_codes_tuples]
 
@@ -288,8 +285,4 @@ def _queryset_to_geography_code_name_tuples(queryset: QuerySet) -> list[tuple[st
         >>> queryset_to_id_name_tuples(qs)
         [(1, "item1"), (2, "item2")]
     """
-    print('received queryset: ', queryset)
-
-    for item in queryset:
-        print('item: ', item)
     return [(item['geography_code'], item['name']) for item in queryset]
