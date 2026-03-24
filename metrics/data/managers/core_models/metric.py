@@ -44,7 +44,8 @@ class MetricQuerySet(models.QuerySet):
                     `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7DayChange']>`
         """
         return self.get_all_unique_names().filter(
-            models.Q(name__icontains="change") & ~models.Q(name__icontains="percent")
+            models.Q(name__icontains="change") & ~models.Q(
+                name__icontains="percent")
         )
 
     def get_all_unique_percent_change_type_names(self) -> models.QuerySet:
@@ -85,22 +86,22 @@ class MetricQuerySet(models.QuerySet):
     def get_filtered_unique_names_related_to_parent_topic_id(
         self, parent_topic_id
     ) -> models.QuerySet:
-        """Gets all available unique sub themes with id and name fields that are related to the parent theme ID.
+        """Gets all available unique metrics with id and name fields that are related to the parent topic ID.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<QuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.filter(topic_id=parent_topic_id).values("id", "name").distinct()
 
     def get_all_names_and_ids(self) -> models.QuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available metrics with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<QuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.all().values("id", "name").distinct()
 
@@ -181,23 +182,23 @@ class MetricManager(models.Manager):
     def get_filtered_unique_names_related_to_parent_topic_id(
         self, parent_topic_id: str
     ) -> MetricQuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available metrics with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.get_queryset().get_filtered_unique_names_related_to_parent_topic_id(
             parent_topic_id=parent_topic_id
         )
 
     def get_all_names_and_ids(self) -> MetricQuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available metrics with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()

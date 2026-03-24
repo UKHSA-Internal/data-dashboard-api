@@ -48,12 +48,12 @@ class TopicQuerySet(models.QuerySet):
     def get_filtered_unique_names_related_to_sub_theme(
         self, parent_sub_theme_id
     ) -> models.QuerySet:
-        """Gets all available unique sub themes with id and name fields that are related to the parent theme ID.
+        """Gets all available topics with id and name fields that are related to the parent sub_theme ID.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<QuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return (
             self.filter(sub_theme_id=parent_sub_theme_id)
@@ -62,12 +62,12 @@ class TopicQuerySet(models.QuerySet):
         )
 
     def get_all_names_and_ids(self) -> models.QuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available topics with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<QuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self.all().values("id", "name").distinct()
 
@@ -123,12 +123,12 @@ class TopicManager(models.Manager):
     def get_filtered_unique_names_related_to_sub_theme(
         self, parent_sub_theme_id: str
     ) -> TopicQuerySet:
-        """Gets all available themes with id and name fields.
+        """Gets all available topics with id and name fields.
 
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<QuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<TopicSet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'MMR1'}, ...]>`
         """
         return self.get_queryset().get_filtered_unique_names_related_to_sub_theme(
             parent_sub_theme_id=parent_sub_theme_id
@@ -140,6 +140,6 @@ class TopicManager(models.Manager):
         Returns:
             QuerySet: A queryset containing dictionaries with id and name:
                 Examples:
-                    `<ThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
+                    `<TopicQuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'MMR1'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()
