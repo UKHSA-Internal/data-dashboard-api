@@ -27,10 +27,6 @@ class AuthGroup(ModelViewSetGroup):
 def register_auth_viewset():
     return AuthGroup()
 
-# exposes the mapping of parent to child themes
-
-# exposes the mapping of parent to child themes
-
 
 @hooks.register("insert_editor_js")
 def permission_set_js():
