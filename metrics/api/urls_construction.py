@@ -40,6 +40,7 @@ from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprec
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
 from public_api import construct_url_patterns_for_public_api
+from public_api.telemetry.urls import urlpatterns as telemetry_urlpatterns
 
 router = routers.DefaultRouter()
 
@@ -289,5 +290,8 @@ def construct_urlpatterns(
             constructed_url_patterns += private_api_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
+
+    # add telemetry patterns
+    constructed_url_patterns += telemetry_urlpatterns
 
     return constructed_url_patterns
