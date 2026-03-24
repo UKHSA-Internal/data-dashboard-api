@@ -187,46 +187,46 @@ class MetricsAPIInterface:
         return self.theme_manager.get_all_names()
 
     def get_all_theme_names_and_ids(self) -> QuerySet:
-        """Gets all available theme names as a flat list queryset.
-        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+        """Gets all available theme names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual theme names.
                 Examples:
-                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+                    `<ThemeQuerySet [{'id': 3, 'name': 'immunisation'},...]>`.
         """
         return self.theme_manager.get_all_names_and_ids()
 
     def get_all_sub_theme_names_and_ids(self) -> QuerySet:
-        """Gets all available theme names as a flat list queryset.
-        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+        """Gets all available subtheme names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
 
         Returns:
-            QuerySet: A queryset of the individual theme names.
+            QuerySet: A queryset of the individual subtheme names.
                 Examples:
-                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+                    `<SubThemeQuerySet [{'id': 3, 'name': 'respiratory'},...]>`.
         """
         return self.sub_theme_manager.get_all_names_and_ids()
 
     def get_all_topic_names_and_ids(self) -> QuerySet:
-        """Gets all available theme names as a flat list queryset.
-        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+        """Gets all available topic names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `TopicManager` from the Metrics API
 
         Returns:
-            QuerySet: A queryset of the individual theme names.
+            QuerySet: A queryset of the individual topic names.
                 Examples:
-                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+                    `<TopicQuerySet [{'id': 1, 'name': '6-in-1'},...]>`.
         """
         return self.topic_manager.get_all_names_and_ids()
 
     def get_all_metric_names_and_ids(self) -> QuerySet:
-        """Gets all available theme names as a flat list queryset.
-        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+        """Gets all available metric names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
 
         Returns:
-            QuerySet: A queryset of the individual theme names.
+            QuerySet: A queryset of the individual metric names.
                 Examples:
-                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+                    `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'},...]>`.
         """
         return self.metric_manager.get_all_names_and_ids()
 
@@ -264,17 +264,6 @@ class MetricsAPIInterface:
 
         """
         return self.sub_theme_manager.get_filtered_unique_names_related_to_theme(parent_theme_id=parent_theme_id)
-
-    def get_all_sub_theme_names_and_ids(self) -> QuerySet:
-        """Gets all available theme names as a flat list queryset.
-        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
-
-        Returns:
-            QuerySet: A queryset of the individual theme names.
-                Examples:
-                    `<ThemeQuerySet ['infectious_disease', ...]>`.
-        """
-        return self.sub_theme_manager.get_all_names_and_ids()
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.
@@ -472,7 +461,7 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual geography_type names:
                 Examples:
-                    `<GeographyTypeQuerySet [ 1, 'UKHSA_Region']>`
+                    `<GeographyTypeQuerySet [1, 'UKHSA_Region']>`
 
         """
         return self.geography_type_manager.get_all_names_and_ids()

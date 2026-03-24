@@ -312,7 +312,7 @@ def get_all_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of theme names.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "immunisation"), ...]
     """
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
@@ -365,20 +365,18 @@ def get_all_unique_sub_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
 
 def get_all_sub_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
-    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+    """Callable for the `choices` on the `sub-theme` fields of the CMS blocks.
 
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new chart type is added.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of subtheme names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "childhood-vaccines"), ...]
     """
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
@@ -453,15 +451,13 @@ def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new chart type is added.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of topic names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "6-in-1"), ...]
     """
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
@@ -481,9 +477,9 @@ def get_all_metric_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of theme names.
+        A list of 2-item tuples of metric names and ids.
         Examples:
-            [("Infectious_disease", "Infectious_disease"), ...]
+            [(1, "6-in-1_coverage_coverageByYear"), ...]
     """
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
@@ -623,15 +619,13 @@ def get_all_geography_type_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Notes:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new `Geography` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of geography type names.
+        A list of 2-item tuples of geography type names and ids.
         Examples:
-            [(, "Nation"), ...]
+            [(1, "Nation"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()
