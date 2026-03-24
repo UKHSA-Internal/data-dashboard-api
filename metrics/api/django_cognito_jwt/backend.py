@@ -8,6 +8,7 @@ from rest_framework.authentication import BaseAuthentication
 
 from .validator import TokenError, TokenValidator
 
+# 2 objects expected when parsing Auth Header: 'Bearer' + token
 VALID_AUTH_HEADER_LENGTH = 2
 
 
