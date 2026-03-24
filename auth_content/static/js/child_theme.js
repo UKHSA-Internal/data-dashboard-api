@@ -11,7 +11,6 @@
   async function fetchChoices(endpoint, dataItemId) {
     try {
       const url = `/api/permission-set/${endpoint}/${dataItemId}`;
-      console.log(`Fetching from: ${url}`);
 
       const response = await fetch(url);
 
@@ -22,7 +21,6 @@
       }
 
       const data = await response.json();
-      console.log(`Received data from ${endpoint}:`, data);
       return data.choices || [];
     } catch (error) {
       console.error(`Error fetching ${endpoint}:`, error);
@@ -30,11 +28,8 @@
     }
   }
   async function fetchGeographies(endpoint, dataItemId) {
-    console.log("selected geography type: ", dataItemId);
-    console.log("selected endpoint: ", endpoint);
     try {
       const url = `/api/permission-set/${endpoint}/${dataItemId}`;
-      console.log(`Fetching from: ${url}`);
 
       const response = await fetch(url);
 
@@ -45,7 +40,6 @@
       }
 
       const data = await response.json();
-      console.log(`Received data from ${endpoint}:`, data);
       return data.choices || [];
     } catch (error) {
       console.error(`Error fetching ${endpoint}:`, error);
@@ -96,8 +90,6 @@
     dropdown.appendChild(option);
 
     dropdown.value = "";
-
-    console.log(`Cleared ${dropdown.name}: ${message}`);
   }
 
   /**
@@ -126,7 +118,6 @@
 
     // Clear all dependent dropdowns
     if (!themeValue || themeValue === "") {
-      console.log("No theme selected - clearing all children");
       clearDropdown(subTheme, "Select theme first");
       clearDropdown(topic, "Select sub-theme first");
       clearDropdown(metric, "Select topic first");
@@ -134,7 +125,6 @@
     }
 
     if (themeValue === "-1") {
-      console.log("Wildcard theme selected - cascading to all children");
       setToWildcard(subTheme, "* (All sub-themes)");
       setToWildcard(topic, "* (All topics)");
       setToWildcard(metric, "* (All metrics)");
@@ -160,7 +150,6 @@
    */
   async function handleSubThemeChange() {
     const subThemeValue = subTheme.value;
-    console.log("Sub-theme changed to:", subThemeValue);
 
     if (!subThemeValue || subThemeValue === "") {
       // No sub-theme selected - clear children
@@ -171,7 +160,6 @@
 
     if (subThemeValue === "-1") {
       // Wildcard sub-theme = cascade wildcard to children
-      console.log("Wildcard sub-theme selected - cascading to children");
       setToWildcard(topic, "* (All topics)");
       setToWildcard(metric, "* (All metrics)");
       return;
@@ -196,18 +184,15 @@
    */
   async function handleTopicChange() {
     const topicValue = topic.value;
-    console.log("Topic changed to:", topicValue);
 
     if (!topicValue || topicValue === "") {
       // No topic selected - clear metrics
-      console.log("No topic selected - clearing metrics");
       clearDropdown(metric, "Select topic first");
       return;
     }
 
     if (topicValue === "-1") {
       // Wildcard topic = cascade wildcard to metrics
-      console.log("Wildcard topic selected - cascading to metrics");
       setToWildcard(metric, "* (All metrics)");
       return;
     }
@@ -225,18 +210,15 @@
   }
   async function handleGeographyTypeChange() {
     const geographyTypeValue = geographyType.value;
-    console.log("geography type changed to:", geographyTypeValue);
 
     if (!geographyTypeValue || geographyTypeValue === "") {
       // No topic selected - clear metrics
-      console.log("No geography type selected");
       clearDropdown(geography, "Select geography type first");
       return;
     }
 
     if (geographyTypeValue === "-1") {
       // Wildcard topic = cascade wildcard to metrics
-      console.log("Wildcard geography selected - cascading to metrics");
       setToWildcard(geography, "* (All geographies)");
       return;
     }
@@ -257,8 +239,6 @@
    * Loads the dropdown options based on saved values
    */
   async function initializeEditMode() {
-    console.log("Initializing edit mode...");
-
     // Store original values before we start manipulating dropdowns
     const savedTheme = theme.value;
     const savedSubTheme = subTheme.value;
@@ -267,18 +247,8 @@
     const savedGeographyType = geographyType.value;
     const savedGeography = geography.value;
 
-    console.log("Saved values:", {
-      theme: savedTheme,
-      subTheme: savedSubTheme,
-      topic: savedTopic,
-      metric: savedMetric,
-      geographyType: savedGeographyType,
-      geography: savedGeography,
-    });
-
     // If theme has a value (not wildcard, not empty), load sub-themes
     if (savedTheme && savedTheme !== "" && savedTheme !== "-1") {
-      console.log(`Loading sub-themes for theme ${savedTheme}...`);
       const subThemeChoices = await fetchChoices("subthemes", savedTheme);
       if (subThemeChoices.length > 0) {
         populateDropdown(subTheme, subThemeChoices, "* (All sub-themes)");
@@ -287,7 +257,6 @@
 
       // If sub-theme has a value, load topics
       if (savedSubTheme && savedSubTheme !== "" && savedSubTheme !== "-1") {
-        console.log(`Loading topics for sub-theme ${savedSubTheme}...`);
         const topicChoices = await fetchChoices("topics", savedSubTheme);
         if (topicChoices.length > 0) {
           populateDropdown(topic, topicChoices, "* (All topics)");
@@ -296,7 +265,6 @@
 
         // If topic has a value, load metrics
         if (savedTopic && savedTopic !== "" && savedTopic !== "-1") {
-          console.log(`Loading metrics for topic ${savedTopic}...`);
           const metricChoices = await fetchChoices("metrics", savedTopic);
           if (metricChoices.length > 0) {
             populateDropdown(metric, metricChoices, "* (All metrics)");
@@ -317,9 +285,6 @@
       savedGeographyType !== "" &&
       savedGeographyType !== "-1"
     ) {
-      console.log(
-        `Loading geographies for geography type ${savedGeographyType}...`,
-      );
       const geographyChoices = await fetchChoices(
         "geographies",
         savedGeographyType,
@@ -331,16 +296,12 @@
     } else if (savedGeographyType === "-1") {
       setToWildcard(geography, "* (All geographies)");
     }
-
-    console.log("Edit mode initialization complete");
   }
 
   /**
    * Initialize the cascading dropdowns
    */
   function initialize() {
-    console.log("Initializing...");
-
     // Get dropdown elements
     theme = document.querySelector('select[name="theme"]');
     subTheme = document.querySelector('select[name="sub_theme"]');
@@ -358,7 +319,7 @@
       !geographyType ||
       !geography
     ) {
-      console.log("Permission set dropdowns not found on this page");
+      console.error("Permission set dropdowns not found on this page");
       return;
     }
 
@@ -368,7 +329,6 @@
     topic.addEventListener("change", handleTopicChange);
     geographyType.addEventListener("change", handleGeographyTypeChange);
 
-    console.log("Event listeners attached");
     const isEditMode =
       theme.value ||
       subTheme.value ||
@@ -378,10 +338,8 @@
       geography.value;
 
     if (isEditMode) {
-      console.log("Edit mode detected");
       initializeEditMode();
     } else {
-      console.log("Create mode - setting initial state");
       clearDropdown(subTheme, "Select theme first");
       clearDropdown(topic, "Select sub-theme first");
       clearDropdown(metric, "Select topic first");
