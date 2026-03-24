@@ -293,10 +293,8 @@ def get_all_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    theme_names = metrics_interface.get_all_theme_names()
-    print(theme_names)
     return _build_two_item_tuple_choices(
-        choices=theme_names,
+        choices=metrics_interface.get_all_theme_names(),
     )
 
 
@@ -317,10 +315,8 @@ def get_all_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    theme_names = metrics_interface.get_all_theme_names_and_ids()
-    print(theme_names)
     return _build_id_name_tuple_choices(
-        choices=theme_names,
+        choices=metrics_interface.get_all_theme_names_and_ids()
     )
 
 
@@ -385,10 +381,8 @@ def get_all_sub_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    sub_theme_names_and_ids = metrics_interface.get_all_sub_theme_names_and_ids()
-    print(sub_theme_names_and_ids)
     return _build_id_name_tuple_choices(
-        choices=sub_theme_names_and_ids,
+        choices=metrics_interface.get_all_sub_theme_names_and_ids(),
     )
 
 
@@ -409,12 +403,9 @@ def get_filtered_unique_sub_theme_names_for_parent_theme(parent_theme_id) -> LIS
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    print("received parent_theme_id: ", parent_theme_id)
-    filtered_sub_themes = metrics_interface.get_filtered_unique_sub_theme_names_for_parent_theme(
-        parent_theme_id=parent_theme_id)
-    print("filtered_sub_themes: ", filtered_sub_themes)
     return _build_id_name_tuple_choices(
-        choices=filtered_sub_themes,
+        choices=metrics_interface.get_filtered_unique_sub_theme_names_for_parent_theme(
+            parent_theme_id=parent_theme_id),
     )
 
 
@@ -473,10 +464,8 @@ def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    topic_names_and_ids = metrics_interface.get_all_topic_names_and_ids()
-    print(topic_names_and_ids)
     return _build_id_name_tuple_choices(
-        choices=topic_names_and_ids,
+        choices=metrics_interface.get_all_topic_names_and_ids()
     )
 
 
@@ -497,10 +486,8 @@ def get_all_metric_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("Infectious_disease", "Infectious_disease"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-    metric_names_and_ids = metrics_interface.get_all_metric_names_and_ids()
-    print(metric_names_and_ids)
     return _build_id_name_tuple_choices(
-        choices=metric_names_and_ids,
+        choices=metrics_interface.get_all_metric_names_and_ids()
     )
 
 
@@ -648,10 +635,8 @@ def get_all_geography_type_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     metrics_interface = MetricsAPIInterface()
-    geography_choices = metrics_interface.get_all_geography_type_names_and_ids()
-    print(geography_choices)
     return _build_id_name_tuple_choices(
-        choices=geography_choices
+        choices=metrics_interface.get_all_geography_type_names_and_ids()
     )
 
 
