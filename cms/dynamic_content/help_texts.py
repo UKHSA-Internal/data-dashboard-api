@@ -584,3 +584,7 @@ For linking to internal pages. (If chosen, external_url must be blank).
 SOURCE_LINK_URL: str = """
 For linking to external url. (Only one of page or external_url must be filled not both).
 """
+
+PAGE_CLASSIFICATION: str = """
+The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
+"""
