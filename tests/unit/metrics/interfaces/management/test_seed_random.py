@@ -125,69 +125,34 @@ class TestSeedRandomCommand:
 
     @mock.patch.object(Command, "_truncate_metrics_data")
     @mock.patch.object(Command, "_seed_time_series_rows")
-    @mock.patch.object(Command, "_build_geography_seed_values")
-    @mock.patch.object(Command, "_build_theme_hierarchy_records")
+    @mock.patch.object(Command, "_seed_geographies")
+    @mock.patch.object(Command, "_seed_theme_hierarchy")
+    @mock.patch.object(Command, "_get_next_random_metric_index")
     @mock.patch.object(Command, "_bulk_create")
-    @mock.patch(f"{MODULE_PATH}.Geography")
     @mock.patch(f"{MODULE_PATH}.Metric")
-    @mock.patch(f"{MODULE_PATH}.Topic")
-    @mock.patch(f"{MODULE_PATH}.SubTheme")
-    @mock.patch(f"{MODULE_PATH}.Theme")
-    @mock.patch(f"{MODULE_PATH}.GeographyType")
     @mock.patch(f"{MODULE_PATH}.transaction.atomic")
-    @mock.patch(f"{MODULE_PATH}.Stratum.objects.create")
-    @mock.patch(f"{MODULE_PATH}.Age.objects.create")
+    @mock.patch(f"{MODULE_PATH}.Stratum.objects.get_or_create")
+    @mock.patch(f"{MODULE_PATH}.Age.objects.get_or_create")
     def test_seed_metrics_data_builds_expected_counts_and_calls(
         self,
-        spy_age_create: mock.MagicMock,
-        spy_stratum_create: mock.MagicMock,
+        spy_age_get_or_create: mock.MagicMock,
+        spy_stratum_get_or_create: mock.MagicMock,
         spy_atomic: mock.MagicMock,
-        spy_geography_type: mock.MagicMock,
-        spy_theme: mock.MagicMock,
-        spy_sub_theme: mock.MagicMock,
-        spy_topic: mock.MagicMock,
         spy_metric: mock.MagicMock,
-        spy_geography: mock.MagicMock,
         spy_bulk_create: mock.MagicMock,
-        spy_build_theme_hierarchy_records: mock.MagicMock,
-        spy_build_geography_seed_values: mock.MagicMock,
+        spy_get_next_random_metric_index: mock.MagicMock,
+        spy_seed_theme_hierarchy: mock.MagicMock,
+        spy_seed_geographies: mock.MagicMock,
         spy_seed_time_series_rows: mock.MagicMock,
         spy_truncate: mock.MagicMock,
     ):
         spy_progress_callback = mock.MagicMock()
         spy_atomic.return_value = nullcontext()
-        spy_geography_type.side_effect = SimpleNamespace
-        spy_theme.side_effect = SimpleNamespace
-        spy_sub_theme.side_effect = SimpleNamespace
-        spy_topic.side_effect = SimpleNamespace
         spy_metric.side_effect = SimpleNamespace
-        spy_geography.side_effect = SimpleNamespace
-        spy_stratum_create.return_value = SimpleNamespace(name="All")
-        spy_age_create.return_value = SimpleNamespace(name="All ages")
+        spy_get_next_random_metric_index.return_value = 1
+        spy_stratum_get_or_create.return_value = (SimpleNamespace(name="All"), False)
+        spy_age_get_or_create.return_value = (SimpleNamespace(name="All ages"), False)
         spy_seed_time_series_rows.return_value = (77, 88)
-        spy_build_theme_hierarchy_records.return_value = (
-            ["infectious_disease", "climate_and_environment"],
-            [
-                ("respiratory", "infectious_disease"),
-                ("vectors", "climate_and_environment"),
-            ],
-            [
-                ("COVID-19", "respiratory", "infectious_disease"),
-                ("ticks", "vectors", "climate_and_environment"),
-            ],
-        )
-        spy_build_geography_seed_values.return_value = [
-            {
-                "name": "England",
-                "geography_code": "E92000001",
-                "geography_type": "Nation",
-            },
-            {
-                "name": "Area 2",
-                "geography_code": "E09000002",
-                "geography_type": "Lower Tier Local Authority",
-            },
-        ]
 
         themes = [
             SimpleNamespace(name="infectious_disease"),
@@ -229,14 +194,9 @@ class TestSeedRandomCommand:
                 geography_type=geography_types[1],
             ),
         ]
-        spy_bulk_create.side_effect = [
-            themes,
-            sub_themes,
-            topics,
-            metrics,
-            geography_types,
-            geographies,
-        ]
+        spy_seed_theme_hierarchy.return_value = (themes, sub_themes, topics)
+        spy_seed_geographies.return_value = geographies
+        spy_bulk_create.return_value = metrics
 
         result = Command._seed_metrics_data(
             scale_config={"geographies": 2, "metrics": 4, "days": 9},
@@ -257,8 +217,8 @@ class TestSeedRandomCommand:
         spy_seed_time_series_rows.assert_called_once_with(
             metrics=metrics,
             geographies=geographies,
-            stratum=spy_stratum_create.return_value,
-            age=spy_age_create.return_value,
+            stratum=spy_stratum_get_or_create.return_value[0],
+            age=spy_age_get_or_create.return_value[0],
             days=9,
             progress_callback=spy_progress_callback,
         )
@@ -298,11 +258,14 @@ class TestSeedRandomCommand:
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
     @mock.patch(f"{MODULE_PATH}.CoreTimeSeries")
+    @mock.patch(f"{MODULE_PATH}.random.choice")
     def test_seed_time_series_rows_flushes_remainder(
         self,
+        spy_random_choice: mock.MagicMock,
         spy_core_time_series: mock.MagicMock,
         spy_api_time_series: mock.MagicMock,
     ):
+        spy_random_choice.return_value = "f"
         spy_core_time_series.side_effect = lambda **kwargs: kwargs
         spy_api_time_series.side_effect = lambda **kwargs: kwargs
         spy_progress_callback = mock.MagicMock()
@@ -320,6 +283,8 @@ class TestSeedRandomCommand:
         assert api_count == 1
         spy_core_time_series.objects.bulk_create.assert_called_once()
         spy_api_time_series.objects.bulk_create.assert_called_once()
+        assert spy_core_time_series.call_args.kwargs["sex"] == "f"
+        assert spy_api_time_series.call_args.kwargs["sex"] == "f"
         progress_messages = [
             call.args[0] for call in spy_progress_callback.call_args_list
         ]
