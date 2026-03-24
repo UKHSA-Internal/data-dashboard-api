@@ -1,8 +1,8 @@
-from django.urls import path
+from django.urls import re_path
 from . import views
 
 urlpatterns = [
-    path("api/telemetry/events", views.events),
-    path("api/telemetry/metrics", views.metrics),
-    path("api/telemetry/health", views.health),
+    re_path(r"^api/telemetry/events", views.events),
+    re_path(r"^api/telemetry/metrics", views.metrics),
+    re_path(r"^api/telemetry/health", views.health),
 ]
