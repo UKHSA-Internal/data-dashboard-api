@@ -270,15 +270,48 @@ class Command(BaseCommand):
     @classmethod
     def _seed_theme_hierarchy(cls) -> tuple[list[Theme], list[SubTheme], list[Topic]]:
         theme_names, sub_theme_rows, topic_rows = cls._build_theme_hierarchy_records()
-        themes_by_name = {theme.name: theme for theme in Theme.objects.filter(name__in=theme_names)}
-        missing_theme_names = [name for name in theme_names if name not in themes_by_name]
+        themes, themes_by_name = cls._upsert_themes(theme_names=theme_names)
+        sub_themes, sub_themes_by_key = cls._upsert_sub_themes(
+            theme_names=theme_names,
+            sub_theme_rows=sub_theme_rows,
+            themes_by_name=themes_by_name,
+        )
+        topics = cls._upsert_topics(
+            topic_rows=topic_rows,
+            sub_themes_by_key=sub_themes_by_key,
+        )
+        return themes, sub_themes, topics
+
+    @classmethod
+    def _upsert_themes(
+        cls,
+        *,
+        theme_names: list[str],
+    ) -> tuple[list[Theme], dict[str, Theme]]:
+        themes_by_name = {
+            theme.name: theme for theme in Theme.objects.filter(name__in=theme_names)
+        }
+        missing_theme_names = [
+            name for name in theme_names if name not in themes_by_name
+        ]
         if missing_theme_names:
             cls._bulk_create(Theme, [Theme(name=name) for name in missing_theme_names])
             themes_by_name.update(
-                {theme.name: theme for theme in Theme.objects.filter(name__in=missing_theme_names)}
+                {
+                    theme.name: theme
+                    for theme in Theme.objects.filter(name__in=missing_theme_names)
+                }
             )
-        themes = [themes_by_name[name] for name in theme_names]
+        return [themes_by_name[name] for name in theme_names], themes_by_name
 
+    @classmethod
+    def _upsert_sub_themes(
+        cls,
+        *,
+        theme_names: list[str],
+        sub_theme_rows: list[tuple[str, str]],
+        themes_by_name: dict[str, Theme],
+    ) -> tuple[list[SubTheme], dict[tuple[str, str], SubTheme]]:
         sub_theme_keys = list(dict.fromkeys(sub_theme_rows))
         existing_sub_themes = SubTheme.objects.select_related("theme").filter(
             theme__name__in=theme_names,
@@ -305,31 +338,41 @@ class Command(BaseCommand):
                 {
                     (sub_theme.name, sub_theme.theme.name): sub_theme
                     for sub_theme in SubTheme.objects.select_related("theme").filter(
-                        theme__name__in={theme_name for _, theme_name in missing_sub_theme_keys},
-                        name__in={sub_theme_name for sub_theme_name, _ in missing_sub_theme_keys},
+                        theme__name__in={
+                            theme_name for _, theme_name in missing_sub_theme_keys
+                        },
+                        name__in={
+                            sub_theme_name
+                            for sub_theme_name, _ in missing_sub_theme_keys
+                        },
                     )
                 }
             )
-        sub_themes = [sub_themes_by_key[key] for key in sub_theme_keys]
+        return [sub_themes_by_key[key] for key in sub_theme_keys], sub_themes_by_key
 
-        topic_keys = list(
-            dict.fromkeys(
-                (topic_name, sub_theme_name, theme_name)
-                for topic_name, sub_theme_name, theme_name in topic_rows
-            )
-        )
+    @classmethod
+    def _upsert_topics(
+        cls,
+        *,
+        topic_rows: list[tuple[str, str, str]],
+        sub_themes_by_key: dict[tuple[str, str], SubTheme],
+    ) -> list[Topic]:
+        topic_keys = list(dict.fromkeys(topic_rows))
         sub_themes_by_id_key = {
-            (sub_theme_name, theme_name): sub_themes_by_key[(sub_theme_name, theme_name)]
+            (sub_theme_name, theme_name): sub_themes_by_key[
+                (sub_theme_name, theme_name)
+            ]
             for _, sub_theme_name, theme_name in topic_keys
         }
-        candidate_sub_theme_ids = [sub_theme.id for sub_theme in sub_themes_by_id_key.values()]
+        candidate_sub_theme_ids = [
+            sub_theme.id for sub_theme in sub_themes_by_id_key.values()
+        ]
         existing_topics = Topic.objects.filter(
             sub_theme_id__in=candidate_sub_theme_ids,
             name__in={topic_name for topic_name, _, _ in topic_keys},
         )
         topics_by_key = {
-            (topic.name, topic.sub_theme_id): topic
-            for topic in existing_topics
+            (topic.name, topic.sub_theme_id): topic for topic in existing_topics
         }
         missing_topic_keys = [
             topic_key
@@ -359,11 +402,13 @@ class Command(BaseCommand):
                             sub_themes_by_id_key[(sub_theme_name, theme_name)].id
                             for _, sub_theme_name, theme_name in missing_topic_keys
                         ],
-                        name__in={topic_name for topic_name, _, _ in missing_topic_keys},
+                        name__in={
+                            topic_name for topic_name, _, _ in missing_topic_keys
+                        },
                     )
                 }
             )
-        topics = [
+        return [
             topics_by_key[
                 (
                     topic_name,
@@ -372,7 +417,6 @@ class Command(BaseCommand):
             ]
             for topic_name, sub_theme_name, theme_name in topic_keys
         ]
-        return themes, sub_themes, topics
 
     @classmethod
     def _seed_geographies(cls, *, count: int) -> list[Geography]:
@@ -383,7 +427,9 @@ class Command(BaseCommand):
         geography_type_names = sorted(geography_type_names)
         geography_types_by_name = {
             geography_type.name: geography_type
-            for geography_type in GeographyType.objects.filter(name__in=geography_type_names)
+            for geography_type in GeographyType.objects.filter(
+                name__in=geography_type_names
+            )
         }
         missing_geography_type_names = [
             name for name in geography_type_names if name not in geography_types_by_name
@@ -411,9 +457,13 @@ class Command(BaseCommand):
                 for record in geography_seed_values
             )
         )
-        existing_geographies = Geography.objects.select_related("geography_type").filter(
+        existing_geographies = Geography.objects.select_related(
+            "geography_type"
+        ).filter(
             name__in={name for name, _, _ in geography_keys},
-            geography_type__name__in={geography_type for _, geography_type, _ in geography_keys},
+            geography_type__name__in={
+                geography_type for _, geography_type, _ in geography_keys
+            },
         )
         geographies_by_key = {
             (geography.name, geography.geography_type.name): geography
@@ -439,10 +489,13 @@ class Command(BaseCommand):
             geographies_by_key.update(
                 {
                     (geography.name, geography.geography_type.name): geography
-                    for geography in Geography.objects.select_related("geography_type").filter(
+                    for geography in Geography.objects.select_related(
+                        "geography_type"
+                    ).filter(
                         name__in={name for name, _, _ in missing_geography_keys},
                         geography_type__name__in={
-                            geography_type for _, geography_type, _ in missing_geography_keys
+                            geography_type
+                            for _, geography_type, _ in missing_geography_keys
                         },
                     )
                 }
@@ -526,7 +579,9 @@ class Command(BaseCommand):
     @staticmethod
     def _get_next_random_metric_index() -> int:
         max_metric_index = 0
-        for metric_name in Metric.objects.filter(name__startswith="Random Metric ").values_list(
+        for metric_name in Metric.objects.filter(
+            name__startswith="Random Metric "
+        ).values_list(
             "name",
             flat=True,
         ):

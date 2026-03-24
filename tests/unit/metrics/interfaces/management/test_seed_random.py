@@ -13,6 +13,8 @@ MODULE_PATH = "metrics.interfaces.management.commands.seed_random"
 FULL_BATCH_DAYS = 5000
 SMALL_GEO_COUNT = 3
 LARGE_GEO_COUNT = 7
+EXPECTED_BULK_CREATE_CALLS = 2
+EXPECTED_NEXT_METRIC_INDEX = 11
 
 
 def _fake_metric_hierarchy() -> SimpleNamespace:
@@ -418,3 +420,257 @@ def test_format_enum_name_replaces_underscores_and_title_cases():
     assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == (
         "Lower Tier Local Authority"
     )
+
+
+@mock.patch.object(Command, "_upsert_topics")
+@mock.patch.object(Command, "_upsert_sub_themes")
+@mock.patch.object(Command, "_upsert_themes")
+@mock.patch.object(Command, "_build_theme_hierarchy_records")
+def test_seed_theme_hierarchy_delegates_to_upsert_helpers(
+    spy_build_theme_hierarchy_records: mock.MagicMock,
+    spy_upsert_themes: mock.MagicMock,
+    spy_upsert_sub_themes: mock.MagicMock,
+    spy_upsert_topics: mock.MagicMock,
+):
+    theme_names = ["theme_1"]
+    sub_theme_rows = [("sub_1", "theme_1")]
+    topic_rows = [("topic_1", "sub_1", "theme_1")]
+    themes = [SimpleNamespace(name="theme_1")]
+    sub_themes = [SimpleNamespace(name="sub_1", theme=themes[0])]
+    sub_theme_map = {("sub_1", "theme_1"): sub_themes[0]}
+    topics = [SimpleNamespace(name="topic_1", sub_theme=sub_themes[0])]
+    themes_by_name = {"theme_1": themes[0]}
+
+    spy_build_theme_hierarchy_records.return_value = (
+        theme_names,
+        sub_theme_rows,
+        topic_rows,
+    )
+    spy_upsert_themes.return_value = (themes, themes_by_name)
+    spy_upsert_sub_themes.return_value = (sub_themes, sub_theme_map)
+    spy_upsert_topics.return_value = topics
+
+    result = Command._seed_theme_hierarchy()
+
+    assert result == (themes, sub_themes, topics)
+    spy_upsert_themes.assert_called_once_with(theme_names=theme_names)
+    spy_upsert_sub_themes.assert_called_once_with(
+        theme_names=theme_names,
+        sub_theme_rows=sub_theme_rows,
+        themes_by_name=themes_by_name,
+    )
+    spy_upsert_topics.assert_called_once_with(
+        topic_rows=topic_rows,
+        sub_themes_by_key=sub_theme_map,
+    )
+
+
+@mock.patch.object(Command, "_bulk_create")
+@mock.patch(f"{MODULE_PATH}.Theme")
+def test_upsert_themes_creates_missing_and_returns_requested_order(
+    spy_theme: mock.MagicMock,
+    spy_bulk_create: mock.MagicMock,
+):
+    existing_theme = SimpleNamespace(name="theme_1")
+    created_theme = SimpleNamespace(name="theme_2")
+    spy_theme.side_effect = SimpleNamespace
+    spy_theme.objects.filter.side_effect = [[existing_theme], [created_theme]]
+
+    themes, themes_by_name = Command._upsert_themes(theme_names=["theme_1", "theme_2"])
+
+    assert [theme.name for theme in themes] == ["theme_1", "theme_2"]
+    assert themes_by_name == {"theme_1": existing_theme, "theme_2": created_theme}
+    spy_bulk_create.assert_called_once()
+
+
+@mock.patch.object(Command, "_bulk_create")
+@mock.patch(f"{MODULE_PATH}.SubTheme")
+def test_upsert_sub_themes_creates_missing_and_returns_requested_order(
+    spy_sub_theme: mock.MagicMock,
+    spy_bulk_create: mock.MagicMock,
+):
+    theme_1 = SimpleNamespace(name="theme_1")
+    theme_2 = SimpleNamespace(name="theme_2")
+    existing_sub_theme = SimpleNamespace(name="sub_1", theme=theme_1)
+    created_sub_theme = SimpleNamespace(name="sub_2", theme=theme_2)
+
+    spy_sub_theme.side_effect = SimpleNamespace
+    spy_sub_theme.objects.select_related.return_value.filter.side_effect = [
+        [existing_sub_theme],
+        [created_sub_theme],
+    ]
+
+    sub_themes, sub_theme_map = Command._upsert_sub_themes(
+        theme_names=["theme_1", "theme_2"],
+        sub_theme_rows=[("sub_1", "theme_1"), ("sub_2", "theme_2")],
+        themes_by_name={"theme_1": theme_1, "theme_2": theme_2},
+    )
+
+    assert [(sub_theme.name, sub_theme.theme.name) for sub_theme in sub_themes] == [
+        ("sub_1", "theme_1"),
+        ("sub_2", "theme_2"),
+    ]
+    assert sub_theme_map == {
+        ("sub_1", "theme_1"): existing_sub_theme,
+        ("sub_2", "theme_2"): created_sub_theme,
+    }
+    spy_bulk_create.assert_called_once()
+
+
+@mock.patch.object(Command, "_bulk_create")
+@mock.patch(f"{MODULE_PATH}.Topic")
+def test_upsert_topics_creates_missing_and_returns_requested_order(
+    spy_topic: mock.MagicMock,
+    spy_bulk_create: mock.MagicMock,
+):
+    sub_theme_1 = SimpleNamespace(id=1, name="sub_1")
+    sub_theme_2 = SimpleNamespace(id=2, name="sub_2")
+    existing_topic = SimpleNamespace(name="topic_1", sub_theme_id=1)
+    created_topic = SimpleNamespace(name="topic_2", sub_theme_id=2)
+
+    spy_topic.side_effect = lambda **kwargs: SimpleNamespace(
+        name=kwargs["name"],
+        sub_theme=kwargs["sub_theme"],
+        sub_theme_id=kwargs["sub_theme"].id,
+    )
+    spy_topic.objects.filter.side_effect = [[existing_topic], [created_topic]]
+
+    topics = Command._upsert_topics(
+        topic_rows=[("topic_1", "sub_1", "theme_1"), ("topic_2", "sub_2", "theme_2")],
+        sub_themes_by_key={
+            ("sub_1", "theme_1"): sub_theme_1,
+            ("sub_2", "theme_2"): sub_theme_2,
+        },
+    )
+
+    assert [(topic.name, topic.sub_theme_id) for topic in topics] == [
+        ("topic_1", 1),
+        ("topic_2", 2),
+    ]
+    spy_bulk_create.assert_called_once()
+
+
+@mock.patch.object(Command, "_build_geography_seed_values")
+@mock.patch.object(Command, "_bulk_create")
+@mock.patch(f"{MODULE_PATH}.Geography")
+@mock.patch(f"{MODULE_PATH}.GeographyType")
+def test_seed_geographies_creates_missing_types_and_geographies(
+    spy_geography_type: mock.MagicMock,
+    spy_geography: mock.MagicMock,
+    spy_bulk_create: mock.MagicMock,
+    spy_build_geography_seed_values: mock.MagicMock,
+):
+    nation_type = SimpleNamespace(name="Nation")
+    ltla_type = SimpleNamespace(name="Lower Tier Local Authority")
+    existing_geography = SimpleNamespace(
+        name="England",
+        geography_type=nation_type,
+        geography_code="E92000001",
+    )
+    created_geography = SimpleNamespace(
+        name="Area 2",
+        geography_type=ltla_type,
+        geography_code="E09000002",
+    )
+    spy_geography_type.side_effect = SimpleNamespace
+    spy_geography.side_effect = SimpleNamespace
+    spy_build_geography_seed_values.return_value = [
+        {
+            "name": "England",
+            "geography_code": "E92000001",
+            "geography_type": "Nation",
+        },
+        {
+            "name": "Area 2",
+            "geography_code": "E09000002",
+            "geography_type": "Lower Tier Local Authority",
+        },
+    ]
+    spy_geography_type.objects.filter.side_effect = [[nation_type], [ltla_type]]
+    spy_geography.objects.select_related.return_value.filter.side_effect = [
+        [existing_geography],
+        [created_geography],
+    ]
+
+    result = Command._seed_geographies(count=2)
+
+    assert [
+        (geography.name, geography.geography_type.name) for geography in result
+    ] == [
+        ("England", "Nation"),
+        ("Area 2", "Lower Tier Local Authority"),
+    ]
+    assert spy_bulk_create.call_count == EXPECTED_BULK_CREATE_CALLS
+
+
+@mock.patch.object(Command, "_build_geography_seed_values")
+@mock.patch.object(Command, "_bulk_create")
+@mock.patch(f"{MODULE_PATH}.Geography")
+@mock.patch(f"{MODULE_PATH}.GeographyType")
+def test_seed_geographies_reuses_existing_without_creating(
+    spy_geography_type: mock.MagicMock,
+    spy_geography: mock.MagicMock,
+    spy_bulk_create: mock.MagicMock,
+    spy_build_geography_seed_values: mock.MagicMock,
+):
+    nation_type = SimpleNamespace(name="Nation")
+    ltla_type = SimpleNamespace(name="Lower Tier Local Authority")
+    england = SimpleNamespace(
+        name="England",
+        geography_type=nation_type,
+        geography_code="E92000001",
+    )
+    area_2 = SimpleNamespace(
+        name="Area 2",
+        geography_type=ltla_type,
+        geography_code="E09000002",
+    )
+    spy_build_geography_seed_values.return_value = [
+        {
+            "name": "England",
+            "geography_code": "E92000001",
+            "geography_type": "Nation",
+        },
+        {
+            "name": "Area 2",
+            "geography_code": "E09000002",
+            "geography_type": "Lower Tier Local Authority",
+        },
+    ]
+    spy_geography_type.objects.filter.return_value = [nation_type, ltla_type]
+    spy_geography.objects.select_related.return_value.filter.return_value = [
+        england,
+        area_2,
+    ]
+
+    result = Command._seed_geographies(count=2)
+
+    assert result == [england, area_2]
+    spy_bulk_create.assert_not_called()
+
+
+@mock.patch(f"{MODULE_PATH}.Metric.objects.filter")
+def test_get_next_random_metric_index_ignores_non_matching_names(
+    spy_metric_filter: mock.MagicMock,
+):
+    spy_metric_filter.return_value.values_list.return_value = [
+        "Random Metric 2",
+        "Random Metric x",
+        "Some Other Metric",
+        "Random Metric 10",
+    ]
+
+    result = Command._get_next_random_metric_index()
+
+    assert result == EXPECTED_NEXT_METRIC_INDEX
+
+
+@mock.patch(f"{MODULE_PATH}.Metric.objects.filter")
+def test_get_next_random_metric_index_defaults_to_one_when_no_matches(
+    spy_metric_filter: mock.MagicMock,
+):
+    spy_metric_filter.return_value.values_list.return_value = ["Some Other Metric"]
+
+    result = Command._get_next_random_metric_index()
+
+    assert result == 1
