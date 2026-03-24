@@ -54,35 +54,52 @@ class PermissionSetForm(WagtailAdminModelForm):
 
         if self.instance and self.instance.pk:
             # Sub-theme
-            if self.instance.sub_theme:
+            if self.instance.sub_theme and self.instance.sub_theme != "-1":
                 self.fields['sub_theme'].widget.choices = [
                     ("", "Select theme first"),
                     (self.instance.sub_theme,
                      f"Loading... (ID: {self.instance.sub_theme})")
                 ]
+            elif self.instance.sub_theme == "-1":
+                # Add wildcard option for initial render
+                self.fields['sub_theme'].widget.choices = [
+                    ("-1", "* (All sub-themes)")
+                ]
 
             # Topic
-            if self.instance.topic:
+            if self.instance.topic and self.instance.topic != "-1":
                 self.fields['topic'].widget.choices = [
                     ("", "Select sub-theme first"),
                     (self.instance.topic,
                      f"Loading... (ID: {self.instance.topic})")
                 ]
+            elif self.instance.topic == "-1":
+                self.fields['topic'].widget.choices = [
+                    ("-1", "* (All topics)")
+                ]
 
             # Metric
-            if self.instance.metric:
+            if self.instance.metric and self.instance.metric != "-1":
                 self.fields['metric'].widget.choices = [
                     ("", "Select topic first"),
                     (self.instance.metric,
                      f"Loading... (ID: {self.instance.metric})")
                 ]
+            elif self.instance.metric == "-1":
+                self.fields['metric'].widget.choices = [
+                    ("-1", "* (All metrics)")
+                ]
 
             # Geography
-            if self.instance.geography:
+            if self.instance.geography and self.instance.geography != "-1":
                 self.fields['geography'].widget.choices = [
                     ("", "Select geography type first"),
                     (self.instance.geography,
                      f"Loading... (ID: {self.instance.geography})")
+                ]
+            elif self.instance.geography == "-1":
+                self.fields['geography'].widget.choices = [
+                    ("-1", "* (All geographies)")
                 ]
 
     def clean(self):

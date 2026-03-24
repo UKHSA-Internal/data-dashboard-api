@@ -88,7 +88,7 @@ class TopicRequestSerializer(serializers.Serializer):
 
         # Handle wildcard
         if sub_theme_id == "-1":
-            return {'choices': [["-1", "* (All sub-themes)"]]}
+            return {'choices': [["-1", "* (All topics)"]]}
 
         # Fetch from interface
         parent_sub_theme_id = int(sub_theme_id)
@@ -137,7 +137,7 @@ class MetricRequestSerializer(serializers.Serializer):
 
         # Handle wildcard
         if topic_id == "-1":
-            return {'choices': [["-1", "* (All sub-themes)"]]}
+            return {'choices': [["-1", "* (All metrics)"]]}
 
         # Fetch from interface
         parent_topic_id = int(topic_id)

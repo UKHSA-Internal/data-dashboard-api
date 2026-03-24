@@ -96,7 +96,6 @@
     dropdown.appendChild(option);
 
     dropdown.value = "";
-    dropdown.disabled = true;
 
     console.log(`Cleared ${dropdown.name}: ${message}`);
   }
@@ -179,8 +178,8 @@
     }
 
     // Clear dependent dropdowns
-    clearDropdown(topic, "--------");
-    clearDropdown(metric, "--------");
+    clearDropdown(topic, "Select sub-theme");
+    clearDropdown(metric, "Select metric");
 
     // Fetch and populate topics
     const choices = await fetchChoices("topics", subThemeValue);
