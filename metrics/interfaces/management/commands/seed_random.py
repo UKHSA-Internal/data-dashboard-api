@@ -234,16 +234,20 @@ class Command(BaseCommand):
                 frequency=frequency,
             ):
                 core_rows.append(core_row)
-                if len(core_rows) >= batch_size:
-                    CoreTimeSeries.objects.bulk_create(core_rows, batch_size=batch_size)
-                    core_count += len(core_rows)
-                    core_rows = []
+                core_rows, core_count = cls._flush_batch(
+                    model=CoreTimeSeries,
+                    rows=core_rows,
+                    batch_size=batch_size,
+                    current_count=core_count,
+                )
 
                 api_rows.append(api_row)
-                if len(api_rows) >= batch_size:
-                    APITimeSeries.objects.bulk_create(api_rows, batch_size=batch_size)
-                    api_count += len(api_rows)
-                    api_rows = []
+                api_rows, api_count = cls._flush_batch(
+                    model=APITimeSeries,
+                    rows=api_rows,
+                    batch_size=batch_size,
+                    current_count=api_count,
+                )
 
             if progress_callback is not None and (
                 metric_index == total_metrics or metric_index % log_interval == 0
@@ -254,13 +258,18 @@ class Command(BaseCommand):
                     f"({processed_row_count:,}/{total_row_count:,} row groups)."
                 )
 
-        if core_rows:
-            CoreTimeSeries.objects.bulk_create(core_rows, batch_size=batch_size)
-            core_count += len(core_rows)
-
-        if api_rows:
-            APITimeSeries.objects.bulk_create(api_rows, batch_size=batch_size)
-            api_count += len(api_rows)
+        core_count = cls._flush_remaining(
+            model=CoreTimeSeries,
+            rows=core_rows,
+            batch_size=batch_size,
+            current_count=core_count,
+        )
+        api_count = cls._flush_remaining(
+            model=APITimeSeries,
+            rows=api_rows,
+            batch_size=batch_size,
+            current_count=api_count,
+        )
 
         if progress_callback is not None:
             progress_callback(
@@ -270,6 +279,34 @@ class Command(BaseCommand):
             )
 
         return core_count, api_count
+
+    @staticmethod
+    def _flush_batch(
+        *,
+        model: type[TModel],
+        rows: list[TModel],
+        batch_size: int,
+        current_count: int,
+    ) -> tuple[list[TModel], int]:
+        if len(rows) < batch_size:
+            return rows, current_count
+
+        model.objects.bulk_create(rows, batch_size=batch_size)
+        return [], current_count + len(rows)
+
+    @staticmethod
+    def _flush_remaining(
+        *,
+        model: type[TModel],
+        rows: list[TModel],
+        batch_size: int,
+        current_count: int,
+    ) -> int:
+        if not rows:
+            return current_count
+
+        model.objects.bulk_create(rows, batch_size=batch_size)
+        return current_count + len(rows)
 
     @classmethod
     def _seed_theme_hierarchy(cls) -> tuple[list[Theme], list[SubTheme], list[Topic]]:
