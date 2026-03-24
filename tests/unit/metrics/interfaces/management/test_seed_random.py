@@ -1,12 +1,14 @@
 from collections.abc import Iterator
 from contextlib import ExitStack, nullcontext
 from types import SimpleNamespace
+from typing import cast
 from unittest import mock
 
 import pytest
 from django.core.management import CommandParser
 from django.core.management.base import CommandError
 
+from metrics.data.models.core_models.supporting import Age, Stratum
 from metrics.interfaces.management.commands.seed_random import SCALE_CONFIGS, Command
 
 MODULE_PATH = "metrics.interfaces.management.commands.seed_random"
@@ -31,6 +33,21 @@ def _fake_geography() -> SimpleNamespace:
         geography_code="RND0001",
         geography_type=geography_type,
     )
+
+
+def _fake_stratum() -> Stratum:
+    return cast(Stratum, SimpleNamespace(name="All"))
+
+
+def _fake_age() -> Age:
+    return cast(Age, SimpleNamespace(name="All ages"))
+
+
+def _assert_progress_messages(progress_messages: list[str]) -> None:
+    assert any(
+        message.startswith("Processed 1/1 metrics") for message in progress_messages
+    )
+    assert any(message.startswith("Inserted ") for message in progress_messages)
 
 
 class TestSeedRandomCommand:
@@ -275,8 +292,8 @@ class TestSeedRandomCommand:
         core_count, api_count = Command._seed_time_series_rows(
             metrics=[_fake_metric_hierarchy()],
             geographies=[_fake_geography()],
-            stratum=SimpleNamespace(name="All"),
-            age=SimpleNamespace(name="All ages"),
+            stratum=_fake_stratum(),
+            age=_fake_age(),
             days=1,
             progress_callback=spy_progress_callback,
         )
@@ -290,10 +307,7 @@ class TestSeedRandomCommand:
         progress_messages = [
             call.args[0] for call in spy_progress_callback.call_args_list
         ]
-        assert any(
-            message.startswith("Processed 1/1 metrics") for message in progress_messages
-        )
-        assert any(message.startswith("Inserted ") for message in progress_messages)
+        _assert_progress_messages(progress_messages)
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
     @mock.patch(f"{MODULE_PATH}.CoreTimeSeries")
@@ -308,8 +322,8 @@ class TestSeedRandomCommand:
         core_count, api_count = Command._seed_time_series_rows(
             metrics=[_fake_metric_hierarchy()],
             geographies=[_fake_geography()],
-            stratum=SimpleNamespace(name="All"),
-            age=SimpleNamespace(name="All ages"),
+            stratum=_fake_stratum(),
+            age=_fake_age(),
             days=FULL_BATCH_DAYS,
         )
 

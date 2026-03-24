@@ -5,7 +5,7 @@ from collections.abc import Callable, Iterable
 from datetime import date, timedelta
 from decimal import Decimal
 from operator import itemgetter
-from typing import TypeVar, override
+from typing import TypeVar, cast, override
 
 from django.core.management import CommandParser, call_command
 from django.core.management.base import BaseCommand
@@ -161,8 +161,10 @@ class Command(BaseCommand):
 
             geographies = cls._seed_geographies(count=scale_config["geographies"])
 
-            stratum, _ = Stratum.objects.get_or_create(name="All")
-            age, _ = Age.objects.get_or_create(name="All ages")
+            stratum_record, _ = Stratum.objects.get_or_create(name="All")
+            age_record, _ = Age.objects.get_or_create(name="All ages")
+            stratum = cast(Stratum, stratum_record)
+            age = cast(Age, age_record)
 
             if progress_callback is not None:
                 progress_callback("Generating Core/API time series rows...")
