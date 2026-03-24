@@ -5,11 +5,12 @@ from collections.abc import Callable, Iterable
 from datetime import date, timedelta
 from decimal import Decimal
 from operator import itemgetter
-from typing import override
+from typing import TypeVar, override
 
 from django.core.management import CommandParser, call_command
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.db.models import Model
 
 from metrics.data.enums import TimePeriod
 from metrics.data.models.api_models import APITimeSeries
@@ -38,6 +39,7 @@ SCALE_CONFIGS = {
     "large": {"geographies": 100, "metrics": 200, "days": 365},
 }
 SEED_RANDOM_SEX_OPTIONS = ("all", "f", "m")
+TModel = TypeVar("TModel", bound=Model)
 
 
 class Command(BaseCommand):
@@ -572,7 +574,7 @@ class Command(BaseCommand):
                 )
 
     @staticmethod
-    def _bulk_create(model, records: Iterable):
+    def _bulk_create(model: type[TModel], records: Iterable[TModel]) -> list[TModel]:
         """Materialise and bulk insert a sequence of model instances."""
         return model.objects.bulk_create(list(records))
 
