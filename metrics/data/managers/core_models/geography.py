@@ -84,14 +84,14 @@ class GeographyQuerySet(models.QuerySet):
         self,
         geography_type_id: int,
     ):
-        """Gets all available geography codes and names for the given `geography_type_name`
+        """Gets all available geography codes and names for the given `geography_type_id`
 
         Args:
-            geography_type_name: string representation of `geography_type_name`
+            geography_type_id: string representation of `geography_type_id`
 
         Returns:
-            QuerySet: A queryset of the individual geography codes
-                which are related to the given geography_type:
+            QuerySet: A queryset of the individual geography codes and geography names
+                which are related to the given geography_type_id:
                 Examples:
                     `<GeographyQuerySet [('E06000001', 'North East'), ('E06000002', 'North West')]>`
 
@@ -197,11 +197,10 @@ class GeographyManager(models.Manager):
         """Gets all available geography codes and names for a give `geography_type`
 
         Args:
-            geography_type_name: string representation of `geography_type_name`
+            geography_type_id: string representation of `geography_type_id`
 
         Returns:
-            QuerySet: A queryset of the individual geography codes
-                which are related to the given geography_type:
+            QuerySet: A queryset of the individual geography codes and names                which are related to the given geography_type:
                 Examples:
                     `<GeographyQuerySet [('E06000001', 'North East'), ('E06000002', 'North West')]>`
 

@@ -1,9 +1,9 @@
 from collections import defaultdict
 
+from django.db.models import QuerySet
 from rest_framework import serializers
-from metrics.api.serializers import help_texts
 
-from metrics.api.serializers.permission_sets import _queryset_to_id_name_tuples
+from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )
@@ -13,7 +13,6 @@ from metrics.data.models.core_models import (
     Geography,
     Topic,
 )
-from django.db.models import QuerySet
 
 GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
@@ -64,8 +63,7 @@ class GeographiesForTopicSerializer(serializers.Serializer):
         """
         topic: str = self.validated_data["topic"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(
-                topic=topic)
+            self.core_time_series_manager.get_available_geographies(topic=topic)
         )
         return _serialize_queryset(queryset=queryset)
 
@@ -192,13 +190,12 @@ class GeographiesResponseSerializer(serializers.ListSerializer):
 
 class GeographyChoicesResponseSerializer(serializers.Serializer):
     """Formats the response for choice endpoints"""
+
     choices = serializers.ListField(
         child=serializers.ListField(
-            child=serializers.CharField(),
-            min_length=2,
-            max_length=2
+            child=serializers.CharField(), min_length=2, max_length=2
         ),
-        help_text=help_texts.GEOGRAPHY_TUPLE_FORMATTING
+        help_text=help_texts.GEOGRAPHY_TUPLE_FORMATTING,
     )
 
 
@@ -242,8 +239,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
             int(value)
             return value
         except ValueError:
-            raise serializers.ValidationError(
-                "Geography Type must be a number or '-1'")
+            raise serializers.ValidationError("Geography Type must be a number or '-1'")
 
     def data(self) -> dict:
         """
@@ -252,25 +248,33 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         Returns:
             Dict with 'choices' key containing list of [id, name] pairs
         """
-        geography_type_id = self.validated_data['geography_type_id']
+        geography_type_id = self.validated_data["geography_type_id"]
 
         # Handle wildcard
         if geography_type_id == "-1":
-            return {'choices': [["-1", "* (All geographies)"]]}
+            return {"choices": [["-1", "* (All geographies)"]]}
 
         parent_geography_type_id = int(geography_type_id)
-        geographies = self.geography_manager.get_geography_codes_and_names_by_geography_type_id(
-            parent_geography_type_id)
+        geographies = (
+            self.geography_manager.get_geography_codes_and_names_by_geography_type_id(
+                parent_geography_type_id
+            )
+        )
         geography_names_and_codes_tuples = _queryset_to_geography_code_name_tuples(
-            geographies)
+            geographies
+        )
 
-        choices = [[str(geography_code), name]
-                   for geography_code, name in geography_names_and_codes_tuples]
+        choices = [
+            [str(geography_code), name]
+            for geography_code, name in geography_names_and_codes_tuples
+        ]
 
-        return {'choices': choices}
+        return {"choices": choices}
 
 
-def _queryset_to_geography_code_name_tuples(queryset: QuerySet) -> list[tuple[str, str]]:
+def _queryset_to_geography_code_name_tuples(
+    queryset: QuerySet,
+) -> list[tuple[str, str]]:
     """
     Convert a QuerySet with 'id' and 'name' fields to a list of tuples.
 
@@ -285,4 +289,4 @@ def _queryset_to_geography_code_name_tuples(queryset: QuerySet) -> list[tuple[st
         >>> queryset_to_id_name_tuples(qs)
         [(1, "item1"), (2, "item2")]
     """
-    return [(item['geography_code'], item['name']) for item in queryset]
+    return [(item["geography_code"], item["name"]) for item in queryset]

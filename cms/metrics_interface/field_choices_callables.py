@@ -10,8 +10,9 @@ This shall ensure that the `choices` are populated from the database.
 And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
 """
 
-from cms.metrics_interface import MetricsAPIInterface
 from django.db.models import QuerySet
+
+from cms.metrics_interface import MetricsAPIInterface
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
@@ -25,9 +26,7 @@ def _build_two_item_tuple_choices(
     return [(choice, choice) for choice in choices]
 
 
-def _build_id_name_tuple_choices(
-    *, choices: QuerySet
-) -> list[tuple[str, str]]:
+def _build_id_name_tuple_choices(*, choices: QuerySet) -> list[tuple[str, str]]:
     """Build choices from a QuerySet containing id and name fields.
 
     Args:
@@ -38,7 +37,7 @@ def _build_id_name_tuple_choices(
         Examples:
             [(1, "infectious_disease"), (2, "respiratory"), ...]
     """
-    return [(str(choice['id']), choice['name']) for choice in choices]
+    return [(str(choice["id"]), choice["name"]) for choice in choices]
 
 
 def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -384,7 +383,9 @@ def get_all_sub_theme_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     )
 
 
-def get_filtered_unique_sub_theme_names_for_parent_theme(parent_theme_id) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def get_filtered_unique_sub_theme_names_for_parent_theme(
+    parent_theme_id,
+) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `theme` fields of the CMS blocks.
 
     Notes:
@@ -403,7 +404,8 @@ def get_filtered_unique_sub_theme_names_for_parent_theme(parent_theme_id) -> LIS
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
         choices=metrics_interface.get_filtered_unique_sub_theme_names_for_parent_theme(
-            parent_theme_id=parent_theme_id),
+            parent_theme_id=parent_theme_id
+        ),
     )
 
 
@@ -721,8 +723,7 @@ def get_all_geography_choices_grouped_by_type() -> (
 
 def get_all_subcategory_choices_grouped_by_categories() -> (
     dict[
-        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str,
-                                                   LIST_OF_TWO_STRING_ITEM_TUPLES]
+        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str, LIST_OF_TWO_STRING_ITEM_TUPLES]
     ]
 ):
     """Callable to return all subcategory choices groups by categories.

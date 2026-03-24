@@ -1,12 +1,13 @@
 from django import forms
-
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 
-from cms.metrics_interface.field_choices_callables import get_all_geography_type_names_and_ids, get_all_theme_names_and_ids
-from validation.enums.geographies_enums import GeographyType
-from wagtail.admin.forms import WagtailAdminModelForm
+from cms.metrics_interface.field_choices_callables import (
+    get_all_geography_type_names_and_ids,
+    get_all_theme_names_and_ids,
+)
 
 
 def get_theme_child_map():
@@ -20,8 +21,6 @@ def get_theme_child_map():
 
     """
     theme_mapping = {}
-
-    print(theme_mapping)
     return theme_mapping
 
 
@@ -30,74 +29,75 @@ class PermissionSetForm(WagtailAdminModelForm):
         super().__init__(*args, **kwargs)
 
         # Use CharField with Select widget to bypass choice validation
-        self.fields['sub_theme'] = forms.CharField(
+        self.fields["sub_theme"] = forms.CharField(
             required=True,
             label="Sub Theme",
-            widget=forms.Select(choices=[("", "Select theme first")])
+            widget=forms.Select(choices=[("", "Select theme first")]),
         )
-        self.fields['topic'] = forms.CharField(
+        self.fields["topic"] = forms.CharField(
             required=True,
             label="Topic",
-            widget=forms.Select(choices=[("", "Select sub-theme first")])
+            widget=forms.Select(choices=[("", "Select sub-theme first")]),
         )
-        self.fields['metric'] = forms.CharField(
+        self.fields["metric"] = forms.CharField(
             required=True,
             label="Metric",
-            widget=forms.Select(choices=[("", "Select topic first")])
+            widget=forms.Select(choices=[("", "Select topic first")]),
         )
-        self.fields['geography'] = forms.CharField(
+        self.fields["geography"] = forms.CharField(
             required=True,
             label="Geography",
             widget=forms.Select(
-                choices=[("-1", "Select geography type first")])
+                choices=[("-1", "Select geography type first")]),
         )
 
         if self.instance and self.instance.pk:
             # Sub-theme
             if self.instance.sub_theme and self.instance.sub_theme != "-1":
-                self.fields['sub_theme'].widget.choices = [
+                self.fields["sub_theme"].widget.choices = [
                     ("", "Select theme first"),
-                    (self.instance.sub_theme,
-                     f"Loading... (ID: {self.instance.sub_theme})")
+                    (
+                        self.instance.sub_theme,
+                        f"Loading... (ID: {self.instance.sub_theme})",
+                    ),
                 ]
             elif self.instance.sub_theme == "-1":
-                self.fields['sub_theme'].widget.choices = [
-                    ("-1", "* (All sub-themes)")
-                ]
+                self.fields["sub_theme"].widget.choices = [
+                    ("-1", "* (All sub-themes)")]
 
             # Topic
             if self.instance.topic and self.instance.topic != "-1":
-                self.fields['topic'].widget.choices = [
+                self.fields["topic"].widget.choices = [
                     ("", "Select sub-theme first"),
                     (self.instance.topic,
-                     f"Loading... (ID: {self.instance.topic})")
+                     f"Loading... (ID: {self.instance.topic})"),
                 ]
             elif self.instance.topic == "-1":
-                self.fields['topic'].widget.choices = [
-                    ("-1", "* (All topics)")
-                ]
+                self.fields["topic"].widget.choices = [
+                    ("-1", "* (All topics)")]
 
             # Metric
             if self.instance.metric and self.instance.metric != "-1":
-                self.fields['metric'].widget.choices = [
+                self.fields["metric"].widget.choices = [
                     ("", "Select topic first"),
                     (self.instance.metric,
-                     f"Loading... (ID: {self.instance.metric})")
+                     f"Loading... (ID: {self.instance.metric})"),
                 ]
             elif self.instance.metric == "-1":
-                self.fields['metric'].widget.choices = [
-                    ("-1", "* (All metrics)")
-                ]
+                self.fields["metric"].widget.choices = [
+                    ("-1", "* (All metrics)")]
 
             # Geography
             if self.instance.geography and self.instance.geography != "-1":
-                self.fields['geography'].widget.choices = [
+                self.fields["geography"].widget.choices = [
                     ("", "Select geography type first"),
-                    (self.instance.geography,
-                     f"Loading... (ID: {self.instance.geography})")
+                    (
+                        self.instance.geography,
+                        f"Loading... (ID: {self.instance.geography})",
+                    ),
                 ]
             elif self.instance.geography == "-1":
-                self.fields['geography'].widget.choices = [
+                self.fields["geography"].widget.choices = [
                     ("-1", "* (All geographies)")
                 ]
 
@@ -105,12 +105,12 @@ class PermissionSetForm(WagtailAdminModelForm):
         """Validate that this permission set doesn't already exist"""
         cleaned_data = super().clean()
 
-        theme = cleaned_data.get('theme')
-        sub_theme = cleaned_data.get('sub_theme')
-        topic = cleaned_data.get('topic')
-        metric = cleaned_data.get('metric')
-        geography_type = cleaned_data.get('geography_type')
-        geography = cleaned_data.get('geography')
+        theme = cleaned_data.get("theme")
+        sub_theme = cleaned_data.get("sub_theme")
+        topic = cleaned_data.get("topic")
+        metric = cleaned_data.get("metric")
+        geography_type = cleaned_data.get("geography_type")
+        geography = cleaned_data.get("geography")
 
         # Check if this combination already exists (excluding current instance when editing)
         queryset = PermissionSet.objects.filter(
@@ -119,7 +119,7 @@ class PermissionSetForm(WagtailAdminModelForm):
             topic=topic,
             metric=metric,
             geography_type=geography_type,
-            geography=geography
+            geography=geography,
         )
 
         if self.instance.pk:
@@ -139,20 +139,26 @@ class PermissionSet(models.Model):
         max_length=500,
         blank=True,
         editable=False,
-        help_text="Auto-generated display name"
+        help_text="Auto-generated display name",
     )
     theme = models.CharField(
-        max_length=255, choices=[("", "---------"), ("-1", "* (All themes)")] + get_all_theme_names_and_ids(), blank=False, default="")
-    sub_theme = models.CharField(
-        max_length=255, blank=False, default="")
-    topic = models.CharField(max_length=255,
-                             blank=False, default="")
-    metric = models.CharField(
-        max_length=255, blank=False, default="")
-    geography_type = models.CharField(max_length=255, choices=[(
-        "", "---------"), ("-1", "* (All geography-types)")] + get_all_geography_type_names_and_ids(), blank=False, default="")
-    geography = models.CharField(
-        max_length=255, blank=False, default="")
+        max_length=255,
+        choices=[("", "---------"), ("-1", "* (All themes)")]
+        + get_all_theme_names_and_ids(),
+        blank=False,
+        default="",
+    )
+    sub_theme = models.CharField(max_length=255, blank=False, default="")
+    topic = models.CharField(max_length=255, blank=False, default="")
+    metric = models.CharField(max_length=255, blank=False, default="")
+    geography_type = models.CharField(
+        max_length=255,
+        choices=[("", "---------"), ("-1", "* (All geography-types)")]
+        + get_all_geography_type_names_and_ids(),
+        blank=False,
+        default="",
+    )
+    geography = models.CharField(max_length=255, blank=False, default="")
 
     base_form_class = PermissionSetForm
 
@@ -168,9 +174,15 @@ class PermissionSet(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['theme', 'sub_theme', 'topic',
-                        'metric', 'geography_type', 'geography'],
-                name='unique_permission_set'
+                fields=[
+                    "theme",
+                    "sub_theme",
+                    "topic",
+                    "metric",
+                    "geography_type",
+                    "geography",
+                ],
+                name="unique_permission_set",
             )
         ]
 
@@ -184,7 +196,6 @@ class PermissionSet(models.Model):
         Generate display name using the selected dropdown labels.
         This uses the form's choice labels, not database lookups.
         """
-        from cms.metrics_interface.field_choices_callables import get_all_theme_names_and_ids
 
         parts = []
 
@@ -192,7 +203,7 @@ class PermissionSet(models.Model):
         if self.theme == "-1":
             parts.append("Theme: * (All)")
         elif self.theme:
-            theme_name = self._get_choice_label('theme', self.theme)
+            theme_name = self._get_choice_label("theme", self.theme)
             parts.append(f"Theme: {theme_name}")
 
         # Sub-theme
@@ -200,30 +211,28 @@ class PermissionSet(models.Model):
             parts.append("Sub-theme: * (All)")
         elif self.sub_theme:
             sub_theme_name = self._get_choice_label(
-                'sub-theme', self.sub_theme)
+                "sub-theme", self.sub_theme)
             parts.append(f"Sub-theme ID: {sub_theme_name}")
 
         # Topic
         if self.topic == "-1":
             parts.append("Topic: * (All)")
         elif self.topic:
-            topic_name = self._get_choice_label(
-                'topic', self.topic)
+            topic_name = self._get_choice_label("topic", self.topic)
             parts.append(f"Topic: {topic_name}")
 
         # Metric
         if self.metric == "-1":
             parts.append("Metric: * (All)")
         elif self.metric:
-            metric_name = self._get_choice_label(
-                'metric', self.metric)
+            metric_name = self._get_choice_label("metric", self.metric)
             parts.append(f"Metric: {metric_name}")
 
         # Geography type
         if self.geography_type == "-1":
             parts.append("Geography Type: * (All)")
         elif self.geography_type:
-            geo_type_label = self.geography_type.replace('_', ' ').title()
+            geo_type_label = self.geography_type.replace("_", " ").title()
             parts.append(f"Geography Type: {geo_type_label}")
 
         # Geography
@@ -236,29 +245,41 @@ class PermissionSet(models.Model):
 
     def _get_choice_label(self, field_name, value):
         """Get the display label for a choice field"""
-        if field_name == 'theme':
-            from cms.metrics_interface.field_choices_callables import get_all_theme_names_and_ids
+        if field_name == "theme":
+            from cms.metrics_interface.field_choices_callables import (
+                get_all_theme_names_and_ids,
+            )
+
             choices = get_all_theme_names_and_ids()
             for choice_value, choice_label in choices:
                 if choice_value == value:
                     return choice_label
 
-        if field_name == 'sub-theme':
-            from cms.metrics_interface.field_choices_callables import get_all_sub_theme_names_and_ids
+        if field_name == "sub-theme":
+            from cms.metrics_interface.field_choices_callables import (
+                get_all_sub_theme_names_and_ids,
+            )
+
             choices = get_all_sub_theme_names_and_ids()
             for choice_value, choice_label in choices:
                 if choice_value == value:
                     return choice_label
 
-        if field_name == 'topic':
-            from cms.metrics_interface.field_choices_callables import get_all_topic_names_and_ids
+        if field_name == "topic":
+            from cms.metrics_interface.field_choices_callables import (
+                get_all_topic_names_and_ids,
+            )
+
             choices = get_all_topic_names_and_ids()
             for choice_value, choice_label in choices:
                 if choice_value == value:
                     return choice_label
 
-        if field_name == 'metric':
-            from cms.metrics_interface.field_choices_callables import get_all_metric_names_and_ids
+        if field_name == "metric":
+            from cms.metrics_interface.field_choices_callables import (
+                get_all_metric_names_and_ids,
+            )
+
             choices = get_all_metric_names_and_ids()
             for choice_value, choice_label in choices:
                 if choice_value == value:

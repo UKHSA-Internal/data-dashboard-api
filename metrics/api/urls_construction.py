@@ -36,10 +36,18 @@ from metrics.api.views import (
 )
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.charts.subplot_charts import SubplotChartsView
-from metrics.api.views.geographies import GeographiesByGeographyTypeView, GeographiesView, GeographiesViewDeprecated
+from metrics.api.views.geographies import (
+    GeographiesByGeographyTypeView,
+    GeographiesView,
+    GeographiesViewDeprecated,
+)
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
-from metrics.api.views.permission_sets import MetricsByTopicView, SubThemesByThemeView, TopicsBySubThemeView
+from metrics.api.views.permission_sets import (
+    MetricsByTopicView,
+    SubThemesByThemeView,
+    TopicsBySubThemeView,
+)
 from public_api import construct_url_patterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -82,8 +90,7 @@ def construct_cms_admin_urlpatterns(
     prefix: str = "" if app_mode == enums.AppMode.CMS_ADMIN.value else "cms-admin/"
     return [
         path(prefix, include(wagtailadmin_urls)),
-        path("choose-page/", LinkBrowseView.as_view(),
-             name="wagtailadmin_choose_page"),
+        path("choose-page/", LinkBrowseView.as_view(), name="wagtailadmin_choose_page"),
     ]
 
 
@@ -131,24 +138,34 @@ private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
-    path(f"{API_PREFIX}permission-set/subthemes/<str:theme_id>",
-         SubThemesByThemeView.as_view(), name='get_subthemes'),
-    path(f"{API_PREFIX}permission-set/topics/<str:sub_theme_id>",
-         TopicsBySubThemeView.as_view(), name='get_topics'),
-    path(f"{API_PREFIX}permission-set/metrics/<str:topic_id>",
-         MetricsByTopicView.as_view(), name='get_metrics'),
-    path(f"{API_PREFIX}permission-set/geographies/<str:geography_type_id>",
-         GeographiesByGeographyTypeView.as_view(), name='get_geographies'),
+    path(
+        f"{API_PREFIX}permission-set/subthemes/<str:theme_id>",
+        SubThemesByThemeView.as_view(),
+        name="get_subthemes",
+    ),
+    path(
+        f"{API_PREFIX}permission-set/topics/<str:sub_theme_id>",
+        TopicsBySubThemeView.as_view(),
+        name="get_topics",
+    ),
+    path(
+        f"{API_PREFIX}permission-set/metrics/<str:topic_id>",
+        MetricsByTopicView.as_view(),
+        name="get_metrics",
+    ),
+    path(
+        f"{API_PREFIX}permission-set/geographies/<str:geography_type_id>",
+        GeographiesByGeographyTypeView.as_view(),
+        name="get_geographies",
+    ),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
-    path(f"{API_PREFIX}alerts/v1/heat",
-         heat_alert_list, name="heat-alerts-list"),
+    path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(
         f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",
         heat_alert_detail,
         name="heat-alerts-detail",
     ),
-    path(f"{API_PREFIX}alerts/v1/cold",
-         cold_alert_list, name="cold-alerts-list"),
+    path(f"{API_PREFIX}alerts/v1/cold", cold_alert_list, name="cold-alerts-list"),
     path(
         f"{API_PREFIX}alerts/v1/cold/<str:geography_code>",
         cold_alert_detail,
@@ -159,28 +176,23 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
-    re_path(f"^{API_PREFIX}downloads/subplot/v1",
-            SubplotDownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}downloads/subplot/v1", SubplotDownloadsView.as_view()),
     re_path(
         f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)",
         GeographiesViewDeprecated.as_view(),
     ),
     re_path(f"^{API_PREFIX}geographies/v3", GeographiesView.as_view()),
-
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}maps/v1", MapsView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}tables/subplot/v1", TablesSubplotView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),
-
 ]
 
 # Audit API endpoints
 audit_api_timeseries_list = AuditAPITimeSeriesViewSet.as_view({"get": "list"})
-audit_core_timeseries_list = AuditCoreTimeseriesViewSet.as_view({
-                                                                "get": "list"})
-audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({
-                                                                "get": "list"})
+audit_core_timeseries_list = AuditCoreTimeseriesViewSet.as_view({"get": "list"})
+audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({"get": "list"})
 
 audit_api_urlpatterns = [
     path(
@@ -200,8 +212,7 @@ audit_api_urlpatterns = [
     ),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
-    re_path(f"^{API_PREFIX}charts/dual-category/v1",
-            DualCategoryChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/dual-category/v1", DualCategoryChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
 ]
 
@@ -222,8 +233,7 @@ docs_urlspatterns = [
 ]
 
 static_urlpatterns = [
-    re_path(r"^static/(?P<path>.*)$", serve,
-            {"document_root": settings.STATIC_ROOT}),
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
 ]
 
 common_urlpatterns = [

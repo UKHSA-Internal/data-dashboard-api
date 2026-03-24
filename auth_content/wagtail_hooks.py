@@ -1,13 +1,10 @@
-import json
-
-from wagtail import hooks
-from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail.admin.viewsets.model import ModelViewSetGroup
 from django.templatetags.static import static
+from django.utils.html import format_html
+from wagtail import hooks
+from wagtail.admin.viewsets.model import ModelViewSetGroup
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from auth_content.models import PermissionSet
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 
 class PermissionSetViewSet(SnippetViewSet):
