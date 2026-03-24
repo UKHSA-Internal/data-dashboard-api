@@ -61,7 +61,6 @@ class PermissionSetForm(WagtailAdminModelForm):
                      f"Loading... (ID: {self.instance.sub_theme})")
                 ]
             elif self.instance.sub_theme == "-1":
-                # Add wildcard option for initial render
                 self.fields['sub_theme'].widget.choices = [
                     ("-1", "* (All sub-themes)")
                 ]
@@ -123,7 +122,6 @@ class PermissionSetForm(WagtailAdminModelForm):
             geography=geography
         )
 
-        # Exclude current instance when editing
         if self.instance.pk:
             queryset = queryset.exclude(pk=self.instance.pk)
 
@@ -140,7 +138,7 @@ class PermissionSet(models.Model):
     name = models.CharField(
         max_length=500,
         blank=True,
-        editable=False,  # Don't show in admin form
+        editable=False,
         help_text="Auto-generated display name"
     )
     theme = models.CharField(
@@ -197,7 +195,7 @@ class PermissionSet(models.Model):
             theme_name = self._get_choice_label('theme', self.theme)
             parts.append(f"Theme: {theme_name}")
 
-        # Sub-theme (we'll need to store these lookups)
+        # Sub-theme
         if self.sub_theme == "-1":
             parts.append("Sub-theme: * (All)")
         elif self.sub_theme:
@@ -221,7 +219,7 @@ class PermissionSet(models.Model):
                 'metric', self.metric)
             parts.append(f"Metric: {metric_name}")
 
-        # Geography type (we have the label from enum)
+        # Geography type
         if self.geography_type == "-1":
             parts.append("Geography Type: * (All)")
         elif self.geography_type:
@@ -266,7 +264,7 @@ class PermissionSet(models.Model):
                 if choice_value == value:
                     return choice_label
 
-        return value  # Fallback to ID if not found
+        return value
 
     def __str__(self):
         return self.name if self.name else f"Permission Set {self.id}"
