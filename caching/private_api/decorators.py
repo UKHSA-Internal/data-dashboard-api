@@ -5,6 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from caching.private_api.management import CacheManagement, CacheMissError
+from metrics.api.django_cognito_jwt import backend
 
 
 class CacheCheckResultedInMissError(Exception): ...
@@ -72,10 +73,8 @@ def cache_response(
 
 
 def _check_if_valid_non_public_request(request):
-    try:
-        is_authenticated = request.auth()
-    except TypeError:
-        is_authenticated = False
+    auth = backend.JSONWebTokenAuthentication()
+    is_authenticated = auth.authenticate(request)
 
     return is_authenticated
 
