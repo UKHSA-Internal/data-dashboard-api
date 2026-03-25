@@ -2,6 +2,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
+from metrics.api.django_cognito_jwt import backend
 
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.serializers.api_time_series_request_serializer import (
@@ -29,12 +30,6 @@ class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializerv2(context=serializer_context)
 
-    @staticmethod
-    @staticmethod
-    def _is_valid_non_public_request(request: Request) -> bool:
-
-        return request.auth is not None
-
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
         serializer: APITimeSeriesRequestSerializerv2 = self._build_request_serializer(
@@ -47,7 +42,8 @@ class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        is_valid_non_public_request = self._is_valid_non_public_request(request=request)
+        auth = backend.JSONWebTokenAuthentication()
+        is_valid_non_public_request = auth.authenticate(request)
         if is_valid_non_public_request:
             response["Cache-Control"] = "private, no-cache"
 
