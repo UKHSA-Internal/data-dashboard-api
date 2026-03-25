@@ -17,17 +17,19 @@ class SubThemeRequestSerializer(serializers.Serializer):
         """
         return self.context.get("sub_theme_manager", SubTheme.objects)
 
-    def validate_theme_id(self, value):
+    @staticmethod
+    def validate_theme_id(value):
         """Validate theme_id is either wildcard or a valid integer"""
         if value == "-1":
             return value
 
         try:
             int(value)
+        except ValueError as err:
+            msg = "theme_id must be a number or '-1'"
+            raise serializers.ValidationError(msg) from err
+        else:
             return value
-        except ValueError:
-            raise serializers.ValidationError(
-                "theme_id must be a number or '-1'")
 
     def data(self) -> dict:
         """
@@ -47,7 +49,7 @@ class SubThemeRequestSerializer(serializers.Serializer):
                 parent_theme_id
             )
         )
-        choices = [[str(id), name] for id, name in sub_theme_tuples]
+        choices = [[str(item_id), name] for item_id, name in sub_theme_tuples]
 
         return {"choices": choices}
 
@@ -65,17 +67,19 @@ class TopicRequestSerializer(serializers.Serializer):
         """
         return self.context.get("topic_manager", Topic.objects)
 
-    def validate_sub_theme_id(self, value):
+    @staticmethod
+    def validate_sub_theme_id(value):
         """Validate sub_theme_id is either wildcard or a valid integer"""
         if value == "-1":
             return value
 
         try:
             int(value)
+        except ValueError as err:
+            msg = "sub_theme_id must be a number or '-1'"
+            raise serializers.ValidationError(msg) from err
+        else:
             return value
-        except ValueError:
-            raise serializers.ValidationError(
-                "sub_theme_id must be a number or '-1'")
 
     def data(self) -> dict:
         """
@@ -96,7 +100,7 @@ class TopicRequestSerializer(serializers.Serializer):
             )
         )
 
-        choices = [[str(id), name] for id, name in topic_tuples]
+        choices = [[str(item_id), name] for item_id, name in topic_tuples]
 
         return {"choices": choices}
 
@@ -114,17 +118,19 @@ class MetricRequestSerializer(serializers.Serializer):
         """
         return self.context.get("metric_manager", Metric.objects)
 
-    def validate_topic_id(self, value):
+    @staticmethod
+    def validate_topic_id(value):
         """Validate topic_id is either wildcard or a valid integer"""
         if value == "-1":
             return value
 
         try:
             int(value)
+        except ValueError as err:
+            msg = "topic_id must be a number or '-1'"
+            raise serializers.ValidationError(msg) from err
+        else:
             return value
-        except ValueError:
-            raise serializers.ValidationError(
-                "topic_id must be a number or '-1'")
 
     def data(self) -> dict:
         """
@@ -145,7 +151,7 @@ class MetricRequestSerializer(serializers.Serializer):
             )
         )
 
-        choices = [[str(id), name] for id, name in metric_tuples]
+        choices = [[str(item_id), name] for item_id, name in metric_tuples]
 
         return {"choices": choices}
 

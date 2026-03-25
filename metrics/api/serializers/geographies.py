@@ -230,16 +230,17 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
     def geography_manager(self):
         return self.context.get("geography_manager", Geography.objects)
 
-    def validate_geography_type_id(self, value):
-        """Validate theme_id is either wildcard or a valid integer"""
+    @staticmethod
+    def validate_geography_type_id(value):
+        """Validate geography_type_id is either wildcard or a valid integer"""
         if value == "-1":
             return value
 
         try:
-            int(value)
-            return value
-        except ValueError:
-            raise serializers.ValidationError("Geography Type must be a number or '-1'")
+            return int(value)
+        except ValueError as err:
+            message = "Geography Type must be a number or '-1'"
+            raise serializers.ValidationError(message) from err
 
     def data(self) -> dict:
         """
@@ -268,7 +269,6 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
             [str(geography_code), name]
             for geography_code, name in geography_names_and_codes_tuples
         ]
-
         return {"choices": choices}
 
 

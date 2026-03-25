@@ -112,7 +112,7 @@ class GeographiesView(APIView):
 class GeographiesByGeographyTypeView(APIView):
     permission_classes = []
 
-    def get(self, request, geography_type_id, *args, **kwargs):
+    def get(self, request, geography_type_id, *args, **kwargs):  # noqa: PLR6301
         serializer = GeographyByGeographyTypeRequestSerializer(
             data={"geography_type_id": geography_type_id}
         )

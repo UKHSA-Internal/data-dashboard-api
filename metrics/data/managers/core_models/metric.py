@@ -44,8 +44,7 @@ class MetricQuerySet(models.QuerySet):
                     `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7DayChange']>`
         """
         return self.get_all_unique_names().filter(
-            models.Q(name__icontains="change") & ~models.Q(
-                name__icontains="percent")
+            models.Q(name__icontains="change") & ~models.Q(name__icontains="percent")
         )
 
     def get_all_unique_percent_change_type_names(self) -> models.QuerySet:
