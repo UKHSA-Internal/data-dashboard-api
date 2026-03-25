@@ -519,3 +519,78 @@ class TestMetricsAPIInterface:
         spy_geography_manager.get_geography_code_for_geography.assert_called_once_with(
             geography=mock_geography, geography_type=mock_geography_type
         )
+
+    def test_get_all_theme_names_and_ids_delegates_call_correctly(self):
+        """
+        Given a `ThemeManager` from the Metrics API app
+        When `get_all_names_and_ids()` is called from that object
+        Then the call is delegated to the correct method on the `ThemeManager`
+        """
+        # Given
+        spy_theme_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            theme_manager=spy_theme_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_theme_names_and_ids = metrics_api_interface.get_all_theme_names_and_ids()
+
+        # Then
+        assert all_theme_names_and_ids == spy_theme_manager.get_all_names_and_ids()
+
+    def test_get_all_sub_theme_names_and_ids_delegates_call_correctly(self):
+        """
+        Given a `SubThemeManager` from the Metrics API app
+        When `get_all_names_and_ids()` is called from that object
+        Then the call is delegated to the correct method on the `SubThemeManager`
+        """
+        # Given
+        spy_sub_theme_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            sub_theme_manager=spy_sub_theme_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_sub_theme_names_and_ids = metrics_api_interface.get_all_sub_theme_names_and_ids()
+
+        # Then
+        assert all_sub_theme_names_and_ids == spy_sub_theme_manager.get_all_names_and_ids()
+
+    def test_get_all_topic_names_and_ids_delegates_call_correctly(self):
+        """
+        Given a `SubThemeManager` from the Metrics API app
+        When `get_all_names_and_ids()` is called from that object
+        Then the call is delegated to the correct method on the `SubThemeManager`
+        """
+        # Given
+        spy_topic_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            topic_manager=spy_topic_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_topic_names_and_ids = metrics_api_interface.get_all_topic_names_and_ids()
+
+        # Then
+        assert all_topic_names_and_ids == spy_topic_manager.get_all_names_and_ids()
+
+    def test_get_all_metric_names_and_ids_delegates_call_correctly(self):
+        """
+        Given a `SubThemeManager` from the Metrics API app
+        When `get_all_names_and_ids()` is called from that object
+        Then the call is delegated to the correct method on the `SubThemeManager`
+        """
+        # Given
+        spy_metric_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            metric_manager=spy_metric_manager,
+        )
+
+        # When
+        all_metric_names_and_ids = metrics_api_interface.get_all_metric_names_and_ids()
+
+        # Then
+        assert all_metric_names_and_ids == spy_metric_manager.get_all_names_and_ids()
