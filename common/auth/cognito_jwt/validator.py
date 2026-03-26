@@ -41,7 +41,7 @@ class TokenValidator:
             raise TokenError(str(exc)) from exc
 
         if getattr(settings, "COGNITO_PUBLIC_KEYS_CACHING_ENABLED", False):
-            cache_key = "django_cognito_jwt:{}".format(headers["kid"])
+            cache_key = "cognito_jwt:{}".format(headers["kid"])
             jwk_data = cache.get(cache_key)
 
             if not jwk_data:

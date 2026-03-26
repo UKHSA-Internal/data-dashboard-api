@@ -111,7 +111,7 @@ TEMPLATES = [
     },
 ]
 
-COGNITO_USER_MANAGER = "metrics.api.django_cognito_jwt.user_manager.CognitoManager"
+COGNITO_USER_MANAGER = "common.auth.cognito_jwt.user_manager.CognitoManager"
 COGNITO_AWS_REGION = config.COGNITO_AWS_REGION
 COGNITO_USER_POOL = config.COGNITO_USER_POOL
 COGNITO_AUDIENCE = None
@@ -122,7 +122,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "metrics.api.django_cognito_jwt.JSONWebTokenAuthentication",
+        "common.auth.cognito_jwt.JSONWebTokenAuthentication",
     ],
 }
 

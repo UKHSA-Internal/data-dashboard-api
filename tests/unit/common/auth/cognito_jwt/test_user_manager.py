@@ -2,7 +2,7 @@ from unittest import mock
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
-from metrics.api.django_cognito_jwt.user_manager import CognitoManager
+from common.auth.cognito_jwt.user_manager import CognitoManager
 
 USER_MODEL = get_user_model()
 

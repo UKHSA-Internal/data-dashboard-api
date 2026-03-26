@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from utils import create_jwt_token
 
-from metrics.api.django_cognito_jwt import validator
+from common.auth.cognito_jwt import validator
 
 
 def test_validate_token(cognito_well_known_keys, jwk_private_key_one):
