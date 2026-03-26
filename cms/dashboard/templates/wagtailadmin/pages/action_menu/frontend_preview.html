@@ -1,6 +1,8 @@
 {% load wagtailadmin_tags %}
 {% if url %}
-    <a class="button{% if classname %} {{ classname }}{% endif %}" href="{{ url }}" target="_blank" rel="noopener noreferrer">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</a>
+    <a id="preview-btn" class="button{% if classname %} {{ classname }}{% endif %}" data-url="{{ url }}" href="#" target="_blank" rel="noopener noreferrer">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</a>
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;">Embargo Time Travel</button>
 {% else %}
-    <button type="submit" name="{{ name }}" value="{{ label }}" class="button{% if classname %} {{ classname }}{% endif %}">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
+    <button id="preview-btn" type="submit" name="{{ name }}" value="{{ label }}" class="button{% if classname %} {{ classname }}{% endif %}">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;">Embargo Time</button>
 {% endif %}

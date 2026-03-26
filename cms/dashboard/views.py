@@ -1,6 +1,8 @@
 from datetime import timedelta
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
+from django.utils.dateparse import parse_datetime
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.core.handlers.wsgi import WSGIRequest
@@ -92,6 +94,15 @@ class PreviewToFrontendRedirectView(View):
             raise PermissionDenied
 
         now = timezone.now()
+
+        embargo_now_str = request.GET.get("embargo_now")
+        if embargo_now_str:
+            embargo_now = parse_datetime(embargo_now_str)
+            if embargo_now is None:
+                embargo_now = now
+        else:
+            embargo_now = now
+
         payload = {
             "page_id": page.pk,
             "editor_id": request.user.pk if request.user.is_authenticated else None,
@@ -99,6 +110,7 @@ class PreviewToFrontendRedirectView(View):
             "exp": int(
                 (now + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()
             ),
+            "embargo_now": int(embargo_now.timestamp()),
         }
 
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)

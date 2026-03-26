@@ -8,3 +8,10 @@
 {% block branding_favicon %}
     <link rel="shortcut icon" href="{% static 'gov_uk_icon.png' %}" />
 {% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{% static 'js/embargo_time_picker.js' %}"></script>
+{% endblock %}
