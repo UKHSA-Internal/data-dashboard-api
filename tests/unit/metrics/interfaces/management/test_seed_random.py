@@ -17,6 +17,8 @@ SMALL_GEO_COUNT = 3
 LARGE_GEO_COUNT = 7
 EXPECTED_BULK_CREATE_CALLS = 2
 EXPECTED_NEXT_METRIC_INDEX = 11
+EXPECTED_TIME_SERIES_POINTS = 2
+EXPECTED_METRIC_VALUE = 123.45
 
 
 def _fake_metric_hierarchy() -> SimpleNamespace:
@@ -44,9 +46,7 @@ def _fake_age() -> Age:
 
 
 def _assert_progress_messages(progress_messages: list[str]) -> None:
-    assert any(
-        message.startswith("Processed 1/1 metrics") for message in progress_messages
-    )
+    assert any(message.startswith("Processed 1/1 metrics") for message in progress_messages)
     assert any(message.startswith("Inserted ") for message in progress_messages)
 
 
@@ -61,6 +61,8 @@ class TestSeedRandomCommand:
         assert options.scale == "small"
         assert options.seed is None
         assert options.truncate_first is False
+        assert options.delivery == "db"
+        assert options.non_public is False
 
     @mock.patch(f"{MODULE_PATH}.random.seed")
     @mock.patch(f"{MODULE_PATH}.call_command")
@@ -86,12 +88,20 @@ class TestSeedRandomCommand:
             "APITimeSeries": 1,
         }
 
-        Command().handle(dataset="metrics", scale="small", truncate_first=True, seed=42)
+        Command().handle(
+            dataset="metrics",
+            scale="small",
+            truncate_first=True,
+            seed=42,
+            delivery="db",
+            non_public=False,
+        )
 
         spy_random_seed.assert_called_once_with(42)
         spy_seed_metrics_data.assert_called_once_with(
             scale_config=SCALE_CONFIGS["small"],
             truncate_first=True,
+            is_public=True,
             progress_callback=mock.ANY,
         )
         spy_call_command.assert_not_called()
@@ -121,7 +131,14 @@ class TestSeedRandomCommand:
         spy_perf_counter.side_effect = [20.0, 22.0]
         spy_time.return_value = 1234
 
-        Command().handle(dataset="cms", scale="large", truncate_first=False, seed=None)
+        Command().handle(
+            dataset="cms",
+            scale="large",
+            truncate_first=False,
+            seed=None,
+            delivery="db",
+            non_public=False,
+        )
 
         spy_random_seed.assert_called_once_with(1234)
         spy_seed_metrics_data.assert_not_called()
@@ -139,6 +156,54 @@ class TestSeedRandomCommand:
                 "CoreTimeSeries": 0,
                 "APITimeSeries": 0,
             },
+            runtime_seconds=2.0,
+        )
+
+    @mock.patch(f"{MODULE_PATH}.random.seed")
+    @mock.patch.object(Command, "_seed_metrics_data")
+    @mock.patch.object(Command, "_seed_metrics_data_to_s3")
+    @mock.patch.object(Command, "_print_summary")
+    @mock.patch(f"{MODULE_PATH}.time.perf_counter")
+    def test_handle_metrics_dataset_s3_delivery(
+        self,
+        spy_perf_counter: mock.MagicMock,
+        spy_print_summary: mock.MagicMock,
+        spy_seed_metrics_data_to_s3: mock.MagicMock,
+        spy_seed_metrics_data: mock.MagicMock,
+        spy_random_seed: mock.MagicMock,
+    ):
+        spy_perf_counter.side_effect = [11.0, 13.0]
+        spy_seed_metrics_data_to_s3.return_value = {
+            "Theme": 1,
+            "SubTheme": 1,
+            "Topic": 1,
+            "Metric": 1,
+            "Geography": 1,
+            "CoreTimeSeries": 10,
+            "APITimeSeries": 10,
+        }
+
+        Command().handle(
+            dataset="metrics",
+            scale="small",
+            truncate_first=False,
+            seed=99,
+            delivery="s3",
+            non_public=True,
+        )
+
+        spy_random_seed.assert_called_once_with(99)
+        spy_seed_metrics_data.assert_not_called()
+        spy_seed_metrics_data_to_s3.assert_called_once_with(
+            scale_config=SCALE_CONFIGS["small"],
+            is_public=False,
+            progress_callback=mock.ANY,
+        )
+        spy_print_summary.assert_called_once_with(
+            dataset="metrics",
+            scale="small",
+            seed=99,
+            counts=spy_seed_metrics_data_to_s3.return_value,
             runtime_seconds=2.0,
         )
 
@@ -191,12 +256,7 @@ class TestSeedRandomCommand:
                 sub_theme=sub_themes[1],
             ),
         ]
-        metrics = [
-            SimpleNamespace(
-                name=f"Metric {index + 1}", topic=topics[index % len(topics)]
-            )
-            for index in range(4)
-        ]
+        metrics = [SimpleNamespace(name=f"Metric {index + 1}", topic=topics[index % len(topics)]) for index in range(4)]
         geography_types = [
             SimpleNamespace(name="Nation"),
             SimpleNamespace(name="Lower Tier Local Authority"),
@@ -220,6 +280,7 @@ class TestSeedRandomCommand:
         result = Command._seed_metrics_data(
             scale_config={"geographies": 2, "metrics": 4, "days": 9},
             truncate_first=True,
+            is_public=False,
             progress_callback=spy_progress_callback,
         )
 
@@ -239,11 +300,10 @@ class TestSeedRandomCommand:
             stratum=spy_stratum_get_or_create.return_value[0],
             age=spy_age_get_or_create.return_value[0],
             days=9,
+            is_public=False,
             progress_callback=spy_progress_callback,
         )
-        spy_progress_callback.assert_any_call(
-            "Preparing metric taxonomy and geography records..."
-        )
+        spy_progress_callback.assert_any_call("Preparing metric taxonomy and geography records...")
         spy_progress_callback.assert_any_call("Generating Core/API time series rows...")
 
     def test_truncate_metrics_data_deletes_from_all_models(self):
@@ -265,9 +325,7 @@ class TestSeedRandomCommand:
             for model_name in model_names:
                 manager = mock.MagicMock()
                 managers[model_name] = manager
-                stack.enter_context(
-                    mock.patch(f"{MODULE_PATH}.{model_name}.objects", manager)
-                )
+                stack.enter_context(mock.patch(f"{MODULE_PATH}.{model_name}.objects", manager))
 
             Command._truncate_metrics_data()
 
@@ -295,6 +353,7 @@ class TestSeedRandomCommand:
             stratum=_fake_stratum(),
             age=_fake_age(),
             days=1,
+            is_public=False,
             progress_callback=spy_progress_callback,
         )
 
@@ -304,9 +363,9 @@ class TestSeedRandomCommand:
         spy_api_time_series.objects.bulk_create.assert_called_once()
         assert spy_core_time_series.call_args.kwargs["sex"] == "f"
         assert spy_api_time_series.call_args.kwargs["sex"] == "f"
-        progress_messages = [
-            call.args[0] for call in spy_progress_callback.call_args_list
-        ]
+        assert spy_core_time_series.call_args.kwargs["is_public"] is False
+        assert spy_api_time_series.call_args.kwargs["is_public"] is False
+        progress_messages = [call.args[0] for call in spy_progress_callback.call_args_list]
         _assert_progress_messages(progress_messages)
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
@@ -325,6 +384,7 @@ class TestSeedRandomCommand:
             stratum=_fake_stratum(),
             age=_fake_age(),
             days=FULL_BATCH_DAYS,
+            is_public=True,
         )
 
         assert core_count == FULL_BATCH_DAYS
@@ -400,10 +460,7 @@ def test_build_theme_hierarchy_records_contains_expected_real_values():
 
     assert "infectious_disease" in theme_names
     assert any(sub_theme == "respiratory" for sub_theme, _ in sub_theme_rows)
-    assert any(
-        topic == "COVID-19" and sub_theme == "respiratory"
-        for topic, sub_theme, _ in topic_rows
-    )
+    assert any(topic == "COVID-19" and sub_theme == "respiratory" for topic, sub_theme, _ in topic_rows)
 
 
 def test_build_theme_hierarchy_records_skips_unmatched_topic_group():
@@ -431,9 +488,7 @@ def test_build_geography_seed_values_returns_required_count():
 
 
 def test_format_enum_name_replaces_underscores_and_title_cases():
-    assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == (
-        "Lower Tier Local Authority"
-    )
+    assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == ("Lower Tier Local Authority")
 
 
 @mock.patch.object(Command, "_upsert_topics")
@@ -608,9 +663,7 @@ def test_seed_geographies_creates_missing_types_and_geographies(
 
     result = Command._seed_geographies(count=2)
 
-    assert [
-        (geography.name, geography.geography_type.name) for geography in result
-    ] == [
+    assert [(geography.name, geography.geography_type.name) for geography in result] == [
         ("England", "Nation"),
         ("Area 2", "Lower Tier Local Authority"),
     ]
@@ -688,3 +741,123 @@ def test_get_next_random_metric_index_defaults_to_one_when_no_matches(
     result = Command._get_next_random_metric_index()
 
     assert result == 1
+
+
+@mock.patch(f"{MODULE_PATH}.AWSClient")
+@mock.patch.object(Command, "_build_s3_object_key")
+@mock.patch.object(Command, "_build_geography_seed_values")
+@mock.patch.object(Command, "_build_theme_hierarchy_records")
+@mock.patch.object(Command, "_build_timeseries_ingestion_payloads")
+def test_seed_metrics_data_to_s3_uploads_payloads_and_returns_counts(
+    spy_build_payloads: mock.MagicMock,
+    spy_build_theme_hierarchy_records: mock.MagicMock,
+    spy_build_geography_seed_values: mock.MagicMock,
+    spy_build_s3_object_key: mock.MagicMock,
+    spy_aws_client: mock.MagicMock,
+):
+    spy_progress_callback = mock.MagicMock()
+    payload = {
+        "topic": "COVID-19",
+        "metric": "COVID-19_cases_randomByDay_1",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "all",
+        "stratum": "default",
+    }
+    spy_build_payloads.return_value = [payload]
+    spy_build_s3_object_key.return_value = "in/key.json"
+    spy_build_theme_hierarchy_records.return_value = (
+        [],
+        [],
+        [("COVID-19", "respiratory", "infectious_disease")],
+    )
+    spy_build_geography_seed_values.return_value = [
+        {
+            "name": "England",
+            "geography_code": "E92000001",
+            "geography_type": "Nation",
+        }
+    ]
+
+    result = Command._seed_metrics_data_to_s3(
+        scale_config={"geographies": 1, "metrics": 2, "days": 3},
+        is_public=False,
+        progress_callback=spy_progress_callback,
+    )
+
+    assert result == {
+        "Theme": 1,
+        "SubTheme": 1,
+        "Topic": 1,
+        "Metric": 2,
+        "Geography": 1,
+        "CoreTimeSeries": 6,
+        "APITimeSeries": 6,
+    }
+    spy_aws_client.return_value.upload_json_to_inbound.assert_called_once_with(
+        key="in/key.json",
+        payload=payload,
+    )
+    spy_progress_callback.assert_any_call("Generating ingestion payloads for S3 upload...")
+    spy_progress_callback.assert_any_call("Uploaded 1 files to ingest bucket in/.")
+
+
+@mock.patch(f"{MODULE_PATH}.random.choice")
+@mock.patch(f"{MODULE_PATH}.random.uniform")
+@mock.patch.object(Command, "_build_geography_seed_values")
+@mock.patch.object(Command, "_build_theme_hierarchy_records")
+def test_build_timeseries_ingestion_payloads_builds_expected_shape(
+    spy_build_theme_hierarchy_records: mock.MagicMock,
+    spy_build_geography_seed_values: mock.MagicMock,
+    spy_random_uniform: mock.MagicMock,
+    spy_random_choice: mock.MagicMock,
+):
+    spy_build_theme_hierarchy_records.return_value = (
+        [],
+        [],
+        [("COVID-19", "respiratory", "infectious_disease")],
+    )
+    spy_build_geography_seed_values.return_value = [
+        {
+            "name": "England",
+            "geography_code": "E92000001",
+            "geography_type": "Nation",
+        }
+    ]
+    spy_random_uniform.return_value = EXPECTED_METRIC_VALUE
+    spy_random_choice.return_value = "all"
+
+    payloads = Command._build_timeseries_ingestion_payloads(
+        scale_config={"geographies": 1, "metrics": 1, "days": 2},
+        is_public=True,
+    )
+
+    assert len(payloads) == 1
+    payload = payloads[0]
+    assert payload["parent_theme"] == "infectious_disease"
+    assert payload["child_theme"] == "respiratory"
+    assert payload["topic"] == "COVID-19"
+    assert payload["metric_group"] == "cases"
+    assert payload["geography"] == "England"
+    assert payload["geography_code"] == "E92000001"
+    assert payload["age"] == "all"
+    assert payload["sex"] == "all"
+    assert payload["stratum"] == "default"
+    assert len(payload["time_series"]) == EXPECTED_TIME_SERIES_POINTS
+    assert payload["time_series"][0]["metric_value"] == EXPECTED_METRIC_VALUE
+    assert payload["time_series"][0]["is_public"] is True
+
+
+def test_build_s3_object_key_builds_expected_file_name():
+    payload = {
+        "topic": "COVID-19",
+        "metric": "COVID-19_cases_randomByDay_1",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "f",
+        "stratum": "default",
+    }
+
+    result = Command._build_s3_object_key(payload=payload, payload_index=7)
+
+    assert result == ("in/covid_19_cases_covid_19_cases_randombyday_1_E92000001_all_f_default_7.json")

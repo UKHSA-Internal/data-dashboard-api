@@ -2,7 +2,7 @@ import random
 import re
 import time
 from collections.abc import Callable, Iterable
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from operator import itemgetter
 from typing import TypeVar, cast, override
@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Model
 
+from ingestion.aws_client import AWSClient
 from metrics.data.enums import TimePeriod
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models.supporting import (
@@ -70,16 +71,28 @@ class Command(BaseCommand):
             default=False,
             help="Clear existing metrics tables before seeding to avoid duplicates.",
         )
+        parser.add_argument(
+            "--delivery",
+            choices=["db", "s3"],
+            default="db",
+            help="Delivery mode for metrics dataset: database insert or s3 ingestion files.",
+        )
+        parser.add_argument(
+            "--non-public",
+            action="store_true",
+            default=False,
+            help="Mark generated metric points as non-public (`is_public=False`).",
+        )
 
     def handle(self, *args, **options) -> None:
         started_at = time.perf_counter()
         dataset: str = options["dataset"]
         scale: str = options["scale"]
         truncate_first: bool = options["truncate_first"]
+        delivery: str = options["delivery"]
+        is_public: bool = not options["non_public"]
 
-        selected_seed = (
-            options["seed"] if options["seed"] is not None else int(time.time())
-        )
+        selected_seed = options["seed"] if options["seed"] is not None else int(time.time())
         random.seed(selected_seed)  # nosec B311
         self.stdout.write(f"Seed used: {selected_seed}")
 
@@ -99,11 +112,19 @@ class Command(BaseCommand):
         if should_seed_metrics:
             scale_config = SCALE_CONFIGS[scale]
             self.stderr.write("Seeding metrics dataset...")
-            counts = self._seed_metrics_data(
-                scale_config=scale_config,
-                truncate_first=truncate_first,
-                progress_callback=self.stderr.write,
-            )
+            if delivery == "s3":
+                counts = self._seed_metrics_data_to_s3(
+                    scale_config=scale_config,
+                    is_public=is_public,
+                    progress_callback=self.stderr.write,
+                )
+            else:
+                counts = self._seed_metrics_data(
+                    scale_config=scale_config,
+                    truncate_first=truncate_first,
+                    is_public=is_public,
+                    progress_callback=self.stderr.write,
+                )
             self.stderr.write("Metrics dataset seeding complete.")
 
         if should_seed_cms:
@@ -126,6 +147,7 @@ class Command(BaseCommand):
         *,
         scale_config: dict[str, int],
         truncate_first: bool,
+        is_public: bool,
         progress_callback: Callable[[str], None] | None = None,
     ) -> dict[str, int]:
         """Seed supporting metric models and time series rows for the selected scale.
@@ -133,6 +155,7 @@ class Command(BaseCommand):
         Args:
             scale_config: Scale-specific object counts for generated records.
             truncate_first: Whether to clear existing metrics-related tables before seeding.
+            is_public: Whether generated metric rows should be marked as public.
             progress_callback: Optional callback used to report progress updates.
 
         Returns:
@@ -174,6 +197,7 @@ class Command(BaseCommand):
                 stratum=stratum,
                 age=age,
                 days=scale_config["days"],
+                is_public=is_public,
                 progress_callback=progress_callback,
             )
 
@@ -185,6 +209,50 @@ class Command(BaseCommand):
             "Geography": len(geographies),
             "CoreTimeSeries": core_count,
             "APITimeSeries": api_count,
+        }
+
+    @classmethod
+    def _seed_metrics_data_to_s3(
+        cls,
+        *,
+        scale_config: dict[str, int],
+        is_public: bool,
+        progress_callback: Callable[[str], None] | None = None,
+    ) -> dict[str, int]:
+        if progress_callback is not None:
+            progress_callback("Generating ingestion payloads for S3 upload...")
+
+        payloads = cls._build_timeseries_ingestion_payloads(
+            scale_config=scale_config,
+            is_public=is_public,
+        )
+        client = AWSClient()
+        uploaded_files = 0
+        for payload_index, payload in enumerate(payloads, start=1):
+            key = cls._build_s3_object_key(payload=payload, payload_index=payload_index)
+            client.upload_json_to_inbound(key=key, payload=payload)
+            uploaded_files += 1
+
+        if progress_callback is not None:
+            progress_callback(f"Uploaded {uploaded_files:,} files to ingest bucket in/.")
+
+        topic_rows = cls._build_theme_hierarchy_records()[2]
+        theme_count = len({theme_name for _, _, theme_name in topic_rows})
+        sub_theme_count = len({(sub_theme_name, theme_name) for _, sub_theme_name, theme_name in topic_rows})
+        topic_count = len(
+            {(topic_name, sub_theme_name, theme_name) for topic_name, sub_theme_name, theme_name in topic_rows}
+        )
+        geography_count = len(cls._build_geography_seed_values(count=scale_config["geographies"]))
+        row_count = scale_config["metrics"] * geography_count * scale_config["days"]
+
+        return {
+            "Theme": theme_count,
+            "SubTheme": sub_theme_count,
+            "Topic": topic_count,
+            "Metric": scale_config["metrics"],
+            "Geography": geography_count,
+            "CoreTimeSeries": row_count,
+            "APITimeSeries": row_count,
         }
 
     @classmethod
@@ -210,6 +278,7 @@ class Command(BaseCommand):
         stratum: Stratum,
         age: Age,
         days: int,
+        is_public: bool,
         progress_callback: Callable[[str], None] | None = None,
     ) -> tuple[int, int]:
         frequency = TimePeriod.Weekly.value
@@ -230,6 +299,7 @@ class Command(BaseCommand):
                 stratum=stratum,
                 age=age,
                 days=days,
+                is_public=is_public,
                 start_date=start_date,
                 frequency=frequency,
             ):
@@ -249,9 +319,7 @@ class Command(BaseCommand):
                     current_count=api_count,
                 )
 
-            if progress_callback is not None and (
-                metric_index == total_metrics or metric_index % log_interval == 0
-            ):
+            if progress_callback is not None and (metric_index == total_metrics or metric_index % log_interval == 0):
                 processed_row_count = metric_index * len(geographies) * days
                 progress_callback(
                     f"Processed {metric_index}/{total_metrics} metrics "
@@ -272,11 +340,7 @@ class Command(BaseCommand):
         )
 
         if progress_callback is not None:
-            progress_callback(
-                "Inserted "
-                f"{core_count:,} CoreTimeSeries rows and "
-                f"{api_count:,} APITimeSeries rows."
-            )
+            progress_callback(f"Inserted {core_count:,} CoreTimeSeries rows and {api_count:,} APITimeSeries rows.")
 
         return core_count, api_count
 
@@ -329,20 +393,11 @@ class Command(BaseCommand):
         *,
         theme_names: list[str],
     ) -> tuple[list[Theme], dict[str, Theme]]:
-        themes_by_name = {
-            theme.name: theme for theme in Theme.objects.filter(name__in=theme_names)
-        }
-        missing_theme_names = [
-            name for name in theme_names if name not in themes_by_name
-        ]
+        themes_by_name = {theme.name: theme for theme in Theme.objects.filter(name__in=theme_names)}
+        missing_theme_names = [name for name in theme_names if name not in themes_by_name]
         if missing_theme_names:
             cls._bulk_create(Theme, [Theme(name=name) for name in missing_theme_names])
-            themes_by_name.update(
-                {
-                    theme.name: theme
-                    for theme in Theme.objects.filter(name__in=missing_theme_names)
-                }
-            )
+            themes_by_name.update({theme.name: theme for theme in Theme.objects.filter(name__in=missing_theme_names)})
         return [themes_by_name[name] for name in theme_names], themes_by_name
 
     @classmethod
@@ -358,10 +413,7 @@ class Command(BaseCommand):
             theme__name__in=theme_names,
             name__in={name for name, _ in sub_theme_keys},
         )
-        sub_themes_by_key = {
-            (sub_theme.name, sub_theme.theme.name): sub_theme
-            for sub_theme in existing_sub_themes
-        }
+        sub_themes_by_key = {(sub_theme.name, sub_theme.theme.name): sub_theme for sub_theme in existing_sub_themes}
         missing_sub_theme_keys = [
             (sub_theme_name, theme_name)
             for sub_theme_name, theme_name in sub_theme_keys
@@ -379,13 +431,8 @@ class Command(BaseCommand):
                 {
                     (sub_theme.name, sub_theme.theme.name): sub_theme
                     for sub_theme in SubTheme.objects.select_related("theme").filter(
-                        theme__name__in={
-                            theme_name for _, theme_name in missing_sub_theme_keys
-                        },
-                        name__in={
-                            sub_theme_name
-                            for sub_theme_name, _ in missing_sub_theme_keys
-                        },
+                        theme__name__in={theme_name for _, theme_name in missing_sub_theme_keys},
+                        name__in={sub_theme_name for sub_theme_name, _ in missing_sub_theme_keys},
                     )
                 }
             )
@@ -400,21 +447,15 @@ class Command(BaseCommand):
     ) -> list[Topic]:
         topic_keys = list(dict.fromkeys(topic_rows))
         sub_themes_by_id_key = {
-            (sub_theme_name, theme_name): sub_themes_by_key[
-                (sub_theme_name, theme_name)
-            ]
+            (sub_theme_name, theme_name): sub_themes_by_key[(sub_theme_name, theme_name)]
             for _, sub_theme_name, theme_name in topic_keys
         }
-        candidate_sub_theme_ids = [
-            sub_theme.id for sub_theme in sub_themes_by_id_key.values()
-        ]
+        candidate_sub_theme_ids = [sub_theme.id for sub_theme in sub_themes_by_id_key.values()]
         existing_topics = Topic.objects.filter(
             sub_theme_id__in=candidate_sub_theme_ids,
             name__in={topic_name for topic_name, _, _ in topic_keys},
         )
-        topics_by_key = {
-            (topic.name, topic.sub_theme_id): topic for topic in existing_topics
-        }
+        topics_by_key = {(topic.name, topic.sub_theme_id): topic for topic in existing_topics}
         missing_topic_keys = [
             topic_key
             for topic_key in topic_keys
@@ -443,9 +484,7 @@ class Command(BaseCommand):
                             sub_themes_by_id_key[(sub_theme_name, theme_name)].id
                             for _, sub_theme_name, theme_name in missing_topic_keys
                         ],
-                        name__in={
-                            topic_name for topic_name, _, _ in missing_topic_keys
-                        },
+                        name__in={topic_name for topic_name, _, _ in missing_topic_keys},
                     )
                 }
             )
@@ -462,19 +501,13 @@ class Command(BaseCommand):
     @classmethod
     def _seed_geographies(cls, *, count: int) -> list[Geography]:
         geography_seed_values = cls._build_geography_seed_values(count=count)
-        geography_type_names = {
-            record["geography_type"] for record in geography_seed_values
-        }
+        geography_type_names = {record["geography_type"] for record in geography_seed_values}
         geography_type_names = sorted(geography_type_names)
         geography_types_by_name = {
             geography_type.name: geography_type
-            for geography_type in GeographyType.objects.filter(
-                name__in=geography_type_names
-            )
+            for geography_type in GeographyType.objects.filter(name__in=geography_type_names)
         }
-        missing_geography_type_names = [
-            name for name in geography_type_names if name not in geography_types_by_name
-        ]
+        missing_geography_type_names = [name for name in geography_type_names if name not in geography_types_by_name]
         if missing_geography_type_names:
             cls._bulk_create(
                 GeographyType,
@@ -483,32 +516,22 @@ class Command(BaseCommand):
             geography_types_by_name.update(
                 {
                     geography_type.name: geography_type
-                    for geography_type in GeographyType.objects.filter(
-                        name__in=missing_geography_type_names
-                    )
+                    for geography_type in GeographyType.objects.filter(name__in=missing_geography_type_names)
                 }
             )
-        geography_types_by_name = {
-            name: geography_types_by_name[name] for name in geography_type_names
-        }
+        geography_types_by_name = {name: geography_types_by_name[name] for name in geography_type_names}
 
         geography_keys = list(
             dict.fromkeys(
-                (record["name"], record["geography_type"], record["geography_code"])
-                for record in geography_seed_values
+                (record["name"], record["geography_type"], record["geography_code"]) for record in geography_seed_values
             )
         )
-        existing_geographies = Geography.objects.select_related(
-            "geography_type"
-        ).filter(
+        existing_geographies = Geography.objects.select_related("geography_type").filter(
             name__in={name for name, _, _ in geography_keys},
-            geography_type__name__in={
-                geography_type for _, geography_type, _ in geography_keys
-            },
+            geography_type__name__in={geography_type for _, geography_type, _ in geography_keys},
         )
         geographies_by_key = {
-            (geography.name, geography.geography_type.name): geography
-            for geography in existing_geographies
+            (geography.name, geography.geography_type.name): geography for geography in existing_geographies
         }
         missing_geography_keys = [
             (name, geography_type, geography_code)
@@ -530,22 +553,14 @@ class Command(BaseCommand):
             geographies_by_key.update(
                 {
                     (geography.name, geography.geography_type.name): geography
-                    for geography in Geography.objects.select_related(
-                        "geography_type"
-                    ).filter(
+                    for geography in Geography.objects.select_related("geography_type").filter(
                         name__in={name for name, _, _ in missing_geography_keys},
-                        geography_type__name__in={
-                            geography_type
-                            for _, geography_type, _ in missing_geography_keys
-                        },
+                        geography_type__name__in={geography_type for _, geography_type, _ in missing_geography_keys},
                     )
                 }
             )
 
-        return [
-            geographies_by_key[(name, geography_type)]
-            for name, geography_type, _ in geography_keys
-        ]
+        return [geographies_by_key[(name, geography_type)] for name, geography_type, _ in geography_keys]
 
     @classmethod
     def _build_time_series_rows_for_metric(
@@ -556,6 +571,7 @@ class Command(BaseCommand):
         stratum: Stratum,
         age: Age,
         days: int,
+        is_public: bool,
         start_date: date,
         frequency: str,
     ) -> Iterable[tuple[CoreTimeSeries, APITimeSeries]]:
@@ -568,8 +584,7 @@ class Command(BaseCommand):
                 current_date = start_date + timedelta(days=day_offset)
                 base_value = random.uniform(5.0, 250.0)  # noqa: S311  # nosec B311
                 metric_value = round(
-                    base_value
-                    + random.uniform(-10.0, 10.0),  # noqa: S311  # nosec B311
+                    base_value + random.uniform(-10.0, 10.0),  # noqa: S311  # nosec B311
                     2,
                 )
                 sex = random.choice(SEED_RANDOM_SEX_OPTIONS)  # noqa: S311  # nosec B311
@@ -588,7 +603,7 @@ class Command(BaseCommand):
                         epiweek=epidemiological_week,
                         date=current_date,
                         metric_value=Decimal(str(metric_value)),
-                        is_public=True,
+                        is_public=is_public,
                     ),
                     APITimeSeries(
                         metric_frequency=frequency,
@@ -608,9 +623,81 @@ class Command(BaseCommand):
                         epiweek=epidemiological_week,
                         date=current_date,
                         metric_value=float(metric_value),
-                        is_public=True,
+                        is_public=is_public,
                     ),
                 )
+
+    @classmethod
+    def _build_timeseries_ingestion_payloads(
+        cls,
+        *,
+        scale_config: dict[str, int],
+        is_public: bool,
+    ) -> list[dict[str, object]]:
+        _, _, topic_rows = cls._build_theme_hierarchy_records()
+        geographies = cls._build_geography_seed_values(count=scale_config["geographies"])
+        refresh_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        start_date = date.today() - timedelta(days=scale_config["days"] - 1)
+        payloads: list[dict[str, object]] = []
+
+        for metric_index in range(scale_config["metrics"]):
+            topic_name, sub_theme_name, theme_name = topic_rows[metric_index % len(topic_rows)]
+            metric_name = f"{topic_name}_cases_randomByDay_{metric_index + 1}"
+            for geography in geographies:
+                time_series_rows: list[dict[str, object]] = []
+                for day_offset in range(scale_config["days"]):
+                    current_date = start_date + timedelta(days=day_offset)
+                    metric_value = round(
+                        random.uniform(5.0, 250.0),  # noqa: S311  # nosec B311
+                        2,
+                    )
+                    time_series_rows.append(
+                        {
+                            "epiweek": current_date.isocalendar().week,
+                            "date": current_date.isoformat(),
+                            "metric_value": metric_value,
+                            "embargo": None,
+                            "is_public": is_public,
+                        }
+                    )
+
+                payloads.append(
+                    {
+                        "parent_theme": theme_name,
+                        "child_theme": sub_theme_name,
+                        "topic": topic_name,
+                        "metric_group": "cases",
+                        "metric": metric_name,
+                        "metric_frequency": TimePeriod.Weekly.value,
+                        "geography_type": geography["geography_type"],
+                        "geography": geography["name"],
+                        "geography_code": geography["geography_code"],
+                        "age": "all",
+                        "sex": random.choice(SEED_RANDOM_SEX_OPTIONS),  # noqa: S311  # nosec B311
+                        "stratum": "default",
+                        "refresh_date": refresh_date,
+                        "time_series": time_series_rows,
+                    }
+                )
+
+        return payloads
+
+    @classmethod
+    def _build_s3_object_key(
+        cls,
+        *,
+        payload: dict[str, object],
+        payload_index: int,
+    ) -> str:
+        topic_name = str(payload["topic"])
+        metric_name = str(payload["metric"])
+        geography_code = str(payload["geography_code"])
+        age = str(payload["age"])
+        sex = str(payload["sex"])
+        stratum = str(payload["stratum"])
+        safe_topic = cls._normalise_key(topic_name)
+        safe_metric = cls._normalise_key(metric_name)
+        return f"in/{safe_topic}_cases_{safe_metric}_{geography_code}_{age}_{sex}_{stratum}_{payload_index}.json"
 
     @staticmethod
     def _bulk_create(model: type[TModel], records: Iterable[TModel]) -> list[TModel]:
@@ -620,9 +707,7 @@ class Command(BaseCommand):
     @staticmethod
     def _get_next_random_metric_index() -> int:
         max_metric_index = 0
-        for metric_name in Metric.objects.filter(
-            name__startswith="Random Metric "
-        ).values_list(
+        for metric_name in Metric.objects.filter(name__startswith="Random Metric ").values_list(
             "name",
             flat=True,
         ):
@@ -661,8 +746,7 @@ class Command(BaseCommand):
             parent_theme_name = child_to_parent[sub_theme_name]
             sub_theme_pairs.add((sub_theme_name, parent_theme_name))
             topic_rows.extend(
-                (topic_value, sub_theme_name, parent_theme_name)
-                for topic_value in topic_group.return_list()
+                (topic_value, sub_theme_name, parent_theme_name) for topic_value in topic_group.return_list()
             )
 
         theme_names = sorted({parent_name for _, parent_name in sub_theme_pairs})
@@ -699,9 +783,7 @@ class Command(BaseCommand):
             {
                 "name": cls._format_enum_name(ltla.name),
                 "geography_code": ltla.value,
-                "geography_type": (
-                    validation_enums.GeographyType.LOWER_TIER_LOCAL_AUTHORITY.value
-                ),
+                "geography_type": (validation_enums.GeographyType.LOWER_TIER_LOCAL_AUTHORITY.value),
             }
             for ltla in list(validation_enums.LTLAs)[:extra_required]
         )

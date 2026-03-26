@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 
 import boto3
@@ -100,6 +101,15 @@ class AWSClient:
         self._copy_file_to_failed(key=key)
         self._delete_file_from_inbound(key=key)
 
+    def upload_json_to_inbound(self, *, key: str, payload: dict) -> None:
+        """Uploads a JSON payload to the inbound folder in the ingest bucket."""
+        self._client.put_object(
+            Bucket=self._bucket_name,
+            Key=key,
+            Body=json.dumps(payload).encode("utf-8"),
+            ContentType="application/json",
+        )
+
     def _copy_file_to_processed(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the processed folder within the s3 bucket
 
@@ -125,9 +135,7 @@ class AWSClient:
                 Key=self._build_processed_key(key=key),
             )
         except botocore.client.ClientError:
-            logger.warning(
-                "Failed to move `%s` to `%s` folder", key, self._processed_folder
-            )
+            logger.warning("Failed to move `%s` to `%s` folder", key, self._processed_folder)
 
     def _copy_file_to_processed_archive(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the ingest archive s3 bucket
@@ -151,9 +159,7 @@ class AWSClient:
                 },
             )
         except botocore.client.ClientError:
-            logger.warning(
-                "Failed to move `%s` to `%s` bucket", key, self._archive_bucket_name
-            )
+            logger.warning("Failed to move `%s` to `%s` bucket", key, self._archive_bucket_name)
 
     def _copy_file_to_failed(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the failed folder within the s3 bucket
@@ -180,9 +186,7 @@ class AWSClient:
                 Key=self._build_failed_key(key=key),
             )
         except botocore.client.ClientError:
-            logger.warning(
-                "Failed to move `%s` to `%s` folder", key, self._failed_folder
-            )
+            logger.warning("Failed to move `%s` to `%s` folder", key, self._failed_folder)
 
     def _delete_file_from_inbound(self, *, key: str) -> None:
         """Deletes the file matching the given `key` from the inbound folder within the s3 bucket
@@ -205,9 +209,7 @@ class AWSClient:
         try:
             self._client.delete_object(Bucket=self._bucket_name, Key=key)
         except botocore.client.ClientError:
-            logger.warning(
-                "Failed to delete `%s` from `%s` folder", key, self._inbound_folder
-            )
+            logger.warning("Failed to delete `%s` from `%s` folder", key, self._inbound_folder)
 
     def _get_filename_from_key(self, *, key: str) -> str:
         """Extracts the filename from the `key`
