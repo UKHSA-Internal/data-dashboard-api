@@ -57,7 +57,11 @@ class TestSeedRandomCommand:
             f"geographies/{quote(sample_row.geography, safe='')}/"
             "metrics/"
         )
-        response = api_client.get(path=path, format="json")
+        response = api_client.get(
+            path=path,
+            format="json",
+            HTTP_ACCEPT="application/json",
+        )
 
         assert response.status_code == HTTP_OK
         assert "metrics" in response.data
