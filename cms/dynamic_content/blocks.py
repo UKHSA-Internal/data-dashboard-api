@@ -210,7 +210,7 @@ class PermissionSetChoiceBlock(ChoiceBlock):
         form_class = super().get_form_class()
 
         # Fetch choices dynamically each time the form is rendered
-        permission_sets = PermissionSet.objects.all().values_list("id", "theme")
+        permission_sets = PermissionSet.objects.all().values_list("id", "name")
 
         form_class.base_fields[self.name].widget.choices = list(permission_sets)
 
