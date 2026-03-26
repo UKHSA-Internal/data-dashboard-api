@@ -74,9 +74,8 @@ def cache_response(
 
 def _check_if_valid_non_public_request(request):
     auth = backend.JSONWebTokenAuthentication()
-    is_authenticated = auth.authenticate(request)
 
-    return is_authenticated
+    return auth.authenticate(request)
 
 
 def _retrieve_response_from_cache_or_calculate(
@@ -110,12 +109,12 @@ def _retrieve_response_from_cache_or_calculate(
     request: Request = args[1]
     if not is_public:
         return _calculate_response_from_view(
-            view_function, is_public=is_public, *args, **kwargs
+            view_function, *args, is_public=is_public, **kwargs
         )
 
     if is_caching_v2_enabled() and not is_reserved_namespace:
         return _calculate_response_from_view(
-            view_function, is_public=is_public, *args, **kwargs
+            view_function, *args, is_public=is_public, **kwargs
         )
 
     cache_management = kwargs.pop(
@@ -146,7 +145,7 @@ def _calculate_response_and_save_in_cache(
     view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
 ) -> Response:
     response: Response = _calculate_response_from_view(
-        view_function, is_public=True, *args, **kwargs
+        view_function, *args, is_public=True, **kwargs
     )
     if timeout == 0:
         return response

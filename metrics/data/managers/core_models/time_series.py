@@ -13,7 +13,9 @@ from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
-from metrics.api.permissions.fluent_permissions import validate_permissions_for_non_public
+from metrics.api.permissions.fluent_permissions import (
+    validate_permissions_for_non_public,
+)
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]

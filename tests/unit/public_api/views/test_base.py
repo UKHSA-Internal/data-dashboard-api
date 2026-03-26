@@ -57,8 +57,8 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         self,
         mock_request_serializer_class: mock.MagicMock,
         mock_response_class: mock.MagicMock,
-        mock_backend_auth_authenticate: mock.MagicMock
-        ):
+        mock_backend_auth_authenticate: mock.MagicMock,
+    ):
         """
         Given `backend.JSONWebTokenAuthentication.authenticate()` returns True
         When `get()` is called
