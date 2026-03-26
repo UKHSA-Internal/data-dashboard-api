@@ -1,4 +1,5 @@
 from wagtail.blocks import (
+    ChoiceBlock,
     RichTextBlock,
     StreamBlock,
     StructBlock,
@@ -66,6 +67,10 @@ class SectionWithLink(StructBlock):
 class TextSection(StructBlock):
     title = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
     body = RichTextBlock(help_text=help_texts.REQUIRED_BODY_FIELD, required=True)
+
+
+class DropdownSection(StructBlock):
+    choice = ChoiceBlock(choices=[("1", "one"), ("2", "two")])
 
 
 class CodeExample(StructBlock):

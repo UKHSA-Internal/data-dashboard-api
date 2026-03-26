@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
+from django.core.validators import RegexValidator
+from wagtail.fields import StreamField
+from cms.dynamic_content import sections
 
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_type_names_and_ids,
@@ -274,3 +277,22 @@ class PermissionSet(models.Model):
 
     def __str__(self):
         return self.name or f"Permission Set {self.id}"
+    
+class Users(models.Model):
+    user_entra_id = models.CharField(
+        validators=[
+            RegexValidator(
+                regex="^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$"
+            )
+        ],
+    )
+    permission_set = StreamField(
+    [
+        ("section", sections.DropdownSection()),
+    ],
+    use_json_field=True,
+)
+    panels = [
+        FieldPanel("user_entra_id"),
+        FieldPanel("permission_set"),
+    ]
