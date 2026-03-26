@@ -274,6 +274,9 @@ def construct_urlpatterns(
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += [
+                path("api/telemetry/", include((telemetry_urlpatterns, "telemetry"))),
+            ]
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case enums.AppMode.INGESTION.value:
@@ -291,7 +294,4 @@ def construct_urlpatterns(
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
 
-    constructed_url_patterns += [
-        path("api/telemetry/", include("public_api.telemetry.urls")),
-    ]
     return constructed_url_patterns
