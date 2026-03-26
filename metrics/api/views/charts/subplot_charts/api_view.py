@@ -118,7 +118,7 @@ class SubplotChartsView(APIView):
 
             # TELEMETRY: explicit failure
             telemetry.track(
-                "chart_failed",
+                "chart_generation_failed",
                 reason=str(error),
                 format="svg"
             )

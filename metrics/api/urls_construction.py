@@ -291,7 +291,7 @@ def construct_urlpatterns(
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
 
-    # add telemetry patterns
-    constructed_url_patterns += telemetry_urlpatterns
-
+    constructed_url_patterns += [
+        path("api/telemetry/", include("public_api.telemetry.urls")),
+    ]
     return constructed_url_patterns
