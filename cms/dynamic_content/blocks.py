@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail import blocks
+from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from cms.dynamic_content import help_texts
@@ -10,13 +10,14 @@ from cms.dynamic_content.components import (
     TrendNumberComponent,
 )
 from validation.url import validate_https_scheme
+from auth_content.models.permission_sets import PermissionSet
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
-class HeadlineNumberBlockTypes(blocks.StreamBlock):
+class HeadlineNumberBlockTypes(StreamBlock):
     headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
     trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
     percentage_number = PercentageNumberComponent(
@@ -27,9 +28,9 @@ class HeadlineNumberBlockTypes(blocks.StreamBlock):
         icon = "bars"
 
 
-class MetricNumberBlockTypes(blocks.StructBlock):
-    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    date_prefix = blocks.TextBlock(
+class MetricNumberBlockTypes(StructBlock):
+    title = TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    date_prefix = TextBlock(
         required=True,
         default=METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.HEADLINE_DATE_PREFIX,
@@ -45,7 +46,7 @@ class MetricNumberBlockTypes(blocks.StructBlock):
         icon = "table"
 
 
-class MetricNumberBlock(blocks.StreamBlock):
+class MetricNumberBlock(StreamBlock):
     column = MetricNumberBlockTypes()
 
 
@@ -60,18 +61,18 @@ class ProgrammingLanguages(models.TextChoices):
         return tuple((language.value, language.value) for language in cls)
 
 
-class CodeSnippet(blocks.StructBlock):
-    language = blocks.ChoiceBlock(
+class CodeSnippet(StructBlock):
+    language = ChoiceBlock(
         choices=ProgrammingLanguages.get_programming_languages,
         default=ProgrammingLanguages.JAVASCRIPT.value,
     )
-    code = blocks.TextBlock(
+    code = TextBlock(
         form_classname="codeblock_monospace",
         help_text=help_texts.CODE_SNIPPET,
     )
 
 
-class CodeBlock(blocks.StreamBlock):
+class CodeBlock(StreamBlock):
     code_snippet = CodeSnippet()
 
 
@@ -126,7 +127,7 @@ class WhaButtonChooserBlock(SnippetChooserBlock):
         return None
 
 
-class PageLinkChooserBlock(blocks.PageChooserBlock):
+class PageLinkChooserBlock(PageChooserBlock):
     @classmethod
     def get_api_representation(cls, value, context=None) -> str | None:
         if value:
@@ -135,40 +136,40 @@ class PageLinkChooserBlock(blocks.PageChooserBlock):
         return None
 
 
-class PageLink(blocks.StructBlock):
-    title = blocks.CharBlock(
+class PageLink(StructBlock):
+    title = CharBlock(
         required=True,
         help_text=help_texts.PAGE_LINK_TITLE,
     )
-    sub_title = blocks.CharBlock(
+    sub_title = CharBlock(
         required=False,
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
     page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
 
 
-class InternalPageLinks(blocks.StreamBlock):
+class InternalPageLinks(StreamBlock):
     page_link = PageLink()
 
     class Meta:
         icon = "link"
 
 
-class RelatedLink(blocks.StructBlock):
-    link_display_text = blocks.CharBlock(
+class RelatedLink(StructBlock):
+    link_display_text = CharBlock(
         required=True, help_text=help_texts.RELATED_LINK_TEXT
     )
-    link = blocks.CharBlock(required=True, help_text=help_texts.RELATED_LINK_URL)
+    link = CharBlock(required=True, help_text=help_texts.RELATED_LINK_URL)
 
 
-class RelatedLinkBlock(blocks.StreamBlock):
+class RelatedLinkBlock(StreamBlock):
     related_link = RelatedLink()
 
 
-class SourceLinkBlock(blocks.StructBlock):
+class SourceLinkBlock(StructBlock):
     """Source link supporting internal (page) or external (URL) links."""
 
-    link_display_text = blocks.CharBlock(
+    link_display_text = CharBlock(
         required=False,
         help_text=help_texts.SOURCE_LINK_TEXT,
     )
@@ -177,19 +178,19 @@ class SourceLinkBlock(blocks.StructBlock):
         required=False,
         help_text=help_texts.SOURCE_LINK_PAGE,
     )
-    external_url = blocks.URLBlock(
+    external_url = URLBlock(
         required=False,
         help_text=help_texts.SOURCE_LINK_URL,
         validators=[validate_https_scheme],
     )
 
-    def clean(self, value: blocks.StructValue):
+    def clean(self, value: StructValue):
         self._validate_only_one_of_page_or_external_url(value=value)
         return super().clean(value=value)
 
     @classmethod
     def _validate_only_one_of_page_or_external_url(
-        cls, *, value: blocks.StructValue
+        cls, *, value: StructValue
     ) -> None:
         """Validate that only one of the page or external_url fields is set if provided."""
         page = value.get("page")
@@ -198,3 +199,19 @@ class SourceLinkBlock(blocks.StructBlock):
         if page and external_url:
             error_message = "Use either page OR external_url, not both."
             raise ValidationError(error_message)
+
+
+
+class PermissionSetChoiceBlock(ChoiceBlock):
+    def __init__(self, **kwargs):
+        super().__init__(choices=[], **kwargs)
+
+    def get_form_class(self):
+        form_class = super().get_form_class()
+
+        # Fetch choices dynamically each time the form is rendered
+        permission_sets = PermissionSet.objects.all().values_list("id", "theme")
+
+        form_class.base_fields[self.name].widget.choices = list(permission_sets)
+
+        return form_class

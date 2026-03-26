@@ -69,10 +69,6 @@ class TextSection(StructBlock):
     body = RichTextBlock(help_text=help_texts.REQUIRED_BODY_FIELD, required=True)
 
 
-class DropdownSection(StructBlock):
-    choice = ChoiceBlock(choices=[("1", "one"), ("2", "two")])
-
-
 class CodeExample(StructBlock):
     heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=False)
     content = blocks.CodeBlock(help_text=help_texts.CODE_EXAMPLE, required=True)

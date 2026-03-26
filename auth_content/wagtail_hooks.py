@@ -4,7 +4,8 @@ from wagtail import hooks
 from wagtail.admin.viewsets.model import ModelViewSetGroup
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from auth_content.models import PermissionSet, Users
+from auth_content.models.permission_sets import PermissionSet
+from auth_content.models.users import User
 
 
 class PermissionSetViewSet(SnippetViewSet):
@@ -13,7 +14,7 @@ class PermissionSetViewSet(SnippetViewSet):
     icon = "key"
     
 class UserViewSet(SnippetViewSet):
-    model = Users
+    model = User
     menu_label = "Users"
     icon = "user"
 
