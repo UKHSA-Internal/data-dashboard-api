@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 import pytest
 from django.core.management import call_command
 from rest_framework.test import APIClient
@@ -46,22 +48,17 @@ class TestSeedRandomCommand:
         assert sample_row is not None
 
         api_client = APIClient()
-        response = api_client.post(
-            path="/api/tables/v4/",
-            data={
-                "file_format": "svg",
-                "plots": [
-                    {
-                        "topic": sample_row.topic,
-                        "metric": sample_row.metric,
-                        "date_from": "2020-01-01",
-                        "chart_type": "bar",
-                    }
-                ],
-            },
-            format="json",
+        path = (
+            "/api/public/timeseries/"
+            f"themes/{quote(sample_row.theme, safe='')}/"
+            f"sub_themes/{quote(sample_row.sub_theme, safe='')}/"
+            f"topics/{quote(sample_row.topic, safe='')}/"
+            f"geography_types/{quote(sample_row.geography_type, safe='')}/"
+            f"geographies/{quote(sample_row.geography, safe='')}/"
+            "metrics/"
         )
+        response = api_client.get(path=path, format="json")
 
         assert response.status_code == HTTP_OK
-        assert len(response.data) > 0
-        assert len(response.data[0]["values"]) > 0
+        assert "metrics" in response.data
+        assert sample_row.metric in response.data["metrics"]
