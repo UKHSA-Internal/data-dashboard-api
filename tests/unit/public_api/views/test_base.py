@@ -45,64 +45,27 @@ class TestBaseNestedAPITimeSeriesView:
             base_view.serializer_class
 
 
-class TestIsValidNonPublicRequest:
-    """
-    Tests for the `_is_valid_non_public_request()` static method.
-    """
-
-    def test_returns_true_when_is_public_false_and_authenticated(self):
-        mocked_request = mock.MagicMock()
-        mocked_request.query_params = {"is-public": "false"}
-        mocked_request.auth = mock.MagicMock(return_value=True)
-        base_view = BaseNestedAPITimeSeriesView()
-
-        result = base_view._is_valid_non_public_request(mocked_request)
-
-        assert result is True
-
-    def test_returns_false_when_is_public_false_but_not_authenticated(self):
-        mocked_request = mock.MagicMock()
-        mocked_request.query_params = {"is-public": "false"}
-        mocked_request.auth = mock.MagicMock(side_effect=TypeError)
-        base_view = BaseNestedAPITimeSeriesView()
-
-        result = base_view._is_valid_non_public_request(mocked_request)
-
-        assert result is False
-
-    def test_returns_false_when_auth_returns_false(self):
-        mocked_request = mock.MagicMock()
-        mocked_request.auth = mock.MagicMock(return_value=False)
-        base_view = BaseNestedAPITimeSeriesView()
-
-        result = base_view._is_valid_non_public_request(mocked_request)
-
-        assert result is False
-
-
 class TestGetAddsPrivateHeaderForNonPublicRequests:
     """
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
     """
 
-    @mock.patch(
-        "public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request"
-    )
+    @mock.patch("public_api.views.base.backend.JSONWebTokenAuthentication.authenticate")
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
-    def test_private_header_added_when_is_valid_non_public_request_is_true(
+    def test_private_header_added_when_valid_jwt(
         self,
         mock_request_serializer_class: mock.MagicMock,
         mock_response_class: mock.MagicMock,
-        spy_is_valid_non_public_request: mock.MagicMock,
-    ):
+        mock_backend_auth_authenticate: mock.MagicMock
+        ):
         """
-        Given `_is_valid_non_public_request()` returns True
+        Given `backend.JSONWebTokenAuthentication.authenticate()` returns True
         When `get()` is called
         Then the response contains Cache-Control: private, no-cache
         """
         # Given
-        spy_is_valid_non_public_request.return_value = True
+        mock_backend_auth_authenticate.return_value = True
 
         mocked_request = mock.MagicMock()
 
@@ -124,22 +87,20 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         response = base_view.get(mocked_request)
 
         # Then
-        spy_is_valid_non_public_request.assert_called_once_with(request=mocked_request)
+        mock_backend_auth_authenticate.assert_called_once_with(mocked_request)
         mocked_response.__setitem__.assert_called_once_with(
             "Cache-Control", "private, no-cache"
         )
         assert response == mocked_response
 
-    @mock.patch(
-        "public_api.views.base.BaseNestedAPITimeSeriesView._is_valid_non_public_request"
-    )
+    @mock.patch("public_api.views.base.backend.JSONWebTokenAuthentication.authenticate")
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
         self,
         mock_request_serializer_class: mock.MagicMock,
         mock_response_class: mock.MagicMock,
-        spy_is_valid_non_public_request: mock.MagicMock,
+        mock_backend_auth_authenticate: mock.MagicMock,
     ):
         """
         Given `_is_valid_non_public_request()` returns False
@@ -147,7 +108,7 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         Then the response does NOT contain a private Cache-Control header
         """
         # Given
-        spy_is_valid_non_public_request.return_value = False
+        mock_backend_auth_authenticate.return_value = False
 
         mocked_request = mock.MagicMock()
 
@@ -172,6 +133,6 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         response = base_view.get(mocked_request)
 
         # Then
-        spy_is_valid_non_public_request.assert_called_once_with(request=mocked_request)
+        mock_backend_auth_authenticate.assert_called_once_with(mocked_request)
         mocked_response.__setitem__.assert_not_called()
         assert response == mocked_response
