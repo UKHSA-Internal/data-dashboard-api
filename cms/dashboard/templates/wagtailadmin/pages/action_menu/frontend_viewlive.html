@@ -1,8 +1,6 @@
 {% load wagtailadmin_tags %}
 {% if url %}
     <a id="viewlive-btn" class="button" data-url="{{ url }}" href="#" target="_blank" rel="noopener noreferrer">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</a>
-    <a id="embargo-time-btn-viewlive" class="button button-secondary embargo-modal-btn" href="#" style="margin-left: 0.5em;">Embargo Time</a>
 {% else %}
     <button id="viewlive-btn" type="submit" name="{{ name }}" value="{{ label }}" class="button">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
-    <a id="embargo-time-btn-viewlive" class="button button-secondary embargo-modal-btn" href="#" style="margin-left: 0.5em;">Embargo Time</a>
 {% endif %}

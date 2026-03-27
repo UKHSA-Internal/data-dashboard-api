@@ -1,3 +1,4 @@
+from cms.dashboard.virtual_clock import get_embargo_time
 import logging
 from collections.abc import Iterable
 
@@ -149,7 +150,7 @@ class WeatherHealthAlertsInterface:
                 refresh_date=None,
             )
 
-        if core_headline.period_end <= timezone.now():
+        if core_headline.period_end <= get_embargo_time():
             # The last refresh is considered to be when the previous period_end expired
             # In this case, we fall back to the green/normal state of metric_value=1
             refresh_date = core_headline.period_end

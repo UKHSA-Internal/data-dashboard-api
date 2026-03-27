@@ -1,3 +1,4 @@
+from cms.dashboard.virtual_clock import get_embargo_time
 from datetime import timedelta
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
@@ -93,25 +94,21 @@ class PreviewToFrontendRedirectView(View):
         if not perms.can_edit():
             raise PermissionDenied
 
-        now = timezone.now()
-
-        embargo_now_str = request.GET.get("embargo_now")
-        if embargo_now_str:
-            embargo_now = parse_datetime(embargo_now_str)
-            if embargo_now is None:
-                embargo_now = now
-        else:
-            embargo_now = now
+        embargo_time_str = request.GET.get("embargo_time")
+        if embargo_time_str:
+            embargo_time = parse_datetime(embargo_time_str)
 
         payload = {
             "page_id": page.pk,
             "editor_id": request.user.pk if request.user.is_authenticated else None,
-            "iat": int(now.timestamp()),
+            "iat": int(timezone.now().timestamp()),
             "exp": int(
-                (now + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()
+                (timezone.now() + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()
             ),
-            "embargo_now": int(embargo_now.timestamp()),
         }
+        
+        if embargo_time is not None:
+            payload["embargo_time"] = int(embargo_time.timestamp())
 
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
 

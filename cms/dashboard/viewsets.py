@@ -1,7 +1,11 @@
+import datetime
+from django.utils import timezone
 from typing import override
 
 from django.conf import settings
 from django.core.signing import BadSignature, SignatureExpired, loads
+from validation.shared import validate_preview_hmac_token
+from cms.dashboard.virtual_clock import set_embargo_time, clear_embargo_time
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -91,27 +95,27 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
         if not auth or not auth.lower().startswith("bearer "):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        # Validate and decode token
+        # Validate and decode token using shared logic
         token = auth.split(" ", 1)[1].strip()
         try:
-            payload = loads(token, salt=PAGE_PREVIEWS_TOKEN_SALT)
-        except (BadSignature, SignatureExpired, ValueError, TypeError):
+            payload = validate_preview_hmac_token(token, page_id=pk)
+        except ValueError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        # Check token expiry
-        exp = payload.get("exp")
-        if exp is None or timezone.now().timestamp() > exp:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # If present, set embargo_time in virtual_clock 
+        embargo_time = payload.get("embargo_time")
+        if embargo_time is not None:
+            dt_utc = datetime.datetime.fromtimestamp(embargo_time, tz=datetime.timezone.utc)
+            set_embargo_time(dt_utc)
+        else:
+            # Defensive: contextvars are per-request, 
+            # but we clear embargo_time to be absolutely certain
+            clear_embargo_time()
 
         # Get page instance
         instance = self.get_queryset().filter(pk=pk).first()
         if instance is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        # Ensure token page_id matches
-        payload_page_id = payload.get("page_id")
-        if payload_page_id is None or int(payload_page_id) != int(instance.pk):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         # Return latest draft if available, else published
         latest_revision = instance.get_latest_revision()
@@ -119,6 +123,6 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
             draft_page = latest_revision.as_object()
             serializer = self.get_serializer(draft_page)
             return Response(serializer.data)
-
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        else:
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)

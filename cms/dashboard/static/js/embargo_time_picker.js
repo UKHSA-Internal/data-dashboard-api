@@ -3,7 +3,19 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     // In-memory embargo time state
+    // Set embargoTime to now on first load
     let embargoTime = null;
+    const getNowString = () => {
+        const now = new Date();
+        const pad = n => n.toString().padStart(2, '0');
+        return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    };
+    embargoTime = getNowString();
+    // Set initial label
+    const initialLabelSpan = document.getElementById('embargo-time-btn-label');
+    if (initialLabelSpan) {
+        initialLabelSpan.textContent = embargoTime;
+    }
 
     // Create modal HTML if not present
     if (!document.getElementById('embargo-time-modal')) {
@@ -12,9 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.style.display = 'none';
         modal.innerHTML = `
             <div class="embargo-modal-content">
-                <label for="embargo-time-input">Select embargo time:</label>
-                <input id="embargo-time-input" type="text" />
-                <a id="embargo-now-btn" href="#" class="button button-secondary embargo-modal-btn">Set to Now</a>
+                <label for="embargo-time-input" style="display:none;">Select embargo time:</label>
+                <input id="embargo-time-input" type="text" style="display:none;" />
+                <div id="embargo-calendar-container"></div>
                 <a id="embargo-ok-btn" href="#" class="button embargo-modal-btn">OK</a>
                 <a id="embargo-cancel-btn" href="#" class="button button-secondary embargo-modal-btn">Cancel</a>
             </div>
@@ -39,50 +51,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize flatpickr
     let embargoPicker = null;
+
+    const buildDateFromPicker = (instance) => {
+        const fallback = new Date();
+        const base = instance.selectedDates[0] || fallback;
+        const year = Number(instance.currentYear);
+        const month = Number(instance.currentMonth);
+        const day = Number(base.getDate());
+        const hours = instance.hourElement ? Number(instance.hourElement.value) : base.getHours();
+        const minutes = instance.minuteElement ? Number(instance.minuteElement.value) : base.getMinutes();
+        return new Date(year, month, day, hours, minutes, 0, 0);
+    };
+
     function showEmbargoModal(callback) {
         const modal = document.getElementById('embargo-time-modal');
-        const input = document.getElementById('embargo-time-input');
         modal.style.display = 'flex';
-        if (!embargoPicker) {
-            embargoPicker = flatpickr(input, {
-                enableTime: true,
-                dateFormat: 'Y-m-d H:i',
-                defaultDate: embargoTime ? embargoTime : new Date(),
-                allowInput: true,
-                onReady: function(selectedDates, dateStr, instance) {
-                    // Only add once
-                    if (!instance.calendarContainer.querySelector('.flatpickr-ok-btn')) {
-                        const okBtn = document.createElement('button');
-                        okBtn.type = 'button';
-                        okBtn.textContent = 'OK';
-                        okBtn.className = 'button button-small flatpickr-ok-btn';
-                        okBtn.style.margin = '8px auto 4px auto';
-                        okBtn.style.display = 'block';
-                        okBtn.onclick = function() {
-                            // Set the input value to the selected date/time
-                            if (instance.selectedDates.length > 0) {
-                                const formatted = instance.formatDate(instance.selectedDates[0], instance.config.dateFormat);
-                                input.value = formatted;
-                                embargoTime = formatted;
-                            }
-                            instance.close();
-                        };
-                        instance.calendarContainer.appendChild(okBtn);
-                    }
-                }
-            });
-        } else {
-            embargoPicker.setDate(embargoTime ? embargoTime : new Date());
-        }
-        // Set to now button
-        document.getElementById('embargo-now-btn').onclick = function () {
-            embargoPicker.setDate(new Date());
-        };
+        const calendarContainer = document.getElementById('embargo-calendar-container');
+        // Remove any previous calendar
+        calendarContainer.innerHTML = '';
+        const calendarInput = document.createElement('input');
+        calendarInput.type = 'text';
+        calendarInput.style.display = 'none';
+        calendarContainer.appendChild(calendarInput);
+        embargoPicker = flatpickr(calendarInput, {
+            enableTime: true,
+            dateFormat: 'Y-m-d H:i',
+            defaultDate: embargoTime || new Date(),
+            allowInput: false,
+            inline: true,
+            onReady: function(selectedDates, dateStr, instance) {
+                // Ensure there is always a selected datetime when modal opens.
+                instance.setDate(embargoTime || new Date(), true);
+            }
+        });
         // OK button
         document.getElementById('embargo-ok-btn').onclick = function () {
-            embargoTime = input.value;
+            // Commit the datetime represented by current picker state.
+            const selectedDate = buildDateFromPicker(embargoPicker);
+            const formatted = embargoPicker.formatDate(selectedDate, embargoPicker.config.dateFormat);
+            embargoTime = formatted;
             modal.style.display = 'none';
-            callback(input.value);
+            // Set alt text (title) and label on the button
+            const embargoBtn = document.getElementById('embargo-time-btn-preview');
+            const labelSpan = document.getElementById('embargo-time-btn-label');
+            if (embargoBtn) {
+                embargoBtn.title = embargoTime ? `Set value: ${embargoTime}` : 'No embargo time set';
+            }
+            if (labelSpan) {
+                labelSpan.textContent = embargoTime;
+            }
+            callback(embargoTime);
         };
         // Cancel button
         document.getElementById('embargo-cancel-btn').onclick = function () {
@@ -99,22 +117,31 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             showEmbargoModal(function (selected) {
                 // embargoTime is already set in showEmbargoModal
+                embargoBtn.title = embargoTime ? `Set value: ${embargoTime}` : 'No embargo time set';
+                const labelSpan = document.getElementById('embargo-time-btn-label');
+                if (labelSpan) {
+                    labelSpan.textContent = embargoTime;
+                }
             });
         });
         actionBtn.addEventListener('click', function (e) {
-            // Always use the current embargoTime (may be null)
-            if (embargoTime) {
-                let url = actionBtn.getAttribute(urlAttr);
-                const sep = url.includes('?') ? '&' : '?';
-                url += sep + 'embargo_now=' + encodeURIComponent(embargoTime);
-                window.location.href = url;
-                e.preventDefault();
+            // Always use the current embargoTime (default to now if not set)
+            let timeToUse = embargoTime;
+            if (!timeToUse) {
+                const now = new Date();
+                // Match flatpickr format
+                const pad = n => n.toString().padStart(2, '0');
+                timeToUse = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+                embargoTime = timeToUse;
             }
+            let url = actionBtn.getAttribute(urlAttr);
+            const sep = url.includes('?') ? '&' : '?';
+            url += sep + 'embargo_time=' + encodeURIComponent(timeToUse);
+            window.open(url, '_blank', 'noopener');
+            e.preventDefault();
         });
     }
 
     // Example usage: update selectors as needed for your template
     attachEmbargoLogic('#embargo-time-btn-preview', '#preview-btn', 'data-url');
-    attachEmbargoLogic('#embargo-time-btn-viewlive', '#viewlive-btn', 'data-url');
-    attachEmbargoLogic('#embargo-time-btn-viewlive-modal', '#viewlive-btn-modal', 'data-url');
 });

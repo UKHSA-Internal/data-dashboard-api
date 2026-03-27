@@ -1,3 +1,4 @@
+from cms.dashboard.virtual_clock import get_embargo_time
 """
 This file contains the custom QuerySet and Manager classes associated with the `CoreTimeSeries` model.
 
@@ -451,7 +452,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             The filtered queryset which excludes emargoed data
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
@@ -494,7 +495,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        current_time = timezone.now()
+        from cms.dashboard.virtual_clock import get_embargo_time
+        current_time = get_embargo_time()
         try:
             return (
                 self.filter(metric__name__in=metrics, embargo__lte=current_time)
