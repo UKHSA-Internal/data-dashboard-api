@@ -745,7 +745,7 @@ class Command(BaseCommand):
                         "geography": geography["name"],
                         "geography_code": geography["geography_code"],
                         "age": "all",
-                        "sex": random.choice(SEED_RANDOM_SEX_OPTIONS),  # noqa: S311
+                        "sex": random.choice(SEED_RANDOM_SEX_OPTIONS),  # nosec
                         "stratum": "default",
                         "refresh_date": refresh_date,
                         "time_series": time_series_rows,
