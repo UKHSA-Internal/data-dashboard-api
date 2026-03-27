@@ -733,6 +733,9 @@ class Command(BaseCommand):
                         }
                     )
 
+                sex_value = random.choice(
+                    SEED_RANDOM_SEX_OPTIONS
+                )  # noqa: S311  # nosec B311
                 payloads.append(
                     {
                         "parent_theme": theme_name,
@@ -745,9 +748,7 @@ class Command(BaseCommand):
                         "geography": geography["name"],
                         "geography_code": geography["geography_code"],
                         "age": "all",
-                        "sex": random.choice(
-                            SEED_RANDOM_SEX_OPTIONS
-                        ),  # noqa: S311  # nosec B311
+                        "sex": sex_value,
                         "stratum": "default",
                         "refresh_date": refresh_date,
                         "time_series": time_series_rows,
