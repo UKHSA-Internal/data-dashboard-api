@@ -95,7 +95,7 @@ class Command(BaseCommand):
         selected_seed = (
             options["seed"] if options["seed"] is not None else int(time.time())
         )
-        random.seed(selected_seed)  # nosec B311
+        random.seed(selected_seed)  # noqa: S311  # nosec
         self.stdout.write(f"Seed used: {selected_seed}")
 
         should_seed_cms = dataset in {"cms", "both"}
@@ -649,13 +649,13 @@ class Command(BaseCommand):
         for geography in geographies:
             for day_offset in range(days):
                 current_date = start_date + timedelta(days=day_offset)
-                base_value = random.uniform(5.0, 250.0)  # nosec
+                base_value = random.uniform(5.0, 250.0)  # noqa: S311  # nosec
                 metric_value = round(
                     base_value
-                    + random.uniform(-10.0, 10.0),  # nosec
+                    + random.uniform(-10.0, 10.0),  # noqa: S311  # nosec
                     2,
                 )
-                sex = random.choice(SEED_RANDOM_SEX_OPTIONS)  # nosec
+                sex = random.choice(SEED_RANDOM_SEX_OPTIONS)  # noqa: S311  # nosec
                 epidemiological_week = current_date.isocalendar().week
 
                 yield (
@@ -720,7 +720,7 @@ class Command(BaseCommand):
                 for day_offset in range(scale_config["days"]):
                     current_date = start_date + timedelta(days=day_offset)
                     metric_value = round(
-                        random.uniform(5.0, 250.0),  # nosec
+                        random.uniform(5.0, 250.0),  # noqa: S311  # nosec
                         2,
                     )
                     time_series_rows.append(
@@ -745,7 +745,7 @@ class Command(BaseCommand):
                         "geography": geography["name"],
                         "geography_code": geography["geography_code"],
                         "age": "all",
-                        "sex": random.choice(SEED_RANDOM_SEX_OPTIONS),  # nosec
+                        "sex": random.choice(SEED_RANDOM_SEX_OPTIONS),  # noqa: S311  # nosec
                         "stratum": "default",
                         "refresh_date": refresh_date,
                         "time_series": time_series_rows,
