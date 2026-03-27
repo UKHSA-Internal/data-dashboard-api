@@ -24,7 +24,7 @@ def _build_timeseries_ingestion_payloads(
                 current_date = start_date + timedelta(days=day_offset)
 
                 metric_value = round(
-                    random.uniform(5.0, 250.0),  # noqa: S311
+                    random.uniform(5.0, 250.0),  # noqa: B311
                     2,
                 )
 
@@ -38,7 +38,6 @@ def _build_timeseries_ingestion_payloads(
                     }
                 )
 
-            # ✅ FIX: move random.choice OUTSIDE dict
             sex_value = random.choice(SEED_RANDOM_SEX_OPTIONS)  # noqa: S311
 
             payloads.append(
