@@ -733,9 +733,7 @@ class Command(BaseCommand):
                         }
                     )
 
-                sex_value = random.choice(
-                    SEED_RANDOM_SEX_OPTIONS
-                )  # noqa: S311  # nosec B311
+                sex_value = random.choice(SEED_RANDOM_SEX_OPTIONS)  # noqa: S311  # nosec B311
                 payloads.append(
                     {
                         "parent_theme": theme_name,
