@@ -47,16 +47,10 @@ class SubplotParametersSerializer(serializers.Serializer):
         subplot_theme = data.get("theme")
         subplot_sub_theme = data.get("sub_theme")
         if not subplot_theme and not chart_theme:
-            msg = (
-                "'theme' must be specified at either "
-                "subplot_parameters or chart_parameters level"
-            )
+            msg = "'theme' must be specified at either subplot_parameters or chart_parameters level"
             raise serializers.ValidationError(msg)
         if not subplot_sub_theme and not chart_sub_theme:
-            msg = (
-                "'sub_theme' must be specified at either "
-                "subplot_parameters or chart_parameters level"
-            )
+            msg = "'sub_theme' must be specified at either subplot_parameters or chart_parameters level"
             raise serializers.ValidationError(msg)
         return data
 

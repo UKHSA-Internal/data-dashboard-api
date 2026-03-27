@@ -7,7 +7,6 @@ from metrics.data.models.rbac_models import help_texts
 
 
 class RBACGroupPermission(models.Model):
-
     class Meta:
         db_table = "rbac_group_permissions"
 

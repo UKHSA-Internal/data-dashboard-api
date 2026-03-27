@@ -36,7 +36,6 @@ THIRD_CHART_BASE_Y = 0.6
 
 
 class SubplotChartSettings(ChartSettings):
-
     def __init__(self, *, chart_generation_payload: SubplotChartGenerationPayload):
         super().__init__(chart_generation_payload=chart_generation_payload)
         self.subplot_data: SubplotGenerationData = chart_generation_payload.subplot_data

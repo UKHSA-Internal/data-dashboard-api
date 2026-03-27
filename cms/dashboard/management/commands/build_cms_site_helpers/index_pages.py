@@ -4,9 +4,7 @@ from cms.topic.models import TopicPage
 def create_respiratory_viruses_index_page_body() -> list[dict]:
     covid_page = TopicPage.objects.get(slug="covid-19")
     influenza_page = TopicPage.objects.get(slug="influenza")
-    other_respiratory_viruses_page = TopicPage.objects.get(
-        slug="other-respiratory-viruses"
-    )
+    other_respiratory_viruses_page = TopicPage.objects.get(slug="other-respiratory-viruses")
 
     return [
         {
@@ -45,9 +43,7 @@ def create_respiratory_viruses_index_page_body() -> list[dict]:
 
 
 def create_cover_index_page_body() -> list[dict]:
-    childhood_vaccinations_topic_page = TopicPage.objects.get(
-        slug="childhood-vaccinations"
-    )
+    childhood_vaccinations_topic_page = TopicPage.objects.get(slug="childhood-vaccinations")
     return [
         {
             "type": "text",

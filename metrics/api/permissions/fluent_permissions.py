@@ -12,7 +12,7 @@ def validate_permissions_for_non_public(
     metric: str,
     geography: str,
     geography_type: str,
-    rbac_permissions: Iterable[RBACPermission]
+    rbac_permissions: Iterable[RBACPermission],
 ) -> bool:
     """Compares the given data parameters to see if the `rbac_permissions` allow access to the non-public data
 

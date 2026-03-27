@@ -50,7 +50,7 @@ class WeatherHealthAlertsInterface:
             geography_code: self._parse_core_headline_as_alarm_state(
                 topic=topic, core_headline=core_headline
             )
-            for geography_code, core_headline, in headlines_mapping.items()
+            for geography_code, core_headline in headlines_mapping.items()
         }
 
         alarm_states = {

@@ -77,9 +77,7 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
     return page
 
 
-def _create_index_page(
-    *, page_data: dict, parent_page: Page, create_index_page_body_func: Callable
-) -> CompositePage:
+def _create_index_page(*, page_data: dict, parent_page: Page, create_index_page_body_func: Callable) -> CompositePage:
     index_page_body: list[dict] = create_index_page_body_func()
 
     page = CompositePage(
@@ -134,7 +132,7 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
         is_public=data["is_public"],
-        page_classification=data["page_classification"]
+        page_classification=data["page_classification"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -198,9 +196,7 @@ def _get_or_create_button_id() -> int:
     return internal_button_snippet.id
 
 
-def _add_download_button_to_composite_body(
-    *, body: dict[list[dict]]
-) -> dict[list[dict]]:
+def _add_download_button_to_composite_body(*, body: dict[list[dict]]) -> dict[list[dict]]:
     body.append(
         {
             "type": "internal_button",

@@ -46,7 +46,9 @@ def _fake_age() -> Age:
 
 
 def _assert_progress_messages(progress_messages: list[str]) -> None:
-    assert any(message.startswith("Processed 1/1 metrics") for message in progress_messages)
+    assert any(
+        message.startswith("Processed 1/1 metrics") for message in progress_messages
+    )
     assert any(message.startswith("Inserted ") for message in progress_messages)
 
 
@@ -256,7 +258,12 @@ class TestSeedRandomCommand:
                 sub_theme=sub_themes[1],
             ),
         ]
-        metrics = [SimpleNamespace(name=f"Metric {index + 1}", topic=topics[index % len(topics)]) for index in range(4)]
+        metrics = [
+            SimpleNamespace(
+                name=f"Metric {index + 1}", topic=topics[index % len(topics)]
+            )
+            for index in range(4)
+        ]
         geography_types = [
             SimpleNamespace(name="Nation"),
             SimpleNamespace(name="Lower Tier Local Authority"),
@@ -303,7 +310,9 @@ class TestSeedRandomCommand:
             is_public=False,
             progress_callback=spy_progress_callback,
         )
-        spy_progress_callback.assert_any_call("Preparing metric taxonomy and geography records...")
+        spy_progress_callback.assert_any_call(
+            "Preparing metric taxonomy and geography records..."
+        )
         spy_progress_callback.assert_any_call("Generating Core/API time series rows...")
 
     def test_truncate_metrics_data_deletes_from_all_models(self):
@@ -325,7 +334,9 @@ class TestSeedRandomCommand:
             for model_name in model_names:
                 manager = mock.MagicMock()
                 managers[model_name] = manager
-                stack.enter_context(mock.patch(f"{MODULE_PATH}.{model_name}.objects", manager))
+                stack.enter_context(
+                    mock.patch(f"{MODULE_PATH}.{model_name}.objects", manager)
+                )
 
             Command._truncate_metrics_data()
 
@@ -365,7 +376,9 @@ class TestSeedRandomCommand:
         assert spy_api_time_series.call_args.kwargs["sex"] == "f"
         assert spy_core_time_series.call_args.kwargs["is_public"] is False
         assert spy_api_time_series.call_args.kwargs["is_public"] is False
-        progress_messages = [call.args[0] for call in spy_progress_callback.call_args_list]
+        progress_messages = [
+            call.args[0] for call in spy_progress_callback.call_args_list
+        ]
         _assert_progress_messages(progress_messages)
 
     @mock.patch(f"{MODULE_PATH}.APITimeSeries")
@@ -460,7 +473,10 @@ def test_build_theme_hierarchy_records_contains_expected_real_values():
 
     assert "infectious_disease" in theme_names
     assert any(sub_theme == "respiratory" for sub_theme, _ in sub_theme_rows)
-    assert any(topic == "COVID-19" and sub_theme == "respiratory" for topic, sub_theme, _ in topic_rows)
+    assert any(
+        topic == "COVID-19" and sub_theme == "respiratory"
+        for topic, sub_theme, _ in topic_rows
+    )
 
 
 def test_build_theme_hierarchy_records_skips_unmatched_topic_group():
@@ -488,7 +504,9 @@ def test_build_geography_seed_values_returns_required_count():
 
 
 def test_format_enum_name_replaces_underscores_and_title_cases():
-    assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == ("Lower Tier Local Authority")
+    assert Command._format_enum_name("LOWER_TIER_LOCAL_AUTHORITY") == (
+        "Lower Tier Local Authority"
+    )
 
 
 @mock.patch.object(Command, "_upsert_topics")
@@ -663,7 +681,9 @@ def test_seed_geographies_creates_missing_types_and_geographies(
 
     result = Command._seed_geographies(count=2)
 
-    assert [(geography.name, geography.geography_type.name) for geography in result] == [
+    assert [
+        (geography.name, geography.geography_type.name) for geography in result
+    ] == [
         ("England", "Nation"),
         ("Area 2", "Lower Tier Local Authority"),
     ]
@@ -798,7 +818,9 @@ def test_seed_metrics_data_to_s3_uploads_payloads_and_returns_counts(
         key="in/key.json",
         payload=payload,
     )
-    spy_progress_callback.assert_any_call("Generating ingestion payloads for S3 upload...")
+    spy_progress_callback.assert_any_call(
+        "Generating ingestion payloads for S3 upload..."
+    )
     spy_progress_callback.assert_any_call("Uploaded 1 files to ingest bucket in/.")
 
 
@@ -860,4 +882,6 @@ def test_build_s3_object_key_builds_expected_file_name():
 
     result = Command._build_s3_object_key(payload=payload, payload_index=7)
 
-    assert result == ("in/covid_19_cases_covid_19_cases_randombyday_1_E92000001_all_f_default_7.json")
+    assert result == (
+        "in/covid_19_cases_covid_19_cases_randombyday_1_E92000001_all_f_default_7.json"
+    )

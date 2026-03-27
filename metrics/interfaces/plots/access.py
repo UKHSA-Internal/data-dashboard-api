@@ -37,10 +37,7 @@ class DataNotFoundForPlotError(Exception):
 
 class DataNotFoundForAnyPlotError(Exception):
     def __init__(self):
-        message = (
-            "No data was found for the plot(s) requested, "
-            "please review the request parameters of each plot provided."
-        )
+        message = "No data was found for the plot(s) requested, please review the request parameters of each plot provided."
         super().__init__(message)
 
 

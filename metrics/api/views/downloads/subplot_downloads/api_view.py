@@ -106,7 +106,7 @@ class SubplotDownloadsView(DownloadsView):
         metric_group: str,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         response: HttpResponse,
-        headers: list[str] | None
+        headers: list[str] | None,
     ) -> None:
         if DataSourceFileType[metric_group].is_headline:
             serializer = self._get_serializer_class(
