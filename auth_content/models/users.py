@@ -13,12 +13,16 @@ class User(models.Model):
             )
         ],
     )
+    
     permission_set = StreamField(
         [
-            ("section", PermissionSetChoiceBlock(required=True)),
+            ("section", PermissionSetChoiceBlock()),
+            
         ],
         use_json_field=True,
+        
     )
+
     panels = [
         FieldPanel("user_entra_id"),
         FieldPanel("permission_set"),

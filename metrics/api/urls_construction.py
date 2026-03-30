@@ -45,6 +45,7 @@ from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
 from metrics.api.views.permission_sets import (
     MetricsByTopicView,
+    PermissionSetChoicesView,
     SubThemesByThemeView,
     TopicsBySubThemeView,
 )
@@ -158,6 +159,12 @@ private_api_urlpatterns = [
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
     ),
+    path(
+        f"{API_PREFIX}permission-set/all",
+        PermissionSetChoicesView.as_view(),
+        name="permission_sets_choices",
+    ),
+
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(

@@ -4,6 +4,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from auth_content.models.permission_sets import PermissionSet
 from metrics.api.serializers.permission_sets import (
     MetricRequestSerializer,
     PermissionSetResponseSerializer,
@@ -63,3 +64,24 @@ class MetricsByTopicView(APIView):
         serializer = MetricRequestSerializer(data={"topic_id": topic_id})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
+
+
+@extend_schema(
+    request=None,
+    tags=[PERMISSION_SETS_API_TAG],
+    responses={HTTPStatus.OK.value: PermissionSetResponseSerializer},
+)
+class PermissionSetChoicesView(APIView):
+    """API endpoint to fetch PermissionSet dropdown options."""
+
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        """API endpoint to fetch permission sets in [[id, name], ...] pairs for a dropdown."""
+        choices = [
+            [str(p.id), p.name]
+            for p in PermissionSet.objects.all().order_by("name")
+        ]
+
+        response_data = {"choices": choices}
+        return Response(response_data, status=HTTPStatus.OK)

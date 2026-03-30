@@ -319,7 +319,7 @@
       !geographyType ||
       !geography
     ) {
-      console.error("Permission set dropdowns not found on this page");
+      console.warn("Permission set dropdowns not found on this page");
       return;
     }
 
