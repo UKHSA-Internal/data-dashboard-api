@@ -3,6 +3,8 @@ from unittest import mock
 
 import pytest
 
+from django.core.exceptions import ValidationError
+
 from cms.topic.models import TopicPage
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
@@ -11,6 +13,34 @@ from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties im
 )
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
+from wagtail.search.index import SearchField
+
+
+class TestTopicPage:
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "page_description",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `TopicPage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        blank_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        # When
+        search_fields: list[SearchField] = blank_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields
 
 
 class TestTemplateCOVID19Page:
@@ -658,3 +688,93 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
+
+
+class TestCleanMethod:
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_public_error_raised_if_invalid_classification(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When no page classification is given.
+        Then a `ValidationError` is raised.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = False
+        fake_covid_topic_page.page_classification = None
+
+        # When/Then
+        with pytest.raises(ValidationError):
+            fake_covid_topic_page.clean()
+
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_public_page_clears_page_classification(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is True (i.e the page is a public page).
+        When a page classification is given.
+        Then the page classification level is cleared.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = True
+        fake_covid_topic_page.page_classification = "official"
+
+        # When
+        fake_covid_topic_page.clean()
+
+        # Then
+        assert fake_covid_topic_page.page_classification is None
+
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_non_public_page_doesnt_clean_page_classification(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When a page classification is given.
+        Then the page classification level is kept.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = False
+        fake_covid_topic_page.page_classification = "official"
+
+        # When
+        fake_covid_topic_page.clean()
+
+        # Then
+        assert fake_covid_topic_page.page_classification == "official"

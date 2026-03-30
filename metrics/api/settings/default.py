@@ -50,6 +50,7 @@ if config.APP_MODE != "INGESTION":
         "rest_framework",
         "drf_spectacular",
         "metrics.api",
+        "cms.acknowledgement",
         "cms.home",
         "cms.topic",
         "cms.topics_list",
@@ -111,11 +112,18 @@ TEMPLATES = [
     },
 ]
 
+COGNITO_USER_MANAGER = "common.auth.cognito_jwt.user_manager.CognitoManager"
+COGNITO_AWS_REGION = config.COGNITO_AWS_REGION
+COGNITO_USER_POOL = config.COGNITO_USER_POOL
+COGNITO_AUDIENCE = None
+COGNITO_PUBLIC_KEYS_CACHING_ENABLED = True
+COGNITO_PUBLIC_KEYS_CACHING_TIMEOUT = 60 * 60 * 24  # 24h caching, default is 300s
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
+        "common.auth.cognito_jwt.JSONWebTokenAuthentication",
     ],
 }
 

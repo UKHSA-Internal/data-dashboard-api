@@ -4,6 +4,7 @@ from unittest import mock
 from wagtail.api.conf import APIField
 
 from cms.dashboard.models import UKHSAPage
+from cms.home.models.landing_page import LandingPageRelatedLink
 from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
 
 
@@ -66,6 +67,19 @@ class TestBlankLandingPage:
 
         # When / Then
         assert hasattr(blank_page, expected_content_panel)
+
+    def test_landing_page_related_link_body_is_optional(self) -> None:
+        """
+        Given the `LandingPageRelatedLink` model
+        When inspecting the `body` field
+        Then the field allows blank and null values
+        """
+        # Given / When
+        body_field = LandingPageRelatedLink._meta.get_field("body")
+
+        # Then
+        assert body_field.blank is True
+        assert body_field.null is True
 
     def test_is_previewable_returns_false(self):
         """

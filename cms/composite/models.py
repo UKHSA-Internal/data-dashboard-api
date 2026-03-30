@@ -47,7 +47,7 @@ class CompositePage(UKHSAPage):
     )
 
     search_fields = UKHSAPage.search_fields + [
-        index.SearchField("body"),
+        index.SearchField("page_description"),
     ]
 
     content_panels = UKHSAPage.content_panels + [

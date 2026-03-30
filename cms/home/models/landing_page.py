@@ -124,3 +124,4 @@ class LandingPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
         LandingPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
+    body = RichTextField(features=[], blank=True, null=True)

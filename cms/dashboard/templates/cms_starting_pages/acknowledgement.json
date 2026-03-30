@@ -1,0 +1,33 @@
+{
+  "id": 30,
+  "meta": {
+    "seo_title": "Accessing official sensitive data | UKHSA data dashboard",
+    "search_description": "Acknowledgement required to access the dashboard",
+    "type": "common.AcknowledgementPage",
+    "detail_url": "http://localhost/api/pages/30/",
+    "html_url": null,
+    "slug": "acknowledgement",
+    "show_in_menus": false,
+    "first_published_at": "2026-02-18T15:32:35.177836+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "cms.acknowledgement",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Data Dashboard Acknowledgement"
+    }
+  },
+  "title": "Accessing official sensitive data",
+  "body": "<div class=\"govuk-!-margin-bottom-6\">\n  <p>By accessing this dashboard you agree to:</p>\n  <ul class=\"govuk-list govuk-list--bullet text-xl\">\n    <li>Not share any content with persons that do not have permission to access the none public dashboard</li>\n    <li>Not distribute or share any content from the none public dashboard online</li>\n    <li>Not leave your workstation un-attended whilst logged into the dashboard</li>\n    <li>Only connect using secure networks whilst accessing the none public dashboard</li>\n    <li>Ensure the environment you are working in is secure and your screen is not visible to others</li>\n  </ul>\n  <a href=\"#terms\" class=\"govuk-link text-xl\">\n    Read full terms of service here\n  </a>\n</div>",
+  "i_agree_checkbox": "I agree to the terms of service",
+  "terms_of_service_link_text": "Read the terms of service",
+  "terms_of_service_link": "https://example.com/terms-of-service",
+  "terms_of_service_error": "Please accept the terms of service",
+  "disagree_button": "I do not agree",
+  "agree_button": "I agree",
+  "last_published_at": "2026-02-18T15:32:35.177836+01:00",
+  "related_links": []
+}
