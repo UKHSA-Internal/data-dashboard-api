@@ -10,6 +10,7 @@ click==8.3.1
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
+cryptography==46.0.6
 defusedxml==0.7.1
 distlib==0.4.0
 django-cors-headers==4.8.0
@@ -58,6 +59,7 @@ Pillow==12.1.1
 platformdirs==4.9.4
 plotly==6.6.0
 pluggy==1.6.0
+pyjwt==2.12.1
 pyparsing==3.3.2
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
@@ -79,7 +81,7 @@ soupsieve==2.8.3
 sqlparams==6.2.0
 telepath==0.3.1
 toml==0.10.2
-tomli==2.4.0
+tomli==2.4.1
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.6.3

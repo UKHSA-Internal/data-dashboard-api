@@ -141,6 +141,7 @@ class Command(BaseCommand):
 
     @classmethod
     def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
+        build_cms_site_helpers.create_common_page(name="start", parent_page=root_page)
         build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
         build_cms_site_helpers.create_common_page(name="location_based_data", parent_page=root_page)
         build_cms_site_helpers.create_common_page(name="whats_coming", parent_page=root_page)
