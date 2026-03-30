@@ -29,7 +29,8 @@ class TestEmbargoMiddleware:
 
         spy_validate_token.assert_called_once_with("validtoken")
         spy_set_embargo_time.assert_called_once_with(
-            datetime.datetime.fromtimestamp(1, tz=datetime.timezone.utc)
+            1,
+            token="validtoken",
         )
         assert spy_clear_embargo_time.call_count == 2
 
@@ -75,10 +76,35 @@ class TestEmbargoMiddleware:
 
         response = middleware(request)
 
-        assert response == {"ok": True}
+        assert response.status_code == 401
+        assert response.json() == {"detail": "The token was invalid"}
         spy_validate_token.assert_called_once_with("invalidtoken")
         spy_set_embargo_time.assert_not_called()
-        assert spy_clear_embargo_time.call_count == 2
+        assert spy_clear_embargo_time.call_count == 1
+
+    @mock.patch(f"{MODULE_PATH}.clear_embargo_time")
+    @mock.patch(f"{MODULE_PATH}.set_embargo_time")
+    @mock.patch(f"{MODULE_PATH}.validate_preview_hmac_token")
+    def test_returns_401_when_auth_header_is_not_bearer(
+        self,
+        spy_validate_token: mock.MagicMock,
+        spy_set_embargo_time: mock.MagicMock,
+        spy_clear_embargo_time: mock.MagicMock,
+    ):
+        request = mock.MagicMock()
+        request.path = "/api/pages/1/"
+        request.headers = {"x-cms-auth": "Token abc"}
+
+        get_response = mock.Mock(return_value={"ok": True})
+        middleware = EmbargoMiddleware(get_response=get_response)
+
+        response = middleware(request)
+
+        assert response.status_code == 401
+        assert response.json() == {"detail": "The token was invalid"}
+        spy_validate_token.assert_not_called()
+        spy_set_embargo_time.assert_not_called()
+        assert spy_clear_embargo_time.call_count == 1
 
     @mock.patch(f"{MODULE_PATH}.clear_embargo_time")
     @mock.patch(f"{MODULE_PATH}.set_embargo_time")

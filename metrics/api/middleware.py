@@ -1,9 +1,8 @@
-import datetime
-
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from cms.dashboard.virtual_clock import clear_embargo_time, set_embargo_time
 from validation.shared import (
+    CMS_AUTH_HEADER,
     get_cms_auth_payload,
     get_cms_auth_bearer_token,
     validate_preview_hmac_token,
@@ -18,6 +17,8 @@ class EmbargoMiddleware:
         - Context is always cleared after the request completes.
     """
 
+    INVALID_TOKEN_DETAIL = {"detail": "The token was invalid"}
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -25,7 +26,9 @@ class EmbargoMiddleware:
         # Defensive reset in case a worker thread is reused.
         clear_embargo_time()
         if self._is_custom_api_request(request=request):
-            self._set_embargo_time_if_header_is_valid(request=request)
+            rejection_response = self._set_embargo_time_if_header_is_valid(request=request)
+            if rejection_response is not None:
+                return rejection_response
 
         try:
             return self.get_response(request)
@@ -41,23 +44,28 @@ class EmbargoMiddleware:
         return path.startswith("/api/")
 
     @classmethod
-    def _set_embargo_time_if_header_is_valid(cls, *, request: HttpRequest) -> None:
+    def _set_embargo_time_if_header_is_valid(
+        cls, *, request: HttpRequest
+    ) -> HttpResponse | None:
         token = get_cms_auth_bearer_token(request.headers)
         if token is None:
-            return
+            has_auth_header = bool(request.headers.get(CMS_AUTH_HEADER, ""))
+            if has_auth_header:
+                return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
+            return None
 
         is_valid = validate_preview_hmac_token(token)
         if not is_valid:
-            return
+            return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
         
         payload = get_cms_auth_payload(token) or {}
 
         embargo_time = payload.get("embargo_time")
         if embargo_time is None:
-            return
+            return None
 
-        dt_utc = datetime.datetime.fromtimestamp(
-            embargo_time,
-            tz=datetime.timezone.utc,
-        )
-        set_embargo_time(dt_utc)
+        was_set = set_embargo_time(embargo_time, token=token)
+        if not was_set:
+            return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
+
+        return None

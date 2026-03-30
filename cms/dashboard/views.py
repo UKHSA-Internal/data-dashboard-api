@@ -1,4 +1,4 @@
-from cms.dashboard.virtual_clock import get_embargo_time
+from cms.dashboard.virtual_clock import get_embargo_time, parse_embargo_time_value
 from datetime import timedelta
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
@@ -98,10 +98,17 @@ class PreviewToFrontendRedirectView(View):
             raise PermissionDenied
 
         embargo_time_value = request.GET.get("embargo_time")
+        parsed_embargo_time = None
         if embargo_time_value is not None:
             embargo_time_value = embargo_time_value.strip()
-        if embargo_time_value == "":
-            embargo_time_value = None
+            if embargo_time_value == "":
+                embargo_time_value = None
+            else:
+                parsed_embargo_time = parse_embargo_time_value(embargo_time_value)
+                if parsed_embargo_time is None:
+                    embargo_time_value = None
+                elif embargo_time_value.lower() != "now":
+                    embargo_time_value = str(int(embargo_time_value))
 
         payload = {
             "page_id": page.pk,
@@ -112,12 +119,8 @@ class PreviewToFrontendRedirectView(View):
             ),
         }
         
-        if embargo_time_value not in (None, "now"):
-            try:
-                payload["embargo_time"] = int(embargo_time_value)
-            except (ValueError, TypeError):
-                # Redirect flow passes through embargo values and does not validate format.
-                pass
+        if parsed_embargo_time is not None:
+            payload["embargo_time"] = int(parsed_embargo_time.timestamp())
 
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
 
