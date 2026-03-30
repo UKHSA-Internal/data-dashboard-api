@@ -8,10 +8,11 @@ from cms.dashboard.virtual_clock import (
 )
 from validation.shared import (
     CMS_AUTH_HEADER,
-    get_cms_auth_payload,
     get_cms_auth_bearer_token,
+    get_cms_auth_payload,
     validate_preview_hmac_token,
 )
+
 
 class EmbargoMiddleware:
     """Set request-scoped embargo time when a valid CMS auth token is present.
@@ -31,7 +32,9 @@ class EmbargoMiddleware:
         # Defensive reset in case a worker thread is reused.
         clear_embargo_time()
         if self._is_custom_api_request(request=request):
-            rejection_response = self._set_embargo_time_if_header_is_valid(request=request)
+            rejection_response = self._set_embargo_time_if_header_is_valid(
+                request=request
+            )
             if rejection_response is not None:
                 return rejection_response
 
@@ -62,7 +65,7 @@ class EmbargoMiddleware:
         is_valid = validate_preview_hmac_token(token)
         if not is_valid:
             return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
-        
+
         payload = get_cms_auth_payload(token) or {}
 
         embargo_time = payload.get("embargo_time")

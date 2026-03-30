@@ -1,10 +1,9 @@
-from cms.dashboard.virtual_clock import get_embargo_time
 import logging
 from collections.abc import Iterable
 
 from django.db.models.manager import Manager
-from django.utils import timezone
 
+from cms.dashboard.virtual_clock import get_embargo_time
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.weather_health_alerts.state import WeatherHealthAlarmState
 

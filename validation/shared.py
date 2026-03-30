@@ -1,15 +1,18 @@
 import typing as t
+
 from django.conf import settings
-from django.core.signing import loads, BadSignature, SignatureExpired
+from django.core.signing import BadSignature, SignatureExpired, loads
 from django.utils import timezone
 
-PAGE_PREVIEWS_TOKEN_SALT = getattr(settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token")
+PAGE_PREVIEWS_TOKEN_SALT = getattr(
+    settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token"
+)
 CMS_AUTH_HEADER = "x-cms-auth"
 
 
 def get_cms_auth_bearer_token(
     headers: t.Mapping[str, str],
-) -> t.Optional[str]:
+) -> str | None:
     """Extract Bearer token from the x-cms-auth header.
 
     Returns None if the header is missing or not in Bearer format.
@@ -21,7 +24,7 @@ def get_cms_auth_bearer_token(
     return auth_header.split(" ", 1)[1].strip()
 
 
-def get_cms_auth_payload(token: str) -> t.Optional[dict]:
+def get_cms_auth_payload(token: str) -> dict | None:
     """Decode CMS auth token payload.
 
     Returns None for invalid or malformed tokens.
@@ -37,7 +40,7 @@ def get_cms_auth_payload(token: str) -> t.Optional[dict]:
     return payload
 
 
-def validate_preview_hmac_token(token: str, *, page_id: t.Optional[int] = None) -> bool:
+def validate_preview_hmac_token(token: str, *, page_id: int | None = None) -> bool:
     """
     Validate and decode a CMS auth token. Optionally checks page_id.
     Returns True if valid, otherwise False.
@@ -56,6 +59,7 @@ def validate_preview_hmac_token(token: str, *, page_id: t.Optional[int] = None) 
             return False
 
     return True
+
 
 def format_child_and_parent_theme_name(name: str) -> str:
     """Naming of themes can sometimes use a `-` rather than `_` in their naming

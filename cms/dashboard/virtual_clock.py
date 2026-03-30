@@ -2,12 +2,15 @@ import contextvars
 import datetime
 import logging
 import typing as t
-from typing import Optional
+
 from django.conf import settings
 from django.utils import timezone
+
 from validation.shared import validate_preview_hmac_token
 
-_embargo_time_ctx: contextvars.ContextVar[Optional[datetime.datetime]] = contextvars.ContextVar("embargo_time", default=None)
+_embargo_time_ctx: contextvars.ContextVar[datetime.datetime | None] = (
+    contextvars.ContextVar("embargo_time", default=None)
+)
 logger = logging.getLogger(__name__)
 
 
@@ -18,7 +21,7 @@ class TimeTravelNotSupportedError(Exception):
 TIME_TRAVEL_NOT_SUPPORTED_MESSAGE = '"Time Travel" is not supported on this server.'
 
 
-def parse_embargo_time_value(embargo_time_value: t.Any) -> Optional[datetime.datetime]:
+def parse_embargo_time_value(embargo_time_value: t.Any) -> datetime.datetime | None:
     """Parse embargo time value into a timezone-aware datetime.
 
     Accepted values:
@@ -41,7 +44,7 @@ def parse_embargo_time_value(embargo_time_value: t.Any) -> Optional[datetime.dat
         return None
 
     try:
-        return datetime.datetime.fromtimestamp(epoch_seconds, tz=datetime.timezone.utc)
+        return datetime.datetime.fromtimestamp(epoch_seconds, tz=datetime.UTC)
     except (OverflowError, OSError, ValueError):
         return None
 
@@ -70,7 +73,7 @@ def set_embargo_time(embargo_time_value: object, *, token: str) -> bool:
 
 def get_embargo_time() -> "datetime.datetime":
     """Return the embargo_time for the current request context.
-       Falls back to timezone.now().
+    Falls back to timezone.now().
     """
     embargo_time = _embargo_time_ctx.get()
     if isinstance(embargo_time, datetime.datetime):

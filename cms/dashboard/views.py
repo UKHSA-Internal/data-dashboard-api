@@ -1,4 +1,3 @@
-from cms.dashboard.virtual_clock import get_embargo_time, parse_embargo_time_value
 from datetime import timedelta
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
@@ -12,6 +11,8 @@ from django.utils import timezone
 from django.views import View
 from wagtail.admin.views.chooser import BrowseView
 from wagtail.models import Page
+
+from cms.dashboard.virtual_clock import parse_embargo_time_value
 
 # Token salt for preview tokens; configurable via Django settings to avoid
 # hard-coded strings in code.
@@ -43,7 +44,12 @@ class PreviewToFrontendRedirectView(View):
 
     @staticmethod
     def _canonicalise_preview_url(
-        *, raw_url: str, slug: str, token: str, page_id: int, embargo_time_value: str | None = None
+        *,
+        raw_url: str,
+        slug: str,
+        token: str,
+        page_id: int,
+        embargo_time_value: str | None = None
     ) -> str:
         """Return preview URL with canonical query params.
 
@@ -101,7 +107,7 @@ class PreviewToFrontendRedirectView(View):
         parsed_embargo_time = None
         if embargo_time_value is not None:
             embargo_time_value = embargo_time_value.strip()
-            if embargo_time_value == "":
+            if not embargo_time_value:
                 embargo_time_value = None
             else:
                 parsed_embargo_time = parse_embargo_time_value(embargo_time_value)
@@ -115,10 +121,12 @@ class PreviewToFrontendRedirectView(View):
             "editor_id": request.user.pk if request.user.is_authenticated else None,
             "iat": int(timezone.now().timestamp()),
             "exp": int(
-                (timezone.now() + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)).timestamp()
+                (
+                    timezone.now() + timedelta(seconds=self.PREVIEW_TOKEN_TTL_SECONDS)
+                ).timestamp()
             ),
         }
-        
+
         if parsed_embargo_time is not None:
             payload["embargo_time"] = int(parsed_embargo_time.timestamp())
 

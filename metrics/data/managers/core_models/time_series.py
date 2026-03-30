@@ -6,14 +6,13 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
-from cms.dashboard.virtual_clock import get_embargo_time
 from collections.abc import Iterable
 from typing import Self
 
 from django.db import models
 from django.db.models.query_utils import Q
-from django.utils import timezone
 
+from cms.dashboard.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
@@ -495,7 +494,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        
+
         current_time = get_embargo_time()
         try:
             return (

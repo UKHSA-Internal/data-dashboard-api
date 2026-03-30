@@ -1,4 +1,3 @@
-from cms.dashboard.virtual_clock import get_embargo_time
 """
 This file contains the custom QuerySet and Manager classes associated with the `CoreHeadline` model.
 
@@ -11,8 +10,8 @@ from collections.abc import Iterable
 from typing import Optional, Self
 
 from django.db import models
-from django.utils import timezone
 
+from cms.dashboard.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )

@@ -1,4 +1,3 @@
-from cms.dashboard.virtual_clock import get_embargo_time
 """
 This file contains the custom QuerySet and Manager classes associated with the `APITimeSeries` model.
 
@@ -10,7 +9,8 @@ from typing import Self
 
 from django.db import models
 from django.db.models.functions.window import Rank
-from django.utils import timezone
+
+from cms.dashboard.virtual_clock import get_embargo_time
 
 
 class APITimeSeriesQuerySet(models.QuerySet):

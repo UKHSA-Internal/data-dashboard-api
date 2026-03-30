@@ -264,7 +264,9 @@ class TestPreviewToFrontendRedirectView:
 
         view = PreviewToFrontendRedirectView()
         response = view.get(request=request, pk=1)
-        location = response.url if hasattr(response, "url") else response.get("Location")
+        location = (
+            response.url if hasattr(response, "url") else response.get("Location")
+        )
         parsed_query = parse_qs(urlparse(location).query)
 
         assert parsed_query["et"] == ["now"]
@@ -285,7 +287,9 @@ class TestPreviewToFrontendRedirectView:
 
         view = PreviewToFrontendRedirectView()
         response = view.get(request=request, pk=1)
-        location = response.url if hasattr(response, "url") else response.get("Location")
+        location = (
+            response.url if hasattr(response, "url") else response.get("Location")
+        )
         parsed_query = parse_qs(urlparse(location).query)
 
         assert parsed_query["et"] == ["1711456200"]

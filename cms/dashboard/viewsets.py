@@ -1,18 +1,6 @@
 from typing import override
 
 from django.conf import settings
-from django.core.signing import BadSignature, SignatureExpired, loads
-from validation.shared import (
-    get_cms_auth_payload,
-    get_cms_auth_bearer_token,
-    validate_preview_hmac_token,
-)
-from cms.dashboard.virtual_clock import (
-    TIME_TRAVEL_NOT_SUPPORTED_MESSAGE,
-    TimeTravelNotSupportedError,
-    clear_embargo_time,
-    set_embargo_time,
-)
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.request import Request
@@ -21,6 +9,17 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import ListablePageSerializer
+from cms.dashboard.virtual_clock import (
+    TIME_TRAVEL_NOT_SUPPORTED_MESSAGE,
+    TimeTravelNotSupportedError,
+    clear_embargo_time,
+    set_embargo_time,
+)
+from validation.shared import (
+    get_cms_auth_bearer_token,
+    get_cms_auth_payload,
+    validate_preview_hmac_token,
+)
 
 PAGE_PREVIEWS_TOKEN_SALT = getattr(
     settings, "PAGE_PREVIEWS_TOKEN_SALT", "preview-token"
@@ -79,7 +78,6 @@ class CMSPagesAPIViewSet(BaseCMSPagesAPIViewSet):
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
-        print('===> DEBUG: DETAIL VIEW ON CMSPages')
         return super().detail_view(request, pk)
 
 
@@ -96,7 +94,6 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
     @override
     def detail_view(self, request: Request, pk: int) -> Response:
         # Check if previews are enabled
-        print('===> DEBUG: DETAIL VIEW ON DRAFTS')
         page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)
         if not page_previews_enabled:
             return Response(
@@ -109,15 +106,19 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
         # Require Bearer token in x-cms-auth header
         token = get_cms_auth_bearer_token(request.headers)
         if token is None:
-            return Response(self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED
+            )
 
         # Validate and decode token using shared logic
         is_valid = validate_preview_hmac_token(token, page_id=pk)
         if not is_valid:
-            return Response(self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED
+            )
         payload = get_cms_auth_payload(token) or {}
 
-        # If present, set embargo_time in virtual_clock 
+        # If present, set embargo_time in virtual_clock
         embargo_time = payload.get("embargo_time")
         if embargo_time is not None:
             try:
@@ -128,9 +129,11 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
                     status=status.HTTP_501_NOT_IMPLEMENTED,
                 )
             if not was_set:
-                return Response(self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED
+                )
         else:
-            # Defensive: contextvars are per-request, 
+            # Defensive: contextvars are per-request,
             # but we clear embargo_time to be absolutely certain
             clear_embargo_time()
 
@@ -145,6 +148,5 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
             draft_page = latest_revision.as_object()
             serializer = self.get_serializer(draft_page)
             return Response(self._with_embargo_time(serializer.data, embargo_time))
-        else:
-            serializer = self.get_serializer(instance)
-            return Response(self._with_embargo_time(serializer.data, embargo_time))
+        serializer = self.get_serializer(instance)
+        return Response(self._with_embargo_time(serializer.data, embargo_time))
