@@ -41,7 +41,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set initial label
     const initialEmbargoBtn = document.getElementById('embargo-time-btn-preview');
     const initialLabelSpan = document.getElementById('embargo-time-btn-label');
+    const setNowBtn = document.querySelector('.embargo-time-set-now-btn');
     updateEmbargoButtonDisplay(initialEmbargoBtn, initialLabelSpan);
+
+    if (setNowBtn) {
+        setNowBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            embargoTime = 'now';
+            updateEmbargoButtonDisplay(initialEmbargoBtn, initialLabelSpan);
+        });
+    }
 
     // Create modal HTML if not present
     if (!document.getElementById('embargo-time-modal')) {
