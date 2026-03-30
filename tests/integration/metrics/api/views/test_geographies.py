@@ -366,5 +366,7 @@ class TestGeographiesByGeographyTypeView:
 
         # data should contain error
 
-        assert str(result["geography_type_id"][0]
-                   ) == "Geography Type must be a number or '-1'"
+        assert (
+            str(result["geography_type_id"][0])
+            == "Geography Type must be a number or '-1'"
+        )

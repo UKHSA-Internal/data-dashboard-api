@@ -63,8 +63,7 @@ class TestSubThemeRequestSerializer:
         # Then
         assert not serializer.is_valid()
         assert "theme_id" in serializer.errors
-        assert "theme_id must be a number or '-1'" in str(
-            serializer.errors["theme_id"])
+        assert "theme_id must be a number or '-1'" in str(serializer.errors["theme_id"])
 
     def test_data_returns_wildcard_response_for_wildcard_theme_id(self):
         """
@@ -244,8 +243,7 @@ class TestTopicRequestSerializer:
         metrics_manager.get_filtered_unique_names_related_to_sub_theme.assert_called_once_with(
             3
         )
-        assert response == {"choices": [
-            ["10", "COVID-19"], ["11", "Influenza"]]}
+        assert response == {"choices": [["10", "COVID-19"], ["11", "Influenza"]]}
 
     def test_topic_manager_uses_context_when_available(self):
         """
@@ -325,8 +323,7 @@ class TestMetricRequestSerializer:
         # Then
         assert not serializer.is_valid()
         assert "topic_id" in serializer.errors
-        assert "topic_id must be a number or '-1'" in str(
-            serializer.errors["topic_id"])
+        assert "topic_id must be a number or '-1'" in str(serializer.errors["topic_id"])
 
     def test_data_returns_wildcard_response_for_wildcard_topic_id(self):
         """
@@ -456,7 +453,9 @@ class TestPermissionSetResponseSerializer:
         choices_field = serializer.fields["choices"]
 
         # Then
-        assert choices_field.help_text == "List of [id, name] pairs for dropdown options"
+        assert (
+            choices_field.help_text == "List of [id, name] pairs for dropdown options"
+        )
 
 
 class TestQuerysetToIdNameTuples:

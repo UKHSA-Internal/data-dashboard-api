@@ -1,6 +1,7 @@
 import factory
 
 from metrics.data.models.core_models import Topic, SubTheme
+from metrics.data.models.core_models import Topic, SubTheme
 
 
 class TopicFactory(factory.django.DjangoModelFactory):
@@ -12,9 +13,7 @@ class TopicFactory(factory.django.DjangoModelFactory):
         model = Topic
 
     @classmethod
-    def create_with_sub_theme(
-        cls, name: str, sub_theme: str
-    ):
+    def create_with_sub_theme(cls, name: str, sub_theme: str):
         sub_theme, _ = SubTheme.objects.get_or_create(name=sub_theme)
 
         return cls.create(

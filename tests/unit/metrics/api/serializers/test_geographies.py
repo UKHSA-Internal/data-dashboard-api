@@ -11,7 +11,7 @@ from metrics.api.serializers.geographies import (
     _serialize_queryset,
     GeographiesRequestSerializer,
     GeographyByGeographyTypeRequestSerializer,
-    _queryset_to_geography_code_name_tuples
+    _queryset_to_geography_code_name_tuples,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
@@ -419,7 +419,9 @@ class TestGeographyByGeographyTypeRequestSerializer:
         """
         # Given
         mock_manager = mock.MagicMock()
-        mock_manager.get_geography_codes_and_names_by_geography_type_id.return_value = []
+        mock_manager.get_geography_codes_and_names_by_geography_type_id.return_value = (
+            []
+        )
 
         data = {"geography_type_id": "999"}
         serializer = GeographyByGeographyTypeRequestSerializer(
@@ -612,8 +614,7 @@ class TestQuerysetToGeographyCodeNameTuples:
         Then a list with one tuple is returned
         """
         # Given
-        mock_queryset = [
-            {"geography_code": "N92000002", "name": "Northern Ireland"}]
+        mock_queryset = [{"geography_code": "N92000002", "name": "Northern Ireland"}]
 
         # When
         result = _queryset_to_geography_code_name_tuples(mock_queryset)

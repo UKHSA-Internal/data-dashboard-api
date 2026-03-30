@@ -12,9 +12,7 @@ class SubThemeFactory(factory.django.DjangoModelFactory):
         model = SubTheme
 
     @classmethod
-    def create_with_theme(
-        cls, name: str, theme: str
-    ):
+    def create_with_theme(cls, name: str, theme: str):
         theme, _ = Theme.objects.get_or_create(name=theme)
 
         return cls.create(

@@ -21,9 +21,11 @@ class TestSubThemeByThemeView:
 
         # create subthemes
         respiratorySubTheme = SubThemeFactory.create_with_theme(
-            name="respiratory", theme="infectious_disease")
+            name="respiratory", theme="infectious_disease"
+        )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines")
+            name="immunisation", theme="childhood_vaccines"
+        )
 
         # Retrieve the subthemes
         themeId = 1
@@ -45,9 +47,11 @@ class TestSubThemeByThemeView:
 
         # create subthemes
         respiratorySubtheme = SubThemeFactory.create_with_theme(
-            name="respiratory", theme="infectious_disease")
+            name="respiratory", theme="infectious_disease"
+        )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines")
+            name="immunisation", theme="childhood_vaccines"
+        )
 
         # Retrieve the subthemes
         themeId = -1
@@ -69,9 +73,11 @@ class TestSubThemeByThemeView:
 
         # create subthemes
         respiratorySubtheme = SubThemeFactory.create_with_theme(
-            name="respiratory", theme="infectious_disease")
+            name="respiratory", theme="infectious_disease"
+        )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines")
+            name="immunisation", theme="childhood_vaccines"
+        )
 
         # Retrieve the subthemes
         themeId = "string"
@@ -82,8 +88,7 @@ class TestSubThemeByThemeView:
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
         # data should contain error
-        assert str(result["theme_id"][0]
-                   ) == "theme_id must be a number or '-1'"
+        assert str(result["theme_id"][0]) == "theme_id must be a number or '-1'"
 
 
 class TestTopicBySubThemeView:
@@ -98,7 +103,8 @@ class TestTopicBySubThemeView:
 
         # create subthemes
         covid19Topic = TopicFactory.create_with_sub_theme(
-            name="COVID-19", sub_theme="respiratory")
+            name="COVID-19", sub_theme="respiratory"
+        )
 
         # Retrieve the topics
         subThemeId = 1
@@ -119,7 +125,8 @@ class TestTopicBySubThemeView:
         client = APIClient()
 
         covid19Topic = TopicFactory.create_with_sub_theme(
-            name="COVID-19", sub_theme="respiratory")
+            name="COVID-19", sub_theme="respiratory"
+        )
 
         # Retrieve the subthemes
         themeId = -1
@@ -141,7 +148,8 @@ class TestTopicBySubThemeView:
 
         # create subthemes
         covid19Topic = TopicFactory.create_with_sub_theme(
-            name="COVID-19", sub_theme="respiratory")
+            name="COVID-19", sub_theme="respiratory"
+        )
 
         # Retrieve the subthemes
         themeId = "string"
@@ -152,8 +160,7 @@ class TestTopicBySubThemeView:
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
         # data should contain error
-        assert str(result["sub_theme_id"][0]
-                   ) == "sub_theme_id must be a number or '-1'"
+        assert str(result["sub_theme_id"][0]) == "sub_theme_id must be a number or '-1'"
 
 
 class TestMetricByTopicView:
@@ -168,7 +175,8 @@ class TestMetricByTopicView:
 
         # create subthemes
         covid19metric = MetricFactory.create_with_topic(
-            name="COVID-19_cases_rateRollingMean", topic="COVID-19")
+            name="COVID-19_cases_rateRollingMean", topic="COVID-19"
+        )
 
         # Retrieve the topics
         topicId = 1
@@ -189,7 +197,8 @@ class TestMetricByTopicView:
         client = APIClient()
 
         covid19metric = MetricFactory.create_with_topic(
-            name="COVID-19_cases_rateRollingMean", topic="COVID-19")
+            name="COVID-19_cases_rateRollingMean", topic="COVID-19"
+        )
 
         # Retrieve the subthemes
         topicId = -1
@@ -211,7 +220,8 @@ class TestMetricByTopicView:
 
         # create subthemes
         covid19metric = MetricFactory.create_with_topic(
-            name="COVID-19_cases_rateRollingMean", topic="COVID-19")
+            name="COVID-19_cases_rateRollingMean", topic="COVID-19"
+        )
 
         # Retrieve the subthemes
         topicId = "string"
@@ -222,5 +232,4 @@ class TestMetricByTopicView:
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
         # data should contain error
-        assert str(result["topic_id"][0]
-                   ) == "topic_id must be a number or '-1'"
+        assert str(result["topic_id"][0]) == "topic_id must be a number or '-1'"

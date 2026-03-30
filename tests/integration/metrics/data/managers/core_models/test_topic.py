@@ -28,3 +28,25 @@ class TestTopicManager:
         # Then
         assert all_topic_names.count() == 3
         assert all_unique_topic_names.count() == 2
+
+    @pytest.mark.django_db
+    def test_query_get_all_names_and_ids(self):
+        """
+        Given a number of existing `Topic` records
+        When `get_all_names_and_ids` is called
+        Then a unique set of `Topic` records is returned.
+        """
+        # Given
+        fake_topic_name_one = "COVID-19"
+        fake_topic_name_two = "Cold-alert"
+        fake_topic_name_three = "Influenza"
+
+        TopicFactory(name=fake_topic_name_one)
+        TopicFactory(name=fake_topic_name_two)
+        TopicFactory(name=fake_topic_name_three)
+
+        # When
+        get_all_names_and_ids = Topic.objects.get_all_names_and_ids()
+
+        # Then
+        assert get_all_names_and_ids.count() == 3
