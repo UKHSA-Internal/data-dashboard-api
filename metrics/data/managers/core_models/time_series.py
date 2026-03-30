@@ -1,4 +1,3 @@
-from cms.dashboard.virtual_clock import get_embargo_time
 """
 This file contains the custom QuerySet and Manager classes associated with the `CoreTimeSeries` model.
 
@@ -7,6 +6,7 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+from cms.dashboard.virtual_clock import get_embargo_time
 from collections.abc import Iterable
 from typing import Self
 
@@ -495,7 +495,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        from cms.dashboard.virtual_clock import get_embargo_time
+        
         current_time = get_embargo_time()
         try:
             return (

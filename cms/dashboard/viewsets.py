@@ -4,7 +4,11 @@ from typing import override
 
 from django.conf import settings
 from django.core.signing import BadSignature, SignatureExpired, loads
-from validation.shared import validate_preview_hmac_token
+from validation.shared import (
+    get_cms_auth_payload,
+    get_cms_auth_bearer_token,
+    validate_preview_hmac_token,
+)
 from cms.dashboard.virtual_clock import set_embargo_time, clear_embargo_time
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -73,14 +77,22 @@ class CMSPagesAPIViewSet(BaseCMSPagesAPIViewSet):
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
+        print('===> DEBUG: DETAIL VIEW ON CMSPages')
         return super().detail_view(request, pk)
 
 
 @extend_schema(tags=["cms"])
 class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
+    @staticmethod
+    def _with_embargo_time(data: dict, embargo_time: int | None) -> dict:
+        response_data = dict(data)
+        response_data["embargo_time"] = embargo_time
+        return response_data
+
     @override
     def detail_view(self, request: Request, pk: int) -> Response:
         # Check if previews are enabled
+        print('===> DEBUG: DETAIL VIEW ON DRAFTS')
         page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)
         if not page_previews_enabled:
             return Response(
@@ -90,17 +102,16 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Require Bearer token in x-draft-auth header
-        auth = request.headers.get("x-draft-auth", "")
-        if not auth or not auth.lower().startswith("bearer "):
+        # Require Bearer token in x-cms-auth header
+        token = get_cms_auth_bearer_token(request.headers)
+        if token is None:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         # Validate and decode token using shared logic
-        token = auth.split(" ", 1)[1].strip()
-        try:
-            payload = validate_preview_hmac_token(token, page_id=pk)
-        except ValueError:
+        is_valid = validate_preview_hmac_token(token, page_id=pk)
+        if not is_valid:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+        payload = get_cms_auth_payload(token) or {}
 
         # If present, set embargo_time in virtual_clock 
         embargo_time = payload.get("embargo_time")
@@ -122,7 +133,7 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
         if latest_revision:
             draft_page = latest_revision.as_object()
             serializer = self.get_serializer(draft_page)
-            return Response(serializer.data)
+            return Response(self._with_embargo_time(serializer.data, embargo_time))
         else:
             serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            return Response(self._with_embargo_time(serializer.data, embargo_time))

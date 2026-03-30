@@ -18,7 +18,9 @@ def get_embargo_time() -> "datetime.datetime":
     """
     embargo_time = _embargo_time_ctx.get()
     if embargo_time is not None:
+        print(f'DEBUG: embargo_time is set to {embargo_time}')
         return embargo_time
+    print('DEBUG: embargo_time is being set to timezone.now()')
     return timezone.now()
 
 

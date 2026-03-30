@@ -14,6 +14,64 @@ from cms.dashboard.viewsets import (
 
 class TestCMSDraftPagesViewSet:
     @patch(
+        "cms.dashboard.viewsets.validate_preview_hmac_token",
+        return_value={"page_id": 1, "embargo_time": 1711456200},
+    )
+    def test_detail_view_includes_embargo_time_with_latest_revision(
+        self, mock_validate, settings
+    ):
+        settings.PAGE_PREVIEWS_ENABLED = True
+        viewset = CMSDraftPagesViewSet()
+        request = MagicMock(spec=Request)
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
+        fake_instance = MagicMock()
+        fake_instance.get_latest_revision.return_value = MagicMock(
+            as_object=MagicMock(return_value="draft_page")
+        )
+        viewset.get_queryset = MagicMock(
+            return_value=MagicMock(
+                filter=MagicMock(
+                    return_value=MagicMock(first=MagicMock(return_value=fake_instance))
+                )
+            )
+        )
+        viewset.get_serializer = MagicMock(return_value=MagicMock(data={"foo": "bar"}))
+
+        response = viewset.detail_view(request=request, pk=1)
+
+        assert response.status_code == 200
+        assert response.data == {"foo": "bar", "embargo_time": 1711456200}
+
+    @patch(
+        "cms.dashboard.viewsets.validate_preview_hmac_token",
+        return_value={"page_id": 1, "embargo_time": None},
+    )
+    def test_detail_view_includes_null_embargo_time_with_published_version(
+        self, mock_validate, settings
+    ):
+        settings.PAGE_PREVIEWS_ENABLED = True
+        viewset = CMSDraftPagesViewSet()
+        request = MagicMock(spec=Request)
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
+        fake_instance = MagicMock()
+        fake_instance.get_latest_revision.return_value = None
+        viewset.get_queryset = MagicMock(
+            return_value=MagicMock(
+                filter=MagicMock(
+                    return_value=MagicMock(first=MagicMock(return_value=fake_instance))
+                )
+            )
+        )
+        viewset.get_serializer = MagicMock(
+            return_value=MagicMock(data={"foo": "published"})
+        )
+
+        response = viewset.detail_view(request=request, pk=1)
+
+        assert response.status_code == 200
+        assert response.data == {"foo": "published", "embargo_time": None}
+
+    @patch(
         "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 2}
     )
     def test_detail_view_returns_401_if_page_id_mismatch(self, mock_loads):
@@ -25,7 +83,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         fake_instance = MagicMock()
         fake_instance.pk = 1
         fake_instance.get_latest_revision.return_value = None
@@ -53,7 +111,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         fake_instance = MagicMock()
         fake_instance.get_latest_revision.return_value = MagicMock(
             as_object=MagicMock(return_value="draft_page")
@@ -84,7 +142,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         fake_instance = MagicMock()
         fake_instance.get_latest_revision.return_value = None
         viewset.get_queryset = MagicMock(
@@ -115,7 +173,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         viewset.get_queryset = MagicMock(
             return_value=MagicMock(
                 filter=MagicMock(
@@ -138,7 +196,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         # When
         response = viewset.detail_view(request=request, pk=1)
         # Then
@@ -156,7 +214,7 @@ class TestCMSDraftPagesViewSet:
         mock_tz.now.return_value.timestamp.return_value = 2
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         # When
         response = viewset.detail_view(request=request, pk=1)
         # Then
@@ -186,7 +244,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "notbearer faketoken"}
+        request.headers = {"x-cms-auth": "notbearer faketoken"}
         # When
         response = viewset.detail_view(request=request, pk=1)
         # Then
@@ -201,7 +259,7 @@ class TestCMSDraftPagesViewSet:
         """
         # Given
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         viewset = CMSDraftPagesViewSet()
         # When
         response = viewset.detail_view(request=request, pk=1)
@@ -218,7 +276,7 @@ class TestCMSDraftPagesViewSet:
         # Given
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         mock_settings.PAGE_PREVIEWS_ENABLED = False
         # When
         response = viewset.detail_view(request=request, pk=1)
@@ -253,7 +311,7 @@ class TestCMSDraftPagesViewSet:
         """Happy path: detail_view returns 200 with a resolved page, fully mocked."""
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         fake_instance = MagicMock()
         fake_instance.get_latest_revision.return_value = MagicMock(
             as_object=MagicMock(return_value=fake_instance)
@@ -284,7 +342,7 @@ class TestCMSDraftPagesViewSet:
     def test_invalid_token_returns_401(self, mock_loads):
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer fake"}
+        request.headers = {"x-cms-auth": "Bearer fake"}
         response = viewset.detail_view(request=request, pk=1)
         assert response.status_code == 401
 
@@ -297,7 +355,7 @@ class TestCMSDraftPagesViewSet:
         mock_get_queryset.return_value.filter.return_value.first.return_value = None
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
-        request.headers = {"x-draft-auth": "Bearer faketoken"}
+        request.headers = {"x-cms-auth": "Bearer faketoken"}
         response = viewset.detail_view(request=request, pk=1)
         assert response.status_code == 404
 

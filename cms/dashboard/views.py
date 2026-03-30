@@ -45,15 +45,19 @@ class PreviewToFrontendRedirectView(View):
 
     @staticmethod
     def _canonicalise_preview_url(
-        *, raw_url: str, slug: str, token: str, page_id: int
+        *, raw_url: str, slug: str, token: str, page_id: int, embargo_time_epoch: str | None = None
     ) -> str:
         """Return preview URL with canonical query params.
 
         The query string is always normalised to `slug`, `t`, and `page_id` so stale or
         legacy template parameters (e.g. `draft=true`, `slug_name`) are not propagated to the frontend.
+        When `embargo_time_epoch` is supplied it is appended as an epoch-integer embargo time parameter.
         """
         parts = urlsplit(raw_url)
-        query = urlencode({"slug": slug, "t": token, "page_id": page_id})
+        params = {"slug": slug, "t": token, "page_id": page_id}
+        if embargo_time_epoch is not None:
+            params["et"] = embargo_time_epoch
+        query = urlencode(params)
         return urlunsplit(
             (parts.scheme, parts.netloc, parts.path, query, parts.fragment)
         )
@@ -95,6 +99,7 @@ class PreviewToFrontendRedirectView(View):
             raise PermissionDenied
 
         embargo_time_str = request.GET.get("embargo_time")
+        embargo_time = None
         if embargo_time_str:
             embargo_time = parse_datetime(embargo_time_str)
 
@@ -107,8 +112,10 @@ class PreviewToFrontendRedirectView(View):
             ),
         }
         
+        embargo_time_epoch: str | None = None
         if embargo_time is not None:
             payload["embargo_time"] = int(embargo_time.timestamp())
+            embargo_time_epoch = str(int(embargo_time.timestamp()))
 
         token = dumps(payload, salt=PAGE_PREVIEWS_TOKEN_SALT)
 
@@ -136,6 +143,7 @@ class PreviewToFrontendRedirectView(View):
             slug=route_slug,
             token=token,
             page_id=page.pk,
+            embargo_time_epoch=embargo_time_epoch,
         )
 
         return redirect(frontend_url)
