@@ -12,7 +12,7 @@ from tests.factories.metrics.topic import TopicFactory
 class TestSubThemeByThemeView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/subthemes"
+        return "/api/data-hierarchy/subthemes"
 
     @pytest.mark.django_db
     def test_get_sub_themes_by_theme_id_should_return_tuple_of_id_and_name(self):
@@ -94,7 +94,7 @@ class TestSubThemeByThemeView:
 class TestTopicBySubThemeView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/topics"
+        return "/api/data-hierarchy/topics"
 
     @pytest.mark.django_db
     def test_get_topics_by_sub_theme_id_should_return_tuple_of_id_and_name(self):
@@ -166,7 +166,7 @@ class TestTopicBySubThemeView:
 class TestMetricByTopicView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/metrics"
+        return "/api/data-hierarchy/metrics"
 
     @pytest.mark.django_db
     def test_get_metric_by_topic_id_should_return_tuple_of_id_and_name(self):

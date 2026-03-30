@@ -270,7 +270,7 @@ class TestGeographiesView:
 class TestGeographiesByGeographyTypeView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/geographies"
+        return "/api/data-hierarchy/geographies"
 
     @pytest.mark.django_db
     def test_get_geographies_by_geography_type_id_should_return_geographies(self):

@@ -10,7 +10,7 @@
    */
   async function fetchChoices(endpoint, dataItemId) {
     try {
-      const url = `/api/permission-set/${endpoint}/${dataItemId}`;
+      const url = `/api/data-hierarchy/${endpoint}/${dataItemId}`;
 
       const response = await fetch(url);
 
