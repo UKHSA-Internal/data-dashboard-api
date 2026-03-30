@@ -3,19 +3,45 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     // In-memory embargo time state
-    // Set embargoTime to now on first load
-    let embargoTime = null;
-    const getNowString = () => {
-        const now = new Date();
-        const pad = n => n.toString().padStart(2, '0');
-        return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    // Default state is the literal string "now".
+    let embargoTime = 'now';
+
+    const formatDisplayValue = (value) => {
+        if (!value || value === 'now') {
+            return 'now';
+        }
+
+        const epochSeconds = Number(value);
+        if (!Number.isFinite(epochSeconds)) {
+            return String(value);
+        }
+
+        const dt = new Date(epochSeconds * 1000);
+        return new Intl.DateTimeFormat('en-GB', {
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short',
+        }).format(dt);
     };
-    embargoTime = getNowString();
+
+    const updateEmbargoButtonDisplay = (embargoBtn, labelSpan) => {
+        const displayValue = formatDisplayValue(embargoTime);
+        if (embargoBtn) {
+            embargoBtn.title = embargoTime ? `Set value: ${displayValue}` : 'No embargo time set';
+        }
+        if (labelSpan) {
+            labelSpan.textContent = displayValue;
+        }
+    };
+
     // Set initial label
+    const initialEmbargoBtn = document.getElementById('embargo-time-btn-preview');
     const initialLabelSpan = document.getElementById('embargo-time-btn-label');
-    if (initialLabelSpan) {
-        initialLabelSpan.textContent = embargoTime;
-    }
+    updateEmbargoButtonDisplay(initialEmbargoBtn, initialLabelSpan);
 
     // Create modal HTML if not present
     if (!document.getElementById('embargo-time-modal')) {
@@ -76,30 +102,24 @@ document.addEventListener('DOMContentLoaded', function () {
         embargoPicker = flatpickr(calendarInput, {
             enableTime: true,
             dateFormat: 'Y-m-d H:i',
-            defaultDate: embargoTime || new Date(),
+            defaultDate: embargoTime === 'now' ? new Date() : new Date(Number(embargoTime) * 1000),
             allowInput: false,
             inline: true,
             onReady: function(selectedDates, dateStr, instance) {
                 // Ensure there is always a selected datetime when modal opens.
-                instance.setDate(embargoTime || new Date(), true);
+                instance.setDate(embargoTime === 'now' ? new Date() : new Date(Number(embargoTime) * 1000), true);
             }
         });
         // OK button
         document.getElementById('embargo-ok-btn').onclick = function () {
             // Commit the datetime represented by current picker state.
             const selectedDate = buildDateFromPicker(embargoPicker);
-            const formatted = embargoPicker.formatDate(selectedDate, embargoPicker.config.dateFormat);
-            embargoTime = formatted;
+            embargoTime = Math.floor(selectedDate.getTime() / 1000).toString();
             modal.style.display = 'none';
             // Set alt text (title) and label on the button
             const embargoBtn = document.getElementById('embargo-time-btn-preview');
             const labelSpan = document.getElementById('embargo-time-btn-label');
-            if (embargoBtn) {
-                embargoBtn.title = embargoTime ? `Set value: ${embargoTime}` : 'No embargo time set';
-            }
-            if (labelSpan) {
-                labelSpan.textContent = embargoTime;
-            }
+            updateEmbargoButtonDisplay(embargoBtn, labelSpan);
             callback(embargoTime);
         };
         // Cancel button
@@ -117,21 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             showEmbargoModal(function (selected) {
                 // embargoTime is already set in showEmbargoModal
-                embargoBtn.title = embargoTime ? `Set value: ${embargoTime}` : 'No embargo time set';
                 const labelSpan = document.getElementById('embargo-time-btn-label');
-                if (labelSpan) {
-                    labelSpan.textContent = embargoTime;
-                }
+                updateEmbargoButtonDisplay(embargoBtn, labelSpan);
             });
         });
         actionBtn.addEventListener('click', function (e) {
-            // Always use the current embargoTime (default to now if not set)
+            // Always use the current embargoTime (default to literal "now" if not set)
             let timeToUse = embargoTime;
             if (!timeToUse) {
-                const now = new Date();
-                // Match flatpickr format
-                const pad = n => n.toString().padStart(2, '0');
-                timeToUse = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+                timeToUse = 'now';
                 embargoTime = timeToUse;
             }
             let url = actionBtn.getAttribute(urlAttr);

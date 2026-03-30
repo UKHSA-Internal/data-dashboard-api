@@ -148,7 +148,7 @@ Example:
 Local default template used by the backend:
 - `http://localhost:3000/preview?slug={slug}&t={token}`
 
-The backend always appends an `et` parameter (Unix epoch integer) to the redirect URL when an embargo time is active.  This is added automatically and does not need to be included in the template.
+The backend appends an `et` parameter to the redirect URL when embargo time travel is used.  The value is either a Unix epoch integer or the literal string `now`.  This is added automatically and does not need to be included in the template.
 
 If omitted, the local default template is used.
 

@@ -1,6 +1,7 @@
 import pytest
 import unittest.mock as mock
 from types import SimpleNamespace
+from urllib.parse import parse_qs, urlparse
 from django.core.exceptions import PermissionDenied
 from django.urls import NoReverseMatch
 from django.test import RequestFactory
@@ -246,6 +247,48 @@ class TestPreviewToFrontendRedirectView:
             response.url if hasattr(response, "url") else response.get("Location")
         )
         assert location.startswith("https://frontend.test/preview?slug=cover&t=")
+
+    @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
+    def test_success_redirects_passes_through_embargo_time_now(
+        self, spy_get_object_or_404: mock.MagicMock, settings
+    ):
+        spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
+        settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
+            "https://frontend.test/preview?slug={slug}&t={token}"
+        )
+        request = RequestFactory().get(
+            "/cms-admin/preview-to-frontend/1/",
+            data={"embargo_time": "now"},
+        )
+        request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
+
+        view = PreviewToFrontendRedirectView()
+        response = view.get(request=request, pk=1)
+        location = response.url if hasattr(response, "url") else response.get("Location")
+        parsed_query = parse_qs(urlparse(location).query)
+
+        assert parsed_query["et"] == ["now"]
+
+    @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
+    def test_success_redirects_passes_through_embargo_time_epoch(
+        self, spy_get_object_or_404: mock.MagicMock, settings
+    ):
+        spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
+        settings.PAGE_PREVIEWS_FRONTEND_URL_TEMPLATE = (
+            "https://frontend.test/preview?slug={slug}&t={token}"
+        )
+        request = RequestFactory().get(
+            "/cms-admin/preview-to-frontend/1/",
+            data={"embargo_time": "1711456200"},
+        )
+        request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
+
+        view = PreviewToFrontendRedirectView()
+        response = view.get(request=request, pk=1)
+        location = response.url if hasattr(response, "url") else response.get("Location")
+        parsed_query = parse_qs(urlparse(location).query)
+
+        assert parsed_query["et"] == ["1711456200"]
 
 
 class TestAddFrontendPreviewAction:
