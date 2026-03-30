@@ -22,18 +22,18 @@ from cms.error.managers import ErrorPageManager
 class ErrorPage(UKHSAPage):
     body = models.TextField(null=True, blank=True)
     error_line = models.TextField(
-        help_text=help_texts.ERROR_PAGE_LINE_FIELD, blank=True, null=True
+        help_text=help_texts.ERROR_PAGE_LINE_FIELD, blank=False, null=False
     )
     error_text = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
         help_text=help_texts.ERROR_PAGE_TEXT_FIELD,
     )
     sub_text = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
         help_text=help_texts.ERROR_PAGE_SUB_TEXT_FIELD,
     )
     related_links_layout = models.CharField(
@@ -56,7 +56,8 @@ class ErrorPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     # Sets which fields to expose on the API
@@ -74,7 +75,8 @@ class ErrorPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
