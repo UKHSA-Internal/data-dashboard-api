@@ -1,6 +1,11 @@
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
-from cms.dashboard.virtual_clock import clear_embargo_time, set_embargo_time
+from cms.dashboard.virtual_clock import (
+    TIME_TRAVEL_NOT_SUPPORTED_MESSAGE,
+    TimeTravelNotSupportedError,
+    clear_embargo_time,
+    set_embargo_time,
+)
 from validation.shared import (
     CMS_AUTH_HEADER,
     get_cms_auth_payload,
@@ -64,7 +69,13 @@ class EmbargoMiddleware:
         if embargo_time is None:
             return None
 
-        was_set = set_embargo_time(embargo_time, token=token)
+        try:
+            was_set = set_embargo_time(embargo_time, token=token)
+        except TimeTravelNotSupportedError:
+            return JsonResponse(
+                {"detail": TIME_TRAVEL_NOT_SUPPORTED_MESSAGE},
+                status=501,
+            )
         if not was_set:
             return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
 

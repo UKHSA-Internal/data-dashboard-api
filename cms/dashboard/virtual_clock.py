@@ -1,12 +1,21 @@
 import contextvars
 import datetime
+import logging
 import typing as t
 from typing import Optional
+from django.conf import settings
 from django.utils import timezone
-
 from validation.shared import validate_preview_hmac_token
 
 _embargo_time_ctx: contextvars.ContextVar[Optional[datetime.datetime]] = contextvars.ContextVar("embargo_time", default=None)
+logger = logging.getLogger(__name__)
+
+
+class TimeTravelNotSupportedError(Exception):
+    pass
+
+
+TIME_TRAVEL_NOT_SUPPORTED_MESSAGE = '"Time Travel" is not supported on this server.'
 
 
 def parse_embargo_time_value(embargo_time_value: t.Any) -> Optional[datetime.datetime]:
@@ -42,6 +51,12 @@ def set_embargo_time(embargo_time_value: object, *, token: str) -> bool:
 
     The value must be either `now` or valid epoch seconds.
     """
+    page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)
+    if not page_previews_enabled:
+        _embargo_time_ctx.set(timezone.now())
+        logger.error(TIME_TRAVEL_NOT_SUPPORTED_MESSAGE)
+        raise TimeTravelNotSupportedError(TIME_TRAVEL_NOT_SUPPORTED_MESSAGE)
+
     if not validate_preview_hmac_token(token):
         return False
 

@@ -7,7 +7,12 @@ from validation.shared import (
     get_cms_auth_bearer_token,
     validate_preview_hmac_token,
 )
-from cms.dashboard.virtual_clock import set_embargo_time, clear_embargo_time
+from cms.dashboard.virtual_clock import (
+    TIME_TRAVEL_NOT_SUPPORTED_MESSAGE,
+    TimeTravelNotSupportedError,
+    clear_embargo_time,
+    set_embargo_time,
+)
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.request import Request
@@ -115,7 +120,13 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
         # If present, set embargo_time in virtual_clock 
         embargo_time = payload.get("embargo_time")
         if embargo_time is not None:
-            was_set = set_embargo_time(embargo_time, token=token)
+            try:
+                was_set = set_embargo_time(embargo_time, token=token)
+            except TimeTravelNotSupportedError:
+                return Response(
+                    {"detail": TIME_TRAVEL_NOT_SUPPORTED_MESSAGE},
+                    status=status.HTTP_501_NOT_IMPLEMENTED,
+                )
             if not was_set:
                 return Response(self.INVALID_TOKEN_DETAIL, status=status.HTTP_401_UNAUTHORIZED)
         else:
