@@ -1,4 +1,5 @@
 import datetime
+import json
 from unittest import mock
 
 from metrics.api.middleware import EmbargoMiddleware
@@ -77,7 +78,7 @@ class TestEmbargoMiddleware:
         response = middleware(request)
 
         assert response.status_code == 401
-        assert response.json() == {"detail": "The token was invalid"}
+        assert json.loads(response.content) == {"detail": "The token was invalid"}
         spy_validate_token.assert_called_once_with("invalidtoken")
         spy_set_embargo_time.assert_not_called()
         assert spy_clear_embargo_time.call_count == 1
@@ -101,7 +102,7 @@ class TestEmbargoMiddleware:
         response = middleware(request)
 
         assert response.status_code == 401
-        assert response.json() == {"detail": "The token was invalid"}
+        assert json.loads(response.content) == {"detail": "The token was invalid"}
         spy_validate_token.assert_not_called()
         spy_set_embargo_time.assert_not_called()
         assert spy_clear_embargo_time.call_count == 1

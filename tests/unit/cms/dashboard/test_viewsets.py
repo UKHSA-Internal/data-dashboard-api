@@ -13,12 +13,17 @@ from cms.dashboard.viewsets import (
 
 
 class TestCMSDraftPagesViewSet:
+    @patch("cms.dashboard.viewsets.set_embargo_time", return_value=True)
     @patch(
-        "cms.dashboard.viewsets.validate_preview_hmac_token",
+        "cms.dashboard.viewsets.get_cms_auth_payload",
         return_value={"page_id": 1, "embargo_time": 1711456200},
     )
+    @patch(
+        "cms.dashboard.viewsets.validate_preview_hmac_token",
+        return_value=True,
+    )
     def test_detail_view_includes_embargo_time_with_latest_revision(
-        self, mock_validate, settings
+        self, mock_validate, mock_get_payload, mock_set_embargo, settings
     ):
         settings.PAGE_PREVIEWS_ENABLED = True
         viewset = CMSDraftPagesViewSet()
@@ -71,10 +76,8 @@ class TestCMSDraftPagesViewSet:
         assert response.status_code == 200
         assert response.data == {"foo": "published", "embargo_time": None}
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 2}
-    )
-    def test_detail_view_returns_401_if_page_id_mismatch(self, mock_loads):
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=False)
+    def test_detail_view_returns_401_if_page_id_mismatch(self, mock_validate):
         """
         Given a draft page with a mismatched page_id in the token
         When detail_view is called
@@ -99,10 +102,9 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == 401
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 1}
-    )
-    def test_detail_view_returns_200_with_latest_revision(self, mock_loads):
+    @patch("cms.dashboard.viewsets.get_cms_auth_payload", return_value={})
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=True)
+    def test_detail_view_returns_200_with_latest_revision(self, mock_validate, mock_get_payload):
         """
         Given a draft page with a valid token and a latest revision
         When detail_view is called
@@ -128,12 +130,11 @@ class TestCMSDraftPagesViewSet:
         response = viewset.detail_view(request=request, pk=1)
         # Then
         assert response.status_code == 200
-        assert response.data == {"foo": "bar"}
+        assert response.data == {"foo": "bar", "embargo_time": None}
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 1}
-    )
-    def test_detail_view_returns_200_with_published_version(self, mock_loads):
+    @patch("cms.dashboard.viewsets.get_cms_auth_payload", return_value={})
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=True)
+    def test_detail_view_returns_200_with_published_version(self, mock_validate, mock_get_payload):
         """
         Given a draft page with a valid token and no latest revision
         When detail_view is called
@@ -159,12 +160,11 @@ class TestCMSDraftPagesViewSet:
         response = viewset.detail_view(request=request, pk=1)
         # Then
         assert response.status_code == 200
-        assert response.data == {"foo": "published"}
+        assert response.data == {"foo": "published", "embargo_time": None}
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 1}
-    )
-    def test_detail_view_returns_404_if_page_not_found(self, mock_loads):
+    @patch("cms.dashboard.viewsets.get_cms_auth_payload", return_value={})
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=True)
+    def test_detail_view_returns_404_if_page_not_found(self, mock_validate, mock_get_payload):
         """
         Given a valid token but the page is not found
         When detail_view is called
@@ -186,8 +186,8 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == 404
 
-    @patch("cms.dashboard.viewsets.loads", return_value={"exp": None, "page_id": 1})
-    def test_detail_view_returns_401_if_exp_is_none(self, mock_loads):
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=False)
+    def test_detail_view_returns_401_if_exp_is_none(self, mock_validate):
         """
         Given a token with no exp value
         When detail_view is called
@@ -202,16 +202,14 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == 401
 
-    @patch("cms.dashboard.viewsets.loads", return_value={"exp": 1, "page_id": 1})
-    @patch("cms.dashboard.viewsets.timezone")
-    def test_detail_view_returns_401_if_expired(self, mock_tz, mock_loads):
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=False)
+    def test_detail_view_returns_401_if_expired(self, mock_validate):
         """
         Given a token with an expired exp value
         When detail_view is called
         Then a 401 response is returned
         """
         # Given
-        mock_tz.now.return_value.timestamp.return_value = 2
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
         request.headers = {"x-cms-auth": "Bearer faketoken"}
@@ -250,8 +248,8 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert response.status_code == 401
 
-    @patch("cms.dashboard.viewsets.loads", return_value={"exp": 0, "page_id": 1})
-    def test_detail_view_returns_401_for_expired_token(self, mock_loads):
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=False)
+    def test_detail_view_returns_401_for_expired_token(self, mock_validate):
         """
         Given a token with an expired exp value (in the past)
         When detail_view is called
@@ -304,10 +302,9 @@ class TestCMSDraftPagesViewSet:
 
     # (Duplicate imports removed)
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 1}
-    )
-    def test_happy_path_returns_200(self, mock_loads):
+    @patch("cms.dashboard.viewsets.get_cms_auth_payload", return_value={})
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=True)
+    def test_happy_path_returns_200(self, mock_validate, mock_get_payload):
         """Happy path: detail_view returns 200 with a resolved page, fully mocked."""
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
@@ -338,19 +335,18 @@ class TestCMSDraftPagesViewSet:
         response = viewset.detail_view(request=request, pk=1)
         assert response.status_code == 401
 
-    @patch("cms.dashboard.viewsets.loads", side_effect=DjangoBadSignature)
-    def test_invalid_token_returns_401(self, mock_loads):
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=False)
+    def test_invalid_token_returns_401(self, mock_validate):
         viewset = CMSDraftPagesViewSet()
         request = MagicMock(spec=Request)
         request.headers = {"x-cms-auth": "Bearer fake"}
         response = viewset.detail_view(request=request, pk=1)
         assert response.status_code == 401
 
-    @patch(
-        "cms.dashboard.viewsets.loads", return_value={"exp": 9999999999, "page_id": 1}
-    )
+    @patch("cms.dashboard.viewsets.get_cms_auth_payload", return_value={})
+    @patch("cms.dashboard.viewsets.validate_preview_hmac_token", return_value=True)
     @patch.object(CMSDraftPagesViewSet, "get_queryset")
-    def test_resolve_returns_none_404(self, mock_get_queryset, mock_loads, settings):
+    def test_resolve_returns_none_404(self, mock_get_queryset, mock_validate, mock_get_payload, settings):
         settings.PAGE_PREVIEWS_ENABLED = True
         mock_get_queryset.return_value.filter.return_value.first.return_value = None
         viewset = CMSDraftPagesViewSet()
