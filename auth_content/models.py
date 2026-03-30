@@ -1,4 +1,5 @@
 from itertools import starmap
+from typing import Callable
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -6,6 +7,7 @@ from django.db import models
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 
+from auth_content.constants import PERMISSION_SET_FIELDS
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_type_names_and_ids,
     get_all_metric_names_and_ids,
@@ -28,45 +30,26 @@ def get_theme_child_map():
     return {}
 
 
+def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
+    choices = [("", field["field_choices_default"]),]
+
+    if field["field_choices_callable"]:
+        choices += field["field_choices_callable"]()
+
+    return forms.CharField(
+        required=True,
+        label=field["field_label"],
+        widget=forms.Select(choices=choices)
+    )
+
+
 class PermissionSetForm(WagtailAdminModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Use CharField with Select widget to bypass choice validation
-        self.fields["theme"] = forms.CharField(
-            widget=forms.Select(
-                choices=[("", "---------"), ("-1", "* (All themes)")]
-                + get_all_theme_names_and_ids()
-            ),
-            required=True,
-        )
-        self.fields["sub_theme"] = forms.CharField(
-            required=True,
-            label="Sub Theme",
-            widget=forms.Select(choices=[("", "Select theme first")]),
-        )
-        self.fields["topic"] = forms.CharField(
-            required=True,
-            label="Topic",
-            widget=forms.Select(choices=[("", "Select sub-theme first")]),
-        )
-        self.fields["metric"] = forms.CharField(
-            required=True,
-            label="Metric",
-            widget=forms.Select(choices=[("", "Select topic first")]),
-        )
-        self.fields["geography_type"] = forms.CharField(
-            widget=forms.Select(
-                choices=[("", "---------"), ("-1", "* (All geography-types)")]
-                + get_all_geography_type_names_and_ids()
-            ),
-            required=True,
-        )
-        self.fields["geography"] = forms.CharField(
-            required=True,
-            label="Geography",
-            widget=forms.Select(choices=[("-1", "Select geography type first")]),
-        )
+        for field in PERMISSION_SET_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
 
         if self.instance and self.instance.pk:
             # Sub-theme
@@ -79,25 +62,30 @@ class PermissionSetForm(WagtailAdminModelForm):
                     ),
                 ]
             elif self.instance.sub_theme == "-1":
-                self.fields["sub_theme"].widget.choices = [("-1", "* (All sub-themes)")]
+                self.fields["sub_theme"].widget.choices = [
+                    ("-1", "* (All sub-themes)")]
 
             # Topic
             if self.instance.topic and self.instance.topic != "-1":
                 self.fields["topic"].widget.choices = [
                     ("", "Select sub-theme first"),
-                    (self.instance.topic, f"Loading... (ID: {self.instance.topic})"),
+                    (self.instance.topic,
+                     f"Loading... (ID: {self.instance.topic})"),
                 ]
             elif self.instance.topic == "-1":
-                self.fields["topic"].widget.choices = [("-1", "* (All topics)")]
+                self.fields["topic"].widget.choices = [
+                    ("-1", "* (All topics)")]
 
             # Metric
             if self.instance.metric and self.instance.metric != "-1":
                 self.fields["metric"].widget.choices = [
                     ("", "Select topic first"),
-                    (self.instance.metric, f"Loading... (ID: {self.instance.metric})"),
+                    (self.instance.metric,
+                     f"Loading... (ID: {self.instance.metric})"),
                 ]
             elif self.instance.metric == "-1":
-                self.fields["metric"].widget.choices = [("-1", "* (All metrics)")]
+                self.fields["metric"].widget.choices = [
+                    ("-1", "* (All metrics)")]
 
             # Geography
             if self.instance.geography and self.instance.geography != "-1":

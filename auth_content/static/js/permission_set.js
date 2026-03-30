@@ -4,30 +4,11 @@
 
   /**
    * Generic function to fetch choices from the API
-   * @param {string} endpoint - The API endpoint (e.g., 'subthemes', 'topics', 'metrics')
+   * @param {string} endpoint - The API endpoint (e.g., 'subthemes', 'topics', 'metrics', 'geography')
    * @param {string} dataItemId - The ID value to pass
    * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
   async function fetchChoices(endpoint, dataItemId) {
-    try {
-      const url = `/api/permission-set/${endpoint}/${dataItemId}`;
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error(`API error: ${errorData.error || "Unknown error"}`);
-        return [];
-      }
-
-      const data = await response.json();
-      return data.choices || [];
-    } catch (error) {
-      console.error(`Error fetching ${endpoint}:`, error);
-      return [];
-    }
-  }
-  async function fetchGeographies(endpoint, dataItemId) {
     try {
       const url = `/api/permission-set/${endpoint}/${dataItemId}`;
 
@@ -95,6 +76,9 @@
   /**
    * Set dropdown to wildcard and disable it
    * Used when parent is wildcard, cascading "all" to children
+   * @param {string} dropdown - The name of the option element that should be updated with the wildcard option.
+   * @param {string} message - Message to display in the dropdown menu
+   * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
   function setToWildcard(
     dropdown,
@@ -225,7 +209,7 @@
     clearDropdown(geography, "--------");
 
     // Fetch and populate metrics
-    const choices = await fetchGeographies("geographies", geographyTypeValue);
+    const choices = await fetchChoices("geographies", geographyTypeValue);
 
     if (choices.length > 0) {
       populateDropdown(geography, choices, "* All geographies");

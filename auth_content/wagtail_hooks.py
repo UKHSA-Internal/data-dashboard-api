@@ -27,4 +27,4 @@ def register_auth_viewset():
 
 @hooks.register("insert_editor_js")
 def permission_set_js():
-    return format_html('<script src="{}"></script>', static("js/child_theme.js"))
+    return format_html('<script src="{}"></script>', static("js/permission_set.js"))
