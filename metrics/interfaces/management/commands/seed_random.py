@@ -655,7 +655,7 @@ class Command(BaseCommand):
                     + random.uniform(-10.0, 10.0),  # noqa: S311  # nosec B311
                     2,
                 )
-                sex = random.choice(SEED_RANDOM_SEX_OPTIONS)   # noqa: S311  # nosec B311
+                sex = random.choice(SEED_RANDOM_SEX_OPTIONS)  # noqa: S311  # nosec B311
                 epidemiological_week = current_date.isocalendar().week
 
                 yield (
