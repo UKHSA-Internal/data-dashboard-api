@@ -1,0 +1,27 @@
+{
+  "id": 122,
+  "meta": {
+    "seo_title": "Sign in | UKHSA data dashboard",
+    "search_description": "Sign in required to access the UKHSA data dashboard",
+    "type": "common.CommonPage",
+    "detail_url": "http://localhost/api/pages/122/",
+    "html_url": null,
+    "slug": "start",
+    "show_in_menus": false,
+    "first_published_at": "2026-02-18T15:32:35.177836+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Sign in to the UKHSA data dashboard",
+  "body": "<div class=\"govuk-grid-column-three-quarters-from-desktop\"><span class=\"govuk-visually-hidden\">Entry title: </span><h1 class=\"govuk-heading-xl govuk-!-margin-bottom-4\">Sign in to the UKHSA data dashboard</h1><p>The UKHSA Data Dashboard provides secure access to critical public health data and insights.</p><p>To view restricted datasets and reports, you need to sign in with an approved account.</p><p><strong>How to Access:</strong></p><ul class=\"govuk-list govuk-list--bullet\"><li>Click the button below to sign in using your credentials.</li><li>If you don't have access but believe you should, please contact your administrator.</li></ul></div>",
+  "last_published_at": "2026-02-18T15:32:35.177836+01:00",
+  "related_links": []
+}
