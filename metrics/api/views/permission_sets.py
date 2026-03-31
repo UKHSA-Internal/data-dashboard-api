@@ -65,23 +65,3 @@ class MetricsByTopicView(APIView):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
 
-
-@extend_schema(
-    request=None,
-    tags=[PERMISSION_SETS_API_TAG],
-    responses={HTTPStatus.OK.value: PermissionSetResponseSerializer},
-)
-class PermissionSetChoicesView(APIView):
-    """API endpoint to fetch PermissionSet dropdown options."""
-
-    permission_classes = []
-
-    def get(self, request, *args, **kwargs):
-        """API endpoint to fetch permission sets in [[id, name], ...] pairs for a dropdown."""
-        choices = [
-            [str(p.id), p.name]
-            for p in PermissionSet.objects.all().order_by("name")
-        ]
-
-        response_data = {"choices": choices}
-        return Response(response_data, status=HTTPStatus.OK)

@@ -32,7 +32,7 @@ class UserForm(WagtailAdminModelForm):
 
 class User(models.Model):
     user_id = models.UUIDField(unique=True)
-    permission_sets = models.ManyToManyField("PermissionSet", blank=True, help_text="If no permission sets are showing, create one on the Permission Sets page")
+    permission_sets = models.ManyToManyField("PermissionSet", blank=True)
 
     base_form_class = UserForm
 

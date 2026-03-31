@@ -45,7 +45,6 @@ from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
 from metrics.api.views.permission_sets import (
     MetricsByTopicView,
-    PermissionSetChoicesView,
     SubThemesByThemeView,
     TopicsBySubThemeView,
 )

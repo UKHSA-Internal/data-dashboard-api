@@ -1,5 +1,4 @@
 from wagtail.blocks import (
-    ChoiceBlock,
     RichTextBlock,
     StreamBlock,
     StructBlock,

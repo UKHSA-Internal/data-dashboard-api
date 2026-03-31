@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail.blocks import CharBlock, ChoiceBlock, ListBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
+from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from cms.dynamic_content import help_texts
@@ -10,7 +10,6 @@ from cms.dynamic_content.components import (
     TrendNumberComponent,
 )
 from validation.url import validate_https_scheme
-from auth_content.models.permission_sets import PermissionSet
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
