@@ -31,10 +31,13 @@ def get_theme_child_map():
 
 
 def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
-    choices = [("", field["field_choices_default"]),]
+    choices = [("", field["field_choice_default"]),]
 
-    if field["field_choices_callable"]:
-        choices += field["field_choices_callable"]()
+    if field["field_choice_wildcard"]:
+        choices += [("-1", field["field_choice_wildcard"])]
+
+    if field["field_choice_callable"]:
+        choices += field["field_choice_callable"]()
 
     return forms.CharField(
         required=True,
