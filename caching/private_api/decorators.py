@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from caching.private_api.management import CacheManagement, CacheMissError
-from metrics.api.django_cognito_jwt import backend
+from common.auth.cognito_jwt import backend
 
 
 class CacheCheckResultedInMissError(Exception): ...

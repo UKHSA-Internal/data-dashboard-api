@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from utils import create_jwt_token
 
-from metrics.api.django_cognito_jwt import backend
+from common.auth.cognito_jwt import backend
 
 USER_MODEL = get_user_model()
 
@@ -28,7 +28,7 @@ def test_authenticate_no_token(rf):
 
 @pytest.mark.parametrize(
     "cognito_user_manager",
-    ["metrics.api.django_cognito_jwt.user_manager.CognitoManager", None],
+    ["common.auth.cognito_jwt.user_manager.CognitoManager", None],
 )
 def test_authenticate_valid(
     rf, monkeypatch, cognito_well_known_keys, jwk_private_key_one, cognito_user_manager
