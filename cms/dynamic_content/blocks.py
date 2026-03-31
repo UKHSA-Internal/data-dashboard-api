@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
+from wagtail.blocks import CharBlock, ChoiceBlock, ListBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from cms.dynamic_content import help_texts
@@ -200,10 +200,3 @@ class SourceLinkBlock(StructBlock):
             error_message = "Use either page OR external_url, not both."
             raise ValidationError(error_message)
 
-
-
-class PermissionSetChoiceBlock(ChoiceBlock):
-    def __init__(self, **kwargs):
-        kwargs["choices"] = [("", "...............")]
-        kwargs["help_text"]= "If no permission sets are showing, create one via the permission sets page"
-        super().__init__(**kwargs)
