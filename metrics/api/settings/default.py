@@ -124,6 +124,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "common.auth.cognito_jwt.JSONWebTokenAuthentication",
     ],
+    "EXCEPTION_HANDLER": "metrics.api.exceptions.custom_exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {
