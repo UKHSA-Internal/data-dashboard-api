@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 from rest_framework import serializers as drf_serializers
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers.permission_sets import (
     MetricRequestSerializer,
     PermissionSetResponseSerializer,
@@ -18,19 +19,19 @@ class TestSubThemeRequestSerializer:
 
     def test_validates_wildcard_theme_id(self):
         """
-        Given a wildcard theme_id value of "-1"
+        Given a wildcard theme_id value of WILDCARD_ID_VALUE
         When the value is validated
         Then the wildcard is accepted
         """
         # Given
-        data = {"theme_id": "-1"}
+        data = {"theme_id": WILDCARD_ID_VALUE}
 
         # When
         serializer = SubThemeRequestSerializer(data=data)
 
         # Then
         assert serializer.is_valid()
-        assert serializer.validated_data["theme_id"] == "-1"
+        assert serializer.validated_data["theme_id"] == WILDCARD_ID_VALUE
 
     def test_validates_numeric_theme_id(self):
         """
@@ -67,12 +68,12 @@ class TestSubThemeRequestSerializer:
 
     def test_data_returns_wildcard_response_for_wildcard_theme_id(self):
         """
-        Given a wildcard theme_id of "-1"
+        Given a wildcard theme_id of WILDCARD_ID_VALUE
         When data() is called
         Then a wildcard response is returned
         """
         # Given
-        data = {"theme_id": "-1"}
+        data = {"theme_id": WILDCARD_ID_VALUE}
         serializer = SubThemeRequestSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
@@ -80,7 +81,7 @@ class TestSubThemeRequestSerializer:
         response = serializer.data()
 
         # Then
-        assert response == {"choices": [["-1", "* (All sub-themes)"]]}
+        assert response == {"choices": [[WILDCARD_ID_VALUE, "* (All sub-themes)"]]}
 
     def test_data_fetches_sub_themes_for_valid_theme_id(self):
         """
@@ -148,19 +149,19 @@ class TestTopicRequestSerializer:
 
     def test_validates_wildcard_sub_theme_id(self):
         """
-        Given a wildcard sub_theme_id value of "-1"
+        Given a wildcard sub_theme_id value of WILDCARD_ID_VALUE
         When the value is validated
         Then the wildcard is accepted
         """
         # Given
-        data = {"sub_theme_id": "-1"}
+        data = {"sub_theme_id": WILDCARD_ID_VALUE}
 
         # When
         serializer = TopicRequestSerializer(data=data)
 
         # Then
         assert serializer.is_valid()
-        assert serializer.validated_data["sub_theme_id"] == "-1"
+        assert serializer.validated_data["sub_theme_id"] == WILDCARD_ID_VALUE
 
     def test_validates_numeric_sub_theme_id(self):
         """
@@ -199,12 +200,12 @@ class TestTopicRequestSerializer:
 
     def test_data_returns_wildcard_response_for_wildcard_sub_theme_id(self):
         """
-        Given a wildcard sub_theme_id of "-1"
+        Given a wildcard sub_theme_id of WILDCARD_ID_VALUE
         When data() is called
         Then a wildcard response is returned
         """
         # Given
-        data = {"sub_theme_id": "-1"}
+        data = {"sub_theme_id": WILDCARD_ID_VALUE}
         serializer = TopicRequestSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
@@ -212,7 +213,7 @@ class TestTopicRequestSerializer:
         response = serializer.data()
 
         # Then
-        assert response == {"choices": [["-1", "* (All topics)"]]}
+        assert response == {"choices": [[WILDCARD_ID_VALUE, "* (All topics)"]]}
 
     def test_data_fetches_topics_for_valid_sub_theme_id(self):
         """
@@ -278,19 +279,19 @@ class TestMetricRequestSerializer:
 
     def test_validates_wildcard_topic_id(self):
         """
-        Given a wildcard topic_id value of "-1"
+        Given a wildcard topic_id value of WILDCARD_ID_VALUE
         When the value is validated
         Then the wildcard is accepted
         """
         # Given
-        data = {"topic_id": "-1"}
+        data = {"topic_id": WILDCARD_ID_VALUE}
 
         # When
         serializer = MetricRequestSerializer(data=data)
 
         # Then
         assert serializer.is_valid()
-        assert serializer.validated_data["topic_id"] == "-1"
+        assert serializer.validated_data["topic_id"] == WILDCARD_ID_VALUE
 
     def test_validates_numeric_topic_id(self):
         """
@@ -327,12 +328,12 @@ class TestMetricRequestSerializer:
 
     def test_data_returns_wildcard_response_for_wildcard_topic_id(self):
         """
-        Given a wildcard topic_id of "-1"
+        Given a wildcard topic_id of WILDCARD_ID_VALUE
         When data() is called
         Then a wildcard response is returned
         """
         # Given
-        data = {"topic_id": "-1"}
+        data = {"topic_id": WILDCARD_ID_VALUE}
         serializer = MetricRequestSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
@@ -340,7 +341,7 @@ class TestMetricRequestSerializer:
         response = serializer.data()
 
         # Then
-        assert response == {"choices": [["-1", "* (All metrics)"]]}
+        assert response == {"choices": [[WILDCARD_ID_VALUE, "* (All metrics)"]]}
 
     def test_data_fetches_metrics_for_valid_topic_id(self):
         """

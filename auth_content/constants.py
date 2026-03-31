@@ -1,6 +1,9 @@
-from cms.metrics_interface.field_choices_callables import get_all_geography_type_names_and_ids, get_all_theme_names_and_ids
+from cms.metrics_interface.field_choices_callables import (
+    get_all_geography_type_names_and_ids,
+    get_all_theme_names_and_ids,
+)
 
-
+WILDCARD_ID_VALUE = "-1"
 PERMISSION_SET_FIELDS = [
     {
         "field_name": "theme",
@@ -43,5 +46,5 @@ PERMISSION_SET_FIELDS = [
         "field_choice_default": "Select geography first",
         "field_choice_wildcard": None,
         "field_choice_callable": None,
-    }
+    },
 ]

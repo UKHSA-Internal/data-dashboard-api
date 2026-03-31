@@ -4,6 +4,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from tests.factories.metrics.geography import GeographyFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
@@ -333,7 +334,7 @@ class TestGeographiesByGeographyTypeView:
         assert len(response.data["choices"]) == 1
 
         # Should return a wildcard choice
-        assert result["choices"][0][0] == "-1"
+        assert result["choices"][0][0] == WILDCARD_ID_VALUE
         assert result["choices"][0][1] == "* (All geographies)"
 
     @pytest.mark.django_db

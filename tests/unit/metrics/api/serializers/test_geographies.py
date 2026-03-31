@@ -4,6 +4,7 @@ import pytest
 
 from rest_framework.exceptions import ValidationError
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.data.models.core_models.supporting import Geography
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 from metrics.api.serializers.geographies import (
@@ -288,19 +289,19 @@ class TestGeographyByGeographyTypeRequestSerializer:
 
     def test_validates_wildcard_geography_type_id(self):
         """
-        Given a wildcard geography_type_id value of "-1"
+        Given a wildcard geography_type_id value of WILDCARD_ID_VALUE
         When the value is validated
         Then the wildcard is accepted
         """
         # Given
-        data = {"geography_type_id": "-1"}
+        data = {"geography_type_id": WILDCARD_ID_VALUE}
 
         # When
         serializer = GeographyByGeographyTypeRequestSerializer(data=data)
 
         # Then
         assert serializer.is_valid()
-        assert serializer.validated_data["geography_type_id"] == "-1"
+        assert serializer.validated_data["geography_type_id"] == WILDCARD_ID_VALUE
 
     def test_validates_numeric_geography_type_id(self):
         """
@@ -360,12 +361,12 @@ class TestGeographyByGeographyTypeRequestSerializer:
 
     def test_data_returns_wildcard_response_for_wildcard_geography_type_id(self):
         """
-        Given a wildcard geography_type_id of "-1"
+        Given a wildcard geography_type_id of WILDCARD_ID_VALUE
         When data() is called
         Then a wildcard response is returned
         """
         # Given
-        data = {"geography_type_id": "-1"}
+        data = {"geography_type_id": WILDCARD_ID_VALUE}
         serializer = GeographyByGeographyTypeRequestSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
@@ -373,7 +374,8 @@ class TestGeographyByGeographyTypeRequestSerializer:
         response = serializer.data()
 
         # Then
-        assert response == {"choices": [["-1", "* (All geographies)"]]}
+        assert response == {"choices": [
+            [WILDCARD_ID_VALUE, "* (All geographies)"]]}
 
     def test_data_fetches_geographies_for_valid_geography_type_id(self):
         """
@@ -542,7 +544,7 @@ class TestGeographyByGeographyTypeRequestSerializer:
 
         # Then
         # The helper function should have been used (implicitly tested by correct output)
-        assert response == {"choices": [["S92000003", "Scotland"]]}
+        assert response == {"choices": [("S92000003", "Scotland")]}
 
 
 class TestQuerysetToGeographyCodeNameTuples:
@@ -614,7 +616,8 @@ class TestQuerysetToGeographyCodeNameTuples:
         Then a list with one tuple is returned
         """
         # Given
-        mock_queryset = [{"geography_code": "N92000002", "name": "Northern Ireland"}]
+        mock_queryset = [
+            {"geography_code": "N92000002", "name": "Northern Ireland"}]
 
         # When
         result = _queryset_to_geography_code_name_tuples(mock_queryset)

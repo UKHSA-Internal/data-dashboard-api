@@ -3,6 +3,7 @@ from collections import defaultdict
 from django.db.models import QuerySet
 from rest_framework import serializers
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
@@ -63,7 +64,8 @@ class GeographiesForTopicSerializer(serializers.Serializer):
         """
         topic: str = self.validated_data["topic"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(topic=topic)
+            self.core_time_series_manager.get_available_geographies(
+                topic=topic)
         )
         return _serialize_queryset(queryset=queryset)
 
@@ -195,7 +197,7 @@ class GeographyChoicesResponseSerializer(serializers.Serializer):
         child=serializers.ListField(
             child=serializers.CharField(), min_length=2, max_length=2
         ),
-        help_text=help_texts.GEOGRAPHY_TUPLE_FORMATTING,
+        help_text=help_texts.GEOGRAPHY_LIST_FORMATTING,
     )
 
 
@@ -231,9 +233,9 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         return self.context.get("geography_manager", Geography.objects)
 
     @staticmethod
-    def validate_geography_type_id(value):
+    def validate_geography_type_id(value: str) -> str | int:
         """Validate geography_type_id is either wildcard or a valid integer"""
-        if value == "-1":
+        if value == WILDCARD_ID_VALUE:
             return value
 
         try:
@@ -242,7 +244,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
             message = "Geography Type must be a number or '-1'"
             raise serializers.ValidationError(message) from err
 
-    def data(self) -> dict:
+    def data(self) -> dict[str, list[tuple[str, str]]]:
         """
         Fetch geographies for specified geography type from DB and format as response.
 
@@ -252,8 +254,8 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         geography_type_id = self.validated_data["geography_type_id"]
 
         # Handle wildcard
-        if geography_type_id == "-1":
-            return {"choices": [["-1", "* (All geographies)"]]}
+        if geography_type_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All geographies)"]]}
 
         parent_geography_type_id = int(geography_type_id)
         geographies = (

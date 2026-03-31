@@ -1,6 +1,7 @@
 (function () {
   "use strict";
   let theme, subTheme, topic, metric, geographyType, geography;
+  const WILDCARD_ID_VALUE = "-1";
 
   /**
    * Generic function to fetch choices from the API
@@ -46,7 +47,7 @@
 
     //dropdown wildcard choice
     const wildcardOption = document.createElement("option");
-    wildcardOption.value = "-1";
+    wildcardOption.value = WILDCARD_ID_VALUE;
     wildcardOption.textContent = wildcardValue;
     dropdown.appendChild(wildcardOption);
 
@@ -87,11 +88,11 @@
     dropdown.innerHTML = "";
 
     const option = document.createElement("option");
-    option.value = "-1";
+    option.value = WILDCARD_ID_VALUE;
     option.textContent = message;
     dropdown.appendChild(option);
 
-    dropdown.value = "-1";
+    dropdown.value = WILDCARD_ID_VALUE;
   }
 
   /**
@@ -108,7 +109,7 @@
       return;
     }
 
-    if (themeValue === "-1") {
+    if (themeValue === WILDCARD_ID_VALUE) {
       setToWildcard(subTheme, "* (All sub-themes)");
       setToWildcard(topic, "* (All topics)");
       setToWildcard(metric, "* (All metrics)");
@@ -142,7 +143,7 @@
       return;
     }
 
-    if (subThemeValue === "-1") {
+    if (subThemeValue === WILDCARD_ID_VALUE) {
       // Wildcard sub-theme = cascade wildcard to children
       setToWildcard(topic, "* (All topics)");
       setToWildcard(metric, "* (All metrics)");
@@ -175,7 +176,7 @@
       return;
     }
 
-    if (topicValue === "-1") {
+    if (topicValue === WILDCARD_ID_VALUE) {
       // Wildcard topic = cascade wildcard to metrics
       setToWildcard(metric, "* (All metrics)");
       return;
@@ -201,7 +202,7 @@
       return;
     }
 
-    if (geographyTypeValue === "-1") {
+    if (geographyTypeValue === WILDCARD_ID_VALUE) {
       // Wildcard topic = cascade wildcard to metrics
       setToWildcard(geography, "* (All geographies)");
       return;
@@ -232,7 +233,7 @@
     const savedGeography = geography.value;
 
     // If theme has a value (not wildcard, not empty), load sub-themes
-    if (savedTheme && savedTheme !== "" && savedTheme !== "-1") {
+    if (savedTheme && savedTheme !== "" && savedTheme !== WILDCARD_ID_VALUE) {
       const subThemeChoices = await fetchChoices("subthemes", savedTheme);
       if (subThemeChoices.length > 0) {
         populateDropdown(subTheme, subThemeChoices, "* (All sub-themes)");
@@ -240,7 +241,11 @@
       }
 
       // If sub-theme has a value, load topics
-      if (savedSubTheme && savedSubTheme !== "" && savedSubTheme !== "-1") {
+      if (
+        savedSubTheme &&
+        savedSubTheme !== "" &&
+        savedSubTheme !== WILDCARD_ID_VALUE
+      ) {
         const topicChoices = await fetchChoices("topics", savedSubTheme);
         if (topicChoices.length > 0) {
           populateDropdown(topic, topicChoices, "* (All topics)");
@@ -248,7 +253,11 @@
         }
 
         // If topic has a value, load metrics
-        if (savedTopic && savedTopic !== "" && savedTopic !== "-1") {
+        if (
+          savedTopic &&
+          savedTopic !== "" &&
+          savedTopic !== WILDCARD_ID_VALUE
+        ) {
           const metricChoices = await fetchChoices("metrics", savedTopic);
           if (metricChoices.length > 0) {
             populateDropdown(metric, metricChoices, "* (All metrics)");
@@ -256,7 +265,7 @@
           }
         }
       }
-    } else if (savedTheme === "-1") {
+    } else if (savedTheme === WILDCARD_ID_VALUE) {
       // Theme is wildcard, cascade to children
       setToWildcard(subTheme, "* (All sub-themes)");
       setToWildcard(topic, "* (All topics)");
@@ -267,7 +276,7 @@
     if (
       savedGeographyType &&
       savedGeographyType !== "" &&
-      savedGeographyType !== "-1"
+      savedGeographyType !== WILDCARD_ID_VALUE
     ) {
       const geographyChoices = await fetchChoices(
         "geographies",
@@ -277,7 +286,7 @@
         populateDropdown(geography, geographyChoices, "* (All geographies)");
         geography.value = savedGeography; // Restore selection
       }
-    } else if (savedGeographyType === "-1") {
+    } else if (savedGeographyType === WILDCARD_ID_VALUE) {
       setToWildcard(geography, "* (All geographies)");
     }
   }

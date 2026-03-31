@@ -129,6 +129,6 @@ If set to false, linear point-to-point lines will be drawn between points.
 CONFIDENCE_INTERVALS: str = """
 Boolean switch to decide whether to draw confidence intervals if provided
 """
-GEOGRAPHY_TUPLE_FORMATTING: str = """
+GEOGRAPHY_LIST_FORMATTING: str = """
 "List of [id, name] pairs for dropdown options"
 """
