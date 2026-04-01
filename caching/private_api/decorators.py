@@ -160,7 +160,6 @@ def _calculate_response_and_save_in_cache(
 def _calculate_response_from_view(
     view_function, *args, is_public: bool = True, **kwargs
 ) -> Response:
-    # Add is_public to response here, and then set header?
     response = view_function(*args, **kwargs)
     if not (is_public):
         response["Cache-Control"] = "private, no-cache"
