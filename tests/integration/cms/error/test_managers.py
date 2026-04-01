@@ -16,7 +16,10 @@ class TestErrorPageManager:
             path="abc",
             depth=1,
             title="abc",
-            body="ghi",
+            body="",
+            error_line="This is an error line",
+            sub_text="This is some subtext that would be displayed on the page",
+            error_text="This is some error text",
             live=True,
             seo_title="ABC",
         )
@@ -24,7 +27,10 @@ class TestErrorPageManager:
             path="def",
             depth=1,
             title="def",
-            body="ghi",
+            body="",
+            error_line="This is an error line",
+            sub_text="This is some subtext that would be displayed on the page",
+            error_text="This is some error text",
             live=False,
             seo_title="DEF",
         )
