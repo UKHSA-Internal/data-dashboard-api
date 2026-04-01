@@ -6,7 +6,6 @@ from rest_framework.test import APIClient
 
 from auth_content.models.permission_sets import PermissionSet
 from tests.factories.metrics.metric import MetricFactory
-from tests.factories.metrics.permission_set import PermissionSetFactory
 from tests.factories.metrics.sub_theme import SubThemeFactory
 from tests.factories.metrics.topic import TopicFactory
 
