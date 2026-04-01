@@ -544,7 +544,7 @@ class TestGeographyByGeographyTypeRequestSerializer:
 
         # Then
         # The helper function should have been used (implicitly tested by correct output)
-        assert response == {"choices": [("S92000003", "Scotland")]}
+        assert response == {"choices": [["S92000003", "Scotland"]]}
 
 
 class TestQuerysetToGeographyCodeNameTuples:

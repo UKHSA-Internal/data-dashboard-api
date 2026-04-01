@@ -43,7 +43,7 @@ PERMISSION_SET_FIELDS = [
     {
         "field_name": "geography",
         "field_label": "Geography",
-        "field_choice_default": "Select geography first",
+        "field_choice_default": "Select geography type first",
         "field_choice_wildcard": None,
         "field_choice_callable": None,
     },
