@@ -55,7 +55,7 @@ class TestSeedRandomCommand:
             f"topics/{quote(sample_row.topic, safe='')}/"
             f"geography_types/{quote(sample_row.geography_type, safe='')}/"
             f"geographies/{quote(sample_row.geography, safe='')}/"
-            "metrics/"
+            "metrics"
         )
         response = api_client.get(
             path=path,
@@ -64,5 +64,6 @@ class TestSeedRandomCommand:
         )
 
         assert response.status_code == HTTP_OK
-        assert "metrics" in response.data
-        assert sample_row.metric in response.data["metrics"]
+        assert isinstance(response.data, list)
+        metric_names = [item["name"] for item in response.data]
+        assert sample_row.metric in metric_names
