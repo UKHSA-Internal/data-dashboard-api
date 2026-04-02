@@ -244,7 +244,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
             message = "Geography Type must be a number or '-1'"
             raise serializers.ValidationError(message) from err
 
-    def data(self) -> dict[str, list[tuple[str, str]]]:
+    def data(self) -> dict[str, list[list[str, str]]]:
         """
         Fetch geographies for specified geography type from DB and format as response.
 
@@ -278,17 +278,17 @@ def _queryset_to_geography_code_name_tuples(
     queryset: QuerySet,
 ) -> list[tuple[str, str]]:
     """
-    Convert a QuerySet with 'id' and 'name' fields to a list of tuples.
+    Convert a QuerySet with 'geography_code' and 'name' fields to a list of tuples.
 
     Args:
-        queryset: QuerySet containing dicts with 'id' and 'name' keys
+        queryset: QuerySet containing dicts with 'geography_code' and 'name' keys
 
     Returns:
-        List of (id, name) tuples
+        List of (geography_code, name) tuples
 
     Examples:
         >>> qs = Model.objects.values('id', 'name')
-        >>> queryset_to_id_name_tuples(qs)
-        [(1, "item1"), (2, "item2")]
+        >>> queryset_to_geography_code_name_tuples(qs)
+        [("E92000001", "England"), ("E12000007", "London")]
     """
     return [(item["geography_code"], item["name"]) for item in queryset]
