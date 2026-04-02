@@ -158,7 +158,6 @@ private_api_urlpatterns = [
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
     ),
-
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(

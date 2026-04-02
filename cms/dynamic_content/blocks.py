@@ -1,6 +1,15 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail.blocks import CharBlock, ChoiceBlock, PageChooserBlock, StreamBlock, StructBlock, StructValue, TextBlock, URLBlock
+from wagtail.blocks import (
+    CharBlock,
+    ChoiceBlock,
+    PageChooserBlock,
+    StreamBlock,
+    StructBlock,
+    StructValue,
+    TextBlock,
+    URLBlock,
+)
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from cms.dynamic_content import help_texts
@@ -155,9 +164,7 @@ class InternalPageLinks(StreamBlock):
 
 
 class RelatedLink(StructBlock):
-    link_display_text = CharBlock(
-        required=True, help_text=help_texts.RELATED_LINK_TEXT
-    )
+    link_display_text = CharBlock(required=True, help_text=help_texts.RELATED_LINK_TEXT)
     link = CharBlock(required=True, help_text=help_texts.RELATED_LINK_URL)
 
 
@@ -188,9 +195,7 @@ class SourceLinkBlock(StructBlock):
         return super().clean(value=value)
 
     @classmethod
-    def _validate_only_one_of_page_or_external_url(
-        cls, *, value: StructValue
-    ) -> None:
+    def _validate_only_one_of_page_or_external_url(cls, *, value: StructValue) -> None:
         """Validate that only one of the page or external_url fields is set if provided."""
         page = value.get("page")
         external_url = value.get("external_url")

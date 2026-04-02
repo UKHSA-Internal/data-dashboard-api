@@ -1,8 +1,6 @@
 from django import forms
-
 from django.db import models
 from wagtail.admin.panels import FieldPanel
-
 
 
 class User(models.Model):
@@ -13,7 +11,6 @@ class User(models.Model):
         FieldPanel("user_id"),
         FieldPanel("permission_sets", widget=forms.CheckboxSelectMultiple),
     ]
-    
-    
+
     def __str__(self):
         return f"User {self.user_id}"

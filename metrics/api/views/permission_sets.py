@@ -4,7 +4,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from auth_content.models.permission_sets import PermissionSet
 from metrics.api.serializers.permission_sets import (
     MetricRequestSerializer,
     PermissionSetResponseSerializer,
@@ -64,4 +63,3 @@ class MetricsByTopicView(APIView):
         serializer = MetricRequestSerializer(data={"topic_id": topic_id})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
-

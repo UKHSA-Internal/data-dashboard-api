@@ -172,8 +172,7 @@ class TestGeographiesView:
 
         # When
         query_params = {"topic": topic}
-        response: Response = client.get(
-            path=self.path, query_params=query_params)
+        response: Response = client.get(path=self.path, query_params=query_params)
 
         # Then
         # Geographies are returned in descending alphabetical order
@@ -246,8 +245,7 @@ class TestGeographiesView:
 
         # When
         query_params = {"geography_type": ltla}
-        response: Response = client.get(
-            path=self.path, query_params=query_params)
+        response: Response = client.get(path=self.path, query_params=query_params)
 
         # Then
         # Geographies are returned in descending alphabetical order

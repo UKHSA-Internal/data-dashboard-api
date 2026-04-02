@@ -32,8 +32,7 @@ class TestGetAllUniqueMetricNames:
         unique_metric_names = field_choices_callables.get_all_unique_metric_names()
 
         # Then
-        assert unique_metric_names == [(x, x)
-                                       for x in retrieved_unique_metric_names]
+        assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
 
 
 class TestGetAlLTimeSeriesMetricNames:
@@ -56,8 +55,7 @@ class TestGetAlLTimeSeriesMetricNames:
         unique_metric_names = field_choices_callables.get_all_timeseries_metric_names()
 
         # Then
-        assert unique_metric_names == [(x, x)
-                                       for x in retrieved_unique_metric_names]
+        assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
 
 
 class TestGetAllHeadlineMetricNames:
@@ -70,8 +68,7 @@ class TestGetAllHeadlineMetricNames:
         When `get_all_headline_metric_names()` is called
         Then the headline metric names are returned as a list of 2-item tuples
         """
-        retrieved_headline_metric_names = [
-            "COVID-19_headline_cases_7DayTotals"]
+        retrieved_headline_metric_names = ["COVID-19_headline_cases_7DayTotals"]
         mocked_get_all_headline_metric_names.return_value = (
             retrieved_headline_metric_names
         )
@@ -98,8 +95,7 @@ class TestGetAllUniqueChangeTypeMetricNames:
         Then the unique metric names are returned as a list of 2-item tuples
         """
         # Given
-        retrieved_unique_change_type_metric_names = [
-            "COVID-19_deaths_ONSRollingMean"]
+        retrieved_unique_change_type_metric_names = ["COVID-19_deaths_ONSRollingMean"]
         mocked_get_all_unique_change_type_metric_names.return_value = (
             retrieved_unique_change_type_metric_names
         )
@@ -437,8 +433,7 @@ class TestGetAllGeographyTypeNames:
         geography_type_names = field_choices_callables.get_all_geography_type_names()
 
         # Then
-        assert geography_type_names == [(x, x)
-                                        for x in retrieved_geography_type_names]
+        assert geography_type_names == [(x, x) for x in retrieved_geography_type_names]
 
 
 class TestGetAllSexNames:
@@ -582,8 +577,7 @@ class TestGetAllSubThemeNames:
         all_sub_theme_names = field_choices_callables.get_all_sub_theme_names()
 
         # Then
-        assert all_sub_theme_names == [(x, x)
-                                       for x in retrieved_sub_theme_names]
+        assert all_sub_theme_names == [(x, x) for x in retrieved_sub_theme_names]
 
 
 class TestGetAllSubThemeNamesAndIds:
@@ -807,8 +801,7 @@ class TestGetAllSubcategoryChoices:
         mocked_get_all_sex_names = ["all", "f", "m"]
         mocked_get_all_age_names.return_value = ["00-04", "05-11"]
         mocked_get_all_stratum_names.return_value = ["default"]
-        mocked_get_all_geography_names.return_value = [
-            "London", "Yorkshire and Humber"]
+        mocked_get_all_geography_names.return_value = ["London", "Yorkshire and Humber"]
 
         # When
         retrieved_subcategory_choices = (
@@ -898,10 +891,8 @@ class TestGetAllSubcategoryChoicesGroupedByCategories:
         Then a dictionary is returned containing the subcategory choices grouped by category
         """
         # Given
-        mocked_get_all_age_names.return_value = [
-            ("00-04", "00-04"), ("05-11", "05-11")]
-        mocked_get_all_sex_names.return_value = [
-            ("all", "all"), ("m", "m"), ("f", "f")]
+        mocked_get_all_age_names.return_value = [("00-04", "00-04"), ("05-11", "05-11")]
+        mocked_get_all_sex_names.return_value = [("all", "all"), ("m", "m"), ("f", "f")]
         mocked_get_all_stratum_names.return_value = [("default", "default")]
         mocked_all_geography_choices_grouped_by_type.return_value = [
             ("London", "London"),

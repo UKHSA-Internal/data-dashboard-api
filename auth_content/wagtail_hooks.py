@@ -11,11 +11,13 @@ class PermissionSetViewSet(ModelViewSet):
     model = PermissionSet
     menu_label = "Permission Sets"
     icon = "key"
-    
+
+
 class UserViewSet(ModelViewSet):
     model = User
     menu_label = "Users"
     icon = "user"
+
 
 class AuthGroup(ModelViewSetGroup):
     items = (PermissionSetViewSet, UserViewSet)

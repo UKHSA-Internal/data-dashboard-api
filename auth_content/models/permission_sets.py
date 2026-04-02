@@ -7,7 +7,6 @@ from django.db import models
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 
-
 from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
@@ -238,6 +237,3 @@ class PermissionSet(models.Model):
 
     def __str__(self):
         return self.name or f"Permission Set {self.id}"
-
-
-
