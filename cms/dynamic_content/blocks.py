@@ -198,3 +198,16 @@ class SourceLinkBlock(blocks.StructBlock):
         if page and external_url:
             error_message = "Use either page OR external_url, not both."
             raise ValidationError(error_message)
+
+
+class SectionFooterLink(blocks.StructBlock):
+    badge_label = blocks.CharBlock(
+        help_text=help_texts.SECTION_FOOTER_BADGE_LABEL, required=True
+    )
+    text = blocks.CharBlock(
+        help_text=help_texts.SECTION_FOOTER_LINK_TEXT, required=True
+    )
+    link = SourceLinkBlock(help_text=help_texts.SECTION_FOOTER_LINK, required=True)
+
+    class Meta:
+        icon = "link"
