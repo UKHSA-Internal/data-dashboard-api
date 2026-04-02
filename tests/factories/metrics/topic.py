@@ -1,8 +1,6 @@
 import factory
 
 from metrics.data.models.core_models import Topic, SubTheme
-from metrics.data.models.core_models import Topic, SubTheme
-
 
 class TopicFactory(factory.django.DjangoModelFactory):
     """
