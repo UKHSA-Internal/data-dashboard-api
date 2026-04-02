@@ -374,8 +374,7 @@ class TestGeographyByGeographyTypeRequestSerializer:
         response = serializer.data()
 
         # Then
-        assert response == {"choices": [
-            [WILDCARD_ID_VALUE, "* (All geographies)"]]}
+        assert response == {"choices": [[WILDCARD_ID_VALUE, "* (All geographies)"]]}
 
     def test_data_fetches_geographies_for_valid_geography_type_id(self):
         """
@@ -616,8 +615,7 @@ class TestQuerysetToGeographyCodeNameTuples:
         Then a list with one tuple is returned
         """
         # Given
-        mock_queryset = [
-            {"geography_code": "N92000002", "name": "Northern Ireland"}]
+        mock_queryset = [{"geography_code": "N92000002", "name": "Northern Ireland"}]
 
         # When
         result = _queryset_to_geography_code_name_tuples(mock_queryset)

@@ -60,13 +60,11 @@ class TestGeographyManager:
         geography_one = GeographyFactory.create_with_geography_type(
             name="Leeds",
             geography_code="E08000035",
-            geography_type="Lower Tier Local Authority"
+            geography_type="Lower Tier Local Authority",
         )
 
         geography_two = GeographyFactory.create_with_geography_type(
-            name="London",
-            geography_code="E12000007",
-            geography_type="Region"
+            name="London", geography_code="E12000007", geography_type="Region"
         )
         geography_three = GeographyFactory.create_with_geography_type(
             name="England",
