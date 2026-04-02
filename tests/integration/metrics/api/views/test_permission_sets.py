@@ -4,7 +4,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from auth_content.models.permission_sets import PermissionSet
+from auth_content.constants import WILDCARD_ID_VALUE
 from tests.factories.metrics.metric import MetricFactory
 from tests.factories.metrics.sub_theme import SubThemeFactory
 from tests.factories.metrics.topic import TopicFactory
@@ -13,7 +13,7 @@ from tests.factories.metrics.topic import TopicFactory
 class TestSubThemeByThemeView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/subthemes"
+        return "/api/data-hierarchy/subthemes"
 
     @pytest.mark.django_db
     def test_get_sub_themes_by_theme_id_should_return_tuple_of_id_and_name(self):
@@ -64,7 +64,7 @@ class TestSubThemeByThemeView:
         assert len(response.data["choices"]) == 1
 
         # Should return a wildcard choice
-        assert result["choices"][0][0] == "-1"
+        assert result["choices"][0][0] == WILDCARD_ID_VALUE
         assert result["choices"][0][1] == "* (All sub-themes)"
 
     @pytest.mark.django_db
@@ -95,7 +95,7 @@ class TestSubThemeByThemeView:
 class TestTopicBySubThemeView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/topics"
+        return "/api/data-hierarchy/topics"
 
     @pytest.mark.django_db
     def test_get_topics_by_sub_theme_id_should_return_tuple_of_id_and_name(self):
@@ -139,7 +139,7 @@ class TestTopicBySubThemeView:
         assert len(response.data["choices"]) == 1
 
         # Should return a wildcard choice
-        assert result["choices"][0][0] == "-1"
+        assert result["choices"][0][0] == WILDCARD_ID_VALUE
         assert result["choices"][0][1] == "* (All topics)"
 
     @pytest.mark.django_db
@@ -167,7 +167,7 @@ class TestTopicBySubThemeView:
 class TestMetricByTopicView:
     @property
     def path(self) -> str:
-        return "/api/permission-set/metrics"
+        return "/api/data-hierarchy/metrics"
 
     @pytest.mark.django_db
     def test_get_metric_by_topic_id_should_return_tuple_of_id_and_name(self):
@@ -211,7 +211,7 @@ class TestMetricByTopicView:
         assert len(response.data["choices"]) == 1
 
         # Should return a wildcard choice
-        assert result["choices"][0][0] == "-1"
+        assert result["choices"][0][0] == WILDCARD_ID_VALUE
         assert result["choices"][0][1] == "* (All metrics)"
 
     @pytest.mark.django_db

@@ -1,7 +1,22 @@
 from django.db.models import QuerySet
 from rest_framework import serializers
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.data.models.core_models.supporting import Metric, SubTheme, Topic
+
+
+def _validate_input_id(value, field_name):
+    """Validate theme_id is either wildcard or a valid integer"""
+    if value == WILDCARD_ID_VALUE:
+        return value
+
+    try:
+        int(value)
+    except ValueError as err:
+        msg = f"{field_name} must be a number or '-1'"
+        raise serializers.ValidationError(msg) from err
+    else:
+        return value
 
 
 class SubThemeRequestSerializer(serializers.Serializer):
@@ -20,16 +35,7 @@ class SubThemeRequestSerializer(serializers.Serializer):
     @staticmethod
     def validate_theme_id(value):
         """Validate theme_id is either wildcard or a valid integer"""
-        if value == "-1":
-            return value
-
-        try:
-            int(value)
-        except ValueError as err:
-            msg = "theme_id must be a number or '-1'"
-            raise serializers.ValidationError(msg) from err
-        else:
-            return value
+        return _validate_input_id(value, "theme_id")
 
     def data(self) -> dict:
         """
@@ -40,8 +46,8 @@ class SubThemeRequestSerializer(serializers.Serializer):
         """
         theme_id = self.validated_data["theme_id"]
 
-        if theme_id == "-1":
-            return {"choices": [["-1", "* (All sub-themes)"]]}
+        if theme_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All sub-themes)"]]}
 
         parent_theme_id = int(theme_id)
         sub_theme_tuples = _queryset_to_id_name_tuples(
@@ -70,16 +76,7 @@ class TopicRequestSerializer(serializers.Serializer):
     @staticmethod
     def validate_sub_theme_id(value):
         """Validate sub_theme_id is either wildcard or a valid integer"""
-        if value == "-1":
-            return value
-
-        try:
-            int(value)
-        except ValueError as err:
-            msg = "sub_theme_id must be a number or '-1'"
-            raise serializers.ValidationError(msg) from err
-        else:
-            return value
+        return _validate_input_id(value, "sub_theme_id")
 
     def data(self) -> dict:
         """
@@ -90,8 +87,8 @@ class TopicRequestSerializer(serializers.Serializer):
         """
         sub_theme_id = self.validated_data["sub_theme_id"]
 
-        if sub_theme_id == "-1":
-            return {"choices": [["-1", "* (All topics)"]]}
+        if sub_theme_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All topics)"]]}
 
         parent_sub_theme_id = int(sub_theme_id)
         topic_tuples = _queryset_to_id_name_tuples(
@@ -121,16 +118,7 @@ class MetricRequestSerializer(serializers.Serializer):
     @staticmethod
     def validate_topic_id(value):
         """Validate topic_id is either wildcard or a valid integer"""
-        if value == "-1":
-            return value
-
-        try:
-            int(value)
-        except ValueError as err:
-            msg = "topic_id must be a number or '-1'"
-            raise serializers.ValidationError(msg) from err
-        else:
-            return value
+        return _validate_input_id(value, "topic_id")
 
     def data(self) -> dict:
         """
@@ -141,8 +129,8 @@ class MetricRequestSerializer(serializers.Serializer):
         """
         topic_id = self.validated_data["topic_id"]
 
-        if topic_id == "-1":
-            return {"choices": [["-1", "* (All metrics)"]]}
+        if topic_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All metrics)"]]}
 
         parent_topic_id = int(topic_id)
         metric_tuples = _queryset_to_id_name_tuples(

@@ -453,3 +453,15 @@ class MetricsAPIInterface:
 
         """
         return self.geography_type_manager.get_all_names_and_ids()
+
+    def get_all_geography_names_and_codes(self) -> QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography names:
+                Examples:
+                    `<GeographyTypeQuerySet [1, 'UKHSA_Region']>`
+
+        """
+        return self.geography_manager.get_all_names_and_codes()

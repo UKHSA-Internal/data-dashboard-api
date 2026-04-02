@@ -15,6 +15,7 @@ from metrics.api.serializers.geographies import (
     GeographyByGeographyTypeRequestSerializer,
     GeographyChoicesResponseSerializer,
 )
+from metrics.api.views.permission_sets import PERMISSION_SETS_API_TAG
 
 GEOGRAPHIES_API_TAG = "geographies"
 
@@ -106,7 +107,7 @@ class GeographiesView(APIView):
 
 @extend_schema(
     request=GeographyByGeographyTypeRequestSerializer,
-    tags=[GEOGRAPHIES_API_TAG],
+    tags=[PERMISSION_SETS_API_TAG],
     responses={HTTPStatus.OK.value: GeographyChoicesResponseSerializer},
 )
 class GeographiesByGeographyTypeView(APIView):

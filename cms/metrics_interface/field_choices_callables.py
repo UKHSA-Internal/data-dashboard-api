@@ -26,7 +26,9 @@ def _build_two_item_tuple_choices(
     return [(choice, choice) for choice in choices]
 
 
-def _build_id_name_tuple_choices(*, choices: QuerySet) -> list[tuple[str, str]]:
+def _build_id_name_tuple_choices(
+    *, choices: QuerySet
+) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Build choices from a QuerySet containing id and name fields.
 
     Args:
@@ -38,6 +40,22 @@ def _build_id_name_tuple_choices(*, choices: QuerySet) -> list[tuple[str, str]]:
             [(1, "infectious_disease"), (2, "respiratory"), ...]
     """
     return [(str(choice["id"]), choice["name"]) for choice in choices]
+
+
+def _build_geography_code_name_tuple_choices(
+    *, choices: QuerySet
+) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Build choices from a QuerySet containing id and name fields.
+
+    Args:
+        choices: QuerySet with 'id' and 'name' fields
+
+    Returns:
+        A list of 2-item tuples (id, name).
+        Examples:
+            [(1, "infectious_disease"), (2, "respiratory"), ...]
+    """
+    return [(str(choice["geography_code"]), choice["name"]) for choice in choices]
 
 
 def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -609,6 +627,28 @@ def get_all_geography_type_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     metrics_interface = MetricsAPIInterface()
     return _build_id_name_tuple_choices(
         choices=metrics_interface.get_all_geography_type_names_and_ids()
+    )
+
+
+def get_all_geography_names_and_codes() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `geography` fields of the CMS blocks on permission sets creation page
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of geography type names and codes.
+        Examples:
+            [("E06000001", "Hartlepool"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+
+    return _build_geography_code_name_tuple_choices(
+        choices=metrics_interface.get_all_geography_names_and_codes()
     )
 
 

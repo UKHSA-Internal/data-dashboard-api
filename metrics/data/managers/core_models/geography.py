@@ -118,6 +118,9 @@ class GeographyQuerySet(models.QuerySet):
         model = self.get(name=geography, geography_type__name=geography_type)
         return model.geography_code
 
+    def get_all_names_and_codes(self):
+        return self.all().values("name", "geography_code").order_by("geography_code")
+
 
 class GeographyManager(models.Manager):
     """Custom model manager class for the `Geography` model."""
@@ -253,3 +256,15 @@ class GeographyManager(models.Manager):
         return self.get_queryset().get_geography_code_for_geography(
             geography=geography, geography_type=geography_type
         )
+
+    def get_all_names_and_codes(self) -> GeographyQuerySet:
+        """Gets all available deduplicated geography names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual geography names
+                ordered in descending ordering starting from A -> Z:
+                Examples:
+                    `<GeographyQuerySet ['England', 'London']>`
+
+        """
+        return self.get_queryset().get_all_names_and_codes()

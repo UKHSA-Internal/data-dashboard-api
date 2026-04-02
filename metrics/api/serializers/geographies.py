@@ -3,6 +3,7 @@ from collections import defaultdict
 from django.db.models import QuerySet
 from rest_framework import serializers
 
+from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
@@ -195,7 +196,7 @@ class GeographyChoicesResponseSerializer(serializers.Serializer):
         child=serializers.ListField(
             child=serializers.CharField(), min_length=2, max_length=2
         ),
-        help_text=help_texts.GEOGRAPHY_TUPLE_FORMATTING,
+        help_text=help_texts.GEOGRAPHY_LIST_FORMATTING,
     )
 
 
@@ -231,9 +232,9 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         return self.context.get("geography_manager", Geography.objects)
 
     @staticmethod
-    def validate_geography_type_id(value):
+    def validate_geography_type_id(value: str) -> str | int:
         """Validate geography_type_id is either wildcard or a valid integer"""
-        if value == "-1":
+        if value == WILDCARD_ID_VALUE:
             return value
 
         try:
@@ -242,7 +243,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
             message = "Geography Type must be a number or '-1'"
             raise serializers.ValidationError(message) from err
 
-    def data(self) -> dict:
+    def data(self) -> dict[str, list[list[str, str]]]:
         """
         Fetch geographies for specified geography type from DB and format as response.
 
@@ -252,8 +253,8 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         geography_type_id = self.validated_data["geography_type_id"]
 
         # Handle wildcard
-        if geography_type_id == "-1":
-            return {"choices": [["-1", "* (All geographies)"]]}
+        if geography_type_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All geographies)"]]}
 
         parent_geography_type_id = int(geography_type_id)
         geographies = (
@@ -276,17 +277,17 @@ def _queryset_to_geography_code_name_tuples(
     queryset: QuerySet,
 ) -> list[tuple[str, str]]:
     """
-    Convert a QuerySet with 'id' and 'name' fields to a list of tuples.
+    Convert a QuerySet with 'geography_code' and 'name' fields to a list of tuples.
 
     Args:
-        queryset: QuerySet containing dicts with 'id' and 'name' keys
+        queryset: QuerySet containing dicts with 'geography_code' and 'name' keys
 
     Returns:
-        List of (id, name) tuples
+        List of (geography_code, name) tuples
 
     Examples:
         >>> qs = Model.objects.values('id', 'name')
-        >>> queryset_to_id_name_tuples(qs)
-        [(1, "item1"), (2, "item2")]
+        >>> queryset_to_geography_code_name_tuples(qs)
+        [("E92000001", "England"), ("E12000007", "London")]
     """
     return [(item["geography_code"], item["name"]) for item in queryset]

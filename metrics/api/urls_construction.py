@@ -139,22 +139,22 @@ private_api_urlpatterns = [
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
     path(
-        f"{API_PREFIX}permission-set/subthemes/<str:theme_id>",
+        f"{API_PREFIX}data-hierarchy/subthemes/<str:theme_id>",
         SubThemesByThemeView.as_view(),
         name="get_subthemes",
     ),
     path(
-        f"{API_PREFIX}permission-set/topics/<str:sub_theme_id>",
+        f"{API_PREFIX}data-hierarchy/topics/<str:sub_theme_id>",
         TopicsBySubThemeView.as_view(),
         name="get_topics",
     ),
     path(
-        f"{API_PREFIX}permission-set/metrics/<str:topic_id>",
+        f"{API_PREFIX}data-hierarchy/metrics/<str:topic_id>",
         MetricsByTopicView.as_view(),
         name="get_metrics",
     ),
     path(
-        f"{API_PREFIX}permission-set/geographies/<str:geography_type_id>",
+        f"{API_PREFIX}data-hierarchy/geographies/<str:geography_type_id>",
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
     ),

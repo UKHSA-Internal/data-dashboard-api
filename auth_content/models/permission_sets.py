@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from itertools import starmap
 
 from django import forms
@@ -7,7 +8,9 @@ from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 
 
+from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
 from cms.metrics_interface.field_choices_callables import (
+    get_all_geography_names_and_codes,
     get_all_geography_type_names_and_ids,
     get_all_metric_names_and_ids,
     get_all_sub_theme_names_and_ids,
@@ -29,90 +32,53 @@ def get_theme_child_map():
     return {}
 
 
+def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
+    choices = [
+        ("", field["field_choice_default"]),
+    ]
+
+    if field["field_choice_wildcard"]:
+        choices += [(WILDCARD_ID_VALUE, field["field_choice_wildcard"])]
+
+    if field["field_choice_callable"]:
+        choices += field["field_choice_callable"]()
+
+    return forms.CharField(
+        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
+    )
+
+
 class PermissionSetForm(WagtailAdminModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Use CharField with Select widget to bypass choice validation
-        self.fields["theme"] = forms.CharField(
-            widget=forms.Select(
-                choices=[("", "---------"), ("-1", "* (All themes)")]
-                + get_all_theme_names_and_ids()
-            ),
-            required=True,
-        )
-        self.fields["sub_theme"] = forms.CharField(
-            required=True,
-            label="Sub Theme",
-            widget=forms.Select(choices=[("", "Select theme first")]),
-        )
-        self.fields["topic"] = forms.CharField(
-            required=True,
-            label="Topic",
-            widget=forms.Select(choices=[("", "Select sub-theme first")]),
-        )
-        self.fields["metric"] = forms.CharField(
-            required=True,
-            label="Metric",
-            widget=forms.Select(choices=[("", "Select topic first")]),
-        )
-        self.fields["geography_type"] = forms.CharField(
-            widget=forms.Select(
-                choices=[("", "---------"), ("-1", "* (All geography-types)")]
-                + get_all_geography_type_names_and_ids()
-            ),
-            required=True,
-        )
-        self.fields["geography"] = forms.CharField(
-            required=True,
-            label="Geography",
-            widget=forms.Select(choices=[("-1", "Select geography type first")]),
-        )
+        for field in PERMISSION_SET_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
 
         if self.instance and self.instance.pk:
-            # Sub-theme
-            if self.instance.sub_theme and self.instance.sub_theme != "-1":
-                self.fields["sub_theme"].widget.choices = [
-                    ("", "Select theme first"),
-                    (
-                        self.instance.sub_theme,
-                        f"Loading... (ID: {self.instance.sub_theme})",
-                    ),
-                ]
-            elif self.instance.sub_theme == "-1":
-                self.fields["sub_theme"].widget.choices = [("-1", "* (All sub-themes)")]
+            self._initialize_dependent_fields()
 
-            # Topic
-            if self.instance.topic and self.instance.topic != "-1":
-                self.fields["topic"].widget.choices = [
-                    ("", "Select sub-theme first"),
-                    (self.instance.topic, f"Loading... (ID: {self.instance.topic})"),
-                ]
-            elif self.instance.topic == "-1":
-                self.fields["topic"].widget.choices = [("-1", "* (All topics)")]
+    def _initialize_dependent_fields(self):
+        """Initialize choices for cascading dependent fields"""
+        dependent_fields = {
+            "sub_theme": ("Select theme first", "* (All sub-themes)"),
+            "topic": ("Select sub-theme first", "* (All topics)"),
+            "metric": ("Select topic first", "* (All metrics)"),
+            "geography": ("Select geography type first", "* (All geographies)"),
+        }
 
-            # Metric
-            if self.instance.metric and self.instance.metric != "-1":
-                self.fields["metric"].widget.choices = [
-                    ("", "Select topic first"),
-                    (self.instance.metric, f"Loading... (ID: {self.instance.metric})"),
-                ]
-            elif self.instance.metric == "-1":
-                self.fields["metric"].widget.choices = [("-1", "* (All metrics)")]
+        for field_name, (placeholder, wildcard_label) in dependent_fields.items():
+            value = getattr(self.instance, field_name, None)
+            if value:
+                choices = self._get_field_choices(value, placeholder, wildcard_label)
+                self.fields[field_name].widget.choices = choices
 
-            # Geography
-            if self.instance.geography and self.instance.geography != "-1":
-                self.fields["geography"].widget.choices = [
-                    ("", "Select geography type first"),
-                    (
-                        self.instance.geography,
-                        f"Loading... (ID: {self.instance.geography})",
-                    ),
-                ]
-            elif self.instance.geography == "-1":
-                self.fields["geography"].widget.choices = [
-                    ("-1", "* (All geographies)")
-                ]
+    @staticmethod
+    def _get_field_choices(value, placeholder, wildcard_label):
+        """Generate choices list based on field value"""
+        if value == WILDCARD_ID_VALUE:
+            return [(WILDCARD_ID_VALUE, wildcard_label)]
+        return [("", placeholder), (value, f"Loading... (ID: {value})")]
 
     def clean(self):
         """Validate that this permission set doesn't already exist"""
@@ -203,7 +169,7 @@ class PermissionSet(models.Model):
 
             Args:
                 field_name: The field identifier (e.g., "theme", "sub-theme")
-                field_value: The stored value (ID or "-1")
+                field_value: The stored value (ID or WILDCARD_ID_VALUE)
                 label: The display label (e.g., "Theme", "Sub-theme")
 
             Returns:
@@ -212,13 +178,8 @@ class PermissionSet(models.Model):
             if not field_value:
                 return None
 
-            if field_value == "-1":
+            if field_value == WILDCARD_ID_VALUE:
                 return f"{label}: * (All)"
-
-            # Special case for geography_type - format the enum value
-            if field_name == "geography_type":
-                formatted_value = field_value.replace("_", " ").title()
-                return f"{label}: {formatted_value}"
 
             # For other fields, use choice label lookup
             choice_label = self._get_choice_label(field_name, field_value)
@@ -245,6 +206,8 @@ class PermissionSet(models.Model):
             "sub-theme": get_all_sub_theme_names_and_ids,
             "topic": get_all_topic_names_and_ids,
             "metric": get_all_metric_names_and_ids,
+            "geography_type": get_all_geography_type_names_and_ids,
+            "geography": get_all_geography_names_and_codes,
         }
 
         # Get the appropriate lookup function
