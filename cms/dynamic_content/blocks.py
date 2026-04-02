@@ -205,13 +205,11 @@ class SourceLinkBlock(StructBlock):
             raise ValidationError(error_message)
 
 
-class SectionFooterLink(blocks.StructBlock):
-    badge_label = blocks.CharBlock(
+class SectionFooterLink(StructBlock):
+    badge_label = CharBlock(
         help_text=help_texts.SECTION_FOOTER_BADGE_LABEL, required=True
     )
-    text = blocks.CharBlock(
-        help_text=help_texts.SECTION_FOOTER_LINK_TEXT, required=True
-    )
+    text = CharBlock(help_text=help_texts.SECTION_FOOTER_LINK_TEXT, required=True)
     link = SourceLinkBlock(help_text=help_texts.SECTION_FOOTER_LINK, required=True)
 
     class Meta:

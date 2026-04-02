@@ -2,6 +2,7 @@ import factory
 
 from metrics.data.models.core_models import Topic, SubTheme
 
+
 class TopicFactory(factory.django.DjangoModelFactory):
     """
     Factory for creating `Topic` instances for tests
