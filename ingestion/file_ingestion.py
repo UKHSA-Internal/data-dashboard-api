@@ -1,4 +1,3 @@
-import io
 import json
 import logging
 from pathlib import Path
@@ -25,19 +24,19 @@ class FileIngestionFailedError(Exception):
         super().__init__(message)
 
 
-def data_ingester(*, data: INCOMING_DATA_TYPE) -> None:
+def data_ingester(*, data: INCOMING_DATA_TYPE, filename: str) -> None:
     """Consumes the data in the given `data` and populates the database
 
     Args:
         data: The incoming source data to be ingested.
             Note that this is expected to be the dict
             not the file handler or stream.
+        filename: The source filename for the inbound payload.
 
     Returns:
         None
-
     """
-    consumer = Consumer(source_data=data)
+    consumer = Consumer(source_data=data, filename=filename)
 
     if consumer.is_headline_data:
         return consumer.process_core_headlines()
@@ -59,7 +58,11 @@ def upload_data(*, key: str, data: INCOMING_DATA_TYPE) -> None:
     logger.info("Uploading %s", key)
 
     try:
-        data_ingester(data=data)
+        # Drop folder names, eg "my_file.json" instead
+        # of "in/2026/04/my_file.json"
+        filename = Path(key).name
+
+        data_ingester(data=data, filename=filename)
     except Exception as error:
         logger.warning("Failed upload of %s due to %s", key, error)
         raise FileIngestionFailedError(file_name=key) from error
@@ -68,13 +71,9 @@ def upload_data(*, key: str, data: INCOMING_DATA_TYPE) -> None:
 
 
 def _upload_data_as_file(*, filepath: Path) -> None:
+    """Reads and uploads data from a JSON file."""
     logger.info("Uploading %s", filepath.name)
 
-    with open(filepath, "rb") as file:
-        deserialized_data = _open_data_from_file(file=file)
+    with open(filepath, encoding="utf-8") as file:
+        deserialized_data = json.load(file)
         upload_data(key=filepath.name, data=deserialized_data)
-
-
-def _open_data_from_file(*, file: io.FileIO) -> dict:
-    lines = file.readlines()[0]
-    return json.loads(lines)

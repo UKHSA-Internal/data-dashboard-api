@@ -103,6 +103,7 @@ class Consumer:
         self,
         *,
         source_data: type_hints.INCOMING_DATA_TYPE,
+        filename: str,
         dto: HeadlineDTO | TimeSeriesDTO | None = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
@@ -118,6 +119,7 @@ class Consumer:
         api_timeseries_manager: Manager = API_TIME_SERIES_MODEL.objects,
     ):
         self._source_data = source_data
+        self.filename = filename
         self.dto = dto or self._build_dto()
 
         # Model managers
@@ -136,8 +138,13 @@ class Consumer:
 
     def _build_dto(self) -> HeadlineDTO | TimeSeriesDTO:
         if self.is_headline_data:
-            return build_headline_dto_from_source(source_data=self._source_data)
-        return build_time_series_dto_from_source(source_data=self._source_data)
+            return build_headline_dto_from_source(
+                source_data=self._source_data, filename=self.filename
+            )
+
+        return build_time_series_dto_from_source(
+            source_data=self._source_data, filename=self.filename
+        )
 
     @property
     def is_headline_data(self) -> bool:

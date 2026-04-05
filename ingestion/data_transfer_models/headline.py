@@ -1,7 +1,7 @@
 import datetime
 from typing import Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictBool
 from pydantic.functional_validators import field_validator, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
@@ -23,7 +23,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
     lower_confidence: float | None = None
-    is_public: bool = True
+    is_public: StrictBool = True
 
     @field_validator("embargo")
     @classmethod
@@ -183,7 +183,7 @@ def _build_enriched_headline_specific_fields(
             upper_confidence=individual_time_series.get("upper_confidence", None),
             metric_value=individual_time_series["metric_value"],
             lower_confidence=individual_time_series.get("lower_confidence", None),
-            is_public=individual_time_series.get("is_public", True),
+            is_public=individual_time_series["is_public"],
         )
         for individual_time_series in source_data["data"]
         if individual_time_series["metric_value"] is not None
