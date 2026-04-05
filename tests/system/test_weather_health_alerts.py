@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 from ingestion.file_ingestion import data_ingester
 
 EXPECTED_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+TEST_FILENAME = "cold-alert_headline_matrixNumber.json"
 
 
 class TestIngestion:
@@ -34,6 +35,7 @@ class TestIngestion:
                     "period_end": "2025-01-07 08:00:00",
                     "metric_value": 11,
                     "embargo": None,
+                    "is_public": True,
                 }
             ],
             "refresh_date": "2025-06-11 11:15:00",
@@ -48,7 +50,7 @@ class TestIngestion:
         Then the alerts/ API returns the newer shorter alert
         """
         # Given
-        data_ingester(data=self.cold_alert_payload)
+        data_ingester(data=self.cold_alert_payload, filename=TEST_FILENAME)
         response_data = self._hit_alert_endpoint(geography_code=self.geography_code)
 
         # Check that we have ingested the original alert
@@ -69,7 +71,7 @@ class TestIngestion:
         shortened_alert_headline_data = self._mutate_headline_data(
             period_end=shortened_period_end
         )
-        data_ingester(data=shortened_alert_headline_data)
+        data_ingester(data=shortened_alert_headline_data, filename=TEST_FILENAME)
 
         # Then
         # Check that we have ingested the updated alert
@@ -94,7 +96,7 @@ class TestIngestion:
         Then the alerts/ API returns the newer shorter alert
         """
         # Given
-        data_ingester(data=self.cold_alert_payload)
+        data_ingester(data=self.cold_alert_payload, filename=TEST_FILENAME)
         response_data = self._hit_alert_endpoint(geography_code=self.geography_code)
 
         # Check that we have ingested the original alert
@@ -114,7 +116,7 @@ class TestIngestion:
         shortened_alert_headline_data = self._mutate_headline_data(
             period_end=shortened_period_end_same_day
         )
-        data_ingester(data=shortened_alert_headline_data)
+        data_ingester(data=shortened_alert_headline_data, filename=TEST_FILENAME)
 
         # Then
         # Check that we have ingested the updated alert
@@ -138,7 +140,7 @@ class TestIngestion:
         Then the alerts/ API returns the newer extended alert
         """
         # Given
-        data_ingester(data=self.cold_alert_payload)
+        data_ingester(data=self.cold_alert_payload, filename=TEST_FILENAME)
         response_data = self._hit_alert_endpoint(geography_code=self.geography_code)
 
         # Check that we have ingested the original alert
@@ -158,7 +160,7 @@ class TestIngestion:
         extended_alert_headline_data = self._mutate_headline_data(
             period_end=increased_period_end
         )
-        data_ingester(data=extended_alert_headline_data)
+        data_ingester(data=extended_alert_headline_data, filename=TEST_FILENAME)
 
         # Then
         # Check that we have ingested the updated alert
@@ -183,7 +185,7 @@ class TestIngestion:
         Then the alerts/ API returns the newer raised alert level
         """
         # Given
-        data_ingester(data=self.cold_alert_payload)
+        data_ingester(data=self.cold_alert_payload, filename=TEST_FILENAME)
         response_data = self._hit_alert_endpoint(geography_code=self.geography_code)
 
         # Check that we have ingested the original alert
@@ -202,7 +204,7 @@ class TestIngestion:
         updated_alert_level_headline_data = self._mutate_headline_data(
             metric_value=updated_alert_level
         )
-        data_ingester(data=updated_alert_level_headline_data)
+        data_ingester(data=updated_alert_level_headline_data, filename=TEST_FILENAME)
 
         # Then
         # Check that we have ingested the updated alert
@@ -224,7 +226,7 @@ class TestIngestion:
         Then the alerts/ API returns the newer 'cancelled' alert level
         """
         # Given
-        data_ingester(data=self.cold_alert_payload)
+        data_ingester(data=self.cold_alert_payload, filename=TEST_FILENAME)
         response_data = self._hit_alert_endpoint(geography_code=self.geography_code)
 
         # Check that we have ingested the original alert
@@ -245,7 +247,7 @@ class TestIngestion:
             metric_value=updated_alert_level,
             period_end=current_time_period_end,
         )
-        data_ingester(data=updated_alert_level_headline_data)
+        data_ingester(data=updated_alert_level_headline_data, filename=TEST_FILENAME)
 
         # Then
         # Check that we have ingested the updated alert

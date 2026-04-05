@@ -26,7 +26,7 @@ EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 class TestConsumer:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
-        self, example_headline_data: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
     ):
         """
         Given an example headline data file
@@ -35,7 +35,7 @@ class TestConsumer:
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        consumer = Consumer(source_data=example_headline_data)
+        consumer = Consumer(source_data=example_headline_data, filename=test_filename)
         assert not CoreHeadline.objects.exists()
 
         # When
@@ -84,7 +84,7 @@ class TestConsumer:
 
     @pytest.mark.django_db
     def test_can_ingest_timeseries_data_successfully(
-        self, example_time_series_data: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
     ):
         """
         Given an example headline data file
@@ -93,7 +93,9 @@ class TestConsumer:
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        consumer = Consumer(source_data=example_time_series_data)
+        consumer = Consumer(
+            source_data=example_time_series_data, filename=test_filename
+        )
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
@@ -235,7 +237,7 @@ class TestConsumer:
         assert str(core_timeseries.epiweek) == str(timeseries_specific_data["epiweek"])
 
     @pytest.mark.django_db
-    def test_can_ingest_duplicated_data_with_force_write_flag(self):
+    def test_can_ingest_duplicated_data_with_force_write_flag(self, test_filename: str):
         """
         Given an original core time series
         And 2 further updates, the 1st of which sets a new value
@@ -266,11 +268,12 @@ class TestConsumer:
                     "date": "2024-06-17",
                     "metric_value": 71,
                     "embargo": "2024-07-16 09:30:00",
+                    "is_public": True,
                 }
             ],
         }
 
-        consumer = Consumer(source_data=original_source_data)
+        consumer = Consumer(source_data=original_source_data, filename=test_filename)
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
@@ -287,7 +290,10 @@ class TestConsumer:
         second_data_with_new_metric_value = copy.deepcopy(original_source_data)
         second_data_with_new_metric_value["time_series"][0]["metric_value"] = 74
         second_data_with_new_metric_value["refresh_date"] = "2024-07-23 08:00:00"
-        consumer = Consumer(source_data=second_data_with_new_metric_value)
+        consumer = Consumer(
+            source_data=second_data_with_new_metric_value,
+            filename=test_filename,
+        )
         consumer.create_core_time_series()
 
         # Then
@@ -303,7 +309,10 @@ class TestConsumer:
         final_data_with_reset_metric_value = copy.deepcopy(original_source_data)
         final_data_with_reset_metric_value["refresh_date"] = "2024-07-30 08:00:00"
         final_data_with_reset_metric_value["time_series"][0]["force_write"] = True
-        consumer = Consumer(source_data=final_data_with_reset_metric_value)
+        consumer = Consumer(
+            source_data=final_data_with_reset_metric_value,
+            filename=test_filename,
+        )
         consumer.create_core_time_series()
 
         # Then

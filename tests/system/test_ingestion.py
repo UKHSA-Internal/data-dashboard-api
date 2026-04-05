@@ -10,12 +10,47 @@ from rest_framework.test import APIClient
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from validation.data_transfer_models.base import MissingFieldError
+from validation.is_public import FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR
 
-FAKE_FILE_NAME = "COVID-19_deaths_ONSByDay.json"
 DATE_FORMAT = "%Y-%m-%d"
+TEST_FILENAME = "COVID-19_deaths_ONSByDay.json"
+MISSING_IS_PUBLIC_ERROR = "`is_public` field is missing from the inbound source data"
 
 
 class TestIngestion:
+    @pytest.mark.django_db
+    def test_rejects_time_series_when_is_public_is_missing_from_payload(
+        self,
+        example_time_series_data: INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        for time_series_data in example_time_series_data["time_series"]:
+            time_series_data.pop("is_public")
+
+        with pytest.raises(MissingFieldError) as exc_info:
+            data_ingester(data=example_time_series_data, filename=test_filename)
+
+        assert str(exc_info.value) == MISSING_IS_PUBLIC_ERROR
+
+        assert CoreTimeSeries.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_rejects_time_series_when_filename_prefix_and_is_public_do_not_match(
+        self,
+        example_time_series_data: INCOMING_DATA_TYPE,
+        non_public_test_filename: str,
+    ):
+        with pytest.raises(ValueError) as exc_info:
+            data_ingester(
+                data=example_time_series_data,
+                filename=non_public_test_filename,
+            )
+
+        assert str(exc_info.value) == FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR
+
+        assert CoreTimeSeries.objects.count() == 0
+
     @pytest.mark.django_db
     def test_data_can_be_ingested_and_queried_from_tables_endpoint(
         self, example_time_series_data: INCOMING_DATA_TYPE
@@ -31,7 +66,7 @@ class TestIngestion:
         assert CoreTimeSeries.objects.count() == 0
 
         # When
-        data_ingester(data=example_time_series_data)
+        data_ingester(data=example_time_series_data, filename=TEST_FILENAME)
 
         # Then
         assert CoreTimeSeries.objects.count() == 2
@@ -84,7 +119,7 @@ class TestIngestion:
         }
         # When / Then
         # Check that the 1st file is ingested properly
-        data_ingester(data=first_sample_data)
+        data_ingester(data=first_sample_data, filename=TEST_FILENAME)
         filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
@@ -122,7 +157,9 @@ class TestIngestion:
                 refresh_date=second_refresh_date,
             )
         )
-        data_ingester(data=second_data_with_no_functional_updates)
+        data_ingester(
+            data=second_data_with_no_functional_updates, filename=TEST_FILENAME
+        )
         filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
@@ -158,7 +195,9 @@ class TestIngestion:
                 metric_value=updated_metric_value,
             )
         )
-        data_ingester(data=third_data_with_retrospective_updates)
+        data_ingester(
+            data=third_data_with_retrospective_updates, filename=TEST_FILENAME
+        )
         filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
@@ -207,7 +246,7 @@ class TestIngestion:
 
         # When / Then
         # The 1st file is ingested we expect all the data points to be made available
-        data_ingester(data=first_sample_data)
+        data_ingester(data=first_sample_data, filename=TEST_FILENAME)
         assert CoreTimeSeries.objects.all().count() == 2
 
         # Check that the `tables/` endpoint returns the correct data
@@ -247,7 +286,10 @@ class TestIngestion:
                 refresh_date=second_refresh_date,
             )
         )
-        data_ingester(data=second_data_file_with_no_functional_updates)
+        data_ingester(
+            data=second_data_file_with_no_functional_updates,
+            filename=TEST_FILENAME,
+        )
         assert CoreTimeSeries.objects.all().count() == 2
         # The `refresh_date` of this file should not be written to the database
         # since the data contained in this file is considered functionally the same as existing data
@@ -275,7 +317,10 @@ class TestIngestion:
             )
         )
 
-        data_ingester(data=third_data_file_with_retrospective_updates)
+        data_ingester(
+            data=third_data_file_with_retrospective_updates,
+            filename=TEST_FILENAME,
+        )
         assert CoreTimeSeries.objects.all().count() == 3
         assert final_refresh_date in CoreTimeSeries.objects.all().values_list(
             "refresh_date", flat=True
@@ -334,7 +379,7 @@ class TestIngestion:
         first_headline_data["data"][0]["upper_confidence"] = first_metric_value + 1
         first_headline_data["data"][0]["metric_value"] = first_metric_value
         first_headline_data["data"][0]["lower_confidence"] = first_metric_value - 1
-        data_ingester(data=first_headline_data)
+        data_ingester(data=first_headline_data, filename=TEST_FILENAME)
         assert CoreHeadline.objects.all().count() == 1
 
         # When / Then
@@ -351,7 +396,7 @@ class TestIngestion:
         second_headline_data["data"][0]["upper_confidence"] = second_metric_value + 1
         second_headline_data["data"][0]["metric_value"] = second_metric_value
         second_headline_data["data"][0]["lower_confidence"] = second_metric_value - 1
-        data_ingester(data=second_headline_data)
+        data_ingester(data=second_headline_data, filename=TEST_FILENAME)
         assert CoreHeadline.objects.all().count() == 2
 
         # When / Then
@@ -368,7 +413,7 @@ class TestIngestion:
         third_headline_data["data"][0]["upper_confidence"] = third_metric_value + 1
         third_headline_data["data"][0]["metric_value"] = third_metric_value
         third_headline_data["data"][0]["lower_confidence"] = third_metric_value - 1
-        data_ingester(data=third_headline_data)
+        data_ingester(data=third_headline_data, filename=TEST_FILENAME)
 
         # When
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
@@ -422,7 +467,7 @@ class TestIngestion:
         first_headline_data["data"][0]["lower_confidence"] = first_metric_value - 1
 
         # When
-        data_ingester(data=first_headline_data)
+        data_ingester(data=first_headline_data, filename=TEST_FILENAME)
 
         # Then
         assert CoreHeadline.objects.all().count() == 1
@@ -439,7 +484,7 @@ class TestIngestion:
         second_headline_data["data"][0]["lower_value"] = second_metric_value - 1
 
         # When
-        data_ingester(data=second_headline_data)
+        data_ingester(data=second_headline_data, filename=TEST_FILENAME)
 
         # Then
         # At this point the first metric value `123` isn't considered stale
@@ -456,7 +501,7 @@ class TestIngestion:
         third_headline_data["data"][0]["lower_value"] = first_metric_value - 1
 
         # When
-        data_ingester(data=third_headline_data)
+        data_ingester(data=third_headline_data, filename=TEST_FILENAME)
 
         # Then
         # At this point the first metric value `123` is now considered stale
