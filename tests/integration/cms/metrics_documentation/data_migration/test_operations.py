@@ -1,5 +1,5 @@
 import pytest
-from django.core.management import call_command
+from unittest import mock
 
 from cms.home.models import UKHSARootPage
 from cms.metrics_documentation.data_migration.child_entries import (
@@ -16,7 +16,46 @@ from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
 )
+from ingestion.file_ingestion import _upload_data_as_file
+from ingestion.operations.truncated_dataset import (
+    _gather_test_data_source_file_paths,
+    clear_metrics_tables,
+)
 from metrics.data.models.core_models import Metric, Topic
+from validation.is_public import NON_PUBLIC_DATA_PREFIX
+
+
+def _seed_truncated_test_data_with_split_auth() -> None:
+    """Ingests OFF-SENS files with auth enabled and other files with auth disabled."""
+    clear_metrics_tables()
+
+    source_file_paths = _gather_test_data_source_file_paths()
+    non_public_file_paths = [
+        filepath
+        for filepath in source_file_paths
+        if filepath.name.startswith(NON_PUBLIC_DATA_PREFIX)
+    ]
+    public_file_paths = [
+        filepath
+        for filepath in source_file_paths
+        if not filepath.name.startswith(NON_PUBLIC_DATA_PREFIX)
+    ]
+
+    with (
+        mock.patch("metrics.api.settings.auth.AUTH_ENABLED", True),
+        mock.patch("ingestion.data_transfer_models.time_series.AUTH_ENABLED", True),
+        mock.patch("ingestion.data_transfer_models.headline.AUTH_ENABLED", True),
+    ):
+        for filepath in non_public_file_paths:
+            _upload_data_as_file(filepath=filepath)
+
+    with (
+        mock.patch("metrics.api.settings.auth.AUTH_ENABLED", False),
+        mock.patch("ingestion.data_transfer_models.time_series.AUTH_ENABLED", False),
+        mock.patch("ingestion.data_transfer_models.headline.AUTH_ENABLED", False),
+    ):
+        for filepath in public_file_paths:
+            _upload_data_as_file(filepath=filepath)
 
 
 class TestRemoveMetricsDocumentationChildEntries:
@@ -116,7 +155,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
             for the corresponding `Metric` records
         """
         # Given
-        call_command("upload_truncated_test_data")
+        _seed_truncated_test_data_with_split_auth()
         healthcare_admission_metric = Metric.objects.get(
             name="RSV_healthcare_admissionRateByWeek"
         )
@@ -170,7 +209,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         And the existing `MetricsDocumentationParentPage` was retained
         """
         # Given
-        call_command("upload_truncated_test_data")
+        _seed_truncated_test_data_with_split_auth()
         individual_metric_data = get_metrics_definitions()[0]
         parent_page: MetricsDocumentationParentPage = (
             get_or_create_metrics_documentation_parent_page()
