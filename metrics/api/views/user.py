@@ -1,0 +1,38 @@
+from http import HTTPStatus
+
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from metrics.api.serializers.user import UserPermissionSetResponseSerializer, UserRequestSerializer
+
+USER_API_TAG = "Authenticated User"
+
+
+@extend_schema(
+    request=UserRequestSerializer,
+    tags=[USER_API_TAG],
+    parameters=[
+        OpenApiParameter(
+            name='user_id',
+            type=str,
+            location=OpenApiParameter.PATH,
+            description='UUID of the user'
+        )
+    ],
+    responses={
+        HTTPStatus.OK.value: UserPermissionSetResponseSerializer,
+        403: {"description": "Not authorized to view these permissions"},
+        404: {"description": "User not found or has no permissions"},
+    },
+)
+class UserPermissionSetsByUserIdView(APIView):
+    """Get user permission sets filtered by user ID"""
+
+    permission_classes = []
+
+    def get(self, request, user_id, *args, **kwargs):  # noqa: PLR6301
+        """API endpoint to fetch a users assigned permission sets using user_id"""
+        serializer = UserRequestSerializer(data={"user_id": user_id})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data())
