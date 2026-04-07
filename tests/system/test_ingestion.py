@@ -10,7 +10,10 @@ from rest_framework.test import APIClient
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from validation.is_public import FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR, MISSING_IS_PUBLIC_FIELD_ERROR
+from validation.is_public import (
+    FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
+    MISSING_IS_PUBLIC_FIELD_ERROR,
+)
 
 DATE_FORMAT = "%Y-%m-%d"
 TEST_FILENAME = "COVID-19_deaths_ONSByDay.json"

@@ -253,4 +253,3 @@ class TestUploadTruncatedTestData:
         assert spy_upload_data_as_file.call_count == len(test_source_data_file_paths)
         for filepath in test_source_data_file_paths:
             spy_upload_data_as_file.assert_any_call(filepath=filepath)
-

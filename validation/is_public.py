@@ -7,7 +7,9 @@ FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR = "Files prefixed with OFF-SENS_ must con
 IS_PUBLIC_BOOLEAN_ERROR = "Every is_public value must be provided as a boolean."
 MIXED_IS_PUBLIC_VALUES_ERROR = "A file must not contain a combination of is_public=True and is_public=False values."
 METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR = "Metrics prefixed with OFF-SENS_ must contain only is_public=False data and unprefixed metrics must contain only is_public=True data."
-MISSING_IS_PUBLIC_FIELD_ERROR = "`is_public` field is missing from the inbound source data"
+MISSING_IS_PUBLIC_FIELD_ERROR = (
+    "The is_public field is missing from the inbound source data."
+)
 
 
 def validate_is_public(

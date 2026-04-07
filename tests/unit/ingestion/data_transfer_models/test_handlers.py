@@ -341,6 +341,26 @@ class TestBuildTimeSeriesDTOFromSource:
                 source_data=source_data, filename=test_filename
             )
 
+    def test_builds_dto_when_time_series_is_empty(
+        self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
+    ):
+        """
+        Given incoming time series source data with an empty "time_series" list
+        When `build_time_series_dto_from_source()` is called
+        Then a `TimeSeriesDTO` is returned with no time series entries
+        """
+        # Given
+        source_data = example_time_series_data
+        source_data["time_series"] = []
+
+        # When
+        time_series_dto = build_time_series_dto_from_source(
+            source_data=source_data, filename=test_filename
+        )
+
+        # Then
+        assert time_series_dto.time_series == []
+
 
 class TestBuildHeadlineDTOFromSource:
     def test_extracts_common_fields_from_source_correctly(
@@ -635,3 +655,23 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(
                 source_data=source_data, filename=test_filename
             )
+
+    def test_builds_dto_when_data_is_empty(
+        self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
+    ):
+        """
+        Given incoming headline source data with an empty "data" list
+        When `build_headline_dto_from_source()` is called
+        Then a `HeadlineDTO` is returned with no data entries
+        """
+        # Given
+        source_data = example_headline_data
+        source_data["data"] = []
+
+        # When
+        headline_dto = build_headline_dto_from_source(
+            source_data=source_data, filename=test_filename
+        )
+
+        # Then
+        assert headline_dto.data == []
