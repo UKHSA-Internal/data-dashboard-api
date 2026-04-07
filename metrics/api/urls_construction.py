@@ -91,8 +91,7 @@ def construct_cms_admin_urlpatterns(
     prefix: str = "" if app_mode == enums.AppMode.CMS_ADMIN.value else "cms-admin/"
     return [
         path(prefix, include(wagtailadmin_urls)),
-        path("choose-page/", LinkBrowseView.as_view(),
-             name="wagtailadmin_choose_page"),
+        path("choose-page/", LinkBrowseView.as_view(), name="wagtailadmin_choose_page"),
     ]
 
 
@@ -169,15 +168,13 @@ private_api_urlpatterns = [
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
-    path(f"{API_PREFIX}alerts/v1/heat",
-         heat_alert_list, name="heat-alerts-list"),
+    path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(
         f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",
         heat_alert_detail,
         name="heat-alerts-detail",
     ),
-    path(f"{API_PREFIX}alerts/v1/cold",
-         cold_alert_list, name="cold-alerts-list"),
+    path(f"{API_PREFIX}alerts/v1/cold", cold_alert_list, name="cold-alerts-list"),
     path(
         f"{API_PREFIX}alerts/v1/cold/<str:geography_code>",
         cold_alert_detail,
@@ -188,8 +185,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
-    re_path(f"^{API_PREFIX}downloads/subplot/v1",
-            SubplotDownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}downloads/subplot/v1", SubplotDownloadsView.as_view()),
     re_path(
         f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)",
         GeographiesViewDeprecated.as_view(),
@@ -204,10 +200,8 @@ private_api_urlpatterns = [
 
 # Audit API endpoints
 audit_api_timeseries_list = AuditAPITimeSeriesViewSet.as_view({"get": "list"})
-audit_core_timeseries_list = AuditCoreTimeseriesViewSet.as_view({
-                                                                "get": "list"})
-audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({
-                                                                "get": "list"})
+audit_core_timeseries_list = AuditCoreTimeseriesViewSet.as_view({"get": "list"})
+audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({"get": "list"})
 
 audit_api_urlpatterns = [
     path(
@@ -227,8 +221,7 @@ audit_api_urlpatterns = [
     ),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
-    re_path(f"^{API_PREFIX}charts/dual-category/v1",
-            DualCategoryChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/dual-category/v1", DualCategoryChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
 ]
 
@@ -249,8 +242,7 @@ docs_urlspatterns = [
 ]
 
 static_urlpatterns = [
-    re_path(r"^static/(?P<path>.*)$", serve,
-            {"document_root": settings.STATIC_ROOT}),
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
 ]
 
 common_urlpatterns = [

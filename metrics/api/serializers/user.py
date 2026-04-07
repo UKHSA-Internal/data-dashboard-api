@@ -1,6 +1,7 @@
+import uuid
+
 from django.db.models import QuerySet
 from rest_framework import serializers
-import uuid
 
 from auth_content.models.users import User
 
@@ -8,7 +9,7 @@ from auth_content.models.users import User
 def _validate_user_id(value):
     """Validate theme_id is either wildcard or a valid integer"""
     try:
-        uuid_obj = uuid.UUID(value, version=4)
+        uuid_obj = uuid.UUID(value, version=4)  # noqa: F841
     except ValueError as err:
         msg = "User ID must be a valid UUID"
         raise serializers.ValidationError(msg) from err
@@ -60,8 +61,7 @@ class UserRequestSerializer(serializers.Serializer):
         user_uuid = uuid.UUID(user_id_str)
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(
-            user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
 
         # Check if user exists or has permissions
         if not permission_sets.exists():
@@ -74,8 +74,7 @@ class UserRequestSerializer(serializers.Serializer):
             }
 
         # Convert QuerySet to list of dicts
-        permission_set_list = _queryset_to_permission_set_dicts(
-            permission_sets)
+        permission_set_list = _queryset_to_permission_set_dicts(permission_sets)
 
         return {
             "user_id": user_id_str,
@@ -87,13 +86,11 @@ class UserRequestSerializer(serializers.Serializer):
 class UserPermissionSetResponseSerializer(serializers.Serializer):
     """Formats the response for choice endpoints"""
 
-    user_id = serializers.CharField(
-        help_text="UUID of the user"
-    )
+    user_id = serializers.CharField(help_text="UUID of the user")
 
     permission_sets = serializers.ListField(
         child=serializers.DictField(),
-        help_text="List of permission set objects assigned to the user"
+        help_text="List of permission set objects assigned to the user",
     )
 
     permission_set_count = serializers.IntegerField(

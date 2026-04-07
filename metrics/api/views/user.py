@@ -4,7 +4,10 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from metrics.api.serializers.user import UserPermissionSetResponseSerializer, UserRequestSerializer
+from metrics.api.serializers.user import (
+    UserPermissionSetResponseSerializer,
+    UserRequestSerializer,
+)
 
 USER_API_TAG = "Authenticated User"
 
@@ -14,10 +17,10 @@ USER_API_TAG = "Authenticated User"
     tags=[USER_API_TAG],
     parameters=[
         OpenApiParameter(
-            name='user_id',
+            name="user_id",
             type=str,
             location=OpenApiParameter.PATH,
-            description='UUID of the user'
+            description="UUID of the user",
         )
     ],
     responses={

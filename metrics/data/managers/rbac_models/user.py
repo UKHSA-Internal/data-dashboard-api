@@ -59,7 +59,8 @@ class UserManager(models.Manager):
         """
         return self.get_queryset().get_user_with_permission_sets(user_id=user_id)
 
-    def get_permission_sets_for_user(self, user_id: UUID) -> models.QuerySet:
+    @staticmethod
+    def get_permission_sets_for_user(user_id: UUID) -> models.QuerySet:
         """
         Get all permission sets for a user directly.
 
