@@ -53,6 +53,12 @@ class SimpleMenu(models.Model):
         help_text=help_texts.SIMPLEMENU_BODY_TEXT,
     )
 
+    panels = [
+        FieldPanel("internal_label"),
+        FieldPanel("is_active"),
+        FieldPanel("body"),
+    ]
+
     objects = SimpleMenuManager()
 
     def __str__(self) -> str:
