@@ -19,9 +19,7 @@ def _create_menu_data() -> list[dict]:
     landing_page = LandingPage.objects.first()
     covid_page = TopicPage.objects.get(slug="covid-19")
     flu_page = TopicPage.objects.get(slug="influenza")
-    other_respiratory_viruses_page = TopicPage.objects.get(
-        slug="other-respiratory-viruses"
-    )
+    other_respiratory_viruses_page = TopicPage.objects.get(slug="other-respiratory-viruses")
     childhood_vaccinations_index_page = CompositePage.objects.get(slug="cover")
 
     weather_health_alerts_page = CompositePage.objects.get(slug="weather-health-alerts")

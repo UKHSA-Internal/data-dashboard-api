@@ -70,12 +70,8 @@ class Command(BaseCommand):
 
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
 
-        build_cms_site_helpers.create_acknowledgement_page(
-            name="acknowledgement", parent_page=root_page
-        )
-        build_cms_site_helpers.create_feedback_page(
-            name="feedback", parent_page=root_page
-        )
+        build_cms_site_helpers.create_acknowledgement_page(name="acknowledgement", parent_page=root_page)
+        build_cms_site_helpers.create_feedback_page(name="feedback", parent_page=root_page)
         build_cms_site_helpers.create_menu_snippet()
 
     @classmethod
@@ -93,12 +89,8 @@ class Command(BaseCommand):
         weather_health_alerts_page = build_cms_site_helpers.create_composite_page(
             name="weather_health_alerts", parent_page=root_page
         )
-        build_cms_site_helpers.create_composite_page(
-            name="heat_health_alerts", parent_page=weather_health_alerts_page
-        )
-        build_cms_site_helpers.create_composite_page(
-            name="cold_health_alerts", parent_page=weather_health_alerts_page
-        )
+        build_cms_site_helpers.create_composite_page(name="heat_health_alerts", parent_page=weather_health_alerts_page)
+        build_cms_site_helpers.create_composite_page(name="cold_health_alerts", parent_page=weather_health_alerts_page)
 
     @classmethod
     def _build_access_our_data_section(cls, root_page: UKHSARootPage) -> None:
@@ -113,33 +105,23 @@ class Command(BaseCommand):
             name="access_our_data_data_structure",
             parent_page=access_our_data_parent_page,
         )
-        build_cms_site_helpers.create_bulk_downloads_page(
-            name="bulk_downloads", parent_page=root_page
-        )
+        build_cms_site_helpers.create_bulk_downloads_page(name="bulk_downloads", parent_page=root_page)
 
     @classmethod
     def _build_respiratory_viruses_section(cls, root_page: UKHSARootPage) -> None:
-        covid_19_page = build_cms_site_helpers.create_topic_page(
-            name="covid_19", parent_page=root_page
-        )
-        influenza_page = build_cms_site_helpers.create_topic_page(
-            name="influenza", parent_page=root_page
-        )
+        covid_19_page = build_cms_site_helpers.create_topic_page(name="covid_19", parent_page=root_page)
+        influenza_page = build_cms_site_helpers.create_topic_page(name="influenza", parent_page=root_page)
         other_respiratory_viruses_page = build_cms_site_helpers.create_topic_page(
             name="other_respiratory_viruses", parent_page=root_page
         )
         # Because the index page links to these pages
         # they need to be created first, referenced and then moved under the index page
 
-        respiratory_viruses_index_page = (
-            build_cms_site_helpers.create_respiratory_viruses_index_page(
-                name="respiratory-viruses", parent_page=root_page
-            )
+        respiratory_viruses_index_page = build_cms_site_helpers.create_respiratory_viruses_index_page(
+            name="respiratory-viruses", parent_page=root_page
         )
 
-        other_respiratory_viruses_page.move(
-            target=respiratory_viruses_index_page, pos="last-child"
-        )
+        other_respiratory_viruses_page.move(target=respiratory_viruses_index_page, pos="last-child")
         influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
         covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
 
@@ -161,19 +143,11 @@ class Command(BaseCommand):
     def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
         build_cms_site_helpers.create_common_page(name="start", parent_page=root_page)
         build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
-        build_cms_site_helpers.create_common_page(
-            name="location_based_data", parent_page=root_page
-        )
-        build_cms_site_helpers.create_common_page(
-            name="whats_coming", parent_page=root_page
-        )
+        build_cms_site_helpers.create_common_page(name="location_based_data", parent_page=root_page)
+        build_cms_site_helpers.create_common_page(name="whats_coming", parent_page=root_page)
         build_cms_site_helpers.create_common_page(name="cookies", parent_page=root_page)
-        build_cms_site_helpers.create_common_page(
-            name="accessibility_statement", parent_page=root_page
-        )
-        build_cms_site_helpers.create_common_page(
-            name="compliance", parent_page=root_page
-        )
+        build_cms_site_helpers.create_common_page(name="accessibility_statement", parent_page=root_page)
+        build_cms_site_helpers.create_common_page(name="compliance", parent_page=root_page)
 
     @staticmethod
     def _clear_cms() -> None:

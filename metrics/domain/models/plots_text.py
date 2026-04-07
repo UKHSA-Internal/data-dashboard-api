@@ -323,10 +323,7 @@ class PlotsText:
         if end_value > start_value:
             part_description = f"It rose from {start_value} on {start_date} to {end_value} on {end_date}. "
         elif end_value == start_value:
-            part_description = (
-                f"The date fluctuates between {start_value} on {start_date}, "
-                f"ending with the same value on {end_date}. "
-            )
+            part_description = f"The date fluctuates between {start_value} on {start_date}, ending with the same value on {end_date}. "
         else:
             part_description = f"It fell from {start_value} on {start_date} to {end_value} on {end_date}. "
 

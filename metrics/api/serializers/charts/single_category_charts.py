@@ -72,7 +72,6 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
 
 
 class ChartsSerializer(BaseChartsSerializer):
-
     plots = ChartPlotsListSerializer()
 
     def to_models(self, request: Request) -> ChartRequestParams:

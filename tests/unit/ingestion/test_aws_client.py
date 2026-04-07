@@ -224,12 +224,7 @@ class TestAWSClient:
         expected_processed_folder: str = (
             aws_client_with_mocked_boto_client._processed_folder
         )
-        expected_log = (
-            f"Moving `{expected_filename}` "
-            f"from `{expected_inbound_folder}` "
-            f"to `{expected_processed_folder}` "
-            f"in s3"
-        )
+        expected_log = f"Moving `{expected_filename}` from `{expected_inbound_folder}` to `{expected_processed_folder}` in s3"
         assert expected_log in caplog.text
 
     # Tests for the `move_file_to_failed_folder()` method
@@ -299,12 +294,7 @@ class TestAWSClient:
             aws_client_with_mocked_boto_client._inbound_folder
         )
         expected_failed_folder: str = aws_client_with_mocked_boto_client._failed_folder
-        expected_log = (
-            f"Moving `{expected_filename}` "
-            f"from `{expected_inbound_folder}` "
-            f"to `{expected_failed_folder}` "
-            f"in s3"
-        )
+        expected_log = f"Moving `{expected_filename}` from `{expected_inbound_folder}` to `{expected_failed_folder}` in s3"
         assert expected_log in caplog.text
 
     # Tests for the _copy_file_to methods
@@ -616,3 +606,19 @@ class TestAWSClient:
         # Then
         expected_key = f"processed/2025-01-01/COVID-19/{FAKE_FILE_NAME}"
         assert processed_archive_key == expected_key
+
+    def test_upload_json_to_inbound_delegates_to_put_object(
+        self, aws_client_with_mocked_boto_client: AWSClient
+    ):
+        payload = {"key": "value"}
+
+        aws_client_with_mocked_boto_client.upload_json_to_inbound(
+            key="in/sample.json",
+            payload=payload,
+        )
+
+        aws_client_with_mocked_boto_client._client.put_object.assert_called_once()
+        kwargs = aws_client_with_mocked_boto_client._client.put_object.call_args.kwargs
+        assert kwargs["Bucket"] == aws_client_with_mocked_boto_client._bucket_name
+        assert kwargs["Key"] == "in/sample.json"
+        assert kwargs["ContentType"] == "application/json"

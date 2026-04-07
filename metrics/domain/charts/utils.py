@@ -22,7 +22,6 @@ def convert_large_numbers_to_short_text(number: int) -> str:
         Eg: 1000 = 1k, 2500 = 2k, 2690 = 3k, 100,000,000 = 1m
     """
     if number >= E_NOTATION[1]:
-
         for index in range(len(E_NOTATION)):
             try:
                 if E_NOTATION[index] <= number < E_NOTATION[index + 1]:

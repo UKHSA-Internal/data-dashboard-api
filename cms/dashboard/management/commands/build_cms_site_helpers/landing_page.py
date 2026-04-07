@@ -6,9 +6,7 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
     respiratory_viruses_index = CompositePage.objects.get(slug="respiratory-viruses")
     covid_page = TopicPage.objects.get(slug="covid-19")
     influenza_page = TopicPage.objects.get(slug="influenza")
-    other_respiratory_viruses_page = TopicPage.objects.get(
-        slug="other-respiratory-viruses"
-    )
+    other_respiratory_viruses_page = TopicPage.objects.get(slug="other-respiratory-viruses")
     weather_health_alerts_page = CompositePage.objects.get(slug="weather-health-alerts")
 
     return [

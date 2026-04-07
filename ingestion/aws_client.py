@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 
 import boto3
@@ -99,6 +100,15 @@ class AWSClient:
         )
         self._copy_file_to_failed(key=key)
         self._delete_file_from_inbound(key=key)
+
+    def upload_json_to_inbound(self, *, key: str, payload: dict) -> None:
+        """Uploads a JSON payload to the inbound folder in the ingest bucket."""
+        self._client.put_object(
+            Bucket=self._bucket_name,
+            Key=key,
+            Body=json.dumps(payload).encode("utf-8"),
+            ContentType="application/json",
+        )
 
     def _copy_file_to_processed(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the processed folder within the s3 bucket
