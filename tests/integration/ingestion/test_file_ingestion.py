@@ -7,15 +7,14 @@ from ingestion.file_ingestion import data_ingester
 from ingestion.utils import type_hints
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from validation.data_transfer_models.base import MissingFieldError
 from validation.is_public import (
     FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
     METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
+    MISSING_IS_PUBLIC_FIELD_ERROR,
     NON_PUBLIC_DATA_PREFIX,
 )
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
-MISSING_IS_PUBLIC_ERROR = "`is_public` field is missing from the inbound source data"
 
 
 class TestDataIngester:
@@ -199,10 +198,10 @@ class TestDataIngester:
         for time_series_data in data["time_series"]:
             time_series_data.pop("is_public")
 
-        with pytest.raises(MissingFieldError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             data_ingester(data=data, filename=test_filename)
 
-        assert str(exc_info.value) == MISSING_IS_PUBLIC_ERROR
+        assert str(exc_info.value) == MISSING_IS_PUBLIC_FIELD_ERROR
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0

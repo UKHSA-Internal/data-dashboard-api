@@ -7,7 +7,7 @@ from tests.unit.ingestion.data_transfer_models.test_handlers import (
     DATE_FORMAT,
     DATETIME_FORMAT,
 )
-from validation.data_transfer_models.base import MissingFieldError
+from validation.is_public import MISSING_IS_PUBLIC_FIELD_ERROR
 
 
 class TestBuildModelMethods:
@@ -106,7 +106,7 @@ class TestBuildModelMethods:
         for data in fake_data["data"]:
             data.pop("is_public")
 
-        with pytest.raises(MissingFieldError):
+        with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             Consumer(source_data=fake_data, filename=test_filename)
 
     @mock.patch.object(Consumer, "update_supporting_models")
@@ -210,7 +210,7 @@ class TestBuildModelMethods:
         for time_series_data in fake_data["time_series"]:
             time_series_data.pop("is_public")
 
-        with pytest.raises(MissingFieldError):
+        with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             Consumer(source_data=fake_data, filename=test_filename)
 
     def test_build_api_time_series(
@@ -303,5 +303,5 @@ class TestBuildModelMethods:
         for time_series_data in fake_data["time_series"]:
             time_series_data.pop("is_public")
 
-        with pytest.raises(MissingFieldError):
+        with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             Consumer(source_data=fake_data, filename=test_filename)

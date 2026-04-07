@@ -1,9 +1,8 @@
 import pytest
-
-from validation.data_transfer_models.base import MissingFieldError
 from validation.is_public import (
     FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
     IS_PUBLIC_BOOLEAN_ERROR,
+    MISSING_IS_PUBLIC_FIELD_ERROR,
     METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
     MIXED_IS_PUBLIC_VALUES_ERROR,
     NON_PUBLIC_DATA_PREFIX,
@@ -12,9 +11,6 @@ from validation.is_public import (
 
 
 class TestValidateIsPublicStatus:
-    MISSING_IS_PUBLIC_ERROR = (
-        "`is_public` field is missing from the inbound source data"
-    )
     PUBLIC_METRIC = "RSV_headline_positivityLatest"
     NON_PUBLIC_METRIC = f"{NON_PUBLIC_DATA_PREFIX}{PUBLIC_METRIC}"
     PUBLIC_FILENAME = f"{PUBLIC_METRIC}.json"
@@ -37,14 +33,14 @@ class TestValidateIsPublicStatus:
         )
 
     def test_raises_error_when_is_public_field_is_missing(self):
-        with pytest.raises(MissingFieldError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             validate_is_public(
                 source_data={"metric": self.PUBLIC_METRIC},
                 fields=[{"period_start": "2023-10-23"}],
                 filename=self.PUBLIC_FILENAME,
             )
 
-        assert str(exc_info.value) == self.MISSING_IS_PUBLIC_ERROR
+        assert str(exc_info.value) == MISSING_IS_PUBLIC_FIELD_ERROR
 
     def test_raises_error_when_is_public_value_is_not_boolean(self):
         with pytest.raises(TypeError) as exc_info:

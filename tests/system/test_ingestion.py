@@ -10,12 +10,11 @@ from rest_framework.test import APIClient
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from validation.data_transfer_models.base import MissingFieldError
-from validation.is_public import FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR
+from validation.is_public import FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR, MISSING_IS_PUBLIC_FIELD_ERROR
 
 DATE_FORMAT = "%Y-%m-%d"
 TEST_FILENAME = "COVID-19_deaths_ONSByDay.json"
-MISSING_IS_PUBLIC_ERROR = "`is_public` field is missing from the inbound source data"
+MISSING_IS_PUBLIC_ERROR = MISSING_IS_PUBLIC_FIELD_ERROR
 
 
 class TestIngestion:
@@ -28,7 +27,7 @@ class TestIngestion:
         for time_series_data in example_time_series_data["time_series"]:
             time_series_data.pop("is_public")
 
-        with pytest.raises(MissingFieldError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             data_ingester(data=example_time_series_data, filename=test_filename)
 
         assert str(exc_info.value) == MISSING_IS_PUBLIC_ERROR

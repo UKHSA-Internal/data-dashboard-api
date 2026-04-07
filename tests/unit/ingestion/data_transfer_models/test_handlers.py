@@ -7,7 +7,7 @@ from ingestion.data_transfer_models.handlers import (
 )
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from validation.data_transfer_models.base import MissingFieldError
-from validation.is_public import NOT_METRIC_ERROR
+from validation.is_public import MISSING_IS_PUBLIC_FIELD_ERROR, NOT_METRIC_ERROR
 
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -108,7 +108,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Given valid incoming time series source data
             which omits the `is_public` field
         When `build_time_series_dto_from_source()` is called
-        Then a `MissingFieldError` is raised
+        Then a `ValueError` is raised
         """
         # Given
         source_data = example_time_series_data
@@ -116,7 +116,7 @@ class TestBuildTimeSeriesDTOFromSource:
             time_series_data.pop("is_public")
 
         # When
-        with pytest.raises(MissingFieldError):
+        with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             build_time_series_dto_from_source(
                 source_data=source_data, filename=test_filename
             )
@@ -192,7 +192,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Given otherwise valid incoming source data
             which contains a field with a None value
         When `build_time_series_dto_from_source()` is called
-        Then a `MissingFieldError` is raised
+        Then a `ValueError` is raised
         """
         # Given
         source_data = example_time_series_data
@@ -423,7 +423,7 @@ class TestBuildHeadlineDTOFromSource:
             headline_data.pop("is_public")
 
         # When
-        with pytest.raises(MissingFieldError):
+        with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             build_headline_dto_from_source(
                 source_data=source_data, filename=test_filename
             )

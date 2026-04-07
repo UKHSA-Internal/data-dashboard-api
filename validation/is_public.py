@@ -1,7 +1,5 @@
 from collections.abc import Mapping, Sequence
 
-from validation.data_transfer_models.base import MissingFieldError
-
 NON_PUBLIC_DATA_PREFIX = "OFF-SENS_"
 
 NOT_METRIC_ERROR = "No top-level metric field"
@@ -9,6 +7,7 @@ FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR = "Files prefixed with OFF-SENS_ must con
 IS_PUBLIC_BOOLEAN_ERROR = "Every is_public value must be provided as a boolean."
 MIXED_IS_PUBLIC_VALUES_ERROR = "A file must not contain a combination of is_public=True and is_public=False values."
 METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR = "Metrics prefixed with OFF-SENS_ must contain only is_public=False data and unprefixed metrics must contain only is_public=True data."
+MISSING_IS_PUBLIC_FIELD_ERROR = "`is_public` field is missing from the inbound source data"
 
 
 def validate_is_public(
@@ -81,7 +80,7 @@ def _validate_is_public_in_data(
 
     for field in fields:
         if "is_public" not in field:
-            raise MissingFieldError(field="is_public")
+            raise ValueError(MISSING_IS_PUBLIC_FIELD_ERROR)
 
         is_public = field["is_public"]
 
