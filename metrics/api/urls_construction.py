@@ -134,10 +134,7 @@ heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
 cold_alert_list = ColdAlertViewSet.as_view({"get": "list"})
 cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
 
-private_api_urlpatterns = [
-    # Headless CMS API - pages + drafts endpoints
-    path(API_PREFIX, cms_api_router.urls),
-    path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
+permission_set_urlpatterns = [
     path(
         f"{API_PREFIX}data-hierarchy/subthemes/<str:theme_id>",
         SubThemesByThemeView.as_view(),
@@ -158,6 +155,12 @@ private_api_urlpatterns = [
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
     ),
+]
+
+private_api_urlpatterns = [
+    # Headless CMS API - pages + drafts endpoints
+    path(API_PREFIX, cms_api_router.urls),
+    path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(
@@ -296,12 +299,14 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += audit_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case enums.AppMode.INGESTION.value:
@@ -318,5 +323,6 @@ def construct_urlpatterns(
             constructed_url_patterns += private_api_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
 
     return constructed_url_patterns
