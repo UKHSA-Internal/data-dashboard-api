@@ -1,7 +1,10 @@
 from collections import defaultdict
 
+from django.db.models import QuerySet
 from rest_framework import serializers
 
+from auth_content.constants import WILDCARD_ID_VALUE
+from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )
@@ -186,6 +189,17 @@ class GeographiesResponseSerializer(serializers.ListSerializer):
     child = GeographiesResponseListSerializer()
 
 
+class GeographyChoicesResponseSerializer(serializers.Serializer):
+    """Formats the response for choice endpoints"""
+
+    choices = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.CharField(), min_length=2, max_length=2
+        ),
+        help_text=help_texts.GEOGRAPHY_LIST_FORMATTING,
+    )
+
+
 MISSING_FIELD_ERROR_MESSAGE = "Either 'topic' or 'geography_type' must be provided."
 SINGLE_FIELD_ONLY_ERROR_MESSAGE = (
     "Only one of 'topic' or 'geography_type' should be provided, not both."
@@ -208,3 +222,72 @@ class GeographiesRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError(SINGLE_FIELD_ONLY_ERROR_MESSAGE)
 
         return attrs
+
+
+class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
+    geography_type_id = serializers.CharField(required=True)
+
+    @property
+    def geography_manager(self):
+        return self.context.get("geography_manager", Geography.objects)
+
+    @staticmethod
+    def validate_geography_type_id(value: str) -> str | int:
+        """Validate geography_type_id is either wildcard or a valid integer"""
+        if value == WILDCARD_ID_VALUE:
+            return value
+
+        try:
+            return int(value)
+        except ValueError as err:
+            message = "Geography Type must be a number or '-1'"
+            raise serializers.ValidationError(message) from err
+
+    def data(self) -> dict[str, list[list[str, str]]]:
+        """
+        Fetch geographies for specified geography type from DB and format as response.
+
+        Returns:
+            Dict with 'choices' key containing list of [id, name] pairs
+        """
+        geography_type_id = self.validated_data["geography_type_id"]
+
+        # Handle wildcard
+        if geography_type_id == WILDCARD_ID_VALUE:
+            return {"choices": [[WILDCARD_ID_VALUE, "* (All geographies)"]]}
+
+        parent_geography_type_id = int(geography_type_id)
+        geographies = (
+            self.geography_manager.get_geography_codes_and_names_by_geography_type_id(
+                parent_geography_type_id
+            )
+        )
+        geography_names_and_codes_tuples = _queryset_to_geography_code_name_tuples(
+            geographies
+        )
+
+        choices = [
+            [str(geography_code), name]
+            for geography_code, name in geography_names_and_codes_tuples
+        ]
+        return {"choices": choices}
+
+
+def _queryset_to_geography_code_name_tuples(
+    queryset: QuerySet,
+) -> list[tuple[str, str]]:
+    """
+    Convert a QuerySet with 'geography_code' and 'name' fields to a list of tuples.
+
+    Args:
+        queryset: QuerySet containing dicts with 'geography_code' and 'name' keys
+
+    Returns:
+        List of (geography_code, name) tuples
+
+    Examples:
+        >>> qs = Model.objects.values('id', 'name')
+        >>> queryset_to_geography_code_name_tuples(qs)
+        [("E92000001", "England"), ("E12000007", "London")]
+    """
+    return [(item["geography_code"], item["name"]) for item in queryset]
