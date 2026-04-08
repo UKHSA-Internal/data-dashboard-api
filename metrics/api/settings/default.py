@@ -61,6 +61,7 @@ if config.APP_MODE != "INGESTION":
         "cms.metrics_documentation",
         "cms.snippets",
         "cms.forms",
+        "cms.error",
         "wagtail.api.v2",
         "wagtail.contrib.forms",
         "wagtail.contrib.redirects",
@@ -77,6 +78,7 @@ if config.APP_MODE != "INGESTION":
         "wagtail_trash",
         "modelcluster",
         "taggit",
+        "auth_content",
     ]
 
 MIDDLEWARE = [
