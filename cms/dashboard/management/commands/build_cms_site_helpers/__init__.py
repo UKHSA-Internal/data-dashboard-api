@@ -10,5 +10,6 @@ from .pages import (
     create_whats_new_parent_page,
     create_whats_new_child_entry,
     create_feedback_page,
+    create_authentication_error_page,
 )
 from .menu import create_menu_snippet

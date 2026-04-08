@@ -1,0 +1,72 @@
+{
+  "id": 243,
+  "meta": {
+    "seo_title": "Authentication Error",
+    "search_description": "",
+    "type": "error.ErrorPage",
+    "detail_url": "https://localhost/api/pages/243/",
+    "html_url": "https://localhost/authentication-error/",
+    "slug": "authentication-error",
+    "show_in_menus": false,
+    "first_published_at": "2026-03-12T11:37:14.391237Z",
+    "alias_of": null,
+    "parent": {
+      "id": 163,
+      "meta": {
+        "type": "home.UKHSARootPage",
+        "detail_url": "https://localhost/api/pages/163/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Failed to sign in",
+  "body": null,
+  "seo_change_frequency": 5,
+  "seo_priority": "0.1",
+  "last_updated_at": "2026-03-12T14:35:25.243922Z",
+  "last_published_at": "2026-03-12T14:35:25.243922Z",
+  "active_announcements": [],
+  "error_line": "An error occurred that meant we were unable to authenticate you.",
+  "error_text": "<p data-block-key=\"genyw\">Reason sign in may have failed:</p><ul><li data-block-key=\"7tar0\">You are not authorised to access the data on this dashboard</li><li data-block-key=\"5tvaa\">Your internet connection may have dropped</li><li data-block-key=\"ce6si\">An unknown error occurred during the sign in process</li></ul>",
+  "sub_text": "<p data-block-key=\"1bc9h\">If you think you have the required authorisation to access the dashboard, please try again and make sure your internet connection is stable. If the problem continues, contact support.</p>",
+  "related_links_layout": "Sidebar",
+  "related_links": [
+    {
+      "id": 1,
+      "meta": {
+        "type": "error.ErrorPageRelatedLink"
+      },
+      "title": "Link 1",
+      "url": "https://www.google.com",
+      "body": "<p data-block-key=\"yjvpv\">This is a link</p>"
+    },
+    {
+      "id": 2,
+      "meta": {
+        "type": "error.ErrorPageRelatedLink"
+      },
+      "title": "Link 2",
+      "url": "https://www.google.com",
+      "body": "<p data-block-key=\"yjvpv\">sfsfsdf</p>"
+    },
+    {
+      "id": 3,
+      "meta": {
+        "type": "error.ErrorPageRelatedLink"
+      },
+      "title": "Link 3",
+      "url": "https://www.google.com",
+      "body": "<p data-block-key=\"yjvpv\">sdfsdfsdf</p>"
+    },
+    {
+      "id": 4,
+      "meta": {
+        "type": "error.ErrorPageRelatedLink"
+      },
+      "title": "Link 4",
+      "url": "https://www.google.com",
+      "body": "<p data-block-key=\"yjvpv\">sfsdfsdf</p>"
+    }
+  ]
+}
