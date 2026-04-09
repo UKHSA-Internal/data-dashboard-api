@@ -48,7 +48,10 @@ from metrics.api.views.permission_sets import (
     SubThemesByThemeView,
     TopicsBySubThemeView,
 )
-from metrics.api.views.user import UserPermissionSetsByUserIdView
+from metrics.api.views.user import (
+    UserPermissionHierarchyByUserIdView,
+    UserPermissionSetsByUserIdView,
+)
 from public_api import construct_url_patterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -160,6 +163,11 @@ permission_set_urlpatterns = [
         f"{API_PREFIX}user/<str:user_id>/permissions",
         UserPermissionSetsByUserIdView.as_view(),
         name="get_user_permissions",
+    ),
+    path(
+        f"{API_PREFIX}user/<str:user_id>/permissions/hierarchy",
+        UserPermissionHierarchyByUserIdView.as_view(),
+        name="get_user_permission_hierarchy",
     ),
 ]
 

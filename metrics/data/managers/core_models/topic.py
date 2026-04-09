@@ -22,6 +22,24 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True)
 
+    def get_name_by_id(self, topic_id: int) -> str | None:
+        """
+        Gets the topic name which matches the given theme id.
+
+        Args:
+            topic_id: The ID of the topic to look up
+
+        Returns:
+            The topic name if found, None otherwise
+
+        Examples:
+            >>> TopicQuerySet.get_name_by_id(1)
+            'infectious_disease'
+            >>> TopicQuerySet.get_name_by_id(999)
+            None
+        """
+        return self.filter(id=topic_id).values_list("name", flat=True).first()
+
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all available unique topic names as a flat list queryset.
 
@@ -77,6 +95,23 @@ class TopicManager(models.Manager):
 
     def get_queryset(self) -> TopicQuerySet:
         return TopicQuerySet(model=self.model, using=self.db)
+
+    def get_name_by_id(self, topic_id: int) -> str | None:
+        """Gets the topic name which matches the given topic id.
+
+        Args:
+            topic_id: The ID of the theme to look up
+
+        Returns:
+            The topic name if found, None otherwise
+
+        Examples:
+            >>> TopicManager.get_name_by_id(1)
+            'COVID-19'
+            >>> TopicManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(topic_id)
 
     def get_all_names(self) -> TopicQuerySet:
         """Gets all available topic names as a flat list queryset.

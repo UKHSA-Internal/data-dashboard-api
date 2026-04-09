@@ -11,6 +11,24 @@ from django.db import models
 class MetricQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `MetricManager`"""
 
+    def get_name_by_id(self, metric_id: int) -> str | None:
+        """
+        Gets the metric name which matches the given theme id.
+
+        Args:
+            metric_id: The ID of the metric to look up
+
+        Returns:
+            The metric name if found, None otherwise
+
+        Examples:
+            >>> MetricQuerySet.get_name_by_id(1)
+            'infectious_disease'
+            >>> MetricQuerySet.get_name_by_id(999)
+            None
+        """
+        return self.filter(id=metric_id).values_list("name", flat=True).first()
+
     def get_all_names(self) -> models.QuerySet:
         """Gets all available metric names as a flat list queryset.
 
@@ -110,6 +128,23 @@ class MetricManager(models.Manager):
 
     def get_queryset(self) -> MetricQuerySet:
         return MetricQuerySet(model=self.model, using=self.db)
+    
+    def get_name_by_id(self, metric_id: int) -> str | None:
+        """Gets the metric name which matches the given metric id.
+
+        Args:
+            metric_id: The ID of the theme to look up
+
+        Returns:
+            The metric name if found, None otherwise
+
+        Examples:
+            >>> MetricManager.get_name_by_id(1)
+            'COVID-19'
+            >>> MetricManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(metric_id)
 
     def get_all_names(self) -> MetricQuerySet:
         """Gets all available metric names as a flat list queryset.
