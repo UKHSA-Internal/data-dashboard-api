@@ -73,10 +73,7 @@ def cache_response(
 
 
 def _check_if_valid_non_public_request(request) -> bool:
-    auth = backend.JSONWebTokenAuthentication()
-    result = auth.authenticate(request)
-
-    return result is not None
+    return request.auth is not None
 
 
 def _retrieve_response_from_cache_or_calculate(
