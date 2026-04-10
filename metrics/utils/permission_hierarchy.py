@@ -11,11 +11,7 @@ from typing import Any
 from django.db.models import QuerySet
 
 from auth_content.models.permission_sets import PermissionSet
-from cms.metrics_interface.field_choices_callables import (
-    get_all_metric_names_and_ids,
-    get_all_sub_theme_names_and_ids,
-    get_all_topic_names_and_ids,
-)
+
 from metrics.data.models.core_models.supporting import Geography, GeographyType, Metric, SubTheme, Theme, Topic
 
 
@@ -378,6 +374,24 @@ def _remove_subsumed_permissions(
     return result
 
 
+def get_deduplicated_permissions(permission_sets: QuerySet) -> list[NormalizedPermission]:
+    """
+    Get deduplicated permissions without hierarchy structure.
+
+    Useful for passing to grouping functions.
+
+    Args:
+        permission_sets: QuerySet of PermissionSet objects
+
+    Returns:
+        List of deduplicated NormalizedPermission objects
+    """
+    normalized_perms = [
+        NormalizedPermission.from_permission_set(perm) for perm in permission_sets
+    ]
+    return _remove_subsumed_permissions(normalized_perms)
+
+
 def _build_summary(
     original: list[NormalizedPermission],
     deduplicated: list[NormalizedPermission],
@@ -405,12 +419,10 @@ def _build_summary(
         perm.theme_name for perm in deduplicated if perm.theme_id == "-1"
     ]
 
-    
-
     return {
         "total_permission_sets": len(original),
         "deduplicated_count": len(deduplicated),
-        "removed_count": len(original) - len(deduplicated), 
+        "removed_count": len(original) - len(deduplicated),
         "has_global_access": has_global_access,
         "wildcard_themes": wildcard_themes,
     }

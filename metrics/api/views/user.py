@@ -51,21 +51,36 @@ class UserPermissionSetsByUserIdView(APIView):
             type=str,
             location=OpenApiParameter.PATH,
             description="UUID of the user",
-        )
+        ),
+        OpenApiParameter(
+            name="group_by",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            description="Optional grouping strategy: 'geography_type', 'geography', or 'theme'",
+            required=False,
+            enum=['geography_type', 'geography', 'theme'],
+        ),
     ],
     responses={
         HTTPStatus.OK.value: UserPermissionSetResponseSerializer,
+        400: {"description": "Invalid group_by parameter"},
         403: {"description": "Not authorized to view these permissions"},
         404: {"description": "User not found or has no permissions"},
     },
 )
 class UserPermissionHierarchyByUserIdView(APIView):
-    """Get user permission sets filtered by user ID"""
+    """Get user permission sets filtered by user ID with optional grouping"""
 
     permission_classes = []
 
     def get(self, request, user_id, *args, **kwargs):  # noqa: PLR6301
-        """API endpoint to fetch a users assigned permission set hierarchy using user_id"""
-        serializer = UserHierarchyRequestSerializer(data={"user_id": user_id})
+        """API endpoint to fetch a user's assigned permission set hierarchy using user_id"""
+        # Pass query parameter to serializer
+        serializer = UserHierarchyRequestSerializer(
+            data={
+                "user_id": user_id,
+                "group_by": request.query_params.get('group_by', ''),
+            }
+        )
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())

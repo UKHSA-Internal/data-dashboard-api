@@ -4,7 +4,8 @@ from django.db.models import QuerySet
 from rest_framework import serializers
 
 from auth_content.models.users import User
-from metrics.utils.permission_hierarchy import build_permission_hierarchy
+from metrics.utils.permission_grouping import group_by_geography, group_by_geography_type, group_by_theme
+from metrics.utils.permission_hierarchy import build_permission_hierarchy, get_deduplicated_permissions
 
 
 def _validate_user_id(value):
@@ -16,6 +17,20 @@ def _validate_user_id(value):
         raise serializers.ValidationError(msg) from err
     else:
         return value
+
+
+@staticmethod
+def _validate_group_by(value):
+    """Validate group_by parameter is a valid option"""
+    if not value:  # Empty string or None
+        return None
+
+    valid_options = ['geography_type', 'geography', 'theme']
+    if value not in valid_options:
+        msg = f"Invalid group_by parameter: '{value}'. Valid options: {', '.join(valid_options)}"
+        raise serializers.ValidationError(msg)
+
+    return value
 
 
 class UserRequestSerializer(serializers.Serializer):
@@ -62,7 +77,8 @@ class UserRequestSerializer(serializers.Serializer):
         user_uuid = uuid.UUID(user_id_str)
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(
+            user_uuid)
 
         # Check if user exists or has permissions
         if not permission_sets.exists():
@@ -75,7 +91,8 @@ class UserRequestSerializer(serializers.Serializer):
             }
 
         # Convert QuerySet to list of dicts
-        permission_set_list = _queryset_to_permission_set_dicts(permission_sets)
+        permission_set_list = _queryset_to_permission_set_dicts(
+            permission_sets)
 
         return {
             "user_id": user_id_str,
@@ -85,9 +102,18 @@ class UserRequestSerializer(serializers.Serializer):
 
 
 class UserHierarchyRequestSerializer(serializers.Serializer):
-    """Fetches and formats sub-theme choices based on theme_id"""
+    """
+    Fetches and formats user permission hierarchy with optional grouping.
+
+    Supports different grouping strategies via 'group_by' parameter:
+    - None (default): Flat deduplicated hierarchy
+    - 'geography_type': Group by geography type → geography
+    - 'geography': Group by specific geography
+    - 'theme': Group by theme → sub-theme → topic
+    """
 
     user_id = serializers.CharField(required=True)
+    group_by = serializers.CharField(required=False, allow_blank=True)
 
     @property
     def user_manager(self):
@@ -102,32 +128,53 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
         """Validate user_id is a guid"""
         return _validate_user_id(value)
 
+    @staticmethod
+    def validate_group_by(value):
+        """Validate user_id is a guid"""
+        return _validate_group_by(value)
+
     def data(self) -> dict:
         """
         Fetch user permission sets from DB and format as response.
 
         Returns:
-            Dict with user_id, permission_sets list, and count
+            Dict with user_id and either:
+            - permission_sets dict (with hierarchy and summary) if no grouping
+            - permissions_by_geography_type dict if group_by='geography_type'
+            - permissions_by_geography dict if group_by='geography'
+            - permissions_by_theme dict if group_by='theme'
 
-        Example:
+        Example (no grouping):
             {
                 "user_id": "123e4567-e89b-12d3-a456-426614174000",
-                "permission_set_hierarchy": [
-                    {
-                        "id": 1,
-                        "name": "Theme: Infectious Disease | ...",
-                        "theme": "1",
-                        "sub_theme": "3",
-                        ...
+                "permission_sets": {
+                    "permission_set_hierarchy": [...],
+                    "summary": {...}
+                }
+            }
+
+        Example (geography_type grouping):
+            {
+                "user_id": "123e4567-e89b-12d3-a456-426614174000",
+                "permissions_by_geography_type": {
+                    "Region": {
+                        "E12000008": {
+                            "geography_name": "South East",
+                            "permissions": [...]
+                        }
                     }
-                ]
+                },
+                "total_permissions": 4
             }
         """
+
         user_id_str = self.validated_data["user_id"]
         user_uuid = uuid.UUID(user_id_str)
+        group_by = self.validated_data.get("group_by")
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(
+            user_uuid)
 
         # Check if user exists or has permissions
         if not permission_sets.exists():
@@ -139,9 +186,39 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
             }
 
         # Convert QuerySet to list of dicts
-        permission_set_list = _queryset_to_permission_hierarchy(permission_sets)
+        # permission_set_list = _queryset_to_permission_hierarchy(
+        #     permission_sets)
 
-        return {"user_id": user_id_str, "permission_sets": permission_set_list}
+        deduplicated_perms = get_deduplicated_permissions(permission_sets)
+
+        if group_by == 'geography_type':
+            return {
+                "user_id": user_id_str,
+                "permissions_by_geography_type": group_by_geography_type(deduplicated_perms),
+                "total_permissions": len(deduplicated_perms),
+            }
+
+        elif group_by == 'geography':
+            return {
+                "user_id": user_id_str,
+                "permissions_by_geography": group_by_geography(deduplicated_perms),
+                "total_permissions": len(deduplicated_perms),
+            }
+
+        elif group_by == 'theme':
+            return {
+                "user_id": user_id_str,
+                "permissions_by_theme": group_by_theme(deduplicated_perms),
+                "total_permissions": len(deduplicated_perms),
+            }
+
+        else:
+            # Default: Return flat deduplicated hierarchy with summary
+            hierarchy = _queryset_to_permission_hierarchy(permission_sets)
+            return {
+                "user_id": user_id_str,
+                "permission_sets": hierarchy,
+            }
 
 
 class UserPermissionSetResponseSerializer(serializers.Serializer):
