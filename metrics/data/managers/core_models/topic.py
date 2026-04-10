@@ -34,7 +34,7 @@ class TopicQuerySet(models.QuerySet):
 
         Examples:
             >>> TopicQuerySet.get_name_by_id(1)
-            'infectious_disease'
+            'COVID-19'
             >>> TopicQuerySet.get_name_by_id(999)
             None
         """

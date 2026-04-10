@@ -176,47 +176,36 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
         permission_sets = self.user_manager.get_permission_sets_for_user(
             user_uuid)
 
-        # Check if user exists or has permissions
         if not permission_sets.exists():
             # Return empty structure rather than raising exception
             # The view can check permission_set_count and return 404 if needed
             return {
-                "user_id": user_id_str,
                 "permission_set_hierarchy": [],
             }
-
-        # Convert QuerySet to list of dicts
-        # permission_set_list = _queryset_to_permission_hierarchy(
-        #     permission_sets)
 
         deduplicated_perms = get_deduplicated_permissions(permission_sets)
 
         if group_by == 'geography_type':
             return {
-                "user_id": user_id_str,
                 "permissions_by_geography_type": group_by_geography_type(deduplicated_perms),
                 "total_permissions": len(deduplicated_perms),
             }
 
         elif group_by == 'geography':
             return {
-                "user_id": user_id_str,
                 "permissions_by_geography": group_by_geography(deduplicated_perms),
                 "total_permissions": len(deduplicated_perms),
             }
 
         elif group_by == 'theme':
             return {
-                "user_id": user_id_str,
                 "permissions_by_theme": group_by_theme(deduplicated_perms),
                 "total_permissions": len(deduplicated_perms),
             }
 
         else:
-            # Default: Return flat deduplicated hierarchy with summary
             hierarchy = _queryset_to_permission_hierarchy(permission_sets)
             return {
-                "user_id": user_id_str,
                 "permission_sets": hierarchy,
             }
 

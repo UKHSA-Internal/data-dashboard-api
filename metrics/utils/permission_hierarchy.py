@@ -77,47 +77,24 @@ class NormalizedPermission:
 
     def _populate_names(self) -> None:
         """Populate human-readable names for all fields."""
-        # Theme
-        if self.theme_id == "-1":
-            self.theme_name = "* (All)"
-        elif self.theme_id:
-            self.theme_name = _get_choice_label(
-                field_name="theme", value=self.theme_id)
+        # Map: (id_attribute, name_attribute, lookup_field_name)
+        field_mappings = [
+            ("theme_id", "theme_name", "theme"),
+            ("sub_theme_id", "sub_theme_name", "sub-theme"),
+            ("topic_id", "topic_name", "topic"),
+            ("metric_id", "metric_name", "metric"),
+            ("geography_type_id", "geography_type_name", "geography_type"),
+            ("geography_id", "geography_name", "geography"),
+        ]
 
-        # Sub-theme
-        if self.sub_theme_id == "-1":
-            self.sub_theme_name = "* (All)"
-        elif self.sub_theme_id:
-            self.sub_theme_name = _get_choice_label(
-                field_name="sub-theme", value=self.sub_theme_id)
+        for id_attr, name_attr, field_name in field_mappings:
+            id_value = getattr(self, id_attr)
 
-        # Topic
-        if self.topic_id == "-1":
-            self.topic_name = "* (All)"
-        elif self.topic_id:
-            self.topic_name = _get_choice_label(
-                field_name="topic", value=self.topic_id)
-
-        # Metric
-        if self.metric_id == "-1":
-            self.metric_name = "* (All)"
-        elif self.metric_id:
-            self.metric_name = _get_choice_label(
-                field_name="metric", value=self.metric_id)
-
-        # Geography Type
-        if self.geography_type_id == "-1":
-            self.geography_type_name = "* (All)"
-        elif self.geography_type_id:
-            self.geography_type_name = _get_choice_label(
-                field_name="geography_type", value=self.geography_type_id)
-
-        # Geography
-        if self.geography_id == "-1":
-            self.geography_name = "* (All)"
-        elif self.geography_id:
-            self.geography_name = _get_choice_label(
-                field_name="geography", value=self.geography_id)
+            if id_value == "-1":
+                setattr(self, name_attr, "* (All)")
+            elif id_value:
+                setattr(self, name_attr, _get_choice_label(
+                    field_name, id_value))
 
     def subsumes(self, other: "NormalizedPermission") -> bool:
         """
@@ -334,10 +311,6 @@ def _remove_subsumed_permissions(
     3. If not subsumed, remove any existing permissions that this one subsumes
     4. Add this permission to the result
 
-    Time complexity: O(n²) where n = number of permissions
-    This is acceptable for typical permission set sizes (< 100)
-    For very large sets (1000+), could optimize with indexing.
-
     Args:
         permissions: List of normalized permissions
 
@@ -398,8 +371,6 @@ def _build_summary(
 ) -> dict[str, Any]:
     """
     Build summary statistics about the permission hierarchy.
-
-    Useful for debugging and understanding the deduplication results.
 
     Args:
         original: Original list of permissions before deduplication
