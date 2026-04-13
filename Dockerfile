@@ -50,6 +50,9 @@ COPY --from=build /code /code
 
 ENV PYTHONFAULTHANDLER=1
 ENV PATH=/usr/local/bin:/usr/bin:/bin
+ENV HOME=/tmp
+ENV XDG_CACHE_HOME=/tmp
+ENV GUNICORN_CMD_ARGS="--pid /tmp/gunicorn.pid --worker-tmp-dir /tmp --access-logfile - --error-logfile -"
 
 EXPOSE 8000
 
