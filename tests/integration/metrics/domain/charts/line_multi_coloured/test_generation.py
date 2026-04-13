@@ -116,7 +116,7 @@ class TestLineMultiColouredCharts:
 
         # ---Y Axis checks---
         y_axis = main_layout.yaxis
-        assert not y_axis.showgrid
+        assert y_axis.showgrid
 
     def test_x_axis_type_is_not_date(self):
         """

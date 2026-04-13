@@ -76,11 +76,13 @@ class TestSingleCategoryChartSettings:
             "spikethickness": 1,
             "spikemode": "toaxis+across+marker",
             "spikesnap": "cursor",
-            "showline": False,
+            "showline": True,
             "fixedrange": True,
             "gridcolor": "rgba(0,0,0,0.05)",
+            "linecolor": "rgba(0,0,0,0.05)",
             "tickcolor": "rgba(0,0,0,0)",
             "showgrid": True,
+            "mirror": True,
             "zeroline": False,
             "ticks": "outside",
             "tickson": "boundaries",
@@ -127,11 +129,13 @@ class TestSingleCategoryChartSettings:
             "spikethickness": 1,
             "spikemode": "toaxis+across+marker",
             "spikesnap": "cursor",
-            "showline": False,
+            "showline": True,
             "showgrid": True,
             "zeroline": False,
             "fixedrange": True,
+            "mirror": True,
             "gridcolor": "rgba(0,0,0,0.05)",
+            "linecolor": "rgba(0,0,0,0.05)",
             "tickcolor": "rgba(0,0,0,0)",
             "ticks": "outside",
             "tickson": "boundaries",
@@ -162,10 +166,13 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_y_axis_config = {
             "rangemode": "tozero",
-            "showgrid": False,
+            "showgrid": True,
+            "showline": True,
+            "linecolor": "rgba(0,0,0,0.05)",
+            "mirror": True,
             "showticklabels": True,
             "fixedrange": True,
-            "gridcolor": "#000",
+            "gridcolor": "rgba(0,0,0,0.05)",
             "ticks": "outside",
             "tickson": "boundaries",
             "tickformatstops": [
@@ -690,6 +697,8 @@ class TestSingleCategoryChartSettings:
 
         # x_axis settings
         expected_chart_config["xaxis"]["showgrid"] = False
+        expected_chart_config["xaxis"]["showline"] = False
+        expected_chart_config["xaxis"]["mirror"] = False
         expected_chart_config["xaxis"]["tickvals"] = fake_x_axis_tick_values
         expected_chart_config["xaxis"]["ticktext"] = fake_x_axis_tick_text
         expected_chart_config["xaxis"]["ticklen"] = 0
@@ -698,6 +707,9 @@ class TestSingleCategoryChartSettings:
         ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
 
         # y_axis settings
+        expected_chart_config["yaxis"]["showgrid"] = False
+        expected_chart_config["yaxis"]["showline"] = False
+        expected_chart_config["yaxis"]["mirror"] = False
         expected_chart_config["yaxis"]["ticks"] = "outside"
         expected_chart_config["yaxis"]["zeroline"] = False
         expected_chart_config["yaxis"]["tickvals"] = fake_y_axis_tick_values
