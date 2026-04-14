@@ -19,25 +19,22 @@ def group_by_geography_type(
 
     Structure:
     {
-        "All Geography Types": {
-            "*": {
-                "geography_name": "All Geographies",
-                "geography_code": "*",
-                "permissions": [...]
+        "1": {  # geography_type_id
+            "geography_type_name": "Region",
+            "geographies": {
+                "E12000008": {  # geography_id (code)
+                    "geography_name": "South East",
+                    "permissions": [...]
+                }
             }
         },
-        "Nation": {
-            "E92000001": {
-                "geography_name": "England",
-                "geography_code": "E92000001",
-                "permissions": [...]
-            }
-        },
-        "Region": {
-            "E12000008": {
-                "geography_name": "South East",
-                "geography_code": "E12000008",
-                "permissions": [...]
+        "-1": {  # wildcard geography_type_id
+            "geography_type_name": "All Geography Types",
+            "geographies": {
+                "*": {
+                    "geography_name": "All Geographies",
+                    "permissions": [...]
+                }
             }
         }
     }
@@ -46,36 +43,41 @@ def group_by_geography_type(
         permissions: List of deduplicated NormalizedPermission objects
 
     Returns:
-        Nested dict grouped by geography type, then geography code
+        Nested dict grouped by geography type ID, then geography code
     """
-    grouped = defaultdict(lambda: defaultdict(lambda: {
-        "geography_name": None,
-        "geography_code": None,
-        "permissions": []
-    }))
+    grouped = defaultdict(lambda: {
+        "geography_type_name": None,
+        "geographies": defaultdict(lambda: {
+            "geography_name": None,
+            "permissions": []
+        })
+    })
 
     for perm in permissions:
-        # Determine geography type display name
-        if perm.geography_type_id == "-1":
-            geo_type_display = "All Geography Types"
-        else:
-            geo_type_display = perm.geography_type_name
+        # Use ID as the key (handles wildcards and specific types)
+        geo_type_id = perm.geography_type_id or "*"
+        geo_code = perm.geography_id if perm.geography_id != "-1" else "*"
 
-        # Determine geography code/display
-        if perm.geography_id == "-1":
-            geo_code = "*"
-            geo_name = f"All {geo_type_display}s" if perm.geography_type_id != "-1" else "All Geographies"
-        else:
-            geo_code = perm.geography_id
-            geo_name = perm.geography_name
+        # Set geography type name if not already set
+        if not grouped[geo_type_id]["geography_type_name"]:
+            if geo_type_id == "-1" or geo_type_id == "*":
+                grouped[geo_type_id]["geography_type_name"] = "All Geography Types"
+            else:
+                grouped[geo_type_id]["geography_type_name"] = perm.geography_type_name
 
-        # Initialize geography entry if needed
-        if not grouped[geo_type_display][geo_code]["geography_name"]:
-            grouped[geo_type_display][geo_code]["geography_name"] = geo_name
-            grouped[geo_type_display][geo_code]["geography_code"] = geo_code
+        # Set geography name if not already set
+        if not grouped[geo_type_id]["geographies"][geo_code]["geography_name"]:
+            if geo_code == "*":
+                if geo_type_id == "-1" or geo_type_id == "*":
+                    geo_name = "All Geographies"
+                else:
+                    geo_name = f"All {perm.geography_type_name}s"
+            else:
+                geo_name = perm.geography_name
+            grouped[geo_type_id]["geographies"][geo_code]["geography_name"] = geo_name
 
         # Add permission to this geography
-        grouped[geo_type_display][geo_code]["permissions"].append({
+        grouped[geo_type_id]["geographies"][geo_code]["permissions"].append({
             "theme": {
                 "id": perm.theme_id or None,
                 "name": perm.theme_name or None,
@@ -95,25 +97,32 @@ def group_by_geography_type(
         })
 
     # Convert defaultdict to regular dict for JSON serialization
-    return {k: dict(v) for k, v in grouped.items()}
+    result = {}
+    for geo_type_id, geo_type_data in grouped.items():
+        result[geo_type_id] = {
+            "geography_type_name": geo_type_data["geography_type_name"],
+            "geographies": dict(geo_type_data["geographies"])
+        }
+
+    return result
 
 
 def group_by_theme(
     permissions: list[NormalizedPermission],
 ) -> dict[str, Any]:
     """
-    Group permissions by theme hierarchy.
+    Group permissions by theme hierarchy using IDs as keys.
 
     Structure:
     {
-        "infectious_disease": {
-            "theme_id": "2",
+        "2": {  # theme_id
+            "theme_name": "infectious_disease",
             "sub_themes": {
-                "respiratory": {
-                    "sub_theme_id": "2",
+                "2": {  # sub_theme_id
+                    "sub_theme_name": "respiratory",
                     "topics": {
-                        "COVID-19": {
-                            "topic_id": "3",
+                        "3": {  # topic_id
+                            "topic_name": "COVID-19",
                             "geographies": [...]
                         }
                     }
@@ -126,36 +135,37 @@ def group_by_theme(
         permissions: List of deduplicated NormalizedPermission objects
 
     Returns:
-        Nested dict grouped by theme → sub-theme → topic
+        Nested dict grouped by theme_id → sub_theme_id → topic_id
     """
     grouped = defaultdict(lambda: {
-        "theme_id": None,
+        "theme_name": None,
         "sub_themes": defaultdict(lambda: {
-            "sub_theme_id": None,
+            "sub_theme_name": None,
             "topics": defaultdict(lambda: {
-                "topic_id": None,
+                "topic_name": None,
                 "geographies": []
             })
         })
     })
 
     for perm in permissions:
-        theme_key = perm.theme_name or perm.theme_id
-        sub_theme_key = perm.sub_theme_name or perm.sub_theme_id
-        topic_key = perm.topic_name or perm.topic_id
+        # Use IDs as keys (handles wildcards and specific IDs)
+        theme_id = perm.theme_id or "*"
+        sub_theme_id = perm.sub_theme_id or "*"
+        topic_id = perm.topic_id or "*"
 
-        # Set IDs if not already set
-        if not grouped[theme_key]["theme_id"]:
-            grouped[theme_key]["theme_id"] = perm.theme_id
+        # Set names if not already set
+        if not grouped[theme_id]["theme_name"]:
+            grouped[theme_id]["theme_name"] = perm.theme_name
 
-        if not grouped[theme_key]["sub_themes"][sub_theme_key]["sub_theme_id"]:
-            grouped[theme_key]["sub_themes"][sub_theme_key]["sub_theme_id"] = perm.sub_theme_id
+        if not grouped[theme_id]["sub_themes"][sub_theme_id]["sub_theme_name"]:
+            grouped[theme_id]["sub_themes"][sub_theme_id]["sub_theme_name"] = perm.sub_theme_name
 
-        if not grouped[theme_key]["sub_themes"][sub_theme_key]["topics"][topic_key]["topic_id"]:
-            grouped[theme_key]["sub_themes"][sub_theme_key]["topics"][topic_key]["topic_id"] = perm.topic_id
+        if not grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["topic_name"]:
+            grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["topic_name"] = perm.topic_name
 
         # Add geography to this topic
-        grouped[theme_key]["sub_themes"][sub_theme_key]["topics"][topic_key]["geographies"].append({
+        grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["geographies"].append({
             "geography_type": {
                 "id": perm.geography_type_id or None,
                 "name": perm.geography_type_name or None,
@@ -170,20 +180,21 @@ def group_by_theme(
             },
         })
 
-    # Convert nested defaultdicts to regular dicts
+    # Convert nested default dicts to regular dicts
     result = {}
-    for theme_key, theme_data in grouped.items():
-        result[theme_key] = {
-            "theme_id": theme_data["theme_id"],
+    for theme_id, theme_data in grouped.items():
+        result[theme_id] = {
+            "theme_name": theme_data["theme_name"],
             "sub_themes": {}
         }
-        for sub_theme_key, sub_theme_data in theme_data["sub_themes"].items():
-            result[theme_key]["sub_themes"][sub_theme_key] = {
-                "sub_theme_id": sub_theme_data["sub_theme_id"],
+        for sub_theme_id, sub_theme_data in theme_data["sub_themes"].items():
+            result[theme_id]["sub_themes"][sub_theme_id] = {
+                "sub_theme_name": sub_theme_data["sub_theme_name"],
                 "topics": {}
             }
-            for topic_key, topic_data in sub_theme_data["topics"].items():
-                result[theme_key]["sub_themes"][sub_theme_key]["topics"][topic_key] = dict(
-                    topic_data)
+            for topic_id, topic_data in sub_theme_data["topics"].items():
+                result[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id] = dict(
+                    topic_data
+                )
 
     return result
