@@ -17,7 +17,6 @@ from validation.metrics_interface.interface import MetricsAPIInterface
 __all__ = [
     "IncomingBaseDataModel",
     "MissingFieldError",
-    "NonPublicDataSentToPublicIngestionError",
 ]
 
 
