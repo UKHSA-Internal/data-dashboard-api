@@ -6,7 +6,6 @@ from auth_content.models import PermissionSet
 from auth_content.wagtail_hooks import NoEditPermissionPolicy, PermissionSetViewSet
 
 
-
 class TestPermissionSetDetailsProperty(TestCase):
 
     def test_single_value_no_pipe(self):
@@ -15,7 +14,9 @@ class TestPermissionSetDetailsProperty(TestCase):
 
     def test_pipe_separated_values_split_to_newlines(self):
         permission_set = PermissionSet(name="Name One|Name Two|Name Three")
-        self.assertEqual(permission_set.permission_set_details, "Name One<br>Name Two<br>Name Three")
+        self.assertEqual(
+            permission_set.permission_set_details, "Name One<br>Name Two<br>Name Three"
+        )
 
     def test_whitespace_around_pipes_is_stripped(self):
         permission_set = PermissionSet(name="Name One | Name Two")
@@ -28,7 +29,8 @@ class TestPermissionSetDetailsProperty(TestCase):
     def test_output_is_marked_safe(self):
         permission_set = PermissionSet(name="Name One|Name Two")
         self.assertIsInstance(permission_set.permission_set_details, SafeData)
-        
+
+
 class TestNoEditPermissionPolicy(TestCase):
 
     def setUp(self):
@@ -41,9 +43,12 @@ class TestNoEditPermissionPolicy(TestCase):
 
     def test_change_permission_denied_for_instance(self):
         self.assertFalse(
-            self.policy.user_has_permission_for_instance(self.user, "change", self.instance)
+            self.policy.user_has_permission_for_instance(
+                self.user, "change", self.instance
+            )
         )
-        
+
+
 class TestPermissionSetViewSet(TestCase):
 
     def setUp(self):
@@ -57,4 +62,6 @@ class TestPermissionSetViewSet(TestCase):
 
     def test_change_permission_denied_via_viewset_policy(self):
         user = MagicMock()
-        self.assertFalse(self.viewset.permission_policy.user_has_permission(user, "change"))
+        self.assertFalse(
+            self.viewset.permission_policy.user_has_permission(user, "change")
+        )

@@ -126,7 +126,7 @@ class PermissionSet(models.Model):
     geography = models.CharField(max_length=255, blank=False, default="")
 
     base_form_class = PermissionSetForm
-    
+
     @property
     def permission_set_details(self):
         parts = [part.strip() for part in self.name.split("|")]
