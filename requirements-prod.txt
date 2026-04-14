@@ -5,7 +5,7 @@ beautifulsoup4==4.14.3
 CacheControl==0.14.4
 certifi==2026.2.25
 cfgv==3.5.0
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
 click==8.3.1
 colorama==0.4.6
 coreapi==2.3.3
@@ -55,7 +55,7 @@ packageurl-python==0.17.6
 packaging==26.0
 pathspec==1.0.4
 pbr==7.0.3
-Pillow==12.1.1
+Pillow==12.2.0
 platformdirs==4.9.4
 plotly==6.6.0
 pluggy==1.6.0
