@@ -56,9 +56,9 @@ class UserPermissionSetsByUserIdView(APIView):
             name="group_by",
             type=str,
             location=OpenApiParameter.QUERY,
-            description="Optional grouping strategy: 'geography_type', 'geography', or 'theme'",
+            description="Optional grouping strategy: 'geography_type', or 'theme'",
             required=False,
-            enum=['geography_type', 'geography', 'theme'],
+            enum=['geography_type', 'theme'],
         ),
     ],
     responses={

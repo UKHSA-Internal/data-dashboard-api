@@ -25,7 +25,7 @@ def _validate_group_by(value):
     if not value:  # Empty string or None
         return None
 
-    valid_options = ['geography_type', 'geography', 'theme']
+    valid_options = ['geography_type', 'theme']
     if value not in valid_options:
         msg = f"Invalid group_by parameter: '{value}'. Valid options: {', '.join(valid_options)}"
         raise serializers.ValidationError(msg)
@@ -108,7 +108,6 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
     Supports different grouping strategies via 'group_by' parameter:
     - None (default): Flat deduplicated hierarchy
     - 'geography_type': Group by geography type → geography
-    - 'geography': Group by specific geography
     - 'theme': Group by theme → sub-theme → topic
     """
 
@@ -141,7 +140,6 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
             Dict with user_id and either:
             - permission_sets dict (with hierarchy and summary) if no grouping
             - permissions_by_geography_type dict if group_by='geography_type'
-            - permissions_by_geography dict if group_by='geography'
             - permissions_by_theme dict if group_by='theme'
 
         Example (no grouping):
@@ -188,12 +186,6 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
         if group_by == 'geography_type':
             return {
                 "permissions_by_geography_type": group_by_geography_type(deduplicated_perms),
-                "total_permissions": len(deduplicated_perms),
-            }
-
-        elif group_by == 'geography':
-            return {
-                "permissions_by_geography": group_by_geography(deduplicated_perms),
                 "total_permissions": len(deduplicated_perms),
             }
 
