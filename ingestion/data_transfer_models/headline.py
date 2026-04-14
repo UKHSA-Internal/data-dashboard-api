@@ -19,7 +19,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
     lower_confidence: float | None = None
-    is_public: StrictBool = True
+    is_public: StrictBool
 
     @field_validator("embargo")
     @classmethod
