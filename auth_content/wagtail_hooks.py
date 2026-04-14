@@ -1,7 +1,11 @@
 from django.templatetags.static import static
 from django.utils.html import format_html
 from wagtail import hooks
-from wagtail.admin.viewsets.model import ModelPermissionPolicy, ModelViewSet, ModelViewSetGroup
+from wagtail.admin.viewsets.model import (
+    ModelPermissionPolicy,
+    ModelViewSet,
+    ModelViewSetGroup,
+)
 
 from auth_content.models.permission_sets import PermissionSet
 from auth_content.models.users import User
