@@ -16,6 +16,10 @@ MODULE_PATH = "metrics.interfaces.headlines.access"
 class TestHeadlinesInterface:
     @pytest.mark.django_db
     @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
+    @mock.patch(
+        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        False,
+    )
     def test_get_latest_metric_value_returns_non_public_record_for_matching_permission(
         self, mocked_auth_enabled: mock.MagicMock
     ):
@@ -23,6 +27,7 @@ class TestHeadlinesInterface:
         Given public and non-public `CoreHeadline` records
         And an `RBACPermission` which gives access to the non-public portion of the data
         And `AUTH_ENABLED` is set to True
+        And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `get_latest_metric_value()` is called from the `HeadlinesInterface`
         Then the non-public record is returned
         """

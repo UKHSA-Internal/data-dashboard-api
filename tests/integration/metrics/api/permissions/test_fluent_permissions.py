@@ -1,8 +1,11 @@
+from unittest import mock
+
 import pytest
 from metrics.api.permissions.fluent_permissions import (
     FluentPermissions,
+    RequestedDataParameters,
+    validate_permissions_for_non_public,
 )
-from metrics.api.permissions.fluent_permissions import RequestedDataParameters
 from tests.fakes.factories.metrics.rbac_models.rbac_permission import (
     FakeRBACPermissionFactory,
 )
@@ -319,3 +322,77 @@ class TestFluentPermissions:
 
         # Then
         assert not is_access_allowed
+
+    @mock.patch(
+        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        True,
+    )
+    def test_validate_permissions_for_non_public_returns_false_when_public_only_enforcement_is_enabled(
+        self,
+    ):
+        """
+        Given requested data parameters and a matching permission
+        When `validate_permissions_for_non_public()` is called
+        And `ENFORCE_PUBLIC_DATA_ONLY` is enabled
+        Then False is returned
+        """
+        # Given
+        matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+            topic=DATA_PARAMETERS["topic"],
+            metric=DATA_PARAMETERS["metric"],
+            geography=DATA_PARAMETERS["geography"],
+            geography_type=DATA_PARAMETERS["geography_type"],
+        )
+
+        # When
+        has_access_to_non_public_data = validate_permissions_for_non_public(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+            topic=DATA_PARAMETERS["topic"],
+            metric=DATA_PARAMETERS["metric"],
+            geography=DATA_PARAMETERS["geography"],
+            geography_type=DATA_PARAMETERS["geography_type"],
+            rbac_permissions=[matching_permission],
+        )
+
+        # Then
+        assert not has_access_to_non_public_data
+
+    @mock.patch(
+        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        False,
+    )
+    def test_validate_permissions_for_non_public_returns_true_for_matching_permission_when_public_only_enforcement_is_disabled(
+        self,
+    ):
+        """
+        Given requested data parameters and a matching permission
+        And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
+        When `validate_permissions_for_non_public()` is called
+        Then True is returned
+        """
+        # Given
+        matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+            topic=DATA_PARAMETERS["topic"],
+            metric=DATA_PARAMETERS["metric"],
+            geography=DATA_PARAMETERS["geography"],
+            geography_type=DATA_PARAMETERS["geography_type"],
+        )
+
+        # When
+        has_access_to_non_public_data = validate_permissions_for_non_public(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+            topic=DATA_PARAMETERS["topic"],
+            metric=DATA_PARAMETERS["metric"],
+            geography=DATA_PARAMETERS["geography"],
+            geography_type=DATA_PARAMETERS["geography_type"],
+            rbac_permissions=[matching_permission],
+        )
+
+        # Then
+        assert has_access_to_non_public_data
