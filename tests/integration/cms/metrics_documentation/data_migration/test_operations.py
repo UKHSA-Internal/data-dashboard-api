@@ -41,19 +41,11 @@ def _seed_truncated_test_data_with_split_auth() -> None:
         if not filepath.name.startswith(NON_PUBLIC_DATA_PREFIX)
     ]
 
-    with (
-        mock.patch("metrics.api.settings.auth.AUTH_ENABLED", True),
-        mock.patch("ingestion.data_transfer_models.time_series.AUTH_ENABLED", True),
-        mock.patch("ingestion.data_transfer_models.headline.AUTH_ENABLED", True),
-    ):
+    with (mock.patch("metrics.api.settings.auth.AUTH_ENABLED", True),):
         for filepath in non_public_file_paths:
             _upload_data_as_file(filepath=filepath)
 
-    with (
-        mock.patch("metrics.api.settings.auth.AUTH_ENABLED", False),
-        mock.patch("ingestion.data_transfer_models.time_series.AUTH_ENABLED", False),
-        mock.patch("ingestion.data_transfer_models.headline.AUTH_ENABLED", False),
-    ):
+    with (mock.patch("metrics.api.settings.auth.AUTH_ENABLED", False),):
         for filepath in public_file_paths:
             _upload_data_as_file(filepath=filepath)
 
