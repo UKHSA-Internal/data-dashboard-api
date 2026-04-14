@@ -132,3 +132,11 @@ Boolean switch to decide whether to draw confidence intervals if provided
 GEOGRAPHY_LIST_FORMATTING: str = """
 "List of [id, name] pairs for dropdown options"
 """
+IS_PUBLIC_FIELD: str = """
+Boolean flag indicating whether the chart data is intended for public display. Defaults to True.
+When set to False, a data classification watermark will be applied to the chart.
+"""
+DATA_CLASSIFICATION_FIELD: str = """
+The data classification label to apply as a watermark on non-public charts.
+Defaults to "OFFICIAL SENSITIVE" when is_public is False and no value is provided.
+"""
