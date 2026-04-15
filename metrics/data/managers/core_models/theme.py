@@ -28,7 +28,6 @@ class ThemeQuerySet(models.QuerySet):
             None
         """
         return self.filter(id=theme_id).values_list("name", flat=True).first()
-        
 
     def get_all_names(self) -> models.QuerySet:
         """Gets all available theme names as a flat list queryset.

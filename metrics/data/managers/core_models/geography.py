@@ -41,7 +41,11 @@ class GeographyQuerySet(models.QuerySet):
             >>> GeographyQuerySet.get_name_by_id(999)
             None
         """
-        return self.filter(geography_code=geography_code).values_list("name", flat=True).first()
+        return (
+            self.filter(geography_code=geography_code)
+            .values_list("name", flat=True)
+            .first()
+        )
 
     def get_all_geography_codes_by_geography_type(
         self, geography_type_name: str

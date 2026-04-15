@@ -128,7 +128,7 @@ class MetricManager(models.Manager):
 
     def get_queryset(self) -> MetricQuerySet:
         return MetricQuerySet(model=self.model, using=self.db)
-    
+
     def get_name_by_id(self, metric_id: int) -> str | None:
         """Gets the metric name which matches the given metric id.
 

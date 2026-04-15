@@ -11,8 +11,14 @@ from typing import Any
 from django.db.models import QuerySet
 
 from auth_content.models.permission_sets import PermissionSet
-
-from metrics.data.models.core_models.supporting import Geography, GeographyType, Metric, SubTheme, Theme, Topic
+from metrics.data.models.core_models.supporting import (
+    Geography,
+    GeographyType,
+    Metric,
+    SubTheme,
+    Theme,
+    Topic,
+)
 
 
 @dataclass
@@ -77,7 +83,6 @@ class NormalizedPermission:
 
     def _populate_names(self) -> None:
         """Populate human-readable names for all fields."""
-        # Map: (id_attribute, name_attribute, lookup_field_name)
         field_mappings = [
             ("theme_id", "theme_name", "theme"),
             ("sub_theme_id", "sub_theme_name", "sub-theme"),
@@ -93,8 +98,7 @@ class NormalizedPermission:
             if id_value == "-1":
                 setattr(self, name_attr, "* (All)")
             elif id_value:
-                setattr(self, name_attr, _get_choice_label(
-                    field_name, id_value))
+                setattr(self, name_attr, _get_choice_label(field_name, id_value))
 
     def subsumes(self, other: "NormalizedPermission") -> bool:
         """
@@ -131,6 +135,27 @@ class NormalizedPermission:
         """
         return self._theme_path_subsumes(other) and self._geography_path_subsumes(other)
 
+    @staticmethod
+    def _field_subsumes(self_value: str, other_value: str) -> bool:
+        """
+        Check if a single field value subsumes another.
+
+        Args:
+            self_value: This permission's field value
+            other_value: Other permission's field value
+
+        Returns:
+            True if self_value subsumes other_value
+        """
+        # Wildcard subsumes everything
+        if self_value == "-1":
+            return True
+
+        if not self_value and other_value:
+            return False
+
+        return self_value == other_value
+
     def _theme_path_subsumes(self, other: "NormalizedPermission") -> bool:
         """
         Check if this permission's theme path subsumes another's.
@@ -147,42 +172,13 @@ class NormalizedPermission:
         Returns:
             True if self's theme path subsumes other's theme path
         """
-        # Theme level
-        if self.theme_id == "-1":
-            return True  # Wildcard theme subsumes everything
-        if not self.theme_id and other.theme_id:
-            return False
-        if self.theme_id != other.theme_id:
-            return False
-
-        # Sub-theme level
-        if self.sub_theme_id == "-1":
-            return (
-                True  # Wildcard sub-theme subsumes all topics/metrics under this theme
-            )
-        if not self.sub_theme_id and other.sub_theme_id:
-            return False
-        if self.sub_theme_id != other.sub_theme_id:
-            return False
-
-        # Topic level
-        if self.topic_id == "-1":
-            return True  # Wildcard topic subsumes all metrics under this sub-theme
-        if not self.topic_id and other.topic_id:
-            return False
-        if self.topic_id != other.topic_id:
-            return False
-
-        # Metric level
-        if self.metric_id == "-1":
-            return True  # Wildcard metric subsumes all specific metrics
-        if not self.metric_id and other.metric_id:
-            return False
-        if self.metric_id != other.metric_id:
-            return False
-
-        # Paths are identical
-        return True
+        # Fixed: Reduced complexity by extracting common logic
+        return (
+            self._field_subsumes(self.theme_id, other.theme_id)
+            and self._field_subsumes(self.sub_theme_id, other.sub_theme_id)
+            and self._field_subsumes(self.topic_id, other.topic_id)
+            and self._field_subsumes(self.metric_id, other.metric_id)
+        )
 
     def _geography_path_subsumes(self, other: "NormalizedPermission") -> bool:
         """
@@ -190,32 +186,15 @@ class NormalizedPermission:
 
         Geography path is: geography_type → geography
 
-        Simpler than theme path as only 2 levels.
-
         Args:
             other: Another permission to compare against
 
         Returns:
             True if self's geography path subsumes other's geography path
         """
-        # Geography type level
-        if self.geography_type_id == "-1":
-            return True  # Wildcard geography type subsumes all geographies
-        if not self.geography_type_id and other.geography_type_id:
-            return False
-        if self.geography_type_id != other.geography_type_id:
-            return False
-
-        # Geography level
-        if self.geography_id == "-1":
-            return True  # Wildcard geography subsumes all specific geographies
-        if not self.geography_id and other.geography_id:
-            return False
-        if self.geography_id != other.geography_id:
-            return False
-
-        # Paths are identical
-        return True
+        return self._field_subsumes(
+            self.geography_type_id, other.geography_type_id
+        ) and self._field_subsumes(self.geography_id, other.geography_id)
 
     def to_dict(self) -> dict[str, Any]:
         """
@@ -287,10 +266,8 @@ def build_permission_hierarchy(permission_sets: QuerySet) -> dict[str, Any]:
         NormalizedPermission.from_permission_set(perm) for perm in permission_sets
     ]
 
-    # Deduplicate - remove subsumed permissions
     deduplicated = _remove_subsumed_permissions(normalized_perms)
 
-    # Build summary statistics
     summary = _build_summary(normalized_perms, deduplicated)
 
     return {
@@ -338,16 +315,16 @@ def _remove_subsumed_permissions(
 
         # This permission is not subsumed, so check if it subsumes any existing ones
         # Remove any existing permissions that this one subsumes
-        result = [
-            existing for existing in result if not perm.subsumes(existing)]
+        result = [existing for existing in result if not perm.subsumes(existing)]
 
-        # Add this permission to the result
         result.append(perm)
 
     return result
 
 
-def get_deduplicated_permissions(permission_sets: QuerySet) -> list[NormalizedPermission]:
+def get_deduplicated_permissions(
+    permission_sets: QuerySet,
+) -> list[NormalizedPermission]:
     """
     Get deduplicated permissions without hierarchy structure.
 
@@ -385,7 +362,6 @@ def _build_summary(
         for perm in deduplicated
     )
 
-    # Find wildcard themes
     wildcard_themes = [
         perm.theme_name for perm in deduplicated if perm.theme_id == "-1"
     ]
@@ -410,17 +386,17 @@ def _get_choice_label(field_name: str, value: str) -> str:
         "topic": Topic.objects,
         "metric": Metric.objects,
         "geography": Geography.objects,
-        "geography_type": GeographyType.objects
+        "geography_type": GeographyType.objects,
     }
 
     manager = field_manager_map.get(field_name)
 
     if manager:
-        name = ""
-        if field_name == "geography":
-            name = manager.get_name_by_id(value)
-        else:
-            name = manager.get_name_by_id(int(value))
-        return name if name else value
+        name = (
+            manager.get_name_by_id(value)
+            if field_name == "geography"
+            else manager.get_name_by_id(int(value))
+        )
+        return name or value
 
     return value

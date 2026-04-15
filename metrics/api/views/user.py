@@ -58,7 +58,7 @@ class UserPermissionSetsByUserIdView(APIView):
             location=OpenApiParameter.QUERY,
             description="Optional grouping strategy: 'geography_type', or 'theme'",
             required=False,
-            enum=['geography_type', 'theme'],
+            enum=["geography_type", "theme"],
         ),
     ],
     responses={
@@ -79,7 +79,7 @@ class UserPermissionHierarchyByUserIdView(APIView):
         serializer = UserHierarchyRequestSerializer(
             data={
                 "user_id": user_id,
-                "group_by": request.query_params.get('group_by', ''),
+                "group_by": request.query_params.get("group_by", ""),
             }
         )
         serializer.is_valid(raise_exception=True)

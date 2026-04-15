@@ -45,13 +45,14 @@ def group_by_geography_type(
     Returns:
         Nested dict grouped by geography type ID, then geography code
     """
-    grouped = defaultdict(lambda: {
-        "geography_type_name": None,
-        "geographies": defaultdict(lambda: {
-            "geography_name": None,
-            "permissions": []
-        })
-    })
+    grouped = defaultdict(
+        lambda: {
+            "geography_type_name": None,
+            "geographies": defaultdict(
+                lambda: {"geography_name": None, "permissions": []}
+            ),
+        }
+    )
 
     for perm in permissions:
         # Use ID as the key (handles wildcards and specific types)
@@ -60,7 +61,7 @@ def group_by_geography_type(
 
         # Set geography type name if not already set
         if not grouped[geo_type_id]["geography_type_name"]:
-            if geo_type_id == "-1" or geo_type_id == "*":
+            if geo_type_id in {"-1", "*"}:
                 grouped[geo_type_id]["geography_type_name"] = "All Geography Types"
             else:
                 grouped[geo_type_id]["geography_type_name"] = perm.geography_type_name
@@ -68,40 +69,44 @@ def group_by_geography_type(
         # Set geography name if not already set
         if not grouped[geo_type_id]["geographies"][geo_code]["geography_name"]:
             if geo_code == "*":
-                if geo_type_id == "-1" or geo_type_id == "*":
-                    geo_name = "All Geographies"
-                else:
-                    geo_name = f"All {perm.geography_type_name}s"
+                # Fixed: Use ternary operator
+                geo_name = (
+                    "All Geographies"
+                    if geo_type_id in {"-1", "*"}
+                    else f"All {perm.geography_type_name}s"
+                )
             else:
                 geo_name = perm.geography_name
             grouped[geo_type_id]["geographies"][geo_code]["geography_name"] = geo_name
 
         # Add permission to this geography
-        grouped[geo_type_id]["geographies"][geo_code]["permissions"].append({
-            "theme": {
-                "id": perm.theme_id or None,
-                "name": perm.theme_name or None,
-            },
-            "sub_theme": {
-                "id": perm.sub_theme_id or None,
-                "name": perm.sub_theme_name or None,
-            },
-            "topic": {
-                "id": perm.topic_id or None,
-                "name": perm.topic_name or None,
-            },
-            "metric": {
-                "id": perm.metric_id or None,
-                "name": perm.metric_name or None,
-            },
-        })
+        grouped[geo_type_id]["geographies"][geo_code]["permissions"].append(
+            {
+                "theme": {
+                    "id": perm.theme_id or None,
+                    "name": perm.theme_name or None,
+                },
+                "sub_theme": {
+                    "id": perm.sub_theme_id or None,
+                    "name": perm.sub_theme_name or None,
+                },
+                "topic": {
+                    "id": perm.topic_id or None,
+                    "name": perm.topic_name or None,
+                },
+                "metric": {
+                    "id": perm.metric_id or None,
+                    "name": perm.metric_name or None,
+                },
+            }
+        )
 
     # Convert defaultdict to regular dict for JSON serialization
     result = {}
     for geo_type_id, geo_type_data in grouped.items():
         result[geo_type_id] = {
             "geography_type_name": geo_type_data["geography_type_name"],
-            "geographies": dict(geo_type_data["geographies"])
+            "geographies": dict(geo_type_data["geographies"]),
         }
 
     return result
@@ -137,16 +142,19 @@ def group_by_theme(
     Returns:
         Nested dict grouped by theme_id → sub_theme_id → topic_id
     """
-    grouped = defaultdict(lambda: {
-        "theme_name": None,
-        "sub_themes": defaultdict(lambda: {
-            "sub_theme_name": None,
-            "topics": defaultdict(lambda: {
-                "topic_name": None,
-                "geographies": []
-            })
-        })
-    })
+    grouped = defaultdict(
+        lambda: {
+            "theme_name": None,
+            "sub_themes": defaultdict(
+                lambda: {
+                    "sub_theme_name": None,
+                    "topics": defaultdict(
+                        lambda: {"topic_name": None, "geographies": []}
+                    ),
+                }
+            ),
+        }
+    )
 
     for perm in permissions:
         # Use IDs as keys (handles wildcards and specific IDs)
@@ -159,38 +167,45 @@ def group_by_theme(
             grouped[theme_id]["theme_name"] = perm.theme_name
 
         if not grouped[theme_id]["sub_themes"][sub_theme_id]["sub_theme_name"]:
-            grouped[theme_id]["sub_themes"][sub_theme_id]["sub_theme_name"] = perm.sub_theme_name
+            grouped[theme_id]["sub_themes"][sub_theme_id][
+                "sub_theme_name"
+            ] = perm.sub_theme_name
 
-        if not grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["topic_name"]:
-            grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["topic_name"] = perm.topic_name
+        if not grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id][
+            "topic_name"
+        ]:
+            grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id][
+                "topic_name"
+            ] = perm.topic_name
 
         # Add geography to this topic
-        grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id]["geographies"].append({
-            "geography_type": {
-                "id": perm.geography_type_id or None,
-                "name": perm.geography_type_name or None,
-            },
-            "geography": {
-                "id": perm.geography_id or None,
-                "name": perm.geography_name or None,
-            },
-            "metric": {
-                "id": perm.metric_id or None,
-                "name": perm.metric_name or None,
-            },
-        })
+        grouped[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id][
+            "geographies"
+        ].append(
+            {
+                "geography_type": {
+                    "id": perm.geography_type_id or None,
+                    "name": perm.geography_type_name or None,
+                },
+                "geography": {
+                    "id": perm.geography_id or None,
+                    "name": perm.geography_name or None,
+                },
+                "metric": {
+                    "id": perm.metric_id or None,
+                    "name": perm.metric_name or None,
+                },
+            }
+        )
 
-    # Convert nested default dicts to regular dicts
+    # Convert nested defaultdicts to regular dicts
     result = {}
     for theme_id, theme_data in grouped.items():
-        result[theme_id] = {
-            "theme_name": theme_data["theme_name"],
-            "sub_themes": {}
-        }
+        result[theme_id] = {"theme_name": theme_data["theme_name"], "sub_themes": {}}
         for sub_theme_id, sub_theme_data in theme_data["sub_themes"].items():
             result[theme_id]["sub_themes"][sub_theme_id] = {
                 "sub_theme_name": sub_theme_data["sub_theme_name"],
-                "topics": {}
+                "topics": {},
             }
             for topic_id, topic_data in sub_theme_data["topics"].items():
                 result[theme_id]["sub_themes"][sub_theme_id]["topics"][topic_id] = dict(
