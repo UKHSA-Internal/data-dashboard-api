@@ -8,6 +8,8 @@ updates:
       prefix: "pip: "
       prefix-development: "pip dev: "
       include: "scope"
+    cooldown:
+      default-days: 5
     ignore:
       - dependency-name: "boto3"
         update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]

@@ -12,7 +12,10 @@ from metrics.api.serializers.geographies import (
     GeographiesRequestSerializer,
     GeographiesRequestSerializerDeprecated,
     GeographiesResponseSerializer,
+    GeographyByGeographyTypeRequestSerializer,
+    GeographyChoicesResponseSerializer,
 )
+from metrics.api.views.permission_sets import PERMISSION_SETS_API_TAG
 
 GEOGRAPHIES_API_TAG = "geographies"
 
@@ -64,14 +67,10 @@ class GeographiesView(APIView):
     )
     def get(self, request, *args, **kwargs) -> Response:
         """This endpoint returns a list of geography types along with an aggregated list of their geographies.
-
         ---
-
         # Main errors
-
         A query parameter of either `topic` or `geography_type` must be provided.
         If neither are provided **or** both are provided, then a 400 `Bad Request` 400 will be returned.
-
         """
         request_serializer = GeographiesRequestSerializer(data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
@@ -104,3 +103,19 @@ class GeographiesView(APIView):
         serializer = GeographiesForGeographyTypeSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
         return serializer.data()
+
+
+@extend_schema(
+    request=GeographyByGeographyTypeRequestSerializer,
+    tags=[PERMISSION_SETS_API_TAG],
+    responses={HTTPStatus.OK.value: GeographyChoicesResponseSerializer},
+)
+class GeographiesByGeographyTypeView(APIView):
+    permission_classes = []
+
+    def get(self, request, geography_type_id, *args, **kwargs):  # noqa: PLR6301
+        serializer = GeographyByGeographyTypeRequestSerializer(
+            data={"geography_type_id": geography_type_id}
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data())

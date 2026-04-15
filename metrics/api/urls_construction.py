@@ -36,9 +36,18 @@ from metrics.api.views import (
 )
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.charts.subplot_charts import SubplotChartsView
-from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
+from metrics.api.views.geographies import (
+    GeographiesByGeographyTypeView,
+    GeographiesView,
+    GeographiesViewDeprecated,
+)
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
+from metrics.api.views.permission_sets import (
+    MetricsByTopicView,
+    SubThemesByThemeView,
+    TopicsBySubThemeView,
+)
 from public_api import construct_url_patterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -124,6 +133,29 @@ heat_alert_list = HeatAlertViewSet.as_view({"get": "list"})
 heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
 cold_alert_list = ColdAlertViewSet.as_view({"get": "list"})
 cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
+
+permission_set_urlpatterns = [
+    path(
+        f"{API_PREFIX}data-hierarchy/subthemes/<str:theme_id>",
+        SubThemesByThemeView.as_view(),
+        name="get_subthemes",
+    ),
+    path(
+        f"{API_PREFIX}data-hierarchy/topics/<str:sub_theme_id>",
+        TopicsBySubThemeView.as_view(),
+        name="get_topics",
+    ),
+    path(
+        f"{API_PREFIX}data-hierarchy/metrics/<str:topic_id>",
+        MetricsByTopicView.as_view(),
+        name="get_metrics",
+    ),
+    path(
+        f"{API_PREFIX}data-hierarchy/geographies/<str:geography_type_id>",
+        GeographiesByGeographyTypeView.as_view(),
+        name="get_geographies",
+    ),
+]
 
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
@@ -267,12 +299,14 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += audit_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case enums.AppMode.INGESTION.value:
@@ -289,5 +323,6 @@ def construct_urlpatterns(
             constructed_url_patterns += private_api_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
 
     return constructed_url_patterns

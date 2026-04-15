@@ -21,7 +21,7 @@
     }
   },
   "title": "Accessing official sensitive data",
-  "body": "",
+  "body": "<div class=\"govuk-!-margin-bottom-6\">\n  <p>By accessing this dashboard you agree to:</p>\n  <ul class=\"govuk-list govuk-list--bullet text-xl\">\n    <li>Not share any content with persons that do not have permission to access the none public dashboard</li>\n    <li>Not distribute or share any content from the none public dashboard online</li>\n    <li>Not leave your workstation un-attended whilst logged into the dashboard</li>\n    <li>Only connect using secure networks whilst accessing the none public dashboard</li>\n    <li>Ensure the environment you are working in is secure and your screen is not visible to others</li>\n  </ul>\n  <a href=\"#terms\" class=\"govuk-link text-xl\">\n    Read full terms of service here\n  </a>\n</div>",
   "i_agree_checkbox": "I agree to the terms of service",
   "terms_of_service_link_text": "Read the terms of service",
   "terms_of_service_link": "https://example.com/terms-of-service",
