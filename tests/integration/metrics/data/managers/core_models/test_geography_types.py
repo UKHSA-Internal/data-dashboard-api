@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.data.models.core_models.supporting import Geography
+from metrics.data.models.core_models.supporting import Geography, GeographyType
 from tests.factories.metrics.geography_type import GeographyTypeFactory
 
 
@@ -41,3 +41,27 @@ class TestGeographyManager:
         assert all_geography_names.count() == 2
         assert all_geography_names_by_type.count() == 1
         assert all_geography_names_by_type.first() == fake_geography_name_one
+
+    @pytest.mark.django_db
+    def test_get_name_by_id(self):
+        """
+        Given a number of existing `geography -type` records
+        When `get_name_by_id` is called
+        Then the geography types with their codes and names are returned correctly
+        """
+        geography_one = GeographyTypeFactory(
+            name="Lower Tier Local Authority",
+            with_geographies=["Hull"]
+        )
+
+        geography_two = GeographyTypeFactory(
+            name="Region",
+            with_geographies=["South East"]
+        )
+
+        # When
+        get_name_by_id = GeographyType.objects.get_name_by_id(2)
+
+        # Access the dictionary returned by .first()
+        result = get_name_by_id
+        assert result == 'Region'
