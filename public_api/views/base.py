@@ -3,7 +3,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from common.auth.cognito_jwt import backend
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
@@ -43,8 +42,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        auth = backend.JSONWebTokenAuthentication()
-        is_valid_non_public_request = auth.authenticate(request)
+        is_valid_non_public_request = request.auth is not None
         if is_valid_non_public_request:
             response["Cache-Control"] = "private, no-cache"
 

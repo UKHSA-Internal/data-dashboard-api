@@ -42,8 +42,7 @@ class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        auth = backend.JSONWebTokenAuthentication()
-        is_valid_non_public_request = auth.authenticate(request)
+        is_valid_non_public_request = request.auth is not None
         if is_valid_non_public_request:
             response["Cache-Control"] = "private, no-cache"
 
