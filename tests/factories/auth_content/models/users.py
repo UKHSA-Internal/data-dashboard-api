@@ -16,11 +16,11 @@ class UserFactory(factory.django.DjangoModelFactory):
     def create_with_permission_set(cls, user_id: str, permission_set_name: str):
         """
         Create a user with a single permission set.
-        
+
         Args:
             user_id: UUID for the user
             permission_set_name: Name of the permission set to assign
-            
+
         Returns:
             User instance with permission set assigned
         """
@@ -30,21 +30,21 @@ class UserFactory(factory.django.DjangoModelFactory):
 
         # Create user first
         user = cls.create(user_id=user_id)
-        
+
         # Then add the permission set using .add()
         user.permission_sets.add(permission_set)
-        
+
         return user
-    
+
     @classmethod
     def create_with_permission_sets(cls, user_id: str, permission_sets: list):
         """
         Create a user with multiple permission sets.
-        
+
         Args:
             user_id: UUID for the user
             permission_sets: List of PermissionSet instances
-            
+
         Returns:
             User instance with permission sets assigned
         """

@@ -50,13 +50,11 @@ class TestGeographyManager:
         Then the geography types with their codes and names are returned correctly
         """
         geography_one = GeographyTypeFactory(
-            name="Lower Tier Local Authority",
-            with_geographies=["Hull"]
+            name="Lower Tier Local Authority", with_geographies=["Hull"]
         )
 
         geography_two = GeographyTypeFactory(
-            name="Region",
-            with_geographies=["South East"]
+            name="Region", with_geographies=["South East"]
         )
 
         # When
@@ -64,4 +62,4 @@ class TestGeographyManager:
 
         # Access the dictionary returned by .first()
         result = get_name_by_id
-        assert result == 'Region'
+        assert result == "Region"

@@ -112,8 +112,7 @@ class TestGeographyManager:
         )
 
         # When
-        get_name_by_id = Geography.objects.get_name_by_id(
-            geography_code="E12000007")
+        get_name_by_id = Geography.objects.get_name_by_id(geography_code="E12000007")
 
         # Access the dictionary returned by .first()
         result = get_name_by_id
