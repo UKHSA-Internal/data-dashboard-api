@@ -585,6 +585,18 @@ SOURCE_LINK_URL: str = """
 For linking to external url. (Only one of page or external_url must be filled not both).
 """
 
+ERROR_PAGE_LINE_FIELD: str = """
+This is the error summary text that will be displayed in red at the top of the error view.
+"""
+
+ERROR_PAGE_TEXT_FIELD: str = """
+This is a rich text field that can be used to display detailed information about the error that the user is experiencing
+"""
+
+ERROR_PAGE_SUB_TEXT_FIELD: str = """
+This is a rich text field that can be used to display further information to the user. This text will appear below the error at the top of the page.
+"""
+
 PAGE_CLASSIFICATION: str = """
 The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
 """
