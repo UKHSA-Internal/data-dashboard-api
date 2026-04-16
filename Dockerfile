@@ -6,22 +6,41 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.13
 
+# this debian version needs to match the version of the distroless image we are using below
 FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
-WORKDIR /build
+WORKDIR /code
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Copy the production-only dependencies into place
-COPY requirements-prod.txt requirements-prod.txt
-COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
+# Install required system packages
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends \
+        bash zsh coreutils libcap2 libtinfo6 gcc libpq-dev python3-dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-# Build runtime bundle and collect shared library deps via dedicated script.
-COPY docker/build_distroless_runtime.sh /usr/local/bin/build_distroless_runtime.sh
+# Copy the production-only dependencies into place.
+COPY requirements-prod.txt /code/requirements-prod.txt
+COPY requirements-prod-ingestion.txt /code/requirements-prod-ingestion.txt
+
+# Install Python production dependencies into /code/.venv. This layer depends only
+# on the base image, system packages and requirements files.
+RUN python3 -m venv /code/.venv \
+    && /code/.venv/bin/pip install --upgrade pip \
+    && /code/.venv/bin/pip install --no-cache-dir -r /code/requirements-prod.txt
+
+# Collect shared-library deps for the distroless runtime.
+COPY docker/collect_shared_libs.sh /usr/local/bin/collect_shared_libs.sh
+RUN bash /usr/local/bin/collect_shared_libs.sh
+
+# Remove build-time-only packages now that dependencies are installed and
+# shared libraries have been collected.
+RUN apt-get purge -y --auto-remove gcc libpq-dev python3-dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Application source code.
 COPY . /code
-
-RUN bash /usr/local/bin/build_distroless_runtime.sh
 
 ###############################################################################
 # Production stage (distroless, root)
