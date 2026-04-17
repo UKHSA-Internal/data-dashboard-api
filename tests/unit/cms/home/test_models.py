@@ -4,6 +4,7 @@ from unittest import mock
 from wagtail.api.conf import APIField
 
 from cms.dashboard.models import UKHSAPage
+from cms.home.models.landing_page import LandingPageRelatedLink
 from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
 
 
@@ -13,7 +14,10 @@ class TestBlankLandingPage:
         (
             "title",
             "sub_title",
+            "page_description",
             "body",
+            "related_links_layout",
+            "related_links",
             "last_published_at",
             "seo_title",
             "search_description",
@@ -38,7 +42,17 @@ class TestBlankLandingPage:
         api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert expected_api_field_name in api_field_names
 
-    @pytest.mark.parametrize("expected_content_panel", ["title", "sub_title", "body"])
+    @pytest.mark.parametrize(
+        "expected_content_panel",
+        [
+            "title",
+            "sub_title",
+            "page_description",
+            "body",
+            "related_links",
+            "related_links_layout",
+        ],
+    )
     def test_has_correct_content_panels(
         self,
         expected_content_panel: str,
@@ -53,6 +67,19 @@ class TestBlankLandingPage:
 
         # When / Then
         assert hasattr(blank_page, expected_content_panel)
+
+    def test_landing_page_related_link_body_is_optional(self) -> None:
+        """
+        Given the `LandingPageRelatedLink` model
+        When inspecting the `body` field
+        Then the field allows blank and null values
+        """
+        # Given / When
+        body_field = LandingPageRelatedLink._meta.get_field("body")
+
+        # Then
+        assert body_field.blank is True
+        assert body_field.null is True
 
     def test_is_previewable_returns_false(self):
         """

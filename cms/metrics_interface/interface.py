@@ -186,6 +186,50 @@ class MetricsAPIInterface:
         """
         return self.theme_manager.get_all_names()
 
+    def get_all_theme_names_and_ids(self) -> QuerySet:
+        """Gets all available theme names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual theme names.
+                Examples:
+                    `<ThemeQuerySet [{'id': 3, 'name': 'immunisation'},...]>`.
+        """
+        return self.theme_manager.get_all_names_and_ids()
+
+    def get_all_sub_theme_names_and_ids(self) -> QuerySet:
+        """Gets all available subtheme names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual subtheme names.
+                Examples:
+                    `<SubThemeQuerySet [{'id': 3, 'name': 'respiratory'},...]>`.
+        """
+        return self.sub_theme_manager.get_all_names_and_ids()
+
+    def get_all_topic_names_and_ids(self) -> QuerySet:
+        """Gets all available topic names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `TopicManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual topic names.
+                Examples:
+                    `<TopicQuerySet [{'id': 1, 'name': '6-in-1'},...]>`.
+        """
+        return self.topic_manager.get_all_names_and_ids()
+
+    def get_all_metric_names_and_ids(self) -> QuerySet:
+        """Gets all available metric names names and ids as a list queryset.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual metric names.
+                Examples:
+                    `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'},...]>`.
+        """
+        return self.metric_manager.get_all_names_and_ids()
+
     def get_all_sub_theme_names(self) -> QuerySet:
         """Gets all available sub_theme names as a flat list queryset.
         Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
@@ -326,7 +370,7 @@ class MetricsAPIInterface:
     ) -> QuerySet:
         """Gets all geography names and codes for a particular geography type, for example `Nation` or
             `Government Office Region`.
-        Note this is achived by delegating the call to the `GeographyManager` from Metrics API
+        Note this is achieved by delegating the call to the `GeographyManager` from Metrics API
 
         Returns
             QuerySet: A queryset of the geography_code and geography_names fields as a list of tuples.
@@ -397,3 +441,27 @@ class MetricsAPIInterface:
         return self.geography_manager.get_geography_code_for_geography(
             geography=geography, geography_type=geography_type
         )
+
+    def get_all_geography_type_names_and_ids(self) -> QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<GeographyTypeQuerySet [1, 'UKHSA_Region']>`
+
+        """
+        return self.geography_type_manager.get_all_names_and_ids()
+
+    def get_all_geography_names_and_codes(self) -> QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography names:
+                Examples:
+                    `<GeographyTypeQuerySet [1, 'UKHSA_Region']>`
+
+        """
+        return self.geography_manager.get_all_names_and_codes()

@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-import plotly.graph_objects
+import plotly.graph_objects as go
 
 from metrics.domain.charts.chart_settings.single_category import (
     SingleCategoryChartSettings,
@@ -13,7 +13,7 @@ from metrics.domain.models.plots import ChartGenerationPayload
 def create_simplified_line_chart(
     *,
     chart_generation_payload: ChartGenerationPayload,
-) -> plotly.graph_objects.Figure:
+) -> go.Figure:
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
@@ -27,7 +27,7 @@ def create_simplified_line_chart(
         `Figure`: A `Plotly` object which can be
             written to a file, or shown.
     """
-    figure = plotly.graph_objects.Figure()
+    figure = go.Figure()
     chart_plot = chart_generation_payload.plots[0]
 
     selected_colour = RGBAChartLineColours.get_colour(
@@ -62,7 +62,7 @@ def _create_line_plot(
     colour: str,
     line_shape: str,
 ) -> dict:
-    return plotly.graph_objects.Scatter(
+    return go.Scatter(
         x=x_axis_values,
         y=y_axis_values,
         mode="lines",
@@ -74,7 +74,7 @@ def _create_line_plot(
 def generate_chart_figure(
     *,
     chart_generation_payload: ChartGenerationPayload,
-) -> plotly.graph_objects.Figure:
+) -> go.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a
         simplified line graph with a single plot and 4 axis ticks
 

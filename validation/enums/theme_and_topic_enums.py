@@ -111,6 +111,7 @@ class _RespiratoryTopic(Enum):
 
 class _InvasiveBacterialInfectionsTopic(Enum):
     IGAS = "iGAS"
+    MENINGOCOCCAL_DISEASE = "Meningococcal-disease"
 
 
 class _BloodstreamInfectionTopic(Enum):

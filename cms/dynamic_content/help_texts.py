@@ -552,3 +552,67 @@ CONFIDENCE_INTERVALS_DESCRIPTION: str = """
 An optional body of text to accompany this block.
 This text will be displayed above the metrics table if confidence intervals is enabled.
 """
+
+WEATHER_HEALTH_ALERT_DESCRIPTION: str = """
+Optional description for the weather health alerts card.
+"""
+
+SOURCE_LINK: str = """
+Optional source link.
+"""
+
+CHART_DESCRIPTION: str = """
+Required description for the chart.
+"""
+
+HEADLINE_CHART_DESCRIPTION: str = """
+Description for the headline chart.
+"""
+
+SOURCE_LINK_INTERNAL_OR_EXTERNAL: str = """
+Source link (internal or external).
+"""
+
+SOURCE_LINK_TEXT: str = """
+Display text for the link.
+"""
+
+SOURCE_LINK_PAGE: str = """
+For linking to internal pages. (If chosen, external_url must be blank).
+"""
+
+SOURCE_LINK_URL: str = """
+For linking to external url. (Only one of page or external_url must be filled not both).
+"""
+
+ERROR_PAGE_LINE_FIELD: str = """
+This is the error summary text that will be displayed in red at the top of the error view.
+"""
+
+ERROR_PAGE_TEXT_FIELD: str = """
+This is a rich text field that can be used to display detailed information about the error that the user is experiencing
+"""
+
+ERROR_PAGE_SUB_TEXT_FIELD: str = """
+This is a rich text field that can be used to display further information to the user. This text will appear below the error at the top of the page.
+"""
+
+PAGE_CLASSIFICATION: str = """
+The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
+"""
+
+SECTION_FOOTER_BLOCKS: str = """
+This is an optional footer for content sections to allow additional supporting information to be linked too. (E.g. a link to furhter information about how we define an outbreak)
+"""
+SECTION_FOOTER: str = """
+This is an optional footer for a section to provide a link to further information.
+"""
+SECTION_FOOTER_BADGE_LABEL: str = """
+This is the label used for the a section footer link badge"
+"""
+SECTION_FOOTER_LINK_TEXT: str = """
+This is the text to displayed along side a link in a the sections footer link.
+"""
+SECTION_FOOTER_LINK: str = """
+This is a link component that allows the user to setup an internal or external link along with a short description of the link's content.
+"""

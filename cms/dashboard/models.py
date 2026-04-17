@@ -8,7 +8,8 @@ from rest_framework.templatetags.rest_framework import render_markdown
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Page, SiteRootPath
+from wagtail.models import Orderable, Page, SiteRootPath
+from wagtail.search import index
 
 from cms import seo
 
@@ -18,6 +19,7 @@ HEADING_4: str = "h4"
 BOLD: str = "bold"
 BULLET_POINTS: str = "ul"
 LINKS: str = "link"
+
 
 AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
     HEADING_2,
@@ -29,6 +31,14 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 ]
 
 MAXIMUM_URL_FIELD_LENGTH: int = 400
+
+
+class DataClassificationLevels(models.TextChoices):
+    OFFICIAL = "official"
+    OFFICIAL_SENSITIVE = "official_sensitive"
+    PROTECTIVE_MARKING_NOT_SET = "protective_marking_not_set"
+    SECRET = "secret"  # nosec #noqa: S105
+    TOP_SECRET = "top_secret"  # nosec #noqa: S105
 
 
 class UKHSAPage(Page):
@@ -86,6 +96,12 @@ class UKHSAPage(Page):
 
     announcement_content_panels = [
         InlinePanel("announcements", heading="Announcements", label="Announcement"),
+    ]
+
+    search_fields = Page.search_fields + [
+        index.SearchField("body"),
+        index.SearchField("title"),
+        index.SearchField("search_description"),
     ]
 
     class Meta:
@@ -163,3 +179,37 @@ class UKHSAPage(Page):
             .order_by("-banner_type")
             .values("id", "title", "body", "banner_type")
         )
+
+
+class UKHSAPageRelatedLink(Orderable):
+    """
+    Abstract base class for all page types related links.
+
+    When a page type extends this class, it will need to include the `page` field e.g.
+
+    page = ParentalKey(
+        <PAGE_TYPE>, on_delete=models.SET_NULL, null=True, related_name="related_links"
+    )
+    """
+
+    title = models.CharField(max_length=255)
+    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    body = RichTextField(features=[])
+
+    # Sets which panels to show on the editing view
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("url"),
+        FieldPanel("body"),
+    ]
+
+    # Sets which fields to expose on the API
+    api_fields = [
+        APIField("title"),
+        APIField("url"),
+        APIField("body"),
+    ]
+
+    class Meta:
+        abstract = True
+        ordering = ["sort_order"]

@@ -1,11 +1,17 @@
 import datetime
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
+    WagtailAdminPageForm,
+)
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.dashboard.enums import (
@@ -14,8 +20,9 @@ from cms.dashboard.enums import (
 )
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
-    MAXIMUM_URL_FIELD_LENGTH,
+    DataClassificationLevels,
     UKHSAPage,
+    UKHSAPageRelatedLink,
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
@@ -28,7 +35,13 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
+class TopicPageAdminForm(WagtailAdminPageForm):
+    class Media:
+        js = ["js/classification_toggle.js"]
+
+
 class TopicPage(UKHSAPage):
+    base_form_class = TopicPageAdminForm
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -38,10 +51,21 @@ class TopicPage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
+
     is_public = models.BooleanField(
         default=False,
         verbose_name="enable public page",
     )
+
+    page_classification = models.CharField(
+        max_length=50,
+        choices=DataClassificationLevels.choices,
+        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        help_text=help_texts.PAGE_CLASSIFICATION,
+        blank=True,
+        null=True,
+    )
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -56,14 +80,13 @@ class TopicPage(UKHSAPage):
     ]
 
     # Search index configuration
-    search_fields = UKHSAPage.search_fields + [
-        index.SearchField("title"),
-    ]
+    search_fields = UKHSAPage.search_fields + [index.SearchField("page_description")]
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("enable_area_selector"),
         FieldPanel("is_public"),
+        FieldPanel("page_classification"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
@@ -78,6 +101,7 @@ class TopicPage(UKHSAPage):
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("is_public"),
+        APIField("page_classification"),
         APIField("selected_topics"),
     ]
 
@@ -203,28 +227,25 @@ class TopicPage(UKHSAPage):
         timestamps = [timestamp for timestamp in timestamps if timestamp]
         return max(timestamps)
 
+    def clean(self):
+        super().clean()
 
-class TopicPageRelatedLink(Orderable):
+        # If is_public is true, automatically clear classification
+        if self.is_public:
+            self.page_classification = None
+        # If not public page, classification must be chosen
+        elif not self.page_classification:
+            raise ValidationError(
+                {
+                    "page_classification": "Please select a classification level for this non-public page"
+                }
+            )
+
+
+class TopicPageRelatedLink(UKHSAPageRelatedLink):
     page = ParentalKey(
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
-    title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
-    body = RichTextField(features=[])
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("url"),
-        FieldPanel("body"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("url"),
-        APIField("body"),
-    ]
 
 
 class TopicPageAnnouncement(Announcement):

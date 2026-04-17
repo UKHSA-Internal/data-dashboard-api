@@ -1,4 +1,4 @@
-import plotly.graph_objects
+import plotly.graph_objects as go
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
@@ -31,7 +31,7 @@ def create_bar_plot(
     bar_colour: str = selected_color.stringified
     legend: str = plot_data.parameters.label
 
-    bar = plotly.graph_objects.Bar(
+    bar = go.Bar(
         x=plot_data.x_axis_values,
         y=plot_data.y_axis_values,
         error_y=get_error_bars(plot_data, chart_generation_payload),

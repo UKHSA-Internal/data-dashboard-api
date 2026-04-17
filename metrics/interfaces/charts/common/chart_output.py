@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-import plotly.graph_objects
+import plotly.graph_objects as go
 
 HEX_COLOUR_BLACK = "#0b0c0c"
 
 
 @dataclass
 class ChartOutput:
-    figure: plotly.graph_objects.Figure
+    figure: go.Figure
     description: str
     is_headline: bool
     is_subplot: bool = False

@@ -1,6 +1,6 @@
 import math
 
-import plotly.graph_objects
+import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from metrics.domain.charts import colour_scheme
@@ -32,9 +32,7 @@ def format_tick_text(*, tick_text: str) -> str:
     return f"<b>{first_line.strip()}</b>"
 
 
-def format_legend_names(
-    figure: plotly.graph_objects.Figure,
-) -> tuple[plotly.graph_objects.Figure, set[str]]:
+def format_legend_names(figure: go.Figure) -> tuple[go.Figure, set[str]]:
     """Updates the Plotly figure legend group to remove duplicate names
 
     Args:
@@ -61,7 +59,7 @@ def format_legend_names(
 def generate_chart_figure(
     *,
     chart_generation_payload: SubplotChartGenerationPayload,
-) -> plotly.graph_objects.Figure:
+) -> go.Figure:
     settings = SubplotChartSettings(
         chart_generation_payload=chart_generation_payload,
     )
@@ -74,7 +72,7 @@ def generate_chart_figure(
     for plot_index, plot_data in enumerate(subplot_data, start=1):
         for data in plot_data.subplot_data:
             figure.add_trace(
-                plotly.graph_objects.Bar(
+                go.Bar(
                     x=data.x_axis_values,
                     y=data.y_axis_values,
                     name=getattr(
@@ -124,11 +122,11 @@ def generate_chart_figure(
 
 
 def add_target_threshold(
-    figure: plotly.graph_objs.Figure,
+    figure: go.Figure,
     y_bottom: float,
     target_threshold_label: str | None,
     fill_colour: str = "rgba(135, 206, 235, 0.3)",
-) -> plotly.graph_objs.Figure:
+) -> go.Figure:
     """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
 
     Notes:
@@ -207,7 +205,7 @@ def add_target_threshold(
 
 def _add_threshold_indicator(
     *,
-    figure: plotly.graph_objects.Figure,
+    figure: go.Figure,
     y_top: float,
     y_bottom: float,
     target_threshold_label: str,

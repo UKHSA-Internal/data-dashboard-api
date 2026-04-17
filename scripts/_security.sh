@@ -27,7 +27,7 @@ function _security() {
 
 function _security_dependencies() {
     uhd venv activate
-    pip-audit -r requirements.txt
+    pysentry-rs --requirements-files requirements.txt
 }
 
 function _security_vulnerabilities() {
