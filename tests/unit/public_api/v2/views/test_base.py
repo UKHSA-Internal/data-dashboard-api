@@ -88,7 +88,6 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         )
         assert response == mocked_response
 
-
     @mock.patch("public_api.version_02.views.base.Response")
     @mock.patch("public_api.version_02.views.base.APITimeSeriesRequestSerializerv2")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
