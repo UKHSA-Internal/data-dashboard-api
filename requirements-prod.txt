@@ -68,7 +68,7 @@ Pygments==2.20.0
 PyYAML==6.0.3
 redis==7.4.0
 requests==2.33.1
-rich==14.3.3
+rich==14.3.4
 ruamel.yaml==0.19.1
 ruamel.yaml.clib==0.2.15
 SQLAlchemy==2.0.49
