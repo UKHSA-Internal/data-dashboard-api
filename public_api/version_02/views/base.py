@@ -3,7 +3,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from common.auth.cognito_jwt import backend
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,

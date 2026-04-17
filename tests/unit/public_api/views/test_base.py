@@ -50,14 +50,12 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
     """
 
-    @mock.patch("public_api.views.base.backend.JSONWebTokenAuthentication.authenticate")
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
     def test_private_header_added_when_valid_jwt(
         self,
         mock_request_serializer_class: mock.MagicMock,
         mock_response_class: mock.MagicMock,
-        mock_backend_auth_authenticate: mock.MagicMock,
     ):
         """
         Given `backend.JSONWebTokenAuthentication.authenticate()` returns True
@@ -65,7 +63,6 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         Then the response contains Cache-Control: private, no-cache
         """
         # Given
-        mock_backend_auth_authenticate.return_value = True
 
         mocked_request = mock.MagicMock()
 
@@ -87,20 +84,17 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         response = base_view.get(mocked_request)
 
         # Then
-        mock_backend_auth_authenticate.assert_called_once_with(mocked_request)
         mocked_response.__setitem__.assert_called_once_with(
             "Cache-Control", "private, no-cache"
         )
         assert response == mocked_response
 
-    @mock.patch("public_api.views.base.backend.JSONWebTokenAuthentication.authenticate")
     @mock.patch("public_api.views.base.Response")
     @mock.patch("public_api.views.base.APITimeSeriesRequestSerializer")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
         self,
         mock_request_serializer_class: mock.MagicMock,
         mock_response_class: mock.MagicMock,
-        mock_backend_auth_authenticate: mock.MagicMock,
     ):
         """
         Given `_is_valid_non_public_request()` returns False
@@ -108,9 +102,9 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         Then the response does NOT contain a private Cache-Control header
         """
         # Given
-        mock_backend_auth_authenticate.return_value = False
 
         mocked_request = mock.MagicMock()
+        mocked_request.auth = None
 
         # Mock DTO slice creation
         mocked_slice = [mock.MagicMock()]
@@ -133,6 +127,5 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         response = base_view.get(mocked_request)
 
         # Then
-        mock_backend_auth_authenticate.assert_called_once_with(mocked_request)
         mocked_response.__setitem__.assert_not_called()
         assert response == mocked_response
