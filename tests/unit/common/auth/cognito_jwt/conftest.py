@@ -8,6 +8,7 @@ from django.conf import settings
 def cognito_settings(settings):
     settings.COGNITO_AWS_REGION = "eu-central-1"
     settings.COGNITO_USER_POOL = "bla"
+    settings.COGNITO_JWT_AUTH_HEADER = "HTTP_X_UHD_AUTH"
     settings.COGNITO_AUDIENCE = "my-client-id"
     settings.COGNITO_PUBLIC_KEYS_CACHING_ENABLED = False
     settings.CACHES = {

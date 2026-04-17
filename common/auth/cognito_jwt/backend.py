@@ -14,11 +14,12 @@ VALID_AUTH_HEADER_LENGTH = 2
 
 def get_authorization_header(request):
     """
-    Return request's 'X-UHD-AUTH:' header, as a bytestring.
+    Return request's authentication header, as a bytestring.
 
     Hide some test client ickyness where the header can be unicode.
     """
-    auth = request.META.get("HTTP_X_UHD_AUTH", b"")
+    auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "Authorization")
+    auth = request.META.get(auth_header, b"")
     if isinstance(auth, str):
         # Work around django test client oddness
         auth = auth.encode(HTTP_HEADER_ENCODING)
@@ -50,6 +51,8 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         else:
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create_for_cognito(jwt_payload)
+        if not user:
+            return None
         return (user, jwt_token)
 
     @staticmethod
