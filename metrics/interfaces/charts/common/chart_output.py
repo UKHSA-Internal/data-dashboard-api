@@ -62,7 +62,7 @@ class ChartOutput:
             x=0.5,
             y=0.5,
             showarrow=False,
-            font=dict(size=WATERMARK_FONT_SIZE, color=WATERMARK_FONT_COLOUR),
+            font={"size": WATERMARK_FONT_SIZE, "color": WATERMARK_FONT_COLOUR},
             textangle=-30,
             opacity=WATERMARK_OPACITY,
         )
