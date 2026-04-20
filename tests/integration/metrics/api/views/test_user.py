@@ -104,7 +104,7 @@ class TestPermissionSetByUser:
         response = client.get(path=path)
 
         # Then
-        assert response.data["permission_set_hierarchy"] == []
+        assert response.data["permission_sets"] == []
 
     @pytest.mark.django_db
     def test_returns_empty_permission_sets_when_no_permissions(self):
@@ -169,7 +169,7 @@ class TestPermissionSetByUser:
         assert summary["deduplicated_count"] == 1
         assert summary["has_global_access"] is True
 
-        hierarchy = result["permission_sets"]["permission_set_hierarchy"]
+        hierarchy = result["permission_sets"]["permission_sets"]
         assert len(hierarchy) == 1
         assert hierarchy[0]["theme"]["id"] == "-1"
         assert hierarchy[0]["geography_type"]["id"] == "-1"

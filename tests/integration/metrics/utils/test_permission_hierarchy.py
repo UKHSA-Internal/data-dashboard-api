@@ -511,7 +511,7 @@ class TestBuildPermissionHierarchy:
         assert result["summary"]["total_permission_sets"] == 1
         assert result["summary"]["deduplicated_count"] == 1
         assert result["summary"]["removed_count"] == 0
-        assert len(result["permission_set_hierarchy"]) == 1
+        assert len(result["permission_sets"]) == 1
 
     @pytest.mark.django_db
     def test_removes_fully_subsumed_permission(self):
@@ -552,7 +552,7 @@ class TestBuildPermissionHierarchy:
         assert result["summary"]["deduplicated_count"] == 1
         assert result["summary"]["removed_count"] == 1
 
-        hierarchy = result["permission_set_hierarchy"]
+        hierarchy = result["permission_sets"]
         assert len(hierarchy) == 1
         assert hierarchy[0]["geography_type"]["id"] == "-1"
 
@@ -593,7 +593,7 @@ class TestBuildPermissionHierarchy:
         # Then
         assert result["summary"]["deduplicated_count"] == 2
         assert result["summary"]["removed_count"] == 0
-        assert len(result["permission_set_hierarchy"]) == 2
+        assert len(result["permission_sets"]) == 2
 
     @pytest.mark.django_db
     def test_complex_multi_level_deduplication(self):
@@ -713,7 +713,7 @@ class TestBuildPermissionHierarchy:
         result = build_permission_hierarchy(user.permission_sets.all())
 
         # Then
-        hierarchy = result["permission_set_hierarchy"]
+        hierarchy = result["permission_sets"]
         assert len(hierarchy) == 1
 
         permission = hierarchy[0]
@@ -822,7 +822,7 @@ class TestGetDeduplicatedPermissions:
         assert result["summary"]["total_permission_sets"] == 0
         assert result["summary"]["deduplicated_count"] == 0
         assert result["summary"]["removed_count"] == 0
-        assert len(result["permission_set_hierarchy"]) == 0
+        assert len(result["permission_sets"]) == 0
 
     @pytest.mark.django_db
     def test_handles_null_fields_gracefully(self):
@@ -850,7 +850,7 @@ class TestGetDeduplicatedPermissions:
 
         # Then
         assert result["summary"]["deduplicated_count"] == 1
-        hierarchy = result["permission_set_hierarchy"]
+        hierarchy = result["permission_sets"]
         assert hierarchy[0]["sub_theme"]["id"] is None
         assert hierarchy[0]["topic"]["id"] is None
 
@@ -903,7 +903,7 @@ class TestGetDeduplicatedPermissions:
         result = build_permission_hierarchy(user.permission_sets.all())
 
         assert result["summary"]["deduplicated_count"] == 1
-        hierarchy = result["permission_set_hierarchy"]
+        hierarchy = result["permission_sets"]
         assert hierarchy[0]["theme"]["id"] == "-1"
 
 
