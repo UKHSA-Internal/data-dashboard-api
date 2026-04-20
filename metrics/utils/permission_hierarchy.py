@@ -151,9 +151,6 @@ class NormalizedPermission:
         if self_value == "-1":
             return True
 
-        if not self_value and other_value:
-            return False
-
         return self_value == other_value
 
     def _theme_path_subsumes(self, other: "NormalizedPermission") -> bool:
