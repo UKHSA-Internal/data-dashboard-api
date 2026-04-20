@@ -57,7 +57,7 @@ pathspec==1.0.4
 pbr==7.0.3
 Pillow==12.2.0
 platformdirs==4.9.6
-plotly==6.6.0
+plotly==6.7.0
 pluggy==1.6.0
 pyjwt==2.12.1
 pyparsing==3.3.2
