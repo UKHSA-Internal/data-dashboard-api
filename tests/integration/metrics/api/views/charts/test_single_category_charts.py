@@ -1,18 +1,28 @@
 import datetime
 from http import HTTPStatus
+from urllib.parse import unquote_plus
+from unittest import mock
 
 import pytest
 from django.contrib.auth.models import User
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from metrics.api.enums import AppMode
+from metrics.api.views.charts.single_category_charts import ChartsView
 from metrics.data.models.core_models import CoreTimeSeries
+from metrics.interfaces.charts.common.chart_output import DEFAULT_DATA_CLASSIFICATION
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
+
+DEFAULT_WATERMARK_LABEL = "OFFICIAL-SENSITIVE"
 
 
 class TestChartsView:
     @staticmethod
-    def _build_valid_payload_for_existing_timeseries(core_timeseries: CoreTimeSeries):
+    def _build_valid_payload_for_existing_timeseries(
+        core_timeseries: CoreTimeSeries,
+    ) -> dict[str, object]:
         return {
             "file_format": "png",
             "plots": [
@@ -87,6 +97,22 @@ class TestChartsView:
 
         # Check that the headers on the response indicate a `png` image being returned
         assert response.headers["Content-Type"] == "image/png"
+
+    def test_cms_admin_mode_uses_is_authenticated_permission(self):
+        """
+        Given the application is running in CMS admin mode
+        When `ChartsView.get_permissions()` is called
+        Then the view requires Django authenticated access
+        """
+
+        with mock.patch(
+            "metrics.api.views.charts.single_category_charts.config.APP_MODE",
+            AppMode.CMS_ADMIN.value,
+        ):
+            permissions_list = ChartsView().get_permissions()
+
+        assert len(permissions_list) == 1
+        assert isinstance(permissions_list[0], permissions.IsAuthenticated)
 
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v3(
@@ -221,3 +247,227 @@ class TestChartsView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_v2_defaults_data_classification_to_official_sensitive_when_not_public(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
+    ):
+        """
+        Given a v2 chart request with `is_public=False` and no `data_classification`
+        When the endpoint is called
+        Then the generated chart params contain the default data classification
+        """
+
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["is_public"] = False
+
+        with mock.patch(
+            "metrics.api.views.charts.single_category_charts.access.generate_chart_as_file",
+            return_value=b"png-bytes",
+        ) as spy_generate_chart_as_file:
+            response: Response = client.post(
+                path="/api/charts/v2/",
+                data=payload,
+                format="json",
+            )
+
+        assert response.status_code == HTTPStatus.OK
+        chart_request_params = spy_generate_chart_as_file.call_args.kwargs[
+            "chart_request_params"
+        ]
+        assert chart_request_params.is_public is False
+        assert chart_request_params.data_classification == DEFAULT_DATA_CLASSIFICATION
+
+    @pytest.mark.django_db
+    def test_v2_preserves_explicit_data_classification_when_not_public(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
+    ):
+        """
+        Given a v2 chart request with `is_public=False` and an explicit classification
+        When the endpoint is called
+        Then the explicit data classification is used for chart generation
+        """
+
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["is_public"] = False
+        payload["data_classification"] = "SECRET"
+
+        with mock.patch(
+            "metrics.api.views.charts.single_category_charts.access.generate_chart_as_file",
+            return_value=b"png-bytes",
+        ) as spy_generate_chart_as_file:
+            response: Response = client.post(
+                path="/api/charts/v2/",
+                data=payload,
+                format="json",
+            )
+
+        assert response.status_code == HTTPStatus.OK
+        chart_request_params = spy_generate_chart_as_file.call_args.kwargs[
+            "chart_request_params"
+        ]
+        assert chart_request_params.is_public is False
+        assert chart_request_params.data_classification == "SECRET"
+
+    @pytest.mark.django_db
+    def test_v2_svg_response_contains_watermark_for_non_public_chart(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
+    ):
+        """
+        Given a v2 request for an SVG chart with `is_public=False`
+        When the endpoint returns the generated chart
+        Then the SVG output contains the default watermark text
+        """
+
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+
+        response: Response = client.post(
+            path="/api/charts/v2/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.headers["Content-Type"].startswith("image/svg")
+
+        svg_bytes = (
+            b"".join(response.streaming_content)
+            if hasattr(response, "streaming_content")
+            else response.content
+        )
+        svg_text = svg_bytes.decode("utf-8", errors="ignore")
+
+        assert "<svg" in svg_text
+        assert DEFAULT_WATERMARK_LABEL in svg_text
+
+    @pytest.mark.django_db
+    def test_v2_svg_response_formats_explicit_official_sensitive_value_as_label(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
+    ):
+        """
+        Given a v2 SVG chart request with the enum-style value `official-sensitive`
+        When the endpoint renders the chart
+        Then the SVG watermark uses the explicit label `OFFICIAL-SENSITIVE`
+        """
+
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+        payload["data_classification"] = "official-sensitive"
+
+        response: Response = client.post(
+            path="/api/charts/v2/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+        svg_bytes = (
+            b"".join(response.streaming_content)
+            if hasattr(response, "streaming_content")
+            else response.content
+        )
+        svg_text = svg_bytes.decode("utf-8", errors="ignore")
+
+        assert DEFAULT_WATERMARK_LABEL in svg_text
+        assert "official-sensitive" not in svg_text
+
+    @pytest.mark.django_db
+    def test_v3_encoded_response_contains_default_watermark_label_for_non_public_chart(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+    ):
+        """
+        Given a v3 non-public chart request without an explicit classification
+        When the endpoint returns the encoded chart response
+        Then both the encoded SVG and interactive figure contain the display label watermark
+        """
+
+        client = APIClient()
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+
+        response: Response = client.post(
+            path="/api/charts/v3/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+        decoded_chart = unquote_plus(response.data["chart"])
+        annotations = response.data["figure"]["layout"].get("annotations", [])
+        annotation_texts = [annotation.get("text") for annotation in annotations]
+
+        assert DEFAULT_WATERMARK_LABEL in decoded_chart
+        assert DEFAULT_WATERMARK_LABEL in annotation_texts
+        assert DEFAULT_DATA_CLASSIFICATION not in decoded_chart
+
+    @pytest.mark.django_db
+    def test_v3_encoded_response_formats_explicit_official_sensitive_value_as_label(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+    ):
+        """
+        Given a v3 non-public chart request with the enum-style value `official_sensitive`
+        When the endpoint returns the encoded chart response
+        Then the watermark is rendered as the display label rather than the raw value
+        """
+
+        client = APIClient()
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+        payload["data_classification"] = "official_sensitive"
+
+        response: Response = client.post(
+            path="/api/charts/v3/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+        decoded_chart = unquote_plus(response.data["chart"])
+        annotations = response.data["figure"]["layout"].get("annotations", [])
+        annotation_texts = [annotation.get("text") for annotation in annotations]
+
+        assert DEFAULT_WATERMARK_LABEL in decoded_chart
+        assert DEFAULT_WATERMARK_LABEL in annotation_texts
+        assert "official_sensitive" not in decoded_chart
