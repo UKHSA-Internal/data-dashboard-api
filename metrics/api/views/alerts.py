@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.response import Response
+import logging
 
 from metrics.api.enums import Alerts
 from metrics.api.serializers.geographies_alerts import GeographiesForAlertsSerializer
@@ -10,6 +11,7 @@ from metrics.interfaces.weather_health_alerts.access import (
 )
 
 ALERTS_API_TAG = "alerts"
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(tags=[ALERTS_API_TAG])
@@ -35,6 +37,9 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
             topic=topic_name,
             metric=metric_name,
         )
+        if request.user.is_authenticated:
+            logger.info("User Authenticated - request.user.permission_sets: %s", request.user.permission_sets)
+            logger.info("User Authenticated - request.user.username: %s", request.user.username)
 
         return Response(data=summary_data)
 

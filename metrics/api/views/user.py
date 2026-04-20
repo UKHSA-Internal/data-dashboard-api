@@ -3,6 +3,7 @@ from http import HTTPStatus
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import logging
 
 from metrics.api.serializers.user import (
     UserHierarchyRequestSerializer,
@@ -11,6 +12,7 @@ from metrics.api.serializers.user import (
 )
 
 USER_API_TAG = "Authenticated User"
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(
@@ -39,6 +41,7 @@ class UserPermissionSetsByUserIdView(APIView):
         """API endpoint to fetch a users assigned permission sets using user_id"""
         serializer = UserRequestSerializer(data={"user_id": user_id})
         serializer.is_valid(raise_exception=True)
+        logger.info("Getting user permission sets (UserPermissionSetsByUserIdView): %s", Response(serializer.data()))
         return Response(serializer.data())
 
 
@@ -83,4 +86,5 @@ class UserPermissionHierarchyByUserIdView(APIView):
             }
         )
         serializer.is_valid(raise_exception=True)
+        logger.info("Getting user permission sets (UserPermissionHierarchyByUserIdView): %s", Response(serializer.data()))
         return Response(serializer.data())
