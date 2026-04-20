@@ -12,6 +12,8 @@ class HeadlineParameters(BaseModel):
     geography_type: str
     sex: str
     age: str
+    is_public: bool = True
+    data_classification: str | None = None
     request: Request | None = None
 
     class Config:

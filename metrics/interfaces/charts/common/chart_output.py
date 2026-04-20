@@ -2,7 +2,26 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
-HEX_COLOUR_BLACK = "#0b0c0c"
+CHART_BG_COLOUR = "#0b0c0c"
+DEFAULT_DATA_CLASSIFICATION = "OFFICIAL SENSITIVE"
+WATERMARK_FONT_SIZE = 40
+WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
+WATERMARK_OPACITY = 0.58
+DATA_CLASSIFICATION_LABELS = {
+    "official": "OFFICIAL",
+    "official_sensitive": "OFFICIAL-SENSITIVE",
+    "protective_marking_not_set": "PROTECTIVE MARKING NOT SET",
+    "secret": "SECRET",
+    "top_secret": "TOP SECRET",
+}
+DATA_CLASSIFICATION_LABELS.update(
+    {
+        DEFAULT_DATA_CLASSIFICATION.casefold(): DATA_CLASSIFICATION_LABELS[
+            "official_sensitive"
+        ],
+        "official-sensitive": DATA_CLASSIFICATION_LABELS["official_sensitive"],
+    }
+)
 
 
 @dataclass
@@ -11,6 +30,42 @@ class ChartOutput:
     description: str
     is_headline: bool
     is_subplot: bool = False
+    is_public: bool = True
+    data_classification: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.is_public:
+            self._apply_watermark()
+
+    def _apply_watermark(self) -> None:
+        """
+        Adds a diagonal watermark to the Plotly figure.
+
+        The watermark is added directly to the figure as a layout
+        annotation using paper coordinates, so it is consistently
+        rendered in static SVG exports, interactive Plotly outputs,
+        and any downloaded chart artefacts.
+        """
+
+        raw_classification = (
+            self.data_classification or DEFAULT_DATA_CLASSIFICATION
+        ).strip()
+        watermark_text = DATA_CLASSIFICATION_LABELS.get(
+            raw_classification.casefold(),
+            raw_classification,
+        )
+
+        self.figure.add_annotation(
+            text=watermark_text,
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+            font=dict(size=WATERMARK_FONT_SIZE, color=WATERMARK_FONT_COLOUR),
+            textangle=-30,
+            opacity=WATERMARK_OPACITY,
+        )
 
     @property
     def interactive_chart_figure_output(self) -> dict:
@@ -51,8 +106,8 @@ class ChartOutput:
         self.figure.layout.autosize = True
 
     def _apply_hover_label_styling(self):
-        self.figure.layout.hoverlabel.bgcolor = HEX_COLOUR_BLACK
-        self.figure.layout.hoverlabel.bordercolor = HEX_COLOUR_BLACK
+        self.figure.layout.hoverlabel.bgcolor = CHART_BG_COLOUR
+        self.figure.layout.hoverlabel.bordercolor = CHART_BG_COLOUR
         self.figure.layout.hoverlabel.font.update(
             size=16,
             color="white",

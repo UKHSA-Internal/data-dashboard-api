@@ -97,6 +97,8 @@ class ChartsView(APIView):
         | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
+        | `is_public`      | Whether the chart is for the public / non-public dashboard environment     | True                     | Yes       |
+        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL SENSITIVE       | No        |
 
         ---
 
@@ -225,6 +227,51 @@ class EncodedChartsView(APIView):
         request=EncodedChartsRequestSerializer,
         responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
         tags=[CHARTS_API_TAG],
+        examples=[
+            OpenApiExample(
+                "COVID-19 encoded SVG example",
+                value={
+                    "file_format": "svg",
+                    "x_axis": "date",
+                    "y_axis": "metric",
+                    "is_public": False,
+                    "data_classification": "OFFICIAL SENSITIVE",
+                    "plots": [
+                        {
+                            "topic": "COVID-19",
+                            "metric": "COVID-19_cases_casesByDay",
+                            "chart_type": "bar",
+                            "date_from": "2022-01-01",
+                            "date_to": "2023-02-01",
+                        }
+                    ],
+                },
+                request_only=True,
+            ),
+            OpenApiExample(
+                "COVID-19 encoded SVG response example",
+                value={
+                    "last_updated": "2023-02-01",
+                    "chart": "%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20300%22%3E%3Ctext%20x%3D%22450%22%20y%3D%22150%22%20text-anchor%3D%22middle%22%3EOFFICIAL%20SENSITIVE%3C%2Ftext%3E%3C%2Fsvg%3E",
+                    "alt_text": "There is only 1 plot on this chart. The horizontal X-axis is labelled 'date'. Whilst the vertical Y-axis is labelled 'metric'. This is a blue solid bar plot showing COVID-19 cases by day.",
+                    "figure": {
+                        "data": [
+                            {
+                                "x": ["2023-01-01", "2023-01-02"],
+                                "y": [100, 150],
+                                "type": "bar",
+                            }
+                        ],
+                        "layout": {
+                            "title": "COVID-19 Cases by Day",
+                            "xaxis": {"title": "Date"},
+                            "yaxis": {"title": "Cases"},
+                        },
+                    },
+                },
+                response_only=True,
+            ),
+        ],
     )
     @cache_response()
     @require_authorisation
@@ -249,6 +296,8 @@ class EncodedChartsView(APIView):
         | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
+        | `is_public`      | Whether the chart is for the public / non-public dashboard environment     | True                     | Yes       |
+        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL SENSITIVE       | No        |
 
         ---
 

@@ -108,7 +108,8 @@ CHART_LEGEND_TITLE: str = """
 An optional title to display for the legend.
 """
 ENCODED_CHARTS_RESPONSE: str = """
-The specified chart in the requested format as a URI encoded string (default format = svg)
+The specified chart in the requested format as a URI encoded string (default format = svg).
+To view the chart, decode the URL-encoded string, save it in a HTML file, and open it in a browser.
 """
 ENCODED_CHARTS_LAST_UPDATED: str = """
 The date that the chart data goes up to
@@ -133,10 +134,9 @@ GEOGRAPHY_LIST_FORMATTING: str = """
 "List of [id, name] pairs for dropdown options"
 """
 IS_PUBLIC_FIELD: str = """
-Boolean flag indicating whether the chart data is intended for public display. Defaults to True.
-When set to False, a data classification watermark will be applied to the chart.
+Whether the chart data is intended for public display. Defaults to True.
+When False, a data classification watermark will be applied to the chart.
 """
 DATA_CLASSIFICATION_FIELD: str = """
-The data classification label to apply as a watermark on non-public charts.
-Defaults to "OFFICIAL SENSITIVE" when is_public is False and no value is provided.
+The data classification watermark to apply on non-public charts, eg "OFFICIAL SENSITIVE".
 """
