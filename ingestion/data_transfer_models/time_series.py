@@ -1,10 +1,11 @@
 import datetime
 
-from pydantic import BaseModel, StrictBool, field_validator
+from pydantic import BaseModel, field_validator
 from pydantic.fields import Field
 
 import validation
 from ingestion.utils import type_hints
+from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD
 from validation.data_transfer_models.base import IncomingBaseDataModel
 
 
@@ -17,7 +18,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     metric_value: float
     in_reporting_delay_period: bool = False
     force_write: bool = False
-    is_public: StrictBool
+    is_public: bool = True
 
     @field_validator("embargo")
     @classmethod
@@ -115,7 +116,11 @@ def _build_enriched_time_series_specific_fields(
                 "in_reporting_delay_period", False
             ),
             force_write=individual_time_series.get("force_write", False),
-            is_public=individual_time_series["is_public"],
+            is_public=(
+                individual_time_series["is_public"]
+                if not ALLOW_MISSING_IS_PUBLIC_FIELD
+                else individual_time_series.get("is_public", True)
+            ),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None

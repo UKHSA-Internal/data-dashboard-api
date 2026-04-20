@@ -110,6 +110,32 @@ class TestBuildModelMethods:
             Consumer(source_data=fake_data, filename=test_filename)
 
     @mock.patch.object(Consumer, "update_supporting_models")
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
+    @mock.patch(
+        "ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=True,
+    )
+    def test_build_core_headlines_sets_is_public_to_true_when_not_provided(
+        self,
+        mocked_update_supporting_models: mock.MagicMock,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        # Given
+        fake_data = example_headline_data
+        for data in fake_data["data"]:
+            data.pop("is_public")
+
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
+
+        # When
+        core_headline_models = consumer.build_core_headlines()
+
+        # Then
+        for core_headline_model in core_headline_models:
+            assert core_headline_model.is_public is True
+
+    @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_time_series(
         self,
         spy_update_supporting_models: mock.MagicMock,
@@ -213,6 +239,32 @@ class TestBuildModelMethods:
         with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             Consumer(source_data=fake_data, filename=test_filename)
 
+    @mock.patch.object(Consumer, "update_supporting_models")
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
+    @mock.patch(
+        "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=True,
+    )
+    def test_build_core_time_series_sets_is_public_to_true_when_not_provided(
+        self,
+        mocked_update_supporting_models: mock.MagicMock,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        # Given
+        fake_data = example_time_series_data
+        for time_series_data in fake_data["time_series"]:
+            time_series_data.pop("is_public")
+
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
+
+        # When
+        core_time_series_models = consumer.build_core_time_series()
+
+        # Then
+        for core_time_series_model in core_time_series_models:
+            assert core_time_series_model.is_public is True
+
     def test_build_api_time_series(
         self,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
@@ -305,3 +357,28 @@ class TestBuildModelMethods:
 
         with pytest.raises(ValueError, match=MISSING_IS_PUBLIC_FIELD_ERROR):
             Consumer(source_data=fake_data, filename=test_filename)
+
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
+    @mock.patch(
+        "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=True,
+    )
+    def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
+        self,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        # Given
+        fake_data = example_time_series_data
+        for time_series_data in fake_data["time_series"]:
+            time_series_data.pop("is_public")
+
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
+
+        # When
+        api_time_series_models = consumer.build_api_time_series()
+
+        # Then
+        for api_time_series_model in api_time_series_models:
+            assert api_time_series_model.is_public is True
+

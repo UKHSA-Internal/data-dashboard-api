@@ -1,5 +1,7 @@
 from collections.abc import Mapping, Sequence
 
+from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD
+
 NON_PUBLIC_DATA_PREFIX = "OFF-SENS_"
 
 NOT_METRIC_ERROR = "No top-level metric field"
@@ -82,6 +84,9 @@ def _validate_is_public_in_data(
 
     for field in fields:
         if "is_public" not in field:
+            if ALLOW_MISSING_IS_PUBLIC_FIELD:
+                is_public_values.append(True)
+                continue
             raise ValueError(MISSING_IS_PUBLIC_FIELD_ERROR)
 
         is_public = field["is_public"]

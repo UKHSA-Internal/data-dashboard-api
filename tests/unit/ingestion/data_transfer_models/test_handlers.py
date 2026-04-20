@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -120,6 +122,28 @@ class TestBuildTimeSeriesDTOFromSource:
             build_time_series_dto_from_source(
                 source_data=source_data, filename=test_filename
             )
+
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
+    @mock.patch(
+        "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=True,
+    )
+    def test_defaults_is_public_to_true_when_not_provided_and_override_on(
+        self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
+    ):
+        # Given
+        source_data = example_time_series_data
+        for time_series_data in source_data["time_series"]:
+            time_series_data.pop("is_public")
+
+        # When
+        time_series_dto = build_time_series_dto_from_source(
+            source_data=source_data, filename=test_filename
+        )
+
+        # Then
+        assert time_series_dto.time_series[0].is_public is True
+        assert time_series_dto.time_series[1].is_public is True
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
@@ -447,6 +471,28 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(
                 source_data=source_data, filename=test_filename
             )
+
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
+    @mock.patch(
+        "ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=True,
+    )
+    def test_defaults_is_public_to_true_when_not_provided(
+        self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
+    ):
+        # Given
+        source_data = example_headline_data
+        for headline_data in source_data["data"]:
+            headline_data.pop("is_public")
+
+        # When
+        headline_dto = build_headline_dto_from_source(
+            source_data=source_data, filename=test_filename
+        )
+
+        # Then
+        assert headline_dto.data[0].is_public is True
+        assert headline_dto.data[1].is_public is True
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
