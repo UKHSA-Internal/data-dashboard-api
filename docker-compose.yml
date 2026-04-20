@@ -1,0 +1,90 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: data-dashboard-db
+    environment:
+      POSTGRES_DB: data_dashboard
+      POSTGRES_USER: data_dashboard
+      POSTGRES_PASSWORD: data_dashboard
+    ports:
+      - "5432:5432"
+    volumes:
+      # Postgres must write WAL and data files here; :ro would prevent startup.
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: data-dashboard-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      # AOF (appendonly) requires writes; :ro would break persistence.
+      - redis_data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: data-dashboard-api
+    depends_on:`
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+    environment:
+      # Override APIENV from .env so the container uses Postgres
+      # instead of the local SQLite configuration.
+      APIENV: "DEV"
+
+      # Configure Django to talk to the Postgres container
+      POSTGRES_DB: data_dashboard
+      POSTGRES_USER: data_dashboard
+      POSTGRES_PASSWORD: data_dashboard
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+
+      # Point Redis settings at the redis service
+      REDIS_HOST: "redis://redis:6379"
+      REDIS_RESERVED_HOST: "redis://redis:6379"
+
+      # Optional: restrict exposed endpoints via APP_MODE.
+      # Leave unset (or empty) to expose all (CMS + APIs) in one container.
+      # Examples:
+      #   APP_MODE: "PUBLIC_API"
+      #   APP_MODE: "PRIVATE_API"
+      #   APP_MODE: "CMS_ADMIN"
+      #   APP_MODE: "UTILITY_WORKER"
+      APP_MODE: ""
+
+      # Avoid writing .pyc when the container root filesystem is read-only.
+      PYTHONDONTWRITEBYTECODE: "1"
+      HOME: /tmp
+
+    # Read-only container root; writable paths are tmpfs only (static/media are ephemeral).
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /code/metrics/static
+
+    ports:
+      - "8000:80"
+    # The Dockerfile already defines the entrypoint and default command:
+    # ENTRYPOINT ["/bin/bash"]
+    # CMD ["./docker/entrypoint.sh"]
+    # which will:
+    #   - run migrations
+    #   - collect static files
+    #   - start gunicorn on port 80
+
+volumes:
+  db_data:
+  redis_data:
+
