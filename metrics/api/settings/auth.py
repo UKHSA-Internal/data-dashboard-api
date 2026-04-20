@@ -6,7 +6,7 @@ def is_auth_enabled() -> bool:
 
 
 def is_allow_missing_is_public_field() -> bool:
-    return str(os.environ.get("ALLOW_MISSING_IS_PUBLIC_FIELD", "")).lower() in {
+    return str(os.environ.get("ALLOW_MISSING_IS_PUBLIC_FIELD", "true")).lower() in {
         "true",
         "1",
     }
