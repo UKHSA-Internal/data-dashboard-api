@@ -10,18 +10,11 @@ WATERMARK_OPACITY = 0.58
 DATA_CLASSIFICATION_LABELS = {
     "official": "OFFICIAL",
     "official_sensitive": "OFFICIAL-SENSITIVE",
+    DEFAULT_DATA_CLASSIFICATION.casefold(): "OFFICIAL-SENSITIVE",  # for it to also satisfy "OFFICIAL SENSITIVE"
     "protective_marking_not_set": "PROTECTIVE MARKING NOT SET",
-    "secret": "SECRET",
-    "top_secret": "TOP SECRET",
+    "secret": "SECRET",  # nosec #noqa: S105
+    "top_secret": "TOP SECRET",  # nosec #noqa: S105
 }
-DATA_CLASSIFICATION_LABELS.update(
-    {
-        DEFAULT_DATA_CLASSIFICATION.casefold(): DATA_CLASSIFICATION_LABELS[
-            "official_sensitive"
-        ],
-        "official-sensitive": DATA_CLASSIFICATION_LABELS["official_sensitive"],
-    }
-)
 
 
 @dataclass
