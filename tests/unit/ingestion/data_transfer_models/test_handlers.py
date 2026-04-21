@@ -213,6 +213,10 @@ class TestBuildTimeSeriesDTOFromSource:
         with pytest.raises(MissingFieldError):
             build_time_series_dto_from_source(source_data=source_data)
 
+    @mock.patch(
+        "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=False,
+    )
     def test_raises_error_when_is_public_is_missing_from_source_data(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
@@ -443,6 +447,10 @@ class TestBuildHeadlineDTOFromSource:
         with pytest.raises(MissingFieldError):
             build_headline_dto_from_source(source_data=source_data)
 
+    @mock.patch(
+        "ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD",
+        new=False,
+    )
     def test_raises_error_when_is_public_is_missing_from_source_data(
         self, example_headline_data: INCOMING_DATA_TYPE
     ):
