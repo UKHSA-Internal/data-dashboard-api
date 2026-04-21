@@ -23,6 +23,24 @@ class GeographyTypeQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).order_by("name")
 
+    def get_name_by_id(self, geography_type_id: int) -> str | None:
+        """
+        Gets the geography_type name which matches the given theme id.
+
+        Args:
+            geography_type_id: The ID of the geography_type to look up
+
+        Returns:
+            The geography_type name if found, None otherwise
+
+        Examples:
+            >>> GeographyTypeQuerySet.get_name_by_id(1)
+            'Nation'
+            >>> GeographyTypeQuerySet.get_name_by_id(999)
+            None
+        """
+        return self.filter(id=geography_type_id).values_list("name", flat=True).first()
+
     def get_all_names_and_ids(self) -> models.QuerySet:
         """Gets all available geography_type names as a flat list queryset.
 
@@ -41,6 +59,23 @@ class GeographyTypeManager(models.Manager):
 
     def get_queryset(self) -> GeographyTypeQuerySet:
         return GeographyTypeQuerySet(model=self.model, using=self.db)
+
+    def get_name_by_id(self, geography_type_id: int) -> str | None:
+        """Gets the geography name which matches the given geography_code.
+
+        Args:
+            geography_type_id: The ID of the geography_type to look up
+
+        Returns:
+            The geography type name if found, None otherwise
+
+        Examples:
+            >>> GeographyManager.get_name_by_id(1)
+            'Region'
+            >>> GeographyManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(geography_type_id)
 
     def get_all_names(self) -> GeographyTypeQuerySet:
         """Gets all available geography_type names as a flat list queryset.

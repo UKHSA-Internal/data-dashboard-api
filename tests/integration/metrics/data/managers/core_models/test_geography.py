@@ -93,3 +93,27 @@ class TestGeographyManager:
             "geography_code": geography_two.geography_code,
             "name": geography_two.name,
         }
+
+    @pytest.mark.django_db
+    def test_get_name_by_id(self):
+        """
+        Given a number of existing `geography` records
+        When `get_name_by_id` is called
+        Then the geography types with their codes and names are returned correctly
+        """
+        geography_one = GeographyFactory.create_with_geography_type(
+            name="Leeds",
+            geography_code="E08000035",
+            geography_type="Lower Tier Local Authority",
+        )
+
+        geography_two = GeographyFactory.create_with_geography_type(
+            name="London", geography_code="E12000007", geography_type="Region"
+        )
+
+        # When
+        get_name_by_id = Geography.objects.get_name_by_id(geography_code="E12000007")
+
+        # Access the dictionary returned by .first()
+        result = get_name_by_id
+        assert result == geography_two.name

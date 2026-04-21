@@ -11,6 +11,24 @@ from django.db import models
 class SubThemeQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `SubThemeManager`"""
 
+    def get_name_by_id(self, sub_theme_id: int) -> str | None:
+        """
+        Gets the sub_theme name which matches the given sub_theme id.
+
+        Args:
+            sub_theme_id: The ID of the theme to look up
+
+        Returns:
+            The sub_theme name if found, None otherwise
+
+        Examples:
+            >>> SubThemeQuerySet.get_name_by_id(1)
+            'respiratory'
+            >>> SubThemeQuerySet.get_name_by_id(999)
+            None
+        """
+        return self.filter(id=sub_theme_id).values_list("name", flat=True).first()
+
     def get_all_names(self) -> models.QuerySet:
         """Gets all available sub_theme names as a flat list queryset.
 
@@ -61,6 +79,23 @@ class SubThemeManager(models.Manager):
 
     def get_queryset(self) -> SubThemeQuerySet:
         return SubThemeQuerySet(model=self.model, using=self.db)
+
+    def get_name_by_id(self, sub_theme_id: int) -> str | None:
+        """Gets the sub_theme name which matches the given sub_theme id.
+
+        Args:
+            sub_theme_id: The ID of the theme to look up
+
+        Returns:
+            The sub_theme name if found, None otherwise
+
+        Examples:
+            >>> SubThemeManager.get_name_by_id(1)
+            'respiratory'
+            >>> SubThemeManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(sub_theme_id)
 
     def get_all_names(self) -> SubThemeQuerySet:
         """Gets all available sub_theme names as a flat list queryset.

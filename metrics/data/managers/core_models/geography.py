@@ -25,6 +25,28 @@ class GeographyQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).distinct().order_by("name")
 
+    def get_name_by_id(self, geography_code: int) -> str | None:
+        """
+        Gets the geography_code name which matches the given theme id.
+
+        Args:
+            geography_code: The geography code of the geography to look up
+
+        Returns:
+            The geography name if found, None otherwise
+
+        Examples:
+            >>> GeographyQuerySet.get_name_by_id(1)
+            'England'
+            >>> GeographyQuerySet.get_name_by_id(999)
+            None
+        """
+        return (
+            self.filter(geography_code=geography_code)
+            .values_list("name", flat=True)
+            .first()
+        )
+
     def get_all_geography_codes_by_geography_type(
         self, geography_type_name: str
     ) -> Self:
@@ -127,6 +149,23 @@ class GeographyManager(models.Manager):
 
     def get_queryset(self) -> GeographyQuerySet:
         return GeographyQuerySet(model=self.model, using=self.db)
+
+    def get_name_by_id(self, geography_code: int) -> str | None:
+        """Gets the geography name which matches the given geography_code.
+
+        Args:
+            geography_code: The ID of the geography to look up
+
+        Returns:
+            The geography name if found, None otherwise
+
+        Examples:
+            >>> GeographyManager.get_name_by_id(1)
+            'England'
+            >>> GeographyManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(geography_code)
 
     def get_all_names(self) -> GeographyQuerySet:
         """Gets all available deduplicated geography names as a flat list queryset.
