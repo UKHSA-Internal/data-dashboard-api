@@ -14,7 +14,7 @@ class TestUserManager:
             from the `UserManager`
         Then the user is returned filtered correctly
         """
-        userId = "f907e591-4c49-4847-89b3-665e3c0133a4"
+        user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
 
         wildcard_permission = PermissionSetFactory.create_wildcard_permission_set()
         permission_one = PermissionSetFactory.create_permission_set(
@@ -34,14 +34,15 @@ class TestUserManager:
             geography=1,
         )
 
-        user_with_wildcard = UserFactory.create_with_permission_sets(
-            user_id=userId,
-            permission_sets=[wildcard_permission, permission_one, permission_two],
+        UserFactory.create_with_permission_sets(
+            user_id=user_id,
+            permission_sets=[wildcard_permission,
+                             permission_one, permission_two],
         )
 
         # When
         get_user_with_permission_sets = User.objects.get_user_with_permission_sets(
-            userId
+            user_id
         )
 
         # Then

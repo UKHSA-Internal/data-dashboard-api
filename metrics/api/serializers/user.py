@@ -14,7 +14,7 @@ from metrics.utils.permission_hierarchy import (
 def _validate_user_id(value):
     """Validate theme_id is either wildcard or a valid integer"""
     try:
-        uuid_obj = uuid.UUID(value, version=4)  # noqa: F841
+        uuid.UUID(value, version=4)  # noqa: F841
     except ValueError as err:
         msg = "User ID must be a valid UUID"
         raise serializers.ValidationError(msg) from err

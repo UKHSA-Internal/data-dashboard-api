@@ -45,9 +45,10 @@ class TestPermissionSetByUser:
             geography_type=1,
             geography=1,
         )
-        user_with_wildcard = UserFactory.create_with_permission_sets(
+        UserFactory.create_with_permission_sets(
             user_id=user_id,
-            permission_sets=[wildcard_permission, permission_one, permission_two],
+            permission_sets=[wildcard_permission,
+                             permission_one, permission_two],
         )
 
         # Retrieve the subthemes
@@ -151,7 +152,7 @@ class TestPermissionSetByUser:
             geography="E92000001",
         )
 
-        user = UserFactory.create_with_permission_sets(
+        UserFactory.create_with_permission_sets(
             user_id=user_id, permission_sets=[global_perm, specific_perm]
         )
 
@@ -181,8 +182,8 @@ class TestPermissionSetByUser:
         user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
 
         # create subthemes
-        wildcard_permission = PermissionSetFactory.create_wildcard_permission_set()
-        user_with_wildcard = UserFactory.create_with_permission_set(
+        PermissionSetFactory.create_wildcard_permission_set()
+        UserFactory.create_with_permission_set(
             user_id=user_id,
             permission_set_name="Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
         )
