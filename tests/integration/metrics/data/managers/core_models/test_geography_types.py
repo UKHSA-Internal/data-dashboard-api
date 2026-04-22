@@ -49,13 +49,11 @@ class TestGeographyManager:
         When `get_name_by_id` is called
         Then the geography types with their codes and names are returned correctly
         """
-        geography_one = GeographyTypeFactory(
+        GeographyTypeFactory(
             name="Lower Tier Local Authority", with_geographies=["Hull"]
         )
 
-        geography_two = GeographyTypeFactory(
-            name="Region", with_geographies=["South East"]
-        )
+        GeographyTypeFactory(name="Region", with_geographies=["South East"])
 
         # When
         get_name_by_id = GeographyType.objects.get_name_by_id(2)

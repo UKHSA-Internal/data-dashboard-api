@@ -439,10 +439,8 @@ class TestSubsumption:
             geography="E92000001",
         )
 
-        normalized_wildcard = NormalizedPermission.from_permission_set(
-            global_wildcard)
-        normalized_specific = NormalizedPermission.from_permission_set(
-            specific)
+        normalized_wildcard = NormalizedPermission.from_permission_set(global_wildcard)
+        normalized_specific = NormalizedPermission.from_permission_set(specific)
 
         # Then
         assert normalized_wildcard.subsumes(normalized_specific)

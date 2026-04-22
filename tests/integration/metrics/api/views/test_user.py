@@ -47,8 +47,7 @@ class TestPermissionSetByUser:
         )
         UserFactory.create_with_permission_sets(
             user_id=user_id,
-            permission_sets=[wildcard_permission,
-                             permission_one, permission_two],
+            permission_sets=[wildcard_permission, permission_one, permission_two],
         )
 
         # Retrieve the subthemes

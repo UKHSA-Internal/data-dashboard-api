@@ -80,8 +80,7 @@ class UserRequestSerializer(serializers.Serializer):
         user_uuid = uuid.UUID(user_id_str)
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(
-            user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
 
         # Check if user exists or has permissions
         if not permission_sets.exists():
@@ -94,8 +93,7 @@ class UserRequestSerializer(serializers.Serializer):
             }
 
         # Convert QuerySet to list of dicts
-        permission_set_list = _queryset_to_permission_set_dicts(
-            permission_sets)
+        permission_set_list = _queryset_to_permission_set_dicts(permission_sets)
 
         return {
             "user_id": user_id_str,
@@ -174,8 +172,7 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
         group_by = self.validated_data.get("group_by")
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(
-            user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
 
         if not permission_sets.exists():
             # Return empty structure rather than raising exception
@@ -188,9 +185,7 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
 
         if group_by == "geography_type":
             return {
-                "permission_sets": group_by_geography_type(
-                    deduplicated_perms
-                ),
+                "permission_sets": group_by_geography_type(deduplicated_perms),
                 "total_permissions": len(deduplicated_perms),
             }
 

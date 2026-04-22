@@ -98,8 +98,7 @@ class NormalizedPermission:
             if id_value == "-1":
                 setattr(self, name_attr, "* (All)")
             elif id_value:
-                setattr(self, name_attr, _get_choice_label(
-                    field_name, id_value))
+                setattr(self, name_attr, _get_choice_label(field_name, id_value))
 
     def subsumes(self, other: "NormalizedPermission") -> bool:
         """
@@ -313,8 +312,7 @@ def _remove_subsumed_permissions(
 
         # This permission is not subsumed, so check if it subsumes any existing ones
         # Remove any existing permissions that this one subsumes
-        result = [
-            existing for existing in result if not perm.subsumes(existing)]
+        result = [existing for existing in result if not perm.subsumes(existing)]
 
         result.append(perm)
 

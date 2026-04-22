@@ -66,7 +66,7 @@ class TestGeographyManager:
         geography_two = GeographyFactory.create_with_geography_type(
             name="London", geography_code="E12000007", geography_type="Region"
         )
-        geography_three = GeographyFactory.create_with_geography_type(
+        GeographyFactory.create_with_geography_type(
             name="England",
             geography_code="E92000001",
             geography_type="Nation",
@@ -101,7 +101,7 @@ class TestGeographyManager:
         When `get_name_by_id` is called
         Then the geography types with their codes and names are returned correctly
         """
-        geography_one = GeographyFactory.create_with_geography_type(
+        GeographyFactory.create_with_geography_type(
             name="Leeds",
             geography_code="E08000035",
             geography_type="Lower Tier Local Authority",
