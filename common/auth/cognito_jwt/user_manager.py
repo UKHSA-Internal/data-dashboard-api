@@ -18,8 +18,9 @@ class CognitoManager(BaseUserManager):
             username = jwt_payload["entraObjectId"]
             permission_sets = jwt_payload["permissionSets"]
         except KeyError:
-            logger.exception(
-                "Error getting entraObjectId and permissionSets from jwt '%s'",
+            logger.debug(
+                "Error getting entraObjectId and/or permissionSets field(s)"
+                " from jwt payload: '%s'",
                 jwt_payload,
             )
             return None

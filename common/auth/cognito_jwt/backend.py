@@ -1,3 +1,5 @@
+import logging
+
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
@@ -7,6 +9,8 @@ from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
 from .validator import TokenError, TokenValidator
+
+logger = logging.getLogger(__name__)
 
 # 2 objects expected when parsing Auth Header: 'Bearer' + token
 VALID_AUTH_HEADER_LENGTH = 2
@@ -52,6 +56,9 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create_for_cognito(jwt_payload)
         if not user:
+            logger.debug(
+                "Unable to create user from JWT, defaulting to unauthenticated"
+            )
             return None
         return (user, jwt_token)
 
