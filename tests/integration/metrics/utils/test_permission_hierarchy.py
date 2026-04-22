@@ -439,8 +439,10 @@ class TestSubsumption:
             geography="E92000001",
         )
 
-        normalized_wildcard = NormalizedPermission.from_permission_set(global_wildcard)
-        normalized_specific = NormalizedPermission.from_permission_set(specific)
+        normalized_wildcard = NormalizedPermission.from_permission_set(
+            global_wildcard)
+        normalized_specific = NormalizedPermission.from_permission_set(
+            specific)
 
         # Then
         assert normalized_wildcard.subsumes(normalized_specific)
@@ -810,10 +812,7 @@ class TestGetDeduplicatedPermissions:
         Then returns empty hierarchy with zero counts
         """
         # Given
-        from auth_content.models.users import User
         from auth_content.models.permission_sets import PermissionSet
-
-        user = User.objects.create(user_id=uuid4())
 
         # When
         result = build_permission_hierarchy(PermissionSet.objects.none())

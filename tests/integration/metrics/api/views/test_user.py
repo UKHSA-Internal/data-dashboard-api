@@ -23,7 +23,7 @@ class TestPermissionSetByUser:
 
         client = APIClient()
 
-        userId = "f907e591-4c49-4847-89b3-665e3c0133a4"
+        user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
 
         # create subthemes
         wildcard_permission = PermissionSetFactory.create_wildcard_permission_set()
@@ -46,17 +46,17 @@ class TestPermissionSetByUser:
             geography=1,
         )
         user_with_wildcard = UserFactory.create_with_permission_sets(
-            user_id=userId,
+            user_id=user_id,
             permission_sets=[wildcard_permission, permission_one, permission_two],
         )
 
         # Retrieve the subthemes
-        path = f"{self.path}/{userId}/permissions"
+        path = f"{self.path}/{user_id}/permissions"
         response: Response = client.get(path=path)
         result = response.data
 
         # Should return a user with 3 permissions sets
-        assert result["user_id"] == userId
+        assert result["user_id"] == user_id
         assert len(result["permission_sets"]) == 3
         assert result["permission_sets"][0] == {
             "id": 1,
@@ -97,10 +97,10 @@ class TestPermissionSetByUser:
         """
         # Given
         client = APIClient()
-        userId = str(uuid4())
+        user_id = str(uuid4())
 
         # When
-        path = f"{self.path}/{userId}/permissions/hierarchy"
+        path = f"{self.path}/{user_id}/permissions/hierarchy"
         response = client.get(path=path)
 
         # Then
@@ -114,16 +114,16 @@ class TestPermissionSetByUser:
         """
         # Given
         client = APIClient()
-        userId = str(uuid4())
+        user_id = str(uuid4())
 
         # When
-        path = f"{self.path}/{userId}/permissions"
+        path = f"{self.path}/{user_id}/permissions"
         response = client.get(path=path)
         data = response.data
         print(data)
 
         # Then
-        assert data["user_id"] == userId
+        assert data["user_id"] == user_id
         assert data["permission_sets"] == []
         assert data["permission_set_count"] == 0
 
@@ -136,7 +136,7 @@ class TestPermissionSetByUser:
         """
         # Given
         client = APIClient()
-        userId = str(uuid4())
+        user_id = str(uuid4())
 
         # Global wildcard: All themes × All geographies
         global_perm = PermissionSetFactory.create_wildcard_permission_set()
@@ -152,11 +152,11 @@ class TestPermissionSetByUser:
         )
 
         user = UserFactory.create_with_permission_sets(
-            user_id=userId, permission_sets=[global_perm, specific_perm]
+            user_id=user_id, permission_sets=[global_perm, specific_perm]
         )
 
         # When
-        path = f"{self.path}/{userId}/permissions/hierarchy"
+        path = f"{self.path}/{user_id}/permissions/hierarchy"
         response = client.get(path=path)
 
         # Then
@@ -178,22 +178,22 @@ class TestPermissionSetByUser:
     def test_get_user_wildcard_permission_set(self):
         client = APIClient()
 
-        userId = "f907e591-4c49-4847-89b3-665e3c0133a4"
+        user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
 
         # create subthemes
         wildcard_permission = PermissionSetFactory.create_wildcard_permission_set()
         user_with_wildcard = UserFactory.create_with_permission_set(
-            user_id=userId,
+            user_id=user_id,
             permission_set_name="Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
         )
 
         # Retrieve the subthemes
-        path = f"{self.path}/{userId}/permissions"
+        path = f"{self.path}/{user_id}/permissions"
         response: Response = client.get(path=path)
         result = response.data
 
         # Should return a wildcard choice
-        assert result["user_id"] == userId
+        assert result["user_id"] == user_id
         assert result["permission_sets"][0] == {
             "id": 1,
             "name": "Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
