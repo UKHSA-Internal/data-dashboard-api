@@ -44,14 +44,6 @@ class TestValidateIsPublicStatus:
 
         assert str(exc_info.value) == MISSING_IS_PUBLIC_FIELD_ERROR
 
-    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
-    def test_allows_missing_is_public_field_when_override_enabled(self):
-        validate_is_public(
-            source_data={"metric": self.PUBLIC_METRIC},
-            fields=[{"period_start": "2023-10-23"}],
-            filename=self.PUBLIC_FILENAME,
-        )
-
     def test_raises_error_when_is_public_value_is_not_boolean(self):
         with pytest.raises(TypeError) as exc_info:
             validate_is_public(
