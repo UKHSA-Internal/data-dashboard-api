@@ -123,7 +123,6 @@ class TestBuildTimeSeriesDTOFromSource:
                 source_data=source_data, filename=test_filename
             )
 
-    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     @mock.patch(
         "ingestion.data_transfer_models.time_series.ALLOW_MISSING_IS_PUBLIC_FIELD",
         new=True,
@@ -131,15 +130,23 @@ class TestBuildTimeSeriesDTOFromSource:
     def test_defaults_is_public_to_true_when_not_provided_and_override_on(
         self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
     ):
+        """
+        Given valid incoming time series source data
+            which omits the `is_public` field
+        And Given ALLOW_MISSING_IS_PUBLIC_FIELD is True
+        When `build_time_series_dto_from_source()` is called
+        Then the enriched `TimeSeriesDTO` has set `is_public` to True
+        """
         # Given
         source_data = example_time_series_data
         for time_series_data in source_data["time_series"]:
             time_series_data.pop("is_public")
 
         # When
-        time_series_dto = build_time_series_dto_from_source(
-            source_data=source_data, filename=test_filename
-        )
+        with mock.patch("ingestion.data_transfer_models.handlers.validate_is_public"):
+            time_series_dto = build_time_series_dto_from_source(
+                source_data=source_data, filename=test_filename
+            )
 
         # Then
         assert time_series_dto.time_series[0].is_public is True
@@ -472,7 +479,6 @@ class TestBuildHeadlineDTOFromSource:
                 source_data=source_data, filename=test_filename
             )
 
-    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", new=True)
     @mock.patch(
         "ingestion.data_transfer_models.headline.ALLOW_MISSING_IS_PUBLIC_FIELD",
         new=True,
@@ -480,15 +486,22 @@ class TestBuildHeadlineDTOFromSource:
     def test_defaults_is_public_to_true_when_not_provided(
         self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
     ):
+        """
+        Given valid incoming headline source
+            which omits the `is_public` field
+        When `build_headline_dto_from_source()` is called
+        Then the enriched `HeadlineDTO` has set `is_public` to True
+        """
         # Given
         source_data = example_headline_data
         for headline_data in source_data["data"]:
             headline_data.pop("is_public")
 
         # When
-        headline_dto = build_headline_dto_from_source(
-            source_data=source_data, filename=test_filename
-        )
+        with mock.patch("ingestion.data_transfer_models.handlers.validate_is_public"):
+            headline_dto = build_headline_dto_from_source(
+                source_data=source_data, filename=test_filename
+            )
 
         # Then
         assert headline_dto.data[0].is_public is True
