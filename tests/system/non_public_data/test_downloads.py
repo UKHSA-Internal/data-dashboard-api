@@ -48,7 +48,7 @@ class TestNonPublicDataDownloadsAPI:
         And public & non-public `CoreTimeSeries` records
         And the required RBAC permission has been granted
         When the `downloads/v2` endpoint is hit
-        Then the returned response includes the non-public record
+        Then the returned response matches the ENFORCE_PUBLIC_DATA_ONLY policy
         """
         # Given
         mocked_auth_enabled.return_value = True
@@ -83,6 +83,12 @@ class TestNonPublicDataDownloadsAPI:
 
         # Then
         results = response.data
+        if auth.ENFORCE_PUBLIC_DATA_ONLY:
+            assert len(results) == 1
+            assert results[0]["date"] == public_record.date
+            assert results[0]["metric_value"] == f"{public_record.metric_value:.4f}"
+            return
+
         assert len(results) == 2
         assert results[0]["date"] == non_public_record.date
         assert results[0]["metric_value"] == f"{non_public_record.metric_value:.4f}"
