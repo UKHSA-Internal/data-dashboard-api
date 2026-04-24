@@ -174,4 +174,11 @@ VALID_PARAMETERS = [
         "meningococcal-disease_cases_casesByWeek",
         "cases",
     ),
+    (
+        "medicines",
+        "antimicrobials",
+        "antibiotics",
+        "antibiotics_consumption_awareAccess",
+        "consumption",
+    ),
 ]
