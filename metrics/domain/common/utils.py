@@ -67,7 +67,7 @@ class ChartTypes(Enum):
             Examples:
                 (("line_single_simplified", "line_single_simplified"), ...)
         """
-        selectable = (cls.line_single_simplified,)
+        selectable = (cls.line_single_simplified, cls.line_multi_coloured)
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 
     @classmethod
@@ -184,6 +184,7 @@ class DataSourceFileType(Enum):
     counts = "counts"
     prevention = "prevention"
     coverage = "coverage"
+    consumption = "consumption"
 
     @property
     def is_headline(self) -> bool:

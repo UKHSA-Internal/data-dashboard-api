@@ -1,5 +1,6 @@
 import datetime
 import decimal
+from unittest import mock
 
 import pytest
 from django.utils import timezone
@@ -435,12 +436,16 @@ class TestCoreTimeSeriesManager:
         )
 
     @pytest.mark.django_db
+    @mock.patch(
+        "metrics.api.settings.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        True,
+    )
     def test_get_available_geographies(self):
         """
-        Given a `topic` and a number of `CoreTimeSeries` records
+        Given a `topic` and a number of public and non-public `CoreTimeSeries` records
         When `get_available_geographies()` is called
             from an instance of the `CoreTimeSeriesManager`
-        Then the returned results contain the correct geographies
+        Then only public geographies for the topic are returned
         """
         # Given
         topic = "COVID-19"
@@ -453,6 +458,12 @@ class TestCoreTimeSeriesManager:
             geography_type_name="Nation",
             geography_name="England",
             topic_name=topic,
+        )
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="Scotland",
+            topic_name=topic,
+            is_public=False,
         )
 
         CoreTimeSeriesFactory.create_record(
@@ -481,184 +492,15 @@ class TestCoreTimeSeriesManager:
         assert available_geographies[1].geography__geography_type__name == "Nation"
 
     @pytest.mark.django_db
-    def test_delete_superseded_data_deletes_stale_records_only(
-        self,
-        timestamp_2_months_from_now: datetime.datetime,
-    ):
-        """
-        Given a number of `CoreTimeSeries` records which are stale
-        And a number of `CoreTimeSeries` records which are live,
-            but not grouped linearly.
-        And an embargoed record
-        When `delete_superseded_data()` is called
-            from an instance of the `CoreTimeSeriesManager`
-        Then only the stale `CoreTimeSeries` records are deleted
-        And the live & embargoed records are still available
-        """
-        # Given
-        dates = FAKE_DATES
-        first_round_outdated_refresh_date = "2023-08-10"
-        second_round_refresh_date = "2023-08-11"
-        third_round_refresh_date = "2023-08-12"
-        fourth_round_refresh_date = "2023-08-13"
-
-        # Our first round of records which are all considered outdated
-        stale_first_round_records = [
-            CoreTimeSeriesFactory.create_record(
-                metric_value=1,
-                date=date,
-                refresh_date=first_round_outdated_refresh_date,
-            )
-            for date in dates
-        ]
-        # In this 2nd round we received updates for each of the `dates`
-        partially_stale_second_round_versions: list[CoreTimeSeries] = [
-            CoreTimeSeriesFactory.create_record(
-                metric_value=2, date=date, refresh_date=second_round_refresh_date
-            )
-            for date in dates
-        ]
-        expected_live_second_round_for_second_date: CoreTimeSeries = (
-            partially_stale_second_round_versions[1]
-        )
-        # In this 3rd round we received updates for only the last of the `dates`
-        last_date: str = dates[-1]
-        expected_live_third_version_for_third_date: CoreTimeSeries = (
-            CoreTimeSeriesFactory.create_record(
-                metric_value=3, date=last_date, refresh_date=third_round_refresh_date
-            )
-        )
-        # In the 4th round, we received an update for only the first of the `dates`
-        first_date: str = dates[0]
-        expected_live_fourth_round_for_first_date: CoreTimeSeries = (
-            CoreTimeSeriesFactory.create_record(
-                metric_value=4, date=first_date, refresh_date=fourth_round_refresh_date
-            )
-        )
-        # In the 5th and final round, we received an update for only the first date
-        # but because this is not yet released from embargo, we do not consider it.
-        embargoed_fifth_round_for_first_date: CoreTimeSeries = (
-            CoreTimeSeriesFactory.create_record(
-                metric_value=5,
-                date=first_date,
-                refresh_date=fourth_round_refresh_date,
-                embargo=timestamp_2_months_from_now,
-            )
-        )
-
-        # When
-        CoreTimeSeries.objects.delete_superseded_data(
-            metric=expected_live_fourth_round_for_first_date.metric.name,
-            geography=expected_live_fourth_round_for_first_date.geography.name,
-            geography_code=expected_live_fourth_round_for_first_date.geography.geography_code,
-            geography_type=expected_live_fourth_round_for_first_date.geography.geography_type.name,
-            stratum=expected_live_fourth_round_for_first_date.stratum.name,
-            age=expected_live_fourth_round_for_first_date.age.name,
-            sex=expected_live_fourth_round_for_first_date.sex,
-            is_public=expected_live_fourth_round_for_first_date.is_public,
-        )
-        retrieved_records = CoreTimeSeries.objects.all()
-
-        # Then
-        # Our database will look like the following:
-        # | 2023-01-01 | 2023-01-02 | 2023-01-03 |
-        # | 1st round  | 1st round  | 1st round  |   <- entirely superseded
-        # | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded
-        # |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
-        # | 4th round  |      -     |     -      |   <- 'head' round with no successors
-        # | 5th round  |      -     |     -      |   <- embargo round not yet released
-        # ----------------------------------------
-        # | 1st round  | 1st round  | 1st round  |   <- expected records to be deleted
-        # | 2nd round  |      -     | 2nd round  |   <- expected records to be deleted
-        assert retrieved_records.count() == 4
-
-        for stale_first_round_record in stale_first_round_records:
-            assert stale_first_round_record not in retrieved_records
-
-        assert partially_stale_second_round_versions[0] not in retrieved_records
-        assert partially_stale_second_round_versions[2] not in retrieved_records
-
-        assert expected_live_second_round_for_second_date in retrieved_records
-        assert expected_live_third_version_for_third_date in retrieved_records
-        assert expected_live_fourth_round_for_first_date in retrieved_records
-        assert embargoed_fifth_round_for_first_date in retrieved_records
-
-    @pytest.mark.django_db
-    def test_find_latest_released_embargo_for_metrics(self):
-        """
-        Given a number of `CoreTimeSeries` records
-            for different metrics
-        When `find_latest_released_embargo_for_metrics()` is called
-            from an instance of the `CoreTimeSeriesManager`
-        Then the latest released embargo timestamp is returned
-        """
-        # Given
-        covid_metric = "COVID-19_deaths_ONSByWeek"
-        covid_metric_for_outdated_embargo = "COVID-19_cases_rateRollingMean"
-
-        superseded_embargo = datetime.datetime(
-            year=2024, month=1, day=1, hour=1, minute=1, second=1, tzinfo=datetime.UTC
-        )
-        latest_released_embargo = datetime.datetime(
-            year=2024, month=2, day=2, hour=1, minute=2, second=2, tzinfo=datetime.UTC
-        )
-        last_unreleased_embargo = get_date_n_months_ago_from_timestamp(
-            datetime_stamp=timezone.now(), number_of_months=-1
-        )
-
-        CoreTimeSeriesFactory.create_record(
-            metric_name=covid_metric, embargo=latest_released_embargo
-        )
-        CoreTimeSeriesFactory.create_record(
-            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
-        )
-        CoreTimeSeriesFactory.create_record(
-            metric_name="hMPV_testing_positivityByWeek", embargo=last_unreleased_embargo
-        )
-
-        # When
-        extracted_embargo = (
-            CoreTimeSeries.objects.find_latest_released_embargo_for_metrics(
-                metrics=[covid_metric, covid_metric_for_outdated_embargo]
-            )
-        )
-
-        # Then
-        assert (
-            extracted_embargo
-            == latest_released_embargo
-            != superseded_embargo
-            != last_unreleased_embargo
-        )
-
-    @pytest.mark.django_db
-    def test_find_latest_released_embargo_for_metrics_returns_none_when_no_data_found(
-        self,
-    ):
-        """
-        Given no existing `CoreTimeSeries` records
-        When `find_latest_released_embargo_for_metrics()` is called
-            from an instance of the `CoreTimeSeriesManager`
-        Then None is returned
-        """
-        # Given
-        covid_metric = "COVID-19_deaths_ONSByWeek"
-
-        # When
-        extracted_embargo = (
-            CoreTimeSeries.objects.find_latest_released_embargo_for_metrics(
-                metrics=[covid_metric]
-            )
-        )
-
-        # Then
-        assert extracted_embargo is None
-
-    @pytest.mark.django_db
+    @mock.patch(
+        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        False,
+    )
     def test_query_for_data_returns_non_public_record_with_acceptable_permissions(self):
         """
         Given public and non-public `CoreTimeSeries` records
         And an `RBACPermission` which gives access to the non-public portion of the data
+        And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `query_for_data()` is called from the `CoreTimeSeriesManager`
         Then the non-public record is included
         """

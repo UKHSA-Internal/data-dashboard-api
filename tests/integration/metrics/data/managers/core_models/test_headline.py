@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 import pytest
 from django.utils import timezone
@@ -528,10 +529,15 @@ class TestCoreHeadlineManager:
         assert extracted_embargo is None
 
     @pytest.mark.django_db
+    @mock.patch(
+        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
+        False,
+    )
     def test_query_for_data_returns_non_public_record_with_acceptable_permissions(self):
         """
         Given public and non-public `CoreHeadline` records
         And an `RBACPermission` which gives access to the non-public portion of the data
+        And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `query_for_data()` is called from the `CoreHeadlineManager`
         Then the non-public record is returned
         """

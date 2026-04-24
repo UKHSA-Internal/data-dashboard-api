@@ -6,9 +6,12 @@ from caching.internal_api_client import (
 )
 from caching.private_api.decorators import (
     _calculate_response_and_save_in_cache,
+    _calculate_response_from_view,
     _retrieve_response_from_cache_or_calculate,
+    cache_response,
 )
 from caching.private_api.management import CacheMissError
+from rest_framework.response import Response
 
 MODULE_PATH = "caching.private_api.decorators"
 
@@ -31,6 +34,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             mock.Mock(),  # view_function
             None,  # timeout
             False,  # is_reserved_namespace
+            True,  # is_public
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -63,6 +67,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             mock.Mock(),  # view_function
             None,  # timeout
             False,  # is_reserved_namespace
+            True,  # is_public
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -99,6 +104,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             mocked_view_function,  # view_function
             None,  # timeout
             False,  # is_reserved_namespace
+            True,  # is_public
             *mocked_args,
             **mocked_kwargs,
         )
@@ -150,6 +156,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             mocked_view_function,  # view_function
             None,  # timeout
             False,  # is_reserved_namespace
+            True,  # is_public
             mocked_args,
             mocked_request,
             cache_management=mock.Mock(),
@@ -159,6 +166,85 @@ class TestRetrieveResponseFromCacheOrCalculate:
         spy_calculate_response_and_save_in_cache.assert_not_called()
         spy_calculate_response_from_view.assert_called_once()
         assert retrieved_response == spy_calculate_response_from_view.return_value
+
+    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
+    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
+    def test_item_not_cached_when_is_public_is_set_to_false(
+        self,
+        spy_calculate_response_from_view: mock.MagicMock,
+        spy_calculate_response_and_save_in_cache: mock.MagicMock,
+    ):
+        """
+        Given a mocked request and `is_public` is False
+        When `_retrieve_response_from_cache_or_calculate()` is called
+        Then the response is calculated and not saved
+
+        Patches:
+            `spy_calculate_response_from_view`: For the main assertion
+            `spy_calculate_response_and_save_in_cache`: To check that
+                the response is not being saved to the cache
+
+        """
+        # Given
+        mocked_request = mock.MagicMock(method="POST")
+        mocked_view_function = mock.Mock()
+        mocked_args = mock.Mock()
+        mocked_cache_management = mock.Mock()
+
+        # When
+        retrieved_response = _retrieve_response_from_cache_or_calculate(
+            mocked_view_function,  # view_function
+            None,  # timeout
+            False,  # is_reserved_namespace
+            False,  # is_public
+            mocked_args,
+            mocked_request,
+            cache_management=mocked_cache_management,
+        )
+
+        # Then
+        spy_calculate_response_and_save_in_cache.assert_not_called()
+        spy_calculate_response_from_view.assert_called_once()
+        assert retrieved_response == spy_calculate_response_from_view.return_value
+
+    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
+    def test_item_returned_from_cache_when_is_public_is_set_to_true(
+        self,
+        spy_calculate_response_from_view: mock.MagicMock,
+    ):
+        """
+        Given a mocked request and `is_public` is True
+        When `_retrieve_response_from_cache_or_calculate()` is called
+        Then the response is returned from cache
+
+        Patches:
+            `spy_calculate_response_from_view`: For the main assertion
+
+
+        """
+        # Given
+        mocked_request = mock.MagicMock(method="POST")
+        mocked_view_function = mock.Mock()
+        mocked_args = mock.Mock()
+        mocked_cache_management = mock.Mock()
+
+        # When
+        retrieved_response = _retrieve_response_from_cache_or_calculate(
+            mocked_view_function,  # view_function
+            None,  # timeout
+            False,  # is_reserved_namespace
+            True,  # is_public
+            mocked_args,
+            mocked_request,
+            cache_management=mocked_cache_management,
+        )
+
+        # Then
+        spy_calculate_response_from_view.assert_not_called()
+        assert (
+            retrieved_response
+            == mocked_cache_management.retrieve_item_from_cache.return_value
+        )
 
 
 class TestCalculateResponseAndSaveInCache:
@@ -194,7 +280,7 @@ class TestCalculateResponseAndSaveInCache:
 
         # Then
         spy_calculate_response_from_view.assert_called_once_with(
-            mocked_view_function, *mocked_args, **mocked_kwargs
+            mocked_view_function, *mocked_args, is_public=True, **mocked_kwargs
         )
         assert response == spy_calculate_response_from_view.return_value
 
@@ -238,3 +324,124 @@ class TestCalculateResponseAndSaveInCache:
             item=expected_calculated_response,
             timeout=123,
         )
+
+    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
+    def test_returns_early_when_timeout_zero(
+        self, spy_calculate_response_from_view: mock.MagicMock
+    ):
+        """
+        Given timeout == 0
+        When `_calculate_response_and_save_in_cache()` is called
+        Then it returns early and does NOT call `save_item_in_cache()`
+        """
+        # Given
+        mocked_view_function = mock.Mock()
+        spy_cache_management = mock.Mock()
+
+        # When
+        response = _calculate_response_and_save_in_cache(
+            mocked_view_function,
+            0,  # timeout - set to 0 so triggers early return
+            spy_cache_management,
+            "abc",  # cache entry key
+            mock.Mock(),
+        )
+
+        # Then
+        spy_cache_management.save_item_in_cache.assert_not_called()
+        assert response == spy_calculate_response_from_view.return_value
+
+
+class TestIsPublicBehaviourInCalculateResponseFromView:
+    """
+    Tests specifically for the 'is_public' handling logic within
+    `_calculate_response_from_view()`.
+    """
+
+    @mock.patch(f"{MODULE_PATH}.Response")
+    def test_private_header_added_when_is_public_is_false(
+        self,
+        mock_response_class: mock.MagicMock,
+    ):
+        """
+        Given a dummy view function which returns a Response
+        And `is_public` is set to False
+        When `_calculate_response_from_view()` is called
+        Then the response contains the private cache header
+        """
+        # Given
+        mocked_response = mock.MagicMock()
+        mock_response_class.return_value = mocked_response
+
+        def dummy_view(*args, **kwargs):
+            return mock_response_class()
+
+        # When
+        returned_response = _calculate_response_from_view(
+            dummy_view,
+            mock.Mock(),  # *args placeholder
+            is_public=False,
+        )
+
+        # Then
+        assert returned_response is mocked_response
+        mocked_response.__setitem__.assert_called_with(
+            "Cache-Control", "private, no-cache"
+        )
+
+    @mock.patch(f"{MODULE_PATH}.Response")
+    def test_no_private_header_added_when_is_public_is_true(
+        self,
+        mock_response_class: mock.MagicMock,
+    ):
+        """
+        Given a dummy view function which returns a Response
+        And `is_public` is set to True
+        When `_calculate_response_from_view()` is called
+        Then the response does NOT contain the private cache header
+        """
+        # Given
+        mocked_response = mock.MagicMock()
+        mock_response_class.return_value = mocked_response
+
+        def dummy_view(*args, **kwargs):
+            return mock_response_class()
+
+        # When
+        returned_response = _calculate_response_from_view(
+            dummy_view,
+            mock.Mock(),  # *args placeholder
+            is_public=True,
+        )
+
+        # Then
+        assert returned_response is mocked_response
+        mocked_response.__setitem__.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}.Response")
+    def test_no_private_header_added_when_is_public_is_omitted_default_true(
+        self,
+        mock_response_class: mock.MagicMock,
+    ):
+        """
+        Given a dummy view function which returns a Response
+        And `is_public` is omitted (defaults to True)
+        When `_calculate_response_from_view()` is called
+        Then the response does NOT contain the private cache header
+        """
+        # Given
+        mocked_response = mock.MagicMock()
+        mock_response_class.return_value = mocked_response
+
+        def dummy_view(*args, **kwargs):
+            return mock_response_class()
+
+        # When
+        returned_response = _calculate_response_from_view(
+            dummy_view,
+            mock.Mock(),  # *args placeholder
+        )
+
+        # Then
+        assert returned_response is mocked_response
+        mocked_response.__setitem__.assert_not_called()
