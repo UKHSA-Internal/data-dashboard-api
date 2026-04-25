@@ -94,6 +94,10 @@ def _is_is_public_consistent_in_data_fields(
 
     for field in fields:
         if "is_public" not in field:
+            if ALLOW_MISSING_IS_PUBLIC_FIELD:
+                logger.info("Missing is_public field in %s", filename)
+                continue
+
             raise ValueError(MISSING_IS_PUBLIC_FIELD_ERROR)
 
         is_public = field["is_public"]
@@ -124,4 +128,3 @@ def _does_metric_off_sens_match_first_is_public(
 
     if is_public != is_metric_public:
         raise ValueError(METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR)
-

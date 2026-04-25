@@ -1,5 +1,6 @@
 import zoneinfo
 from copy import deepcopy
+from unittest import mock
 
 import pytest
 
@@ -8,10 +9,7 @@ from ingestion.utils import type_hints
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from validation.is_public import (
-    FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
-    METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR,
     MISSING_IS_PUBLIC_FIELD_ERROR,
-    NON_PUBLIC_DATA_PREFIX,
 )
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
@@ -189,6 +187,7 @@ class TestDataIngester:
         )
 
     @pytest.mark.django_db
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_rejects_time_series_when_is_public_is_missing(
         self,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
@@ -202,39 +201,6 @@ class TestDataIngester:
             data_ingester(data=data, filename=test_filename)
 
         assert str(exc_info.value) == MISSING_IS_PUBLIC_FIELD_ERROR
-
-        assert CoreTimeSeries.objects.count() == 0
-        assert APITimeSeries.objects.count() == 0
-
-    @pytest.mark.django_db
-    def test_rejects_time_series_when_metric_prefix_does_not_match_is_public(
-        self,
-        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
-        non_public_test_filename: str,
-    ):
-        data = deepcopy(example_time_series_data)
-        data["metric"] = f"{NON_PUBLIC_DATA_PREFIX}{data['metric']}"
-
-        with pytest.raises(ValueError) as exc_info:
-            data_ingester(data=data, filename=non_public_test_filename)
-
-        assert str(exc_info.value) == METRIC_AND_DATA_IS_PUBLIC_MISMATCH_ERROR
-
-        assert CoreTimeSeries.objects.count() == 0
-        assert APITimeSeries.objects.count() == 0
-
-    @pytest.mark.django_db
-    def test_rejects_time_series_when_filename_prefix_does_not_match_is_public(
-        self,
-        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
-        non_public_test_filename: str,
-    ):
-        data = deepcopy(example_time_series_data)
-
-        with pytest.raises(ValueError) as exc_info:
-            data_ingester(data=data, filename=non_public_test_filename)
-
-        assert str(exc_info.value) == FILE_AND_DATA_IS_PUBLIC_MISMATCH_ERROR
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0

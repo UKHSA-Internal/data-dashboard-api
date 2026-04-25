@@ -85,6 +85,7 @@ class TestBuildModelMethods:
         )
 
     @mock.patch.object(Consumer, "update_supporting_models")
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_raises_error_when_build_core_headlines_is_public_is_not_provided(
         self,
         mocked_update_supporting_models: mock.MagicMock,
@@ -270,6 +271,7 @@ class TestBuildModelMethods:
             assert core_time_series_model.is_public is True
 
     @mock.patch.object(Consumer, "update_supporting_models")
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_raises_error_when_build_core_time_series_is_public_is_not_provided(
         self,
         mocked_update_supporting_models: mock.MagicMock,
@@ -369,6 +371,7 @@ class TestBuildModelMethods:
                 == fake_data["time_series"][index]["is_public"]
             )
 
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_raises_error_when_build_api_time_series_is_public_is_not_provided(
         self,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,

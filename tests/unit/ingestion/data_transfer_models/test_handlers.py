@@ -103,6 +103,7 @@ class TestBuildTimeSeriesDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["time_series"]
 
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_raises_error_when_is_public_is_not_provided(
         self, example_time_series_data: INCOMING_DATA_TYPE, test_filename: str
     ):
@@ -459,6 +460,7 @@ class TestBuildHeadlineDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["data"]
 
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_raises_error_when_is_public_is_not_provided(
         self, example_headline_data: INCOMING_DATA_TYPE, test_filename: str
     ):

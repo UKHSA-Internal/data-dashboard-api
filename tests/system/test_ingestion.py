@@ -2,6 +2,7 @@ import copy
 import datetime
 from collections import OrderedDict
 from decimal import Decimal
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
@@ -22,6 +23,7 @@ MISSING_IS_PUBLIC_ERROR = MISSING_IS_PUBLIC_FIELD_ERROR
 
 class TestIngestion:
     @pytest.mark.django_db
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
     def test_rejects_time_series_when_is_public_is_missing_from_payload(
         self,
         example_time_series_data: INCOMING_DATA_TYPE,
