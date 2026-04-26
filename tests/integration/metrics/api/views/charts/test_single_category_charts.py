@@ -370,7 +370,7 @@ class TestChartsView:
         admin_user: User,
     ):
         """
-        Given a v2 SVG chart request with the enum-style value `official-sensitive`
+        Given a v2 SVG chart request with the canonical value `official_sensitive`
         When the endpoint renders the chart
         Then the SVG watermark uses the explicit label `OFFICIAL-SENSITIVE`
         """
@@ -383,7 +383,7 @@ class TestChartsView:
         )
         payload["file_format"] = "svg"
         payload["is_public"] = False
-        payload["data_classification"] = "official-sensitive"
+        payload["data_classification"] = "official_sensitive"
 
         response: Response = client.post(
             path="/api/charts/v2/",
@@ -401,7 +401,7 @@ class TestChartsView:
         svg_text = svg_bytes.decode("utf-8", errors="ignore")
 
         assert DEFAULT_WATERMARK_LABEL in svg_text
-        assert "official-sensitive" not in svg_text
+        assert "official_sensitive" not in svg_text
 
     @pytest.mark.django_db
     def test_v3_encoded_response_contains_default_watermark_label_for_non_public_chart(
@@ -435,7 +435,6 @@ class TestChartsView:
 
         assert DEFAULT_WATERMARK_LABEL in decoded_chart
         assert DEFAULT_WATERMARK_LABEL in annotation_texts
-        assert DEFAULT_DATA_CLASSIFICATION not in decoded_chart
 
     @pytest.mark.django_db
     def test_v3_encoded_response_formats_explicit_official_sensitive_value_as_label(

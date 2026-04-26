@@ -98,7 +98,7 @@ class ChartsView(APIView):
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
         | `is_public`      | Whether the chart is for the public / non-public dashboard environment     | True                     | Yes       |
-        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL SENSITIVE       | No        |
+        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL-SENSITIVE       | No        |
 
         ---
 
@@ -235,7 +235,7 @@ class EncodedChartsView(APIView):
                     "x_axis": "date",
                     "y_axis": "metric",
                     "is_public": False,
-                    "data_classification": "OFFICIAL SENSITIVE",
+                    "data_classification": "OFFICIAL-SENSITIVE",
                     "plots": [
                         {
                             "topic": "COVID-19",
@@ -297,7 +297,7 @@ class EncodedChartsView(APIView):
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
         | `is_public`      | Whether the chart is for the public / non-public dashboard environment     | True                     | Yes       |
-        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL SENSITIVE       | No        |
+        | `data_classification` | The watermark wording  (only for non-public charts)                   | OFFICIAL-SENSITIVE       | No        |
 
         ---
 

@@ -3,14 +3,13 @@ from dataclasses import dataclass
 import plotly.graph_objects as go
 
 CHART_BG_COLOUR = "#0b0c0c"
-DEFAULT_DATA_CLASSIFICATION = "OFFICIAL SENSITIVE"
+DEFAULT_DATA_CLASSIFICATION = "OFFICIAL-SENSITIVE"
 WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
 DATA_CLASSIFICATION_LABELS = {
     "official": "OFFICIAL",
     "official_sensitive": "OFFICIAL-SENSITIVE",
-    DEFAULT_DATA_CLASSIFICATION.casefold(): "OFFICIAL-SENSITIVE",  # for it to also satisfy "OFFICIAL SENSITIVE"
     "protective_marking_not_set": "PROTECTIVE MARKING NOT SET",
     "secret": "SECRET",  # nosec #noqa: S105
     "top_secret": "TOP SECRET",  # nosec #noqa: S105
@@ -44,8 +43,7 @@ class ChartOutput:
             self.data_classification or DEFAULT_DATA_CLASSIFICATION
         ).strip()
         watermark_text = DATA_CLASSIFICATION_LABELS.get(
-            raw_classification.casefold(),
-            raw_classification,
+            raw_classification, raw_classification
         )
 
         self.figure.add_annotation(

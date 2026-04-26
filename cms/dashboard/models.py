@@ -34,11 +34,14 @@ MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
 class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "official"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PROTECTIVE_MARKING_NOT_SET = "protective_marking_not_set"
-    SECRET = "secret"  # nosec #noqa: S105
-    TOP_SECRET = "top_secret"  # nosec #noqa: S105
+    OFFICIAL = "official", "Official"
+    OFFICIAL_SENSITIVE = "official_sensitive", "Official-Sensitive"
+    PROTECTIVE_MARKING_NOT_SET = (
+        "protective_marking_not_set",
+        "Protective Marking Not Set",
+    )
+    SECRET = "secret", "Secret"  # nosec #noqa: S105
+    TOP_SECRET = "top_secret", "Top Secret"  # nosec #noqa: S105
 
 
 class UKHSAPage(Page):

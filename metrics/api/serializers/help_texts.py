@@ -138,5 +138,5 @@ Whether the chart data is intended for public display. Defaults to True.
 When False, a data classification watermark will be applied to the chart.
 """
 DATA_CLASSIFICATION_FIELD: str = """
-The data classification watermark to apply on non-public charts, eg "OFFICIAL SENSITIVE".
+The data classification watermark to apply on non-public charts, eg "OFFICIAL-SENSITIVE".
 """

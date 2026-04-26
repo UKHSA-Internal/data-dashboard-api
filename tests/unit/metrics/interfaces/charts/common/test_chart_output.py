@@ -4,12 +4,11 @@ import pytest
 from metrics.interfaces.charts.common.chart_output import (
     CHART_BG_COLOUR,
     ChartOutput,
+    DEFAULT_DATA_CLASSIFICATION,
     WATERMARK_FONT_COLOUR,
     WATERMARK_FONT_SIZE,
     WATERMARK_OPACITY,
 )
-
-DEFAULT_WATERMARK_LABEL = "OFFICIAL-SENSITIVE"
 
 
 def _make_figure() -> go.Figure:
@@ -78,7 +77,7 @@ class TestChartOutputWatermark:
 
         # Then
         annotation = chart_output.figure.layout.annotations[0]
-        assert annotation.text == DEFAULT_WATERMARK_LABEL
+        assert annotation.text == DEFAULT_DATA_CLASSIFICATION
 
     def test_watermark_uses_provided_data_classification(self):
         """
