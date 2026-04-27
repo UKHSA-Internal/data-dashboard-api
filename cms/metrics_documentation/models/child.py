@@ -12,7 +12,7 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.search import index
 
-from cms.dashboard.models import DataClassificationLevels, UKHSAPage
+from cms.dashboard.models import DataClassifications, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
@@ -45,8 +45,8 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     )
     page_classification = models.CharField(
         max_length=50,
-        choices=DataClassificationLevels.choices,
-        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        choices=DataClassifications.choices,
+        default=DataClassifications.official_sensitive.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
         null=True,
         blank=True,

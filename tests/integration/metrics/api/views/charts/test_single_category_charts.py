@@ -12,7 +12,7 @@ from rest_framework.test import APIClient
 from metrics.api.enums import AppMode
 from metrics.api.views.charts.single_category_charts import ChartsView
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.interfaces.charts.common.chart_output import DEFAULT_DATA_CLASSIFICATION
+from metrics.interfaces.data_classification.access import DataClassificationInterface
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 DEFAULT_WATERMARK_LABEL = "OFFICIAL-SENSITIVE"
@@ -283,7 +283,10 @@ class TestChartsView:
             "chart_request_params"
         ]
         assert chart_request_params.is_public is False
-        assert chart_request_params.data_classification == DEFAULT_DATA_CLASSIFICATION
+        assert (
+            chart_request_params.data_classification
+            == DataClassificationInterface.DEFAULT
+        )
 
     @pytest.mark.django_db
     def test_v2_preserves_explicit_data_classification_when_not_public(
@@ -440,7 +443,7 @@ class TestChartsView:
         )
         svg_text = svg_bytes.decode("utf-8", errors="ignore")
 
-        assert DEFAULT_DATA_CLASSIFICATION in svg_text
+        assert DataClassificationInterface.DEFAULT in svg_text
         assert "not-a-valid-classification" not in svg_text
 
     @pytest.mark.django_db
@@ -542,6 +545,6 @@ class TestChartsView:
         annotations = response.data["figure"]["layout"].get("annotations", [])
         annotation_texts = [annotation.get("text") for annotation in annotations]
 
-        assert DEFAULT_DATA_CLASSIFICATION in decoded_chart
-        assert DEFAULT_DATA_CLASSIFICATION in annotation_texts
+        assert DataClassificationInterface.DEFAULT in decoded_chart
+        assert DataClassificationInterface.DEFAULT in annotation_texts
         assert "not-a-valid-classification" not in decoded_chart

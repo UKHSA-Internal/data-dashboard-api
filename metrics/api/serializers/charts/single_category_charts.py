@@ -19,7 +19,7 @@ from metrics.domain.common.utils import (
     DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
 from metrics.domain.models import ChartRequestParams, PlotParameters
-from metrics.interfaces.charts.common.chart_output import DEFAULT_DATA_CLASSIFICATION
+from metrics.interfaces.data_classification.access import DataClassificationInterface
 
 
 class ChartPlotSerializer(plots.PlotSerializer):
@@ -90,7 +90,7 @@ class ChartsSerializer(BaseChartsSerializer):
         if not is_public and not data_classification:
             # Defaults to the label of "official_sensitive" which is "OFFICIAL-SENSITIVE".
             # Frontend also defaults, but we keep backend defaulting as a defensive fallback.
-            data_classification = DEFAULT_DATA_CLASSIFICATION
+            data_classification = DataClassificationInterface.DEFAULT
 
         return ChartRequestParams(
             plots=self.data["plots"],

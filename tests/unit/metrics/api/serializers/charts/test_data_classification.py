@@ -19,7 +19,7 @@ from metrics.api.serializers.headlines import HeadlinesQuerySerializer
 from metrics.api.serializers.trends import TrendsQuerySerializer
 from metrics.domain.models import ChartRequestParams, PlotParameters
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
-from metrics.interfaces.charts.common.chart_output import DEFAULT_DATA_CLASSIFICATION
+from metrics.interfaces.data_classification.access import DataClassificationInterface
 
 _MINIMAL_CHARTS_PAYLOAD = {"file_format": "svg", "plots": []}
 _REQUEST = mock.Mock(spec=Request)
@@ -115,7 +115,7 @@ class TestChartsSerializerToModelsDataClassification:
         serializer.is_valid(raise_exception=True)
         params: ChartRequestParams = serializer.to_models(request=_REQUEST)
         assert params.is_public is False
-        assert params.data_classification == DEFAULT_DATA_CLASSIFICATION
+        assert params.data_classification == DataClassificationInterface.DEFAULT
 
     def test_to_models_uses_explicit_data_classification_when_is_public_false(self):
         """
@@ -172,7 +172,7 @@ class TestEncodedChartsRequestSerializerDataClassification:
         serializer = EncodedChartsRequestSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
         params: ChartRequestParams = serializer.to_models(request=_REQUEST)
-        assert params.data_classification == DEFAULT_DATA_CLASSIFICATION
+        assert params.data_classification == DataClassificationInterface.DEFAULT
 
 
 class TestSubplotChartRequestSerializerDataClassification:
@@ -212,7 +212,7 @@ class TestSubplotChartRequestSerializerDataClassification:
         serializer.is_valid(raise_exception=True)
         params: SubplotChartRequestParameters = serializer.to_models(request=_REQUEST)
         assert params.is_public is False
-        assert params.data_classification == DEFAULT_DATA_CLASSIFICATION
+        assert params.data_classification == DataClassificationInterface.DEFAULT
 
     def test_uses_explicit_data_classification_when_not_public(self):
         """

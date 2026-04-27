@@ -20,7 +20,7 @@ from cms.dashboard.enums import (
 )
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
-    DataClassificationLevels,
+    DataClassifications,
     UKHSAPage,
     UKHSAPageRelatedLink,
 )
@@ -59,8 +59,8 @@ class TopicPage(UKHSAPage):
 
     page_classification = models.CharField(
         max_length=50,
-        choices=DataClassificationLevels.choices,
-        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
+        choices=DataClassifications.choices,
+        default=DataClassifications.official_sensitive.value,
         help_text=help_texts.PAGE_CLASSIFICATION,
         blank=True,
         null=True,

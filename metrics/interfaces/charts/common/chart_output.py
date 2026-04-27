@@ -2,18 +2,12 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
+from metrics.interfaces.data_classification.access import DataClassificationInterface
+
 CHART_BG_COLOUR = "#0b0c0c"
-DEFAULT_DATA_CLASSIFICATION = "OFFICIAL-SENSITIVE"
 WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
-DATA_CLASSIFICATION_LABELS = {
-    "official": "OFFICIAL",
-    "official_sensitive": "OFFICIAL-SENSITIVE",
-    "protective_marking_not_set": "PROTECTIVE MARKING NOT SET",
-    "secret": "SECRET",  # nosec #noqa: S105
-    "top_secret": "TOP SECRET",  # nosec #noqa: S105
-}
 
 
 @dataclass
@@ -40,12 +34,13 @@ class ChartOutput:
         """
 
         raw_classification = (
-            self.data_classification or DEFAULT_DATA_CLASSIFICATION
+            self.data_classification or DataClassificationInterface.DEFAULT
         ).strip()
+
         # SECURITY: If anything unknown gets passed in through the data_classification
         #           API parameter, we'll use our default watermark instead
-        watermark_text = DATA_CLASSIFICATION_LABELS.get(
-            raw_classification, DEFAULT_DATA_CLASSIFICATION
+        watermark_text = DataClassificationInterface.LIST.get(
+            raw_classification, DataClassificationInterface.DEFAULT
         )
 
         self.figure.add_annotation(

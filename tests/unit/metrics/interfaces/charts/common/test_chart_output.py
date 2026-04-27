@@ -4,11 +4,11 @@ import pytest
 from metrics.interfaces.charts.common.chart_output import (
     CHART_BG_COLOUR,
     ChartOutput,
-    DEFAULT_DATA_CLASSIFICATION,
     WATERMARK_FONT_COLOUR,
     WATERMARK_FONT_SIZE,
     WATERMARK_OPACITY,
 )
+from metrics.interfaces.data_classification.access import DataClassificationInterface
 
 
 def _make_figure() -> go.Figure:
@@ -62,7 +62,7 @@ class TestChartOutputWatermark:
         """
         Given `is_public=False` and no `data_classification` provided
         When a `ChartOutput` instance is created
-        Then the watermark text is the DEFAULT_DATA_CLASSIFICATION value
+        Then the watermark text is DEFAULT_DATA_CLASSIFICATION
         """
 
         # Given / When
@@ -77,7 +77,7 @@ class TestChartOutputWatermark:
 
         # Then
         annotation = chart_output.figure.layout.annotations[0]
-        assert annotation.text == DEFAULT_DATA_CLASSIFICATION
+        assert annotation.text == DataClassificationInterface.DEFAULT
 
     def test_watermark_annotation_is_centred_in_paper_coordinates(self):
         """
