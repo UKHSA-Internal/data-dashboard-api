@@ -79,29 +79,6 @@ class TestChartOutputWatermark:
         annotation = chart_output.figure.layout.annotations[0]
         assert annotation.text == DEFAULT_DATA_CLASSIFICATION
 
-    def test_watermark_uses_provided_data_classification(self):
-        """
-        Given `is_public=False` and a custom `data_classification`
-        When a `ChartOutput` instance is created
-        Then the watermark text matches the provided `data_classification`
-        """
-        # Given
-        custom_classification = "Highly Confidential"
-        figure = _make_figure()
-
-        # When
-        chart_output = ChartOutput(
-            figure=figure,
-            description="test",
-            is_headline=False,
-            is_public=False,
-            data_classification=custom_classification,
-        )
-
-        # Then
-        annotation = chart_output.figure.layout.annotations[0]
-        assert annotation.text == custom_classification
-
     def test_watermark_annotation_is_centred_in_paper_coordinates(self):
         """
         Given `is_public=False`

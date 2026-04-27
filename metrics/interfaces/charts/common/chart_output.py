@@ -42,8 +42,10 @@ class ChartOutput:
         raw_classification = (
             self.data_classification or DEFAULT_DATA_CLASSIFICATION
         ).strip()
+        # SECURITY: If anything unknown gets passed in through the data_classification
+        #           API parameter, we'll use our default watermark instead
         watermark_text = DATA_CLASSIFICATION_LABELS.get(
-            raw_classification, raw_classification
+            raw_classification, DEFAULT_DATA_CLASSIFICATION
         )
 
         self.figure.add_annotation(

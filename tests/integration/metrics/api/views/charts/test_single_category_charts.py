@@ -404,6 +404,46 @@ class TestChartsView:
         assert "official_sensitive" not in svg_text
 
     @pytest.mark.django_db
+    def test_v2_svg_response_defaults_unknown_data_classification_to_default_label(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
+    ):
+        """
+        Given a v2 non-public SVG chart request with an unknown data classification
+        When the endpoint renders the chart
+        Then the watermark falls back to the default label
+        """
+
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+        payload["data_classification"] = "not-a-valid-classification"
+
+        response: Response = client.post(
+            path="/api/charts/v2/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+        svg_bytes = (
+            b"".join(response.streaming_content)
+            if hasattr(response, "streaming_content")
+            else response.content
+        )
+        svg_text = svg_bytes.decode("utf-8", errors="ignore")
+
+        assert DEFAULT_DATA_CLASSIFICATION in svg_text
+        assert "not-a-valid-classification" not in svg_text
+
+    @pytest.mark.django_db
     def test_v3_encoded_response_contains_default_watermark_label_for_non_public_chart(
         self,
         core_timeseries_example: list[CoreTimeSeries],
@@ -470,3 +510,38 @@ class TestChartsView:
         assert DEFAULT_WATERMARK_LABEL in decoded_chart
         assert DEFAULT_WATERMARK_LABEL in annotation_texts
         assert "official_sensitive" not in decoded_chart
+
+    @pytest.mark.django_db
+    def test_v3_encoded_response_defaults_unknown_data_classification_to_default_label(
+        self,
+        core_timeseries_example: list[CoreTimeSeries],
+    ):
+        """
+        Given a v3 non-public chart request with an unknown data classification
+        When the endpoint returns the encoded chart response
+        Then the watermark falls back to the default label
+        """
+
+        client = APIClient()
+        payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
+        )
+        payload["file_format"] = "svg"
+        payload["is_public"] = False
+        payload["data_classification"] = "not-a-valid-classification"
+
+        response: Response = client.post(
+            path="/api/charts/v3/",
+            data=payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+        decoded_chart = unquote_plus(response.data["chart"])
+        annotations = response.data["figure"]["layout"].get("annotations", [])
+        annotation_texts = [annotation.get("text") for annotation in annotations]
+
+        assert DEFAULT_DATA_CLASSIFICATION in decoded_chart
+        assert DEFAULT_DATA_CLASSIFICATION in annotation_texts
+        assert "not-a-valid-classification" not in decoded_chart
