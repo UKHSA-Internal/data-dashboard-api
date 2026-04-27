@@ -100,8 +100,8 @@ class TestChartOutputWatermark:
         annotation = chart_output.figure.layout.annotations[0]
         assert annotation.xref == "paper"
         assert annotation.yref == "paper"
-        assert annotation.x == 0.5
-        assert annotation.y == 0.5
+        assert annotation.x == pytest.approx(0.5)
+        assert annotation.y == pytest.approx(0.5)
         assert annotation.showarrow is False
 
     def test_watermark_annotation_is_diagonal(self):
@@ -123,4 +123,4 @@ class TestChartOutputWatermark:
 
         # Then
         annotation = chart_output.figure.layout.annotations[0]
-        assert annotation.textangle == -30
+        assert annotation.textangle == pytest.approx(-30)
