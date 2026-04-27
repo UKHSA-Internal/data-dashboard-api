@@ -335,6 +335,7 @@ ignore_imports = [
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
     "ingestion.data_transfer_models.headline -> metrics.api.settings.auth",             # allowance for `AUTH_ENABLED` setting
     "ingestion.data_transfer_models.time_series -> metrics.api.settings.auth",          # allowance for `AUTH_ENABLED` setting
+    "validation.is_public -> metrics.api.settings.auth",                                # allowance for `AUTH_ENABLED` setting
     "ingestion.data_transfer_models.* -> validation.data_transfer_models.base",
     "ingestion.data_transfer_models.* -> validation",
 ]
