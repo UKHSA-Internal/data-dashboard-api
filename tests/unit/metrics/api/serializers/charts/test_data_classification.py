@@ -75,7 +75,7 @@ class TestChartsSerializerIsPublicField:
         serializer.is_valid(raise_exception=True)
         assert serializer.validated_data["data_classification"] is None
 
-    def test_data_classification_accepts_custom_value(self):
+    def test_data_classification_accepts_non_default_value_from_our_list(self):
         """
         Given a payload with a custom `data_classification` string
         When `is_valid()` is called on `ChartsSerializer`
