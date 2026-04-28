@@ -82,6 +82,7 @@ class Command(BaseCommand):
         )
 
         build_cms_site_helpers.create_menu_snippet()
+        build_cms_site_helpers.create_simplemenu_snippet()
 
     @classmethod
     def _build_whats_new_section(cls, root_page: UKHSARootPage) -> None:

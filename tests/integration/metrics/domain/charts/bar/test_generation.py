@@ -135,7 +135,7 @@ class TestBarCharts:
 
         assert x_axis.showgrid
         assert not x_axis.zeroline
-        assert not x_axis.showline
+        assert x_axis.showline
 
         # Tick marks should be on the boundary drawn going outwards of the main frame
         assert x_axis.ticks == "outside"
@@ -152,8 +152,9 @@ class TestBarCharts:
 
         # ---Y Axis checks---
         y_axis = figure.layout.yaxis
-        assert not y_axis.showgrid
+        assert y_axis.showgrid
         assert y_axis.showticklabels
+        assert y_axis.showline
 
     def test_confidence_intervals_all_data(self, fake_plot_data: PlotGenerationData):
         """
