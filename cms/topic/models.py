@@ -1,7 +1,11 @@
+from collections.abc import Callable
+
 import datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django import forms
+
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel,
@@ -29,15 +33,59 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
+from cms.topic.constants import THEME_FIELDS
 from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
+def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
+    choices = [
+        ("", field["field_choice_default"]),
+    ]
+
+    if field["field_choice_callable"]:
+        choices += field["field_choice_callable"]()
+
+    return forms.CharField(
+        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
+    )
+
+
 class TopicPageAdminForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in THEME_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
+
+        if self.instance and self.instance.pk:
+            self._initialize_dependent_fields()
+
+    def _initialize_dependent_fields(self):
+        """Initialize choices for cascading dependent fields"""
+        dependent_fields = {
+            "sub_theme": ("Select theme first"),
+            "topic": ("Select sub-theme first"),
+            "metric": ("Select topic first"),
+            "geography": ("Select geography type first"),
+        }
+
+        for field_name, (placeholder, wildcard_label) in dependent_fields.items():
+            value = getattr(self.instance, field_name, None)
+            if value:
+                choices = self._get_field_choices(value, placeholder, wildcard_label)
+                self.fields[field_name].widget.choices = choices
+
+    @staticmethod
+    def _get_field_choices(value, placeholder, wildcard_label):
+        """Generate choices list based on field value"""
+        return [("", placeholder), (value, f"Loading... (ID: {value})")]
+    
     class Media:
         js = ["js/classification_toggle.js"]
+        js = ["js/populate_dropdowns.js"]
 
 
 class TopicPage(UKHSAPage):
@@ -66,6 +114,10 @@ class TopicPage(UKHSAPage):
         null=True,
     )
 
+    theme = models.CharField(max_length=255, blank=True, default="")
+    sub_theme = models.CharField(max_length=255, blank=True, default="")
+    topic = models.CharField(max_length=255, blank=True, default="")
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -87,6 +139,9 @@ class TopicPage(UKHSAPage):
         FieldPanel("enable_area_selector"),
         FieldPanel("is_public"),
         FieldPanel("page_classification"),
+        FieldPanel("theme"),
+        FieldPanel("sub_theme"),
+        FieldPanel("topic"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
