@@ -33,8 +33,7 @@ def validate_is_public(
                   "my_headline.json" or "OFF-SENS_my_headline.json".
     """
 
-    is_metric_non_public = _is_metric_off_sens(source_data=source_data)
-    is_metric_public = not is_metric_non_public
+    is_metric_public = not _is_metric_off_sens(source_data=source_data)
 
     _does_metric_off_sens_match_filename(
         filename=filename, is_metric_public=is_metric_public
@@ -98,6 +97,7 @@ def _is_is_public_consistent_in_data_fields(
                 logger.info("Missing is_public field in %s", filename)
                 continue
 
+            # Only ALLOW_MISSING_IS_PUBLIC_FIELD=false will reach this error
             raise ValueError(MISSING_IS_PUBLIC_FIELD_ERROR)
 
         is_public = field["is_public"]
