@@ -18,6 +18,7 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
+from cms.auth_content.auth_utils import _create_form_field
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -33,24 +34,11 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
-from cms.topic.constants import THEME_FIELDS
+from cms.dashboard.constants import THEME_FIELDS
 from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
-
-
-def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
-    choices = [
-        ("", field["field_choice_default"]),
-    ]
-
-    if field["field_choice_callable"]:
-        choices += field["field_choice_callable"]()
-
-    return forms.CharField(
-        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
-    )
 
 
 class TopicPageAdminForm(WagtailAdminPageForm):
@@ -79,13 +67,12 @@ class TopicPageAdminForm(WagtailAdminPageForm):
                 self.fields[field_name].widget.choices = choices
 
     @staticmethod
-    def _get_field_choices(value, placeholder, wildcard_label):
+    def _get_field_choices(value, placeholder):
         """Generate choices list based on field value"""
         return [("", placeholder), (value, f"Loading... (ID: {value})")]
     
     class Media:
-        js = ["js/classification_toggle.js"]
-        js = ["js/populate_dropdowns.js"]
+        js = ["js/toggle_available_fields_on_is_public.js"]
 
 
 class TopicPage(UKHSAPage):

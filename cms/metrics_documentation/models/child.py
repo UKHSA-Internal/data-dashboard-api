@@ -12,6 +12,8 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.search import index
 
+from cms.auth_content.auth_utils import _create_form_field
+from cms.dashboard.constants import THEME_FIELDS
 from cms.dashboard.models import DataClassificationLevels, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
@@ -31,6 +33,35 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 
 
 class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in THEME_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
+
+        if self.instance and self.instance.pk:
+            self._initialize_dependent_fields()
+
+    def _initialize_dependent_fields(self):
+        """Initialize choices for cascading dependent fields"""
+        dependent_fields = {
+            "sub_theme": ("Select theme first"),
+            "topic": ("Select sub-theme first"),
+            "metric": ("Select topic first"),
+            "geography": ("Select geography type first"),
+        }
+
+        for field_name, (placeholder, wildcard_label) in dependent_fields.items():
+            value = getattr(self.instance, field_name, None)
+            if value:
+                choices = self._get_field_choices(value, placeholder, wildcard_label)
+                self.fields[field_name].widget.choices = choices
+
+    @staticmethod
+    def _get_field_choices(value, placeholder):
+        """Generate choices list based on field value"""
+        return [("", placeholder), (value, f"Loading... (ID: {value})")]
+
     class Media:
         js = ["js/toggle_available_fields_on_is_public.js"]
 
@@ -51,6 +82,9 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         null=True,
         blank=True,
     )
+    
+    theme = models.CharField(max_length=255, blank=True, default="")
+    sub_theme = models.CharField(max_length=255, blank=True, default="")    
     topic = models.CharField(
         max_length=255,
         default="",
@@ -69,6 +103,9 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("metric"),
         FieldPanel("is_public"),
         FieldPanel("page_classification"),
+        FieldPanel("theme"),
+        FieldPanel("sub_theme"),
+        FieldPanel("topic"),
         FieldPanel("body"),
     ]
 

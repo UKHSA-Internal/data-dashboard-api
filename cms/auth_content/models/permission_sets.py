@@ -1,12 +1,12 @@
 from collections.abc import Callable
 from itertools import starmap
 
-from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
+from cms.auth_content.auth_utils import _create_form_field
 from cms.auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
@@ -17,42 +17,12 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_topic_names_and_ids,
 )
 
-
-def get_theme_child_map():
-    """Returns an object of all parent to child mappings
-    e.g.
-    {
-        infectious_disease: [vaccine_preventable, respiratory ....],
-        extreme_event: [weather_alert, mortality_report...]
-        ...
-    }
-
-    """
-    return {}
-
-
-def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
-    choices = [
-        ("", field["field_choice_default"]),
-    ]
-
-    if field["field_choice_wildcard"]:
-        choices += [(WILDCARD_ID_VALUE, field["field_choice_wildcard"])]
-
-    if field["field_choice_callable"]:
-        choices += field["field_choice_callable"]()
-
-    return forms.CharField(
-        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
-    )
-
-
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(field)
+            self.fields[field["field_name"]] = _create_form_field(field, WILDCARD_ID_VALUE)
 
         if self.instance and self.instance.pk:
             self._initialize_dependent_fields()
