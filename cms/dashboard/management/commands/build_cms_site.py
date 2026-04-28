@@ -184,6 +184,9 @@ class Command(BaseCommand):
         build_cms_site_helpers.create_common_page(
             name="compliance", parent_page=root_page
         )
+        build_cms_site_helpers.create_common_page(
+            name="logged_out", parent_page=root_page
+        )
 
     @staticmethod
     def _clear_cms() -> None:
