@@ -97,5 +97,5 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
-            restrict_to_public=True,
+            restrict_to_public=True,  # because we are not allowing non-public data through the public API
         )

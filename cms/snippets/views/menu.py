@@ -8,6 +8,8 @@ from caching.private_api.decorators import cache_response
 from cms.snippets.serializers import (
     MenuResponseSerializer,
     MenuSerializer,
+    SimpleMenuResponseSerializer,
+    SimpleMenuSerializer,
 )
 
 
@@ -29,4 +31,27 @@ class MenuView(APIView):
 
         """
         serializer = MenuSerializer()
+        return Response(data=serializer.data, status=HTTPStatus.OK)
+
+
+class SimpleMenuView(APIView):
+    permission_classes = []
+
+    @classmethod
+    @extend_schema(
+        tags=["cms"], responses={HTTPStatus.OK: SimpleMenuResponseSerializer}
+    )
+    @cache_response()
+    def get(cls, request, *args, **kwargs) -> Response:
+        """
+        This endpoint returns the state of the currently active `SimpleMenu`
+
+        Note that if there is no active banner then the response will look like:
+
+        ```
+        {"active_menu": null}
+        ```
+
+        """
+        serializer = SimpleMenuSerializer()
         return Response(data=serializer.data, status=HTTPStatus.OK)
