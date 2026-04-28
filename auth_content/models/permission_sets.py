@@ -4,7 +4,7 @@ from itertools import starmap
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
 from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
@@ -47,7 +47,7 @@ def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharFie
     )
 
 
-class PermissionSetForm(WagtailAdminModelForm):
+class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
