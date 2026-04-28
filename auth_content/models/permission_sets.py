@@ -5,7 +5,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail.admin.forms import WagtailAdminModelForm
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, mark_safe
 
 from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
 from cms.metrics_interface.field_choices_callables import (
@@ -126,6 +126,11 @@ class PermissionSet(models.Model):
     geography = models.CharField(max_length=255, blank=False, default="")
 
     base_form_class = PermissionSetForm
+
+    @property
+    def permission_set_details(self):
+        parts = [part.strip() for part in self.name.split("|")]
+        return mark_safe("<br>".join(parts))
 
     panels = [
         FieldPanel("theme"),
