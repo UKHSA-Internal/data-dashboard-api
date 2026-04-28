@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 from rest_framework import serializers as drf_serializers
 
-from auth_content.constants import WILDCARD_ID_VALUE
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers.permission_sets import (
     MetricRequestSerializer,
     PermissionSetResponseSerializer,

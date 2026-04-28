@@ -52,6 +52,7 @@ if config.APP_MODE != "INGESTION":
         "metrics.api",
         "cms.acknowledgement",
         "cms.home",
+        "cms.auth_content",
         "cms.topic",
         "cms.topics_list",
         "cms.dashboard",
@@ -78,7 +79,6 @@ if config.APP_MODE != "INGESTION":
         "wagtail_trash",
         "modelcluster",
         "taggit",
-        "auth_content",
     ]
 
 MIDDLEWARE = [

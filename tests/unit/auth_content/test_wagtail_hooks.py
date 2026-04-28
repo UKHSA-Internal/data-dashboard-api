@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 from django.test import TestCase
 from django.utils.safestring import SafeData
 
-from auth_content.models.permission_sets import PermissionSet
-from auth_content.wagtail_hooks import NoEditPermissionPolicy, PermissionSetViewSet
+from cms.auth_content.models.permission_sets import PermissionSet
+from cms.auth_content.wagtail_hooks import NoEditPermissionPolicy, PermissionSetViewSet
 
 
 class TestPermissionSetDetailsProperty(TestCase):

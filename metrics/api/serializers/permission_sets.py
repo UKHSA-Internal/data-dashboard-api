@@ -1,7 +1,7 @@
 from django.db.models import QuerySet
 from rest_framework import serializers
 
-from auth_content.constants import WILDCARD_ID_VALUE
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 from metrics.data.models.core_models.supporting import Metric, SubTheme, Topic
 
 

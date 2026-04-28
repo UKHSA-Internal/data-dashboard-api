@@ -32,7 +32,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 
 class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
     class Media:
-        js = ["js/classification_toggle.js"]
+        js = ["js/toggle_available_fields_on_is_public.js"]
 
 
 class MetricsDocumentationChildEntry(UKHSAPage):

@@ -7,7 +7,7 @@ from django.db import models
 from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
-from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
+from cms.auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
     get_all_geography_type_names_and_ids,

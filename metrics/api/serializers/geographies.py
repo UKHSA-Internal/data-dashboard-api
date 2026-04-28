@@ -3,7 +3,7 @@ from collections import defaultdict
 from django.db.models import QuerySet
 from rest_framework import serializers
 
-from auth_content.constants import WILDCARD_ID_VALUE
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
