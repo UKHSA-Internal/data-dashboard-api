@@ -25,6 +25,10 @@ class _ImmunisationChildTheme(Enum):
     CHILDHOOD_VACCINES = "childhood-vaccines"
 
 
+class _MedicinesChildTheme(Enum):
+    ANTIMICROBIALS = "antimicrobials"
+
+
 class _NonCommunicableChildTheme(Enum):
     RESPIRATORY = "respiratory"
 
@@ -136,12 +140,17 @@ class _AntimicrobialResistanceTopic(Enum):
     CARBAPENAMASE_PRODUCING_ORGANISMS = "carbapenamase-producing-organisms"
 
 
+class _AntimicrobialsTopic(Enum):
+    ANTIBIOTICS = "antibiotics"
+
+
 class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
     EXTREME_EVENT = "extreme_event"
     NON_COMMUNICABLE = "non-communicable"
     CLIMATE_AND_ENVIRONMENT = "climate_and_environment"
     IMMUNISATION = "immunisation"
+    MEDICINES = "medicines"
 
 
 class ChildTheme(BaseEnum):
@@ -151,6 +160,7 @@ class ChildTheme(BaseEnum):
     CLIMATE_AND_ENVIRONMENT = _ClimateAndEnvironmentChildTheme
     CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
     IMMUNISATION = _ImmunisationChildTheme
+    MEDICINES = _MedicinesChildTheme
 
 
 class Topic(BaseEnum):
@@ -163,6 +173,7 @@ class Topic(BaseEnum):
     BLOODBORNE = _BloodbourneTopic
     GASTROINTESTINAL = _GastrointestinalTopic
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
+    ANTIMICROBIALS = _AntimicrobialsTopic
     CONTACT = _ContactTopic
     VECTORS = _VectorsTopic
     INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic
