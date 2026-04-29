@@ -25,7 +25,7 @@ class GeographyQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).distinct().order_by("name")
 
-    def get_name_by_id(self, geography_code: int) -> str | None:
+    def get_name_by_code(self, geography_code: str) -> str | None:
         """
         Gets the geography_code name which matches the given theme id.
 
@@ -36,7 +36,7 @@ class GeographyQuerySet(models.QuerySet):
             The geography name if found, None otherwise
 
         Examples:
-            >>> GeographyQuerySet.get_name_by_id(1)
+            >>> GeographyQuerySet.get_name_by_code("E92000001")
             'England'
             >>> GeographyQuerySet.get_name_by_id(999)
             None
@@ -150,7 +150,7 @@ class GeographyManager(models.Manager):
     def get_queryset(self) -> GeographyQuerySet:
         return GeographyQuerySet(model=self.model, using=self.db)
 
-    def get_name_by_id(self, geography_code: int) -> str | None:
+    def get_name_by_code(self, geography_code: int) -> str | None:
         """Gets the geography name which matches the given geography_code.
 
         Args:
@@ -165,7 +165,7 @@ class GeographyManager(models.Manager):
             >>> GeographyManager.get_name_by_id(999)
             None
         """
-        return self.get_queryset().get_name_by_id(geography_code)
+        return self.get_queryset().get_name_by_code(geography_code)
 
     def get_all_names(self) -> GeographyQuerySet:
         """Gets all available deduplicated geography names as a flat list queryset.

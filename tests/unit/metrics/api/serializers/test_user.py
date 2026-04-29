@@ -17,7 +17,7 @@ class TestUserManager(unittest.TestCase):
         # Given
         user_manager = UserManager()
 
-        mock_user_id = 1
+        mock_user_id = "1"
 
         # When
         user_manager.get_user_with_permission_sets(mock_user_id)

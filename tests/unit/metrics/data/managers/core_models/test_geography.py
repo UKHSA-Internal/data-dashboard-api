@@ -57,8 +57,8 @@ class TestGeographyManager:
             geography_type_id=fake_geography_type_id,
         )
 
-    @mock.patch.object(GeographyQuerySet, "get_name_by_id")
-    def test_get_name_by_id(self, spy_get_name_by_id: mock.MagicMock):
+    @mock.patch.object(GeographyQuerySet, "get_name_by_code")
+    def test_get_name_by_code(self, spy_get_name_by_code: mock.MagicMock):
         """
         Given a payload containing the required field
         When `get_name_by_id` is called,
@@ -69,10 +69,10 @@ class TestGeographyManager:
         geography_manager = GeographyManager()
 
         # When
-        GeographyManager.get_name_by_id(
+        GeographyManager.get_name_by_code(
             geography_manager,
             geography_code=fake_geography_code,
         )
 
         # Then
-        spy_get_name_by_id.assert_called_with(fake_geography_code)
+        spy_get_name_by_code.assert_called_with(fake_geography_code)

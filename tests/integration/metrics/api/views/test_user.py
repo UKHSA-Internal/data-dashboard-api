@@ -47,7 +47,8 @@ class TestPermissionSetByUser:
         )
         UserFactory.create_with_permission_sets(
             user_id=user_id,
-            permission_sets=[wildcard_permission, permission_one, permission_two],
+            permission_sets=[wildcard_permission,
+                             permission_one, permission_two],
         )
 
         # Retrieve the subthemes
@@ -291,6 +292,4 @@ class TestPermissionSetByUser:
         response = client.get(path)
 
         # Then
-        # Depending on your implementation, this might be 400 or just ignored
-        # Adjust based on your actual validation logic
-        assert response.status_code in [HTTPStatus.OK, HTTPStatus.BAD_REQUEST]
+        assert response.status_code in [HTTPStatus.BAD_REQUEST]

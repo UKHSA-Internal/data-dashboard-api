@@ -95,7 +95,7 @@ class TestGeographyManager:
         }
 
     @pytest.mark.django_db
-    def test_get_name_by_id(self):
+    def test_get_name_by_code(self):
         """
         Given a number of existing `geography` records
         When `get_name_by_id` is called
@@ -112,8 +112,9 @@ class TestGeographyManager:
         )
 
         # When
-        get_name_by_id = Geography.objects.get_name_by_id(geography_code="E12000007")
+        get_name_by_code = Geography.objects.get_name_by_code(
+            geography_code="E12000007")
 
         # Access the dictionary returned by .first()
-        result = get_name_by_id
+        result = get_name_by_code
         assert result == geography_two.name
