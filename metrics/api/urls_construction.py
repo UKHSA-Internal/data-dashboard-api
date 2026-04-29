@@ -321,7 +321,6 @@ def construct_urlpatterns(
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case enums.AppMode.INGESTION.value:
