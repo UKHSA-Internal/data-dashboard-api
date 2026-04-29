@@ -390,7 +390,7 @@ def _get_choice_label(field_name: str, value: str) -> str:
 
     if manager:
         name = (
-            manager.get_name_by_id(value)
+            manager.get_name_by_code(value)
             if field_name == "geography"
             else manager.get_name_by_id(int(value))
         )

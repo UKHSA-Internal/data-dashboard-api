@@ -20,6 +20,39 @@ class TestPermissionSetByUser:
 
     @pytest.mark.django_db
     def test_get_user_wildcard_permission_set(self):
+        client = APIClient()
+
+        user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
+
+        # create subthemes
+        PermissionSetFactory.create_wildcard_permission_set()
+        UserFactory.create_with_permission_set(
+            user_id=user_id,
+            permission_set_name="Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
+        )
+
+        # Retrieve the subthemes
+        path = f"{self.path}/{user_id}/permissions"
+        response: Response = client.get(path=path)
+        result = response.data
+
+        # Should return a wildcard choice
+        assert result["user_id"] == user_id
+        assert result["permission_sets"][0] == {
+            "id": 1,
+            "name": "Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
+            "theme": "-1",
+            "sub_theme": "-1",
+            "topic": "-1",
+            "metric": "-1",
+            "geography_type": "-1",
+            "geography": "-1",
+        }
+
+    @pytest.mark.django_db
+    def test_returns_all_user_permission_sets_when_user_has_multiple_permission_sets_including_wildcard(
+        self,
+    ):
 
         client = APIClient()
 
@@ -28,7 +61,6 @@ class TestPermissionSetByUser:
         # create subthemes
         wildcard_permission = PermissionSetFactory.create_wildcard_permission_set()
         permission_one = PermissionSetFactory.create_permission_set(
-            name="Permission Set 1",
             theme=1,
             sub_theme=1,
             topic=2,
@@ -37,7 +69,6 @@ class TestPermissionSetByUser:
             geography=1,
         )
         permission_two = PermissionSetFactory.create_permission_set(
-            name=" Permission Set 2",
             theme=1,
             sub_theme=2,
             topic=1,
@@ -47,8 +78,7 @@ class TestPermissionSetByUser:
         )
         UserFactory.create_with_permission_sets(
             user_id=user_id,
-            permission_sets=[wildcard_permission,
-                             permission_one, permission_two],
+            permission_sets=[wildcard_permission, permission_one, permission_two],
         )
 
         # Retrieve the subthemes
@@ -68,6 +98,26 @@ class TestPermissionSetByUser:
             "metric": "-1",
             "geography_type": "-1",
             "geography": "-1",
+        }
+        assert result["permission_sets"][1] == {
+            "id": 2,
+            "name": "Theme: 1 | Sub-theme: 1 | Topic: 2 | Metric: 2 | Geography Type: 2 | Geography: 1",
+            "theme": "1",
+            "sub_theme": "1",
+            "topic": "2",
+            "metric": "2",
+            "geography_type": "2",
+            "geography": "1",
+        }
+        assert result["permission_sets"][2] == {
+            "id": 3,
+            "name": "Theme: 1 | Sub-theme: 2 | Topic: 1 | Metric: 2 | Geography Type: 1 | Geography: 1",
+            "theme": "1",
+            "sub_theme": "2",
+            "topic": "1",
+            "metric": "2",
+            "geography_type": "1",
+            "geography": "1",
         }
 
     @pytest.mark.django_db
@@ -174,37 +224,6 @@ class TestPermissionSetByUser:
         assert len(hierarchy) == 1
         assert hierarchy[0]["theme"]["id"] == "-1"
         assert hierarchy[0]["geography_type"]["id"] == "-1"
-
-    @pytest.mark.django_db
-    def test_get_user_wildcard_permission_set(self):
-        client = APIClient()
-
-        user_id = "f907e591-4c49-4847-89b3-665e3c0133a4"
-
-        # create subthemes
-        PermissionSetFactory.create_wildcard_permission_set()
-        UserFactory.create_with_permission_set(
-            user_id=user_id,
-            permission_set_name="Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
-        )
-
-        # Retrieve the subthemes
-        path = f"{self.path}/{user_id}/permissions"
-        response: Response = client.get(path=path)
-        result = response.data
-
-        # Should return a wildcard choice
-        assert result["user_id"] == user_id
-        assert result["permission_sets"][0] == {
-            "id": 1,
-            "name": "Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All) | Geography: * (All)",
-            "theme": "-1",
-            "sub_theme": "-1",
-            "topic": "-1",
-            "metric": "-1",
-            "geography_type": "-1",
-            "geography": "-1",
-        }
 
     @pytest.mark.django_db
     def test_accepts_empty_group_by_parameter(self):
