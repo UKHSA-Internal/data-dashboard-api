@@ -2,6 +2,8 @@ from collections.abc import Callable
 
 from django import forms
 
+from cms.dynamic_content import help_texts
+
 
 def _create_form_field(field: dict[str, str | Callable | None], wildcard_id_value=None) -> forms.CharField:
     choices = [
@@ -15,20 +17,5 @@ def _create_form_field(field: dict[str, str | Callable | None], wildcard_id_valu
         choices += field["field_choice_callable"]()
 
     return forms.CharField(
-        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
+        required=False, label=field["field_label"], widget=forms.Select(choices=choices), help_text=help_texts.NON_PUBLIC_PAGE_REQUIRED
     )
-
-def _initialize_dependent_fields(self):
-        """Initialize choices for cascading dependent fields"""
-        dependent_fields = {
-            "sub_theme": ("Select theme first", "* (All sub-themes)"),
-            "topic": ("Select sub-theme first", "* (All topics)"),
-            "metric": ("Select topic first", "* (All metrics)"),
-            "geography": ("Select geography type first", "* (All geographies)"),
-        }
-
-        for field_name, (placeholder, wildcard_label) in dependent_fields.items():
-            value = getattr(self.instance, field_name, None)
-            if value:
-                choices = self._get_field_choices(value, placeholder, wildcard_label)
-                self.fields[field_name].widget.choices = choices

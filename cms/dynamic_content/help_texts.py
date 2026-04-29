@@ -626,6 +626,10 @@ PAGE_CLASSIFICATION: str = """
 The classification level of all data on this page (only applies to non-public pages). Defaults to `Official-Sensitive`.
 """
 
+NON_PUBLIC_PAGE_REQUIRED: str = """
+This field is required for a non-public page.
+"""
+
 SECTION_FOOTER_BLOCKS: str = """
 This is an optional footer for content sections to allow additional supporting information to be linked too. (E.g. a link to furhter information about how we define an outbreak)
 """

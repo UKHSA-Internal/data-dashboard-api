@@ -1,10 +1,7 @@
-from collections.abc import Callable
-
 import datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django import forms
 
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -56,14 +53,12 @@ class TopicPageAdminForm(WagtailAdminPageForm):
         dependent_fields = {
             "sub_theme": ("Select theme first"),
             "topic": ("Select sub-theme first"),
-            "metric": ("Select topic first"),
-            "geography": ("Select geography type first"),
         }
 
-        for field_name, (placeholder, wildcard_label) in dependent_fields.items():
+        for field_name, (placeholder) in dependent_fields.items():
             value = getattr(self.instance, field_name, None)
             if value:
-                choices = self._get_field_choices(value, placeholder, wildcard_label)
+                choices = self._get_field_choices(value, placeholder)
                 self.fields[field_name].widget.choices = choices
 
     @staticmethod
@@ -101,9 +96,9 @@ class TopicPage(UKHSAPage):
         null=True,
     )
 
-    theme = models.CharField(max_length=255, blank=True, default="")
-    sub_theme = models.CharField(max_length=255, blank=True, default="")
-    topic = models.CharField(max_length=255, blank=True, default="")
+    theme = models.CharField(max_length=255, blank=True, default="", null=True)
+    sub_theme = models.CharField(max_length=255, blank=True, default="", null=True)
+    topic = models.CharField(max_length=255, blank=True, default="", null=True)
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -272,16 +267,39 @@ class TopicPage(UKHSAPage):
     def clean(self):
         super().clean()
 
-        # If is_public is true, automatically clear classification
+        # If is_public is true, automatically clear non-public fields
         if self.is_public:
             self.page_classification = None
-        # If not public page, classification must be chosen
+            self.theme = None
+            self.sub_theme = None
+            self.topic = None
+
+        # If not public page, non-public fields must be set
         elif not self.page_classification:
             raise ValidationError(
                 {
                     "page_classification": "Please select a classification level for this non-public page"
                 }
             )
+        elif not self.theme:
+            raise ValidationError(
+                {
+                    "theme": "Please select a theme for this non-public page"
+                }
+            )
+        elif not self.sub_theme:
+            raise ValidationError(
+                {
+                    "sub_theme": "Please select a sub theme for this non-public page"
+                }
+            )
+        elif not self.topic:
+            raise ValidationError(
+                {
+                    "topic": "Please select a topic for this non-public page"
+                }
+            )
+        
 
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):

@@ -17,15 +17,14 @@
       topic: topic,
     }
 
-    if (!isPublicCheckbox || !Object.values(fields).every(Boolean)) return
-
     if (isPublicCheckbox.checked) {
       Object.values(fields).forEach(disableField)
-      clearDropdown(subTheme, "Select theme first")
-      clearDropdown(topic, "Select sub-theme first")
-      theme.value = ""
+      clearDropdown(fields.subTheme, "Select theme first")
+      clearDropdown(fields.topic, "Select sub-theme first")
+      fields.theme.value = ""
     } else {
       Object.values(fields).forEach(enableField)
+      fields.classification.value="official_sensitive"
     }
   }
 
@@ -194,6 +193,8 @@
       console.error("No theme dropdowns found on this page")
       return
     }
+
+    toggleAvailableFields()
 
     // Add event listeners
     theme.addEventListener("change", handleThemeChange)
