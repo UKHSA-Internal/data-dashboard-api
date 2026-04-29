@@ -12,4 +12,4 @@ from .pages import (
     create_feedback_page,
     create_authentication_error_page,
 )
-from .menu import create_menu_snippet
+from .menu import create_menu_snippet, create_simplemenu_snippet

@@ -184,6 +184,7 @@ class DataSourceFileType(Enum):
     counts = "counts"
     prevention = "prevention"
     coverage = "coverage"
+    consumption = "consumption"
 
     @property
     def is_headline(self) -> bool:

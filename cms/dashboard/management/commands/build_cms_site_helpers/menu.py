@@ -2,7 +2,7 @@ from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
 from cms.home.models import LandingPage
 from cms.metrics_documentation.models import MetricsDocumentationParentPage
-from cms.snippets.models import Menu
+from cms.snippets.models import Menu, SimpleMenu
 from cms.topic.models import TopicPage
 from cms.whats_new.models import WhatsNewParentPage
 
@@ -171,4 +171,34 @@ def _create_menu_data() -> list[dict]:
             },
             "id": "dcd6d76c-a3b3-4b44-8326-8177d609b50b",
         }
+    ]
+
+
+def create_simplemenu_snippet():
+    SimpleMenu.objects.create(
+        internal_label="Primary navigation",
+        is_active=True,
+        body=_create_simplemenu_data(),
+    )
+
+
+def _create_simplemenu_data() -> list[dict]:
+    covid_page = TopicPage.objects.get(slug="covid-19")
+    flu_page = TopicPage.objects.get(slug="influenza")
+
+    return [
+        {
+            "type": "link",
+            "value": {"title": "COVID", "page": covid_page.id, "html_url": covid_page.full_url},
+            "id": "d8e270c7-f3d7-41cf-8d7c-c2bbe62ed71d",
+        },
+        {
+            "type": "link",
+            "value": {
+                "title": "What's new",
+                "page": flu_page.id,
+                "html_url": flu_page.full_url,
+            },
+            "id": "021352b9-d606-48ee-b942-1739ccec9e03",
+        },
     ]
