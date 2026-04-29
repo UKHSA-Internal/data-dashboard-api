@@ -31,6 +31,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
+
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
         )
@@ -39,4 +40,10 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         )
 
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
-        return Response(serializer.data)
+        response = Response(data=serializer.data)
+
+        is_valid_non_public_request = request.auth is not None
+        if is_valid_non_public_request:
+            response["Cache-Control"] = "private, no-cache"
+
+        return response

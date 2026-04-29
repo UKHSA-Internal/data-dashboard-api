@@ -73,6 +73,11 @@ class PopularTopicsMetricNumberBlockTypes(StructBlock):
         default=METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.HEADLINE_DATE_PREFIX,
     )
+    topic_page = PageLinkChooserBlock(
+        page_type="topic.TopicPage",
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
+    )
     headline_metrics = PopularTopicsHeadlineNumberBlockTypes(
         required=True,
         min_num=POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT,

@@ -105,4 +105,11 @@ INVALID_PARAMETERS = [
         "meningococcal-disease_cases_casesByWeek",
         "cases",
     ),  # Invalid topic name of meningococcal-disease rather than Meningococcal-disease
+    (
+        "medicines",
+        "antimicrobials",
+        "antibiotics",
+        "antibiotics_consumption_awareAccess",
+        "cases",
+    ),  # Invalid metric group
 ]
