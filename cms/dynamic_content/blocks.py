@@ -20,6 +20,15 @@ POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
+class PageLinkChooserBlock(blocks.PageChooserBlock):
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> str | None:
+        if value:
+            return value.full_url
+
+        return None
+
+
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
     headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
     trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
@@ -63,6 +72,11 @@ class PopularTopicsMetricNumberBlockTypes(blocks.StructBlock):
         required=True,
         default=METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.HEADLINE_DATE_PREFIX,
+    )
+    topic_page = PageLinkChooserBlock(
+        page_type="topic.TopicPage",
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
     )
     headline_metrics = PopularTopicsHeadlineNumberBlockTypes(
         required=True,
@@ -167,15 +181,6 @@ class WhaButtonChooserBlock(SnippetChooserBlock):
                 "text": value.text,
                 "button_type": value.button_type,
             }
-        return None
-
-
-class PageLinkChooserBlock(blocks.PageChooserBlock):
-    @classmethod
-    def get_api_representation(cls, value, context=None) -> str | None:
-        if value:
-            return value.full_url
-
         return None
 
 

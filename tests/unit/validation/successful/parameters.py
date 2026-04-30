@@ -63,6 +63,13 @@ VALID_PARAMETERS = [
         "prevention",
     ),
     (
+        "infectious_disease",
+        "bloodborne",
+        "HIV",
+        "HIV_cases_lateDiagnosesByKeyPop",
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "chemical_exposure",
         "Lead",
