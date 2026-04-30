@@ -43,10 +43,11 @@ class SingleCategoryChartSettings(ChartSettings):
             "spikemode": "toaxis+across+marker",
             "spikesnap": "cursor",
             "showgrid": True,
-            "showline": False,
+            "showline": True,
             "zeroline": False,
             "fixedrange": True,
             "gridcolor": "rgba(0,0,0,0.05)",
+            "linecolor": "rgba(0,0,0,0.05)",
             "ticks": "outside",
             "tickson": "boundaries",
             "type": "date",
@@ -55,6 +56,7 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
             "autotickangles": [0, 90],
+            "mirror": True,
         }
 
         if self._chart_generation_payload.x_axis_title:
@@ -82,10 +84,13 @@ class SingleCategoryChartSettings(ChartSettings):
                 {"dtickrange": [1000, 99999], "value": ",.0f"},
                 {"dtickrange": [100000, None], "value": ".0s"},
             ],
-            "showgrid": False,
+            "showgrid": True,
             "showticklabels": True,
+            "showline": True,
             "fixedrange": True,
-            "gridcolor": "#000",
+            "gridcolor": "rgba(0,0,0,0.05)",
+            "linecolor": "rgba(0,0,0,0.05)",
+            "mirror": True,
             "tickfont": tick_font,
             "rangemode": "tozero",
         }
@@ -366,6 +371,8 @@ class SingleCategoryChartSettings(ChartSettings):
 
         # x_axis config
         chart_config["xaxis"]["showgrid"] = False
+        chart_config["xaxis"]["showline"] = False
+        chart_config["xaxis"]["mirror"] = False
         chart_config["xaxis"]["ticks"] = "outside"
         chart_config["xaxis"]["tickvals"] = axis_params["x_axis_tick_values"]
         chart_config["xaxis"]["ticktext"] = axis_params["x_axis_tick_text"]
@@ -375,6 +382,9 @@ class SingleCategoryChartSettings(ChartSettings):
         ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
 
         # y_axis config
+        chart_config["yaxis"]["showgrid"] = False
+        chart_config["yaxis"]["showline"] = False
+        chart_config["yaxis"]["mirror"] = False
         chart_config["yaxis"]["zeroline"] = False
         chart_config["yaxis"]["ticks"] = "outside"
         chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]

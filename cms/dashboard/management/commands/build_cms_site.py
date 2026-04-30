@@ -82,6 +82,7 @@ class Command(BaseCommand):
         )
 
         build_cms_site_helpers.create_menu_snippet()
+        build_cms_site_helpers.create_simplemenu_snippet()
 
     @classmethod
     def _build_whats_new_section(cls, root_page: UKHSARootPage) -> None:
@@ -182,6 +183,9 @@ class Command(BaseCommand):
         )
         build_cms_site_helpers.create_common_page(
             name="compliance", parent_page=root_page
+        )
+        build_cms_site_helpers.create_common_page(
+            name="logged_out", parent_page=root_page
         )
 
     @staticmethod
