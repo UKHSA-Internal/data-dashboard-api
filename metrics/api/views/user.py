@@ -1,13 +1,11 @@
 from http import HTTPStatus
 
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from metrics.api.serializers.user import (
     FlatPermissionHierarchyResponseSerializer,
-    GroupedByGeographyTypeResponseSerializer,
-    GroupedByThemeResponseSerializer,
     UserHierarchyRequestSerializer,
     UserPermissionSetResponseSerializer,
     UserRequestSerializer,
@@ -86,7 +84,7 @@ class UserPermissionSetsByUserIdView(APIView):
                         "topic": {"id": "3", "name": "COVID-19"},
                         "metric": {"id": "-1", "name": "* (All)"},
                         "geography_type": {"id": "3", "name": "Nation"},
-                        "geography": {"id": "E92000001", "name": "England"}
+                        "geography": {"id": "E92000001", "name": "England"},
                     }
                 ],
                 "summary": {
@@ -94,8 +92,8 @@ class UserPermissionSetsByUserIdView(APIView):
                     "deduplicated_count": 1,
                     "removed_count": 0,
                     "has_global_access": False,
-                    "wildcard_themes": []
-                }
+                    "wildcard_themes": [],
+                },
             },
             response_only=True,
         ),
@@ -111,17 +109,21 @@ class UserPermissionSetsByUserIdView(APIView):
                                 "geography_name": "England",
                                 "permissions": [
                                     {
-                                        "themes": [{"id": "2", "name": "infectious_disease"}],
-                                        "sub_themes": [{"id": "2", "name": "respiratory"}],
+                                        "themes": [
+                                            {"id": "2", "name": "infectious_disease"}
+                                        ],
+                                        "sub_themes": [
+                                            {"id": "2", "name": "respiratory"}
+                                        ],
                                         "topics": [{"id": "3", "name": "COVID-19"}],
-                                        "metrics": [{"id": "-1", "name": "* (All)"}]
+                                        "metrics": [{"id": "-1", "name": "* (All)"}],
                                     }
-                                ]
+                                ],
                             }
-                        }
+                        },
                     }
                 },
-                "total_permissions": 1
+                "total_permissions": 1,
             },
             response_only=True,
         ),
@@ -140,18 +142,27 @@ class UserPermissionSetsByUserIdView(APIView):
                                         "topic_name": "COVID-19",
                                         "geographies": [
                                             {
-                                                "geography_types": [{"id": "3", "name": "Nation"}],
-                                                "geographies": [{"id": "E92000001", "name": "England"}],
-                                                "metrics": [{"id": "-1", "name": "* (All)"}]
+                                                "geography_types": [
+                                                    {"id": "3", "name": "Nation"}
+                                                ],
+                                                "geographies": [
+                                                    {
+                                                        "id": "E92000001",
+                                                        "name": "England",
+                                                    }
+                                                ],
+                                                "metrics": [
+                                                    {"id": "-1", "name": "* (All)"}
+                                                ],
                                             }
-                                        ]
+                                        ],
                                     }
-                                }
+                                },
                             }
-                        }
+                        },
                     }
                 },
-                "total_permissions": 1
+                "total_permissions": 1,
             },
             response_only=True,
         ),
