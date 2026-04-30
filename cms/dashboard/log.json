@@ -1,0 +1,147 @@
+{
+  "BODY_LOGS": {
+    "formsubmission": "<error: TopicPage object has no attribute formsubmission>",
+    "redirect": "<error: TopicPage object has no attribute redirect>",
+    "sites_rooted_here": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x117186ae0>",
+    "aliases": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x117186de0>",
+    "group_permissions": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x11719cb90>",
+    "view_restrictions": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x11719cbc0>",
+    "workflowpage": "<error: TopicPage has no workflowpage.>",
+    "wagtail_admin_comments": "<modelcluster.fields.create_deferring_foreign_related_manager.<locals>.DeferringRelatedManager object at 0x11719c980>",
+    "subscribers": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x1171b4680>",
+    "id": 80,
+    "path": "00010001000I0001",
+    "depth": 4,
+    "numchild": 0,
+    "translation_key": "UUID(a290e958-d915-4025-8fc7-886d82c492b8)",
+    "locale": "<Locale: English>",
+    "latest_revision": "<Revision: Childhood vaccinations at 2026-04-27 11:07:38.042274+01:00>",
+    "live": true,
+    "has_unpublished_changes": false,
+    "first_published_at": "datetime.datetime(2026, 4, 27, 11, 7, 38, 72815, tzinfo=zoneinfo.ZoneInfo(key=Europe/London))",
+    "last_published_at": "datetime.datetime(2026, 4, 27, 11, 7, 38, 72815, tzinfo=zoneinfo.ZoneInfo(key=Europe/London))",
+    "live_revision": "<Revision: Childhood vaccinations at 2026-04-27 11:07:38.042274+01:00>",
+    "go_live_at": "None",
+    "expire_at": "None",
+    "expired": false,
+    "locked": false,
+    "locked_at": "None",
+    "locked_by": "None",
+    "title": "Childhood vaccinations",
+    "draft_title": "Childhood vaccinations",
+    "slug": "childhood-vaccinations",
+    "content_type": "<ContentType: Topic | topic page>",
+    "url_path": "/ukhsa-dashboard-root/cover/childhood-vaccinations/",
+    "owner": "None",
+    "seo_title": "Childhood vaccinations",
+    "show_in_menus": false,
+    "search_description": "",
+    "latest_revision_created_at": "datetime.datetime(2026, 4, 27, 11, 7, 38, 42274, tzinfo=zoneinfo.ZoneInfo(key=Europe/London))",
+    "alias_of": "None",
+    "related_links": "<modelcluster.fields.create_deferring_foreign_related_manager.<locals>.DeferringRelatedManager object at 0x115f42390>",
+    "announcements": "<modelcluster.fields.create_deferring_foreign_related_manager.<locals>.DeferringRelatedManager object at 0x1171b49b0>",
+    "page_ptr": "<Page: Childhood vaccinations>",
+    "seo_change_frequency": 5,
+    "seo_priority": "Decimal(0.5)",
+    "body": "BODY",
+    "page_description": "PAGE_DESCRIPTION",
+    "enable_area_selector": false,
+    "is_public": true,
+    "page_classification": "None",
+    "related_links_layout": "Footer",
+    "_revisions": "<django.contrib.contenttypes.fields.create_generic_related_manager.<locals>.GenericRelatedObjectManager object at 0x1171b5100>",
+    "_workflow_states": "<django.contrib.contenttypes.fields.create_generic_related_manager.<locals>.GenericRelatedObjectManager object at 0x1171b4c20>",
+    "_specific_workflow_states": "<django.contrib.contenttypes.fields.create_generic_related_manager.<locals>.GenericRelatedObjectManager object at 0x1171d3980>",
+    "index_entries": "<django.contrib.contenttypes.fields.create_generic_related_manager.<locals>.GenericRelatedObjectManager object at 0x1171b4740>"
+  },
+
+  "USER_OBJECT_PERMISSION_SETS": {
+    "permission_set_hierarchy": [
+      {
+        "theme": {
+          "id": "3",
+          "name": "extreme_event"
+        },
+        "sub_theme": {
+          "id": "4",
+          "name": "weather_alert"
+        },
+        "topic": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "metric": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "geography_type": {
+          "id": "6",
+          "name": "United Kingdom"
+        },
+        "geography": {
+          "id": "K02000001",
+          "name": "United Kingdom"
+        }
+      },
+      {
+        "theme": {
+          "id": "2",
+          "name": "infectious_disease"
+        },
+        "sub_theme": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "topic": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "metric": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "geography_type": {
+          "id": "1",
+          "name": "Upper Tier Local Authority"
+        },
+        "geography": {
+          "id": "E06000014",
+          "name": "York"
+        }
+      },
+      {
+        "theme": {
+          "id": "1",
+          "name": "immunisation"
+        },
+        "sub_theme": {
+          "id": "1",
+          "name": "childhood-vaccines"
+        },
+        "topic": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "metric": {
+          "id": "-1",
+          "name": "* (All)"
+        },
+        "geography_type": {
+          "id": "1",
+          "name": "Upper Tier Local Authority"
+        },
+        "geography": {
+          "id": "E06000014",
+          "name": "York"
+        }
+      }
+    ],
+    "summary": {
+      "total_permission_sets": 3,
+      "deduplicated_count": 3,
+      "removed_count": 0,
+      "has_global_access": false,
+      "wildcard_themes": []
+    }
+  }
+}

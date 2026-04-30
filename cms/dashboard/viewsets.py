@@ -50,6 +50,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         queryset = super().get_queryset()
 
         req = self.request
+        print(f"🦊🦊🦊🦊🦊🦊🦊🦊 USER: {req.user} 🦊🦊🦊🦊🦊🦊🦊🦊🦊")
         if req.auth is None:
             # Filter pages to find those with the is public field (and where is_public is true)
             topic_page_id_with_is_public = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
@@ -62,21 +63,45 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             pages_without_is_public = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
             public_pages = is_public_pages | pages_without_is_public
             
-            queryset = public_pages
-            
-        return queryset.specific()
+            filtered_queryset = public_pages
+        
+        else:
+
+            print(f"🦊🦊🦊🦊🦊🦊🦊🦊 Permission Sets: {req.user.permission_sets} 🦊🦊🦊🦊🦊🦊🦊🦊🦊")
+            # user permissions = req.user.permission_sets
+            # allowed_pages = []
+            # for each page in queryset:
+            #   if it is a topic or metric doc child page:
+            #       for each permisison set that the user has:
+            #           get the theme id and compare to users permission set themes
+            #           if the theme matches:
+            #               get the page subtheme id and compare to subtheme of matched permission set
+            #               if the subtheme matches:
+            #                   get the topic id for page and permission set
+            #                       if the id matches:
+            #                           allowed_pages.append(page)
+            #               
+            #   else if it is not a topic or metric doc child page:            
+            #       allowed_pages.append(page)
+            #
+            #   filtered_queryset = allowed_pages
+            #
+            #
+        return filtered_queryset.specific()
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:
         """This endpoint returns a list of published pages from the CMS (Wagtail).
         The payload includes page `title`, `id` and `meta` data about each page.
         """
+        print(f"REQUEST.USER 🦄 {request.user}")
         print(f"I AM LISTING VIEW 🦄: {super().listing_view(request=request)}")
         return super().listing_view(request=request)
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
         """This end point returns a page from the CMS based on a Page `ID`."""
+        print(f"REQUEST.USER 🎯 {request.user}")
         print(f"I AM DETAIL VIEW 🎯: {super().detail_view(request=request, pk=pk)}")
         if request.auth is None:
             print()
