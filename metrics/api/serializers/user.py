@@ -80,7 +80,8 @@ class UserRequestSerializer(serializers.Serializer):
         user_uuid = uuid.UUID(user_id_str)
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(
+            user_uuid)
 
         # Check if user exists or has permissions
         if not permission_sets.exists():
@@ -93,7 +94,8 @@ class UserRequestSerializer(serializers.Serializer):
             }
 
         # Convert QuerySet to list of dicts
-        permission_set_list = _queryset_to_permission_set_dicts(permission_sets)
+        permission_set_list = _queryset_to_permission_set_dicts(
+            permission_sets)
 
         return {
             "user_id": user_id_str,
@@ -172,7 +174,8 @@ class UserHierarchyRequestSerializer(serializers.Serializer):
         group_by = self.validated_data.get("group_by")
 
         # Get permission sets for this user
-        permission_sets = self.user_manager.get_permission_sets_for_user(user_uuid)
+        permission_sets = self.user_manager.get_permission_sets_for_user(
+            user_uuid)
 
         if not permission_sets.exists():
             # Return empty structure rather than raising exception
@@ -214,6 +217,42 @@ class UserPermissionSetResponseSerializer(serializers.Serializer):
     permission_set_count = serializers.IntegerField(
         help_text="Total number of permission sets assigned to the user"
     )
+
+
+class FlatPermissionHierarchyResponseSerializer(serializers.Serializer):
+    """Response format when no grouping is applied (default)."""
+
+    permission_sets = serializers.ListField(
+        child=serializers.DictField(),
+        help_text="List of deduplicated permission sets with theme and geography details"
+    )
+    summary = serializers.DictField(
+        help_text="Statistics: total_permission_sets, deduplicated_count, removed_count, has_global_access, wildcard_themes"
+    )
+
+
+class GroupedByGeographyTypeResponseSerializer(serializers.Serializer):
+    """Response format when grouped by geography_type."""
+
+    permission_sets = serializers.DictField(
+        help_text=(
+            "Map of geography_type_id to geography type details. "
+            "Each geography type contains geographies, which contain consolidated permissions."
+        )
+    )
+    total_permissions = serializers.IntegerField()
+
+
+class GroupedByThemeResponseSerializer(serializers.Serializer):
+    """Response format when grouped by theme."""
+
+    permission_sets = serializers.DictField(
+        help_text=(
+            "Map of theme_id to theme details. "
+            "Each theme contains sub_themes, which contain topics, which contain geographies with metrics."
+        )
+    )
+    total_permissions = serializers.IntegerField()
 
 
 def _queryset_to_permission_set_dicts(
