@@ -77,7 +77,12 @@ Once again, you should include this line in the `.env` file at the root level of
 
 See the [Django documentation | SECRET_KEY](https://docs.djangoproject.com/en/4.2/ref/settings/#secret-key) for more information.
 
-4. Set up the virtual environment and install the project dependencies via:
+4. Set up for running the non-public version locally.
+
+If you want to run the non-public version (i.e. pass a valid JWT into requests), you'll have to link to a deployed cognito instance by adding env variables as per the [guidance below](#remote-infrastructure)
+Once again, you should include these in the `.env` file at the root level of your project structure.
+
+5. Set up the virtual environment and install the project dependencies via:
 ```bash
 uhd venv create
 ```
@@ -85,12 +90,12 @@ This command will create a virtual environment at the `.venv/` folder at the roo
 The version of Python which will be used is dictated by the aforementioned `.python-version` file.
 And finally, the entire project dependencies will be installed within the virtual environment.
 
-5. Apply the database migrations and ensure Django collects all required static files.
+6. Apply the database migrations and ensure Django collects all required static files.
 ```bash
 uhd server setup-all
 ```
 
-6. Run a development server:
+7. Run a development server:
 ```bash
 uhd server run-local
 ```
