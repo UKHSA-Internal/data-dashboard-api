@@ -1,5 +1,5 @@
 {
-  "BODY_LOGS": {
+  "TOPICPAGE.topicpage_LOGS (pre theme)": {
     "formsubmission": "<error: TopicPage object has no attribute formsubmission>",
     "redirect": "<error: TopicPage object has no attribute redirect>",
     "sites_rooted_here": "<django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x117186ae0>",
