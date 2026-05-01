@@ -3,14 +3,14 @@ anyascii==0.3.3
 attrs==26.1.0
 beautifulsoup4==4.14.3
 CacheControl==0.14.4
-certifi==2026.2.25
+certifi==2026.4.22
 cfgv==3.5.0
 charset-normalizer==3.4.7
 click==8.3.3
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==46.0.7
+cryptography==47.0.0
 defusedxml==0.7.1
 distlib==0.4.0
 django-cors-headers==4.8.0
@@ -53,7 +53,7 @@ openpyxl==3.1.5
 orjson==3.11.8
 packageurl-python==0.17.6
 packaging==26.1
-pathspec==1.0.4
+pathspec==1.1.0
 pbr==7.0.3
 Pillow==12.2.0
 platformdirs==4.9.6
