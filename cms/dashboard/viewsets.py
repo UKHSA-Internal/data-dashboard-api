@@ -12,17 +12,17 @@ from cms.topic.models import TopicPage
 
 from django.db.models import Q
 
-
-
+# TODO: Changed to use dict - not sure if this will also be required when my auth issues are resolved
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
     for permission in user_permissions:
-        if permission.theme.id == -1:
+        print(permission)
+        if permission['theme']['id'] == -1:
             return True
-        if permission.theme.id == theme_id and sub_theme_id == -1:
+        if permission['theme']['id'] == theme_id and sub_theme_id == -1:
             return True
-        if permission.theme.id == theme_id \
-            and (permission.sub_theme.id == sub_theme_id) \
-            and (permission.topic.id == -1 or permission.topic.id == topic_id):
+        if permission['theme']['id'] == theme_id \
+            and (permission['sub_theme']['id'] == sub_theme_id) \
+            and (permission['topic']['id'] == -1 or permission['topic']['id'] == topic_id):
             return True
 
     return False
@@ -91,29 +91,27 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             # print(f"🦊 page.topicpage.theme (id): {page.topicpage.theme}")
             user_permissions = req.user.permission_sets['permission_set_hierarchy']
 
-            # Global access check
+            # TODO: Global access check?
 
             allowed_pages = []
-            for page in queryset:
-                if page.type(TopicPage):
-                    if page.topicpage.is_public:
-                        allowed_pages.append(page.id)
-                    else:
-                        # Compare to users permission themes
-                        if check_permissions(user_permissions, page.topicpage.theme.id, page.topicpage.sub_theme.id, page.topicpage.theme.topic.id):
-                            allowed_pages.append(page.id)
-
-                elif page.type(MetricsDocumentationChildEntry):
-                    if page.metricsdocumentationchildentry.is_public:
-                        allowed_pages.append(page.id)
-                    else:
-                        if check_permissions(user_permissions, page.topicpage.theme.id, page.topicpage.sub_theme.id, page.topicpage.theme.topic.id):
-                            allowed_pages.append(page.id)                           
-
-                else:
+            for page in queryset.type(TopicPage):
+                if page.topicpage.is_public:
                     allowed_pages.append(page.id)
+                else:
+                    if check_permissions(user_permissions, page.topicpage.theme, page.topicpage.sub_theme, page.topicpage.topic):
+                        allowed_pages.append(page.id)
+            
+            for page in queryset.type(MetricsDocumentationChildEntry):
+                if page.metricsdocumentationchildentry.is_public:
+                    allowed_pages.append(page.id)
+                else:
+                    if check_permissions(user_permissions, page.metricsdocumentationchildentry.theme, page.metricsdocumentationchildentry.sub_theme, page.metricsdocumentationchildentry.topic):
+                        allowed_pages.append(page.id)
 
-            filtered_queryset = queryset.filter(id__in=allowed_pages)
+            public_pages = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
+            permitted_private_pages = queryset.filter(id__in=allowed_pages)
+
+            filtered_queryset = public_pages | permitted_private_pages
                     
         return filtered_queryset.specific()
 

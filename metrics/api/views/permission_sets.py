@@ -42,7 +42,7 @@ class TopicsBySubThemeView(APIView):
     permission_classes = []
 
     def get(self, request, sub_theme_id, *args, **kwargs):  # noqa: PLR6301
-        """API endpoint to fetch sub-themes based on selected theme."""
+        """API endpoint to fetch topics based on selected sub-theme."""
         serializer = TopicRequestSerializer(data={"sub_theme_id": sub_theme_id})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
@@ -59,7 +59,7 @@ class MetricsByTopicView(APIView):
     permission_classes = []
 
     def get(self, request, topic_id, *args, **kwargs):  # noqa: PLR6301
-        """API endpoint to fetch sub-themes based on selected theme."""
+        """API endpoint to fetch metrics based on selected topic."""
         serializer = MetricRequestSerializer(data={"topic_id": topic_id})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
