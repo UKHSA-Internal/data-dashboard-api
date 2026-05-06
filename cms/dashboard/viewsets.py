@@ -10,19 +10,12 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSeria
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
 
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 
 
 # TODO: Changed to use dict - not sure if this will also be required when my auth issues are resolved
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
-    print("inside check permissions")
-    # TODO: the count and log is very useful for debugging but remove when the ticket is complete
-    # count = 0
     for permission in user_permissions:
-        # count += 1
-        # print(
-        #     f"permission count: {count}      |||    permission_theme =? theme id: {permission["theme"]["id"]} =? {theme_id}     ||     permission_subtheme =? subtheme id: {permission["sub_theme"]["id"]} =? {sub_theme_id}    ||     permission_topic =? topic id: {permission["topic"]["id"]} =? {topic_id}"
-        # )
         if permission["theme"]["id"] == "-1":
             return True
         if (
@@ -82,33 +75,35 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         req = self.request
 
         if req.auth is None:
-            # Filter pages to find those with the is public field (and where is_public is true)
-            topic_page_ids_with_is_public = TopicPage.objects.filter(
-                is_public=True, page_ptr__in=queryset
-            ).values_list("page_ptr_id", flat=True)
-            metric_doc_child_page_ids_with_is_public = (
-                MetricsDocumentationChildEntry.objects.filter(
-                    is_public=True, page_ptr__in=queryset
-                ).values_list("page_ptr_id", flat=True)
+            filtered_queryset = queryset.annotate(
+                is_public_topic_page=Exists(
+                    TopicPage.objects.filter(
+                        page_ptr_id=OuterRef("pk"),
+                        is_public=True,
+                    )
+                ),
+                is_public_metrics_doc_child_page=Exists(
+                    MetricsDocumentationChildEntry.objects.filter(
+                        page_ptr_id=OuterRef("pk"),
+                        is_public=True,
+                    )
+                ),
+            ).filter(
+                Q(is_public_topic_page=True)
+                | Q(is_public_metrics_doc_child_page=True)
+                | ~Q(
+                    content_type__model__in=[
+                        "topicpage",
+                        "metricsdocumentationchildentry",
+                    ]
+                )
             )
-
-            # Combine all public pages into one queryset
-            topic_public_pages = queryset.filter(id__in=topic_page_ids_with_is_public)
-            metric_child_public_pages = queryset.filter(
-                id__in=metric_doc_child_page_ids_with_is_public
-            )
-            is_public_pages = topic_public_pages | metric_child_public_pages
-            pages_without_is_public = queryset.not_type(
-                TopicPage, MetricsDocumentationChildEntry
-            )
-            public_pages = is_public_pages | pages_without_is_public
-
-            filtered_queryset = public_pages
 
         else:
             user_permissions = req.user.permission_sets["permission_set_hierarchy"]
-            
-            if user_permissions.has_global_access:
+            print(f"USER PERMISSIONS: {user_permissions}")
+
+            if req.user.permission_sets["has_global_access"]:
                 filtered_queryset = queryset
 
             else:
@@ -123,6 +118,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                             page.topicpage.sub_theme,
                             page.topicpage.topic,
                         ):
+                            print(f"Non Public Page: {page.title} added to allowed pages")
                             allowed_pages.append(page.id)
 
                 for page in queryset.type(MetricsDocumentationChildEntry):
@@ -135,6 +131,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                             page.metricsdocumentationchildentry.sub_theme,
                             page.metricsdocumentationchildentry.topic,
                         ):
+                            print(f"Non Public Page: {page.title} added to allowed pages")
                             allowed_pages.append(page.id)
 
                 public_pages = queryset.not_type(
