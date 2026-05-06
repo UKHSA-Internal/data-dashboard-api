@@ -12,20 +12,36 @@ from cms.topic.models import TopicPage
 
 from django.db.models import Q
 
+
 # TODO: Changed to use dict - not sure if this will also be required when my auth issues are resolved
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
+    print("inside check permissions")
+    # TODO: the count and log is very useful for debugging but remove when the ticket is complete
+    # count = 0
     for permission in user_permissions:
-        print(permission)
-        if permission['theme']['id'] == -1:
+        # count += 1
+        # print(
+        #     f"permission count: {count}      |||    permission_theme =? theme id: {permission["theme"]["id"]} =? {theme_id}     ||     permission_subtheme =? subtheme id: {permission["sub_theme"]["id"]} =? {sub_theme_id}    ||     permission_topic =? topic id: {permission["topic"]["id"]} =? {topic_id}"
+        # )
+        if permission["theme"]["id"] == "-1":
             return True
-        if permission['theme']['id'] == theme_id and sub_theme_id == -1:
+        if (
+            permission["theme"]["id"] == theme_id
+            and permission["sub_theme"]["id"] == "-1"
+        ):
             return True
-        if permission['theme']['id'] == theme_id \
-            and (permission['sub_theme']['id'] == sub_theme_id) \
-            and (permission['topic']['id'] == -1 or permission['topic']['id'] == topic_id):
+        if (
+            permission["theme"]["id"] == theme_id
+            and (permission["sub_theme"]["id"] == sub_theme_id)
+            and (
+                permission["topic"]["id"] == "-1"
+                or permission["topic"]["id"] == topic_id
+            )
+        ):
             return True
 
     return False
+
 
 @extend_schema(tags=["cms"])
 class CMSPagesAPIViewSet(PagesAPIViewSet):
@@ -64,55 +80,70 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         queryset = super().get_queryset()
 
         req = self.request
-        
-        # for page in queryset.type(TopicPage):
-        #     if page.topicpage.theme is not None:
-        #         print(f"page.title: {page.title}")
-        #         print(f"🦊 page.topicpage.theme (id): {page.topicpage.theme}")
 
-        print(f"👤🦊🦊🦊🦊👤 USER: {req.user} 👤🦊🦊🦊🦊👤")
         if req.auth is None:
             # Filter pages to find those with the is public field (and where is_public is true)
-            topic_page_ids_with_is_public = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
-            metric_doc_child_page_ids_with_is_public = MetricsDocumentationChildEntry.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+            topic_page_ids_with_is_public = TopicPage.objects.filter(
+                is_public=True, page_ptr__in=queryset
+            ).values_list("page_ptr_id", flat=True)
+            metric_doc_child_page_ids_with_is_public = (
+                MetricsDocumentationChildEntry.objects.filter(
+                    is_public=True, page_ptr__in=queryset
+                ).values_list("page_ptr_id", flat=True)
+            )
 
             # Combine all public pages into one queryset
             topic_public_pages = queryset.filter(id__in=topic_page_ids_with_is_public)
-            metric_child_public_pages = queryset.filter(id__in=metric_doc_child_page_ids_with_is_public)
+            metric_child_public_pages = queryset.filter(
+                id__in=metric_doc_child_page_ids_with_is_public
+            )
             is_public_pages = topic_public_pages | metric_child_public_pages
-            pages_without_is_public = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
+            pages_without_is_public = queryset.not_type(
+                TopicPage, MetricsDocumentationChildEntry
+            )
             public_pages = is_public_pages | pages_without_is_public
-            
+
             filtered_queryset = public_pages
-        
+
         else:
-
-            print(f"🦊🦊🦊🦊🦊🦊🦊🦊 Permission Sets: {req.user.permission_sets} 🦊🦊🦊🦊🦊🦊🦊🦊🦊")
-            # print(f"🦊 page.topicpage.theme (id): {page.topicpage.theme}")
-            user_permissions = req.user.permission_sets['permission_set_hierarchy']
-
-            # TODO: Global access check?
-
-            allowed_pages = []
-            for page in queryset.type(TopicPage):
-                if page.topicpage.is_public:
-                    allowed_pages.append(page.id)
-                else:
-                    if check_permissions(user_permissions, page.topicpage.theme, page.topicpage.sub_theme, page.topicpage.topic):
-                        allowed_pages.append(page.id)
+            user_permissions = req.user.permission_sets["permission_set_hierarchy"]
             
-            for page in queryset.type(MetricsDocumentationChildEntry):
-                if page.metricsdocumentationchildentry.is_public:
-                    allowed_pages.append(page.id)
-                else:
-                    if check_permissions(user_permissions, page.metricsdocumentationchildentry.theme, page.metricsdocumentationchildentry.sub_theme, page.metricsdocumentationchildentry.topic):
+            if user_permissions.has_global_access:
+                filtered_queryset = queryset
+
+            else:
+                allowed_pages = []
+                for page in queryset.type(TopicPage):
+                    if page.topicpage.is_public:
                         allowed_pages.append(page.id)
+                    else:
+                        if check_permissions(
+                            user_permissions,
+                            page.topicpage.theme,
+                            page.topicpage.sub_theme,
+                            page.topicpage.topic,
+                        ):
+                            allowed_pages.append(page.id)
 
-            public_pages = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
-            permitted_private_pages = queryset.filter(id__in=allowed_pages)
+                for page in queryset.type(MetricsDocumentationChildEntry):
+                    if page.metricsdocumentationchildentry.is_public:
+                        allowed_pages.append(page.id)
+                    else:
+                        if check_permissions(
+                            user_permissions,
+                            page.metricsdocumentationchildentry.theme,
+                            page.metricsdocumentationchildentry.sub_theme,
+                            page.metricsdocumentationchildentry.topic,
+                        ):
+                            allowed_pages.append(page.id)
 
-            filtered_queryset = public_pages | permitted_private_pages
-                    
+                public_pages = queryset.not_type(
+                    TopicPage, MetricsDocumentationChildEntry
+                )
+                permitted_private_pages = queryset.filter(id__in=allowed_pages)
+
+                filtered_queryset = public_pages | permitted_private_pages
+
         return filtered_queryset.specific()
 
     @cache_response()
@@ -120,15 +151,11 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         """This endpoint returns a list of published pages from the CMS (Wagtail).
         The payload includes page `title`, `id` and `meta` data about each page.
         """
-        print(f"REQUEST.USER 🦄 {request.user}")
-        print(f"I AM LISTING VIEW 🦄: {super().listing_view(request=request)}")
         return super().listing_view(request=request)
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
         """This end point returns a page from the CMS based on a Page `ID`."""
-        print(f"REQUEST.USER 🎯 {request.user}")
-        print(f"I AM DETAIL VIEW 🎯: {super().detail_view(request=request, pk=pk)}")
         if request.auth is None:
             print()
             # check the is public flag & only return public pages
