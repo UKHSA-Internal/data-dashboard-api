@@ -11,11 +11,32 @@ on your development system. For Mac users this will require `homebrew`.
 
 For a guide on setting up home brew please find details on the following link https://brew.sh/
 
+### Install Postgresql
+
 Once homebrew has been set up you can run the following command to install `postgressql`
 
 ```bash
 brew install postgresql
 ```
+
+### Install node / npm and packages
+
+Run the following command to install both node and npm: 
+
+```bash
+brew install node
+
+node -v && npm -v
+v25.9.0 # <== current node version
+11.12.1 # <== current npm version
+```
+
+Run the following command to install node packages
+
+```bash
+npm install
+```
+
 
 ## Standard command tooling
 
