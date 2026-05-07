@@ -45,7 +45,7 @@ function _tests_unit() {
 
 function _tests_jest() {
     npm run test # see package.json (scripts section)
-    echo "Html report: file://${PWD}/coverage/index.html" # link to jest coverage report
+    echo "Html report 👉 file://${PWD}/coverage/index.html" # link to jest coverage report
 }
 
 function _tests_jest_ci() {
