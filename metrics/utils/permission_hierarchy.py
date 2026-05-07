@@ -10,7 +10,7 @@ from typing import Any
 
 from django.db.models import QuerySet
 
-from auth_content.models.permission_sets import PermissionSet
+from cms.auth_content.models.permission_sets import PermissionSet
 from metrics.data.models.core_models.supporting import (
     Geography,
     GeographyType,

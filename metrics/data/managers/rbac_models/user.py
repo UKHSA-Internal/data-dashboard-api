@@ -9,7 +9,8 @@ from uuid import UUID
 
 from django.db import models
 
-from auth_content.models.permission_sets import PermissionSet
+from cms.auth_content.models.permission_sets import PermissionSet
+
 
 
 class UserQuerySet(models.QuerySet):

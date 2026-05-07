@@ -1,7 +1,7 @@
 import factory
 
-from auth_content.models.permission_sets import PermissionSet
-from auth_content.models.users import User
+from cms.auth_content.models.permission_sets import PermissionSet
+from cms.auth_content.models.users import User
 
 
 class UserFactory(factory.django.DjangoModelFactory):

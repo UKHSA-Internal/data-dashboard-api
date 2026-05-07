@@ -810,7 +810,7 @@ class TestGetDeduplicatedPermissions:
         Then returns empty hierarchy with zero counts
         """
         # Given
-        from auth_content.models.permission_sets import PermissionSet
+        from cms.auth_content.models.permission_sets import PermissionSet
 
         # When
         result = build_permission_hierarchy(PermissionSet.objects.none())
