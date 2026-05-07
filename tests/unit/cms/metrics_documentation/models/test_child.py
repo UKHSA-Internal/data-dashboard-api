@@ -32,10 +32,10 @@ class TestMetricsDocumentationChildEntry:
             "page_classification",
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     def test_has_correct_api_fields(
         self,
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         expected_api_field: str,
     ):
         """
@@ -63,10 +63,10 @@ class TestMetricsDocumentationChildEntry:
             "body",
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     def test_has_the_correct_content_panels(
         self,
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         expected_content_panel_name: str,
     ):
         """
@@ -91,10 +91,10 @@ class TestMetricsDocumentationChildEntry:
 
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     @mock.patch.object(child.MetricsDocumentationChildEntry, "find_topic")
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     def test_get_topic_delegates_calls_correctly(
         self,
-        mock_get_all_unique_metric_names: mock.MagicMock,
+        mock_get_all_metric_names_and_ids: mock.MagicMock,
         spy_find_topic: mock.MagicMock,
         spy_get_a_list_of_all_topic_names: mock.MagicMock,
     ):
@@ -122,7 +122,7 @@ class TestMetricsDocumentationChildEntry:
         spy_find_topic.assert_called_once()
 
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @pytest.mark.parametrize(
         "metric_name, metric_group",
         [
@@ -134,7 +134,7 @@ class TestMetricsDocumentationChildEntry:
     )
     def test_metric_group_returns_expected_string(
         self,
-        mock_get_all_unique_metric_names: mock.MagicMock,
+        get_all_metric_names_and_ids: mock.MagicMock,
         mock_get_all_topic_names: mock.MagicMock,
         metric_name: str,
         metric_group: str,
@@ -155,7 +155,7 @@ class TestMetricsDocumentationChildEntry:
         # Then
         assert fake_metrics_documentation_child_entry_page.metric_group == metric_group
 
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     @pytest.mark.parametrize(
         "selected_metric, extracted_topic",
@@ -172,7 +172,7 @@ class TestMetricsDocumentationChildEntry:
     def test_find_topic_returns_expected_topic_name(
         self,
         spy_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         selected_metric: str,
         extracted_topic: str,
     ):
@@ -206,12 +206,12 @@ class TestMetricsDocumentationChildEntry:
         # Then
         assert return_topic == extracted_topic
 
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_find_topic_raises_error(
         self,
         mock_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
     ):
         """
         Given a metric name that does not include a valid topic.
@@ -246,12 +246,12 @@ class TestMetricsDocumentationChildEntry:
         "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_public_error_raised_if_invalid_classification(
         self,
         mock_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,
     ):
@@ -280,12 +280,12 @@ class TestMetricsDocumentationChildEntry:
         "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_public_page_clears_page_classification(
         self,
         mock_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,
     ):
@@ -316,12 +316,12 @@ class TestMetricsDocumentationChildEntry:
         "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
         return_value=None,
     )
-    @mock.patch(f"{MODULE_PATH}.get_all_unique_metric_names")
+    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_non_public_page_doesnt_clean_page_classification(
         self,
         mock_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_unique_metric_names: mock.MagicMock(),
+        mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,
     ):
@@ -337,6 +337,9 @@ class TestMetricsDocumentationChildEntry:
 
         fake_metrics_documentation_child_entry_page.is_public = False
         fake_metrics_documentation_child_entry_page.page_classification = "official"
+        fake_metrics_documentation_child_entry_page.theme = "infectious_disease"
+        fake_metrics_documentation_child_entry_page.sub_theme = "respiratory"
+        fake_metrics_documentation_child_entry_page.topic = "COVID-19"
 
         # When
         fake_metrics_documentation_child_entry_page.clean()

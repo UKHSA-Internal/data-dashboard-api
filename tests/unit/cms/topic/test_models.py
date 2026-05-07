@@ -772,6 +772,9 @@ class TestCleanMethod:
 
         fake_covid_topic_page.is_public = False
         fake_covid_topic_page.page_classification = "official"
+        fake_covid_topic_page.theme = "infectious_disease"
+        fake_covid_topic_page.sub_theme = "respiratory"
+        fake_covid_topic_page.topic = "COVID-19"
 
         # When
         fake_covid_topic_page.clean()
