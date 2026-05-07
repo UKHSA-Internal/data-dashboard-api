@@ -1,7 +1,9 @@
 /** @type {import('jest').Config} */
 export default {
   testEnvironment: 'jsdom',
-  transform: {},
+  transform: {
+    '^.+\\.js$': 'babel-jest',
+  },
 
   // 1. Where Jest looks for tests
   roots: [

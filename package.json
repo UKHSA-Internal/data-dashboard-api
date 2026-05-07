@@ -8,8 +8,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test:ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --ci --coverage",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "jest --coverage",
+    "test:ci": "jest --ci --coverage"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,10 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
     "@testing-library/jest-dom": "^6.9.1",
+    "babel-jest": "^30.3.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "jest-junit": "^17.0.0"
