@@ -12,7 +12,7 @@ from metrics.utils.permission_hierarchy import (
 
 
 def _validate_user_id(value):
-    """Validate theme_id is either wildcard or a valid integer"""
+    """Validate user_id is valid uuid"""
     try:
         uuid.UUID(value, version=4)  # noqa: F841
     except ValueError as err:
