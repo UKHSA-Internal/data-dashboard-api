@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test:ci": "jest --ci --coverage",
+    "test:ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --ci --coverage",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
   },
   "repository": {

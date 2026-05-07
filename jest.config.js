@@ -48,7 +48,7 @@ export default {
   coverageDirectory: '<rootDir>/coverage',
 
   // 7. Coverage formats
-  coverageReporters: ['json-summary', 'text'],
+  coverageReporters: ['json-summary', 'text', 'html'],
 
   // 8. Optional but useful
   modulePathIgnorePatterns: [
@@ -63,5 +63,8 @@ export default {
       functions: 100,
       lines: 100,
     },
-  }
+  },
+
+  // 10. Reporters
+  reporters: ['default', 'jest-junit'],
 };
