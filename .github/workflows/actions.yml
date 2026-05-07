@@ -132,6 +132,7 @@ jobs:
           source uhd.sh
           uhd tests unit
       - name: Run jest tests
+        run: |
           source uhd.sh
           uhd tests jest-ci
       - name: Unit tests coverage comment
@@ -142,13 +143,6 @@ jobs:
           coverage-summary-path: ./coverage/coverage-summary.json
           junitxml-path: ./junit.xml
           title: Unit tests coverage
-
-
-
-
-
-
-
 
   ###############################################################################
   # Integration tests
