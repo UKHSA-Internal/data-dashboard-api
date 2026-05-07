@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-const { setToWildcard } = require("./permission_set.js");
+const { setToWildcard, WILDCARD_ID_VALUE } = require("./permission_set.js");
 
 describe("setToWildcard", () => {
   test("sets dropdown to wildcard state correctly", () => {
@@ -23,8 +23,8 @@ describe("setToWildcard", () => {
     expect(select.children.length).toBe(1);
 
     const option = select.children[0];
-    expect(option.value).toBe("-1");
+    expect(option.value).toBe(WILDCARD_ID_VALUE);
     expect(option.textContent).toBe("* All Items");
-    expect(select.value).toBe("-1");
+    expect(select.value).toBe(WILDCARD_ID_VALUE);
   });
 });

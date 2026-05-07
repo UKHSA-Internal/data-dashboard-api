@@ -47,7 +47,7 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage',
 
   // 7. Coverage formats
-  coverageReporters: ['text', 'html', 'lcov'],
+  coverageReporters: ['json-summary', 'text'],
 
   // 8. Optional but useful
   modulePathIgnorePatterns: [
@@ -63,5 +63,10 @@ module.exports = {
       lines: 2,
     },
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
+
+  // 10. After jest environment has been loaded, run custom setup
+  setupFilesAfterEnv: ['./jest.setup.js'],
+
+  // 11. Reporters
+  reporters: ['default', 'jest-junit'],
 };
