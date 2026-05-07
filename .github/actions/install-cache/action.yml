@@ -24,6 +24,5 @@ runs:
         uhd venv create
       shell: bash
     - name: npm install CI
-      run: |
-      # NOSONAR
-        npm ci
+      run: 
+        npm ci --ignore-scripts
