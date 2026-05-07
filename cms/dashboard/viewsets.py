@@ -153,9 +153,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
         """This end point returns a page from the CMS based on a Page `ID`."""
-        if request.auth is None:
-            print()
-            # check the is public flag & only return public pages
         return super().detail_view(request=request, pk=pk)
 
 
