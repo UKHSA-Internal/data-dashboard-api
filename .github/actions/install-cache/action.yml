@@ -26,3 +26,4 @@ runs:
     - name: npm install CI
       run: 
         npm ci --ignore-scripts
+      shell: bash
