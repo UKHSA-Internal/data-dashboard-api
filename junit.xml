@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.351">
-  <testsuite name="setToWildcard" errors="0" failures="0" skipped="0" timestamp="2026-05-07T10:12:40" time="0.129" tests="1">
-    <testcase classname="setToWildcard sets dropdown to wildcard state correctly" name="setToWildcard sets dropdown to wildcard state correctly" time="0.006">
-    </testcase>
-  </testsuite>
-</testsuites>
