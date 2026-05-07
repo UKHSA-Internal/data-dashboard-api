@@ -131,6 +131,9 @@ jobs:
         run: |
           source uhd.sh
           uhd tests unit
+      - name: Run jest tests
+          source uhd.sh
+          uhd tests jest-ci
       - name: Unit tests coverage comment
         uses: ukhsa-internal/jest-coverage-comment-action@v1
         with:
