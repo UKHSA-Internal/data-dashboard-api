@@ -1,8 +1,9 @@
+import { setToWildcard, WILDCARD_ID_VALUE } from "./permission_set.js";
+
 /**
  * @jest-environment jsdom
  */
 
-const { setToWildcard, WILDCARD_ID_VALUE } = require("./permission_set.js");
 
 describe("setToWildcard", () => {
   test("sets dropdown to wildcard state correctly", () => {

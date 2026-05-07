@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
-module.exports = {
+export default {
   testEnvironment: 'jsdom',
+  transform: {},
 
   // 1. Where Jest looks for tests
   roots: [
@@ -62,11 +63,5 @@ module.exports = {
       functions: 100,
       lines: 100,
     },
-  },
-
-  // 10. After jest environment has been loaded, run custom setup
-  setupFilesAfterEnv: ['./jest.setup.js'],
-
-  // 11. Reporters
-  reporters: ['default', 'jest-junit'],
+  }
 };
