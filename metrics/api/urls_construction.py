@@ -48,6 +48,10 @@ from metrics.api.views.permission_sets import (
     SubThemesByThemeView,
     TopicsBySubThemeView,
 )
+from metrics.api.views.user import (
+    UserPermissionHierarchyByUserIdView,
+    UserPermissionSetsByUserIdView,
+)
 from public_api import construct_url_patterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -154,6 +158,16 @@ permission_set_urlpatterns = [
         f"{API_PREFIX}data-hierarchy/geographies/<str:geography_type_id>",
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
+    ),
+    path(
+        f"{API_PREFIX}user/<str:user_id>/permissions",
+        UserPermissionSetsByUserIdView.as_view(),
+        name="get_user_permissions",
+    ),
+    path(
+        f"{API_PREFIX}user/<str:user_id>/permissions/hierarchy",
+        UserPermissionHierarchyByUserIdView.as_view(),
+        name="get_user_permission_hierarchy",
     ),
 ]
 
@@ -300,14 +314,12 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += audit_api_urlpatterns
-            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case enums.AppMode.INGESTION.value:

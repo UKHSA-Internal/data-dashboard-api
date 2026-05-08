@@ -11,6 +11,24 @@ from django.db import models
 class ThemeQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `ThemeManger`"""
 
+    def get_name_by_id(self, theme_id: int) -> str | None:
+        """
+        Gets the theme name which matches the given theme id.
+
+        Args:
+            theme_id: The ID of the theme to look up
+
+        Returns:
+            The theme name if found, None otherwise
+
+        Examples:
+            >>> ThemeQuerySet.get_name_by_id(1)
+            'infectious_disease'
+            >>> ThemeQuerySet.get_name_by_id(999)
+            None
+        """
+        return self.filter(id=theme_id).values_list("name", flat=True).first()
+
     def get_all_names(self) -> models.QuerySet:
         """Gets all available theme names as a flat list queryset.
 
@@ -37,6 +55,23 @@ class ThemeManager(models.Manager):
 
     def get_queryset(self) -> ThemeQuerySet:
         return ThemeQuerySet(model=self.model, using=self.db)
+
+    def get_name_by_id(self, theme_id: int) -> str | None:
+        """Gets the theme name which matches the given theme id.
+
+        Args:
+            theme_id: The ID of the theme to look up
+
+        Returns:
+            The theme name if found, None otherwise
+
+        Examples:
+            >>> ThemeManager.get_name_by_id(1)
+            'infectious_disease'
+            >>> ThemeManager.get_name_by_id(999)
+            None
+        """
+        return self.get_queryset().get_name_by_id(theme_id)
 
     def get_all_names(self) -> ThemeQuerySet:
         """Gets all available topic names as a flat list queryset.
