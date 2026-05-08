@@ -43,7 +43,7 @@ class TestGeographyManager:
         Then it delegates call to `GeographyQuerySet`.
         """
         # Given
-        fake_geography_type_id = 1
+        fake_geography_type_id = "1"
         geography_manager = GeographyManager()
 
         # When
@@ -56,3 +56,23 @@ class TestGeographyManager:
         spy_get_geography_codes_and_names_by_geography_type_id.assert_called_with(
             geography_type_id=fake_geography_type_id,
         )
+
+    @mock.patch.object(GeographyQuerySet, "get_name_by_code")
+    def test_get_name_by_code(self, spy_get_name_by_code: mock.MagicMock):
+        """
+        Given a payload containing the required field
+        When `get_name_by_id` is called,
+        Then it delegates call to `GeographyQuerySet`.
+        """
+        # Given
+        fake_geography_code = "E92000001"
+        geography_manager = GeographyManager()
+
+        # When
+        GeographyManager.get_name_by_code(
+            geography_manager,
+            geography_code=fake_geography_code,
+        )
+
+        # Then
+        spy_get_name_by_code.assert_called_with(fake_geography_code)
