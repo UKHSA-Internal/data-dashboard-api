@@ -12,7 +12,7 @@ from metrics.data.models.core_models import Metric, Topic
 
 
 @pytest.mark.django_db
-class TestGetQuerySet:
+class TestCMSPagesAPIViewSetPermissions:
     
     @pytest.fixture
     def setup_pages(self):
