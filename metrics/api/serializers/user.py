@@ -3,7 +3,7 @@ import uuid
 from django.db.models import QuerySet
 from rest_framework import serializers
 
-from auth_content.models.users import User
+from cms.auth_content.models.users import User
 from metrics.utils.permission_grouping import group_by_geography_type, group_by_theme
 from metrics.utils.permission_hierarchy import (
     build_permission_hierarchy,
