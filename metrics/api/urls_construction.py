@@ -314,6 +314,7 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += audit_api_urlpatterns
+            constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
