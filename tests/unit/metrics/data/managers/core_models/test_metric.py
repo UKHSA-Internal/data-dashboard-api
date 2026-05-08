@@ -7,7 +7,7 @@ from metrics.data.managers.core_models.metric import (
 )
 
 
-class TestThemeManager(unittest.TestCase):
+class TestMetricManager(unittest.TestCase):
     @mock.patch.object(MetricQuerySet, "get_all_names_and_ids")
     def test_get_all_theme_names_and_ids(
         self, spy_get_all_names_and_ids: mock.MagicMock

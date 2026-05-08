@@ -89,3 +89,30 @@ class TestMetricManager:
         assert timeseries_metric_name in all_metric_names_and_ids.values_list(
             "name", flat=True
         )
+
+    @pytest.mark.django_db
+    def test_get_name_by_id(self):
+        """
+        Given a number of existing `Metric` records
+        When `get_name_by_id()` is called
+            from the `MetricManager`
+        Then the metrics returned have been filtered correctly
+        """
+        # Given
+        timeseries_metric_name = "COVID-19_deaths_ONSByWeek"
+        timeseries_metric_group = MetricGroup.objects.create(name="deaths")
+        Metric.objects.create(
+            name=timeseries_metric_name,
+            metric_group=timeseries_metric_group,
+        )
+        headline_metric_group = MetricGroup.objects.create(name="headline")
+        Metric.objects.create(
+            name="COVID-19_headline_ONSdeaths_7DayChange",
+            metric_group=headline_metric_group,
+        )
+
+        # When
+        get_name_by_id = Metric.objects.get_name_by_id(2)
+
+        # Then
+        assert get_name_by_id == "COVID-19_headline_ONSdeaths_7DayChange"

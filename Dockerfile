@@ -6,63 +6,78 @@
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
 ARG PYTHON_VERSION=3.12.13
 
-FROM python:${PYTHON_VERSION}-slim AS build
+# this debian version needs to match the version of the distroless image we are using below
+FROM python:${PYTHON_VERSION}-slim-bookworm AS build
 
-# Ensure the virtual environment will be available on the `PATH` variable
-ENV PATH=/venv/bin:$PATH
-
-# Copy the production-only dependencies into place
-COPY requirements-prod.txt requirements-prod.txt
-COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
-
-# Main build process
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev gcc libnss3-dev libexpat1-dev\
-    # Install toolchain needed for C libraries like `psycopg2`
-    && python3 -m venv /venv \
-    # Create the python virtual environment
-    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
-    # Remove dangling files from installation of libraries
-    && pip install --upgrade pip \
-    # Upgrade the pip installer to the latest version
-    && pip install --no-cache-dir -r requirements-prod.txt
-    # Install project dependencies onto the virtual environment
-
-# Mounts the application code into the image
-COPY . code
-
-###############################################################################
-# Production stage
-###############################################################################
-FROM python:${PYTHON_VERSION}-slim AS production
-
-# Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
 
-# Copy the virtual environment & application code from the `build` stage
-COPY --from=build /venv /venv
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install required system packages
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends \
+        bash zsh coreutils libcap2 libtinfo6 gcc libpq-dev python3-dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Copy the production-only dependencies into place.
+COPY requirements-prod.txt /code/requirements-prod.txt
+COPY requirements-prod-ingestion.txt /code/requirements-prod-ingestion.txt
+
+# Install Python production dependencies into /code/.venv. This layer depends only
+# on the base image, system packages and requirements files.
+RUN python3 -m venv /code/.venv \
+    && /code/.venv/bin/pip install --upgrade pip \
+    && /code/.venv/bin/pip install --no-cache-dir -r /code/requirements-prod.txt
+
+# Collect shared-library deps for the distroless runtime.
+COPY docker/collect_shared_libs.sh /usr/local/bin/collect_shared_libs.sh
+RUN bash /usr/local/bin/collect_shared_libs.sh
+
+# Remove build-time-only packages now that dependencies are installed and
+# shared libraries have been collected.
+RUN apt-get purge -y --auto-remove gcc libpq-dev python3-dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Application source code.
+COPY . /code
+
+###############################################################################
+# Production stage (distroless, root)
+# NOTE:
+#   The distroless base image is pinned to a specific digest for reproducible
+#   builds. When updating, refresh the digest via `docker pull` + `docker inspect`.
+###############################################################################
+FROM gcr.io/distroless/cc-debian12@sha256:329e54034ce498f9c6b345044e8f530c6691f99e94a92446f68c0adf9baa8464 AS production
+
+WORKDIR /code
+
+# Copy dependencies and app code from the `build` stage.
+COPY --from=build /usr/local/lib/ /usr/local/lib/
+COPY --from=build /usr/local/bin/ /usr/local/bin/
+COPY --from=build /deps/ /
+
+# zsh, bash and minimal coreutils required by our entrypoint tooling
+# bash is needed for kaleido's wrapper script
+COPY --from=build /usr/bin/zsh /usr/bin/zsh
+COPY --from=build /bin/bash /bin/bash
+COPY --from=build /usr/bin/dirname /usr/bin/dirname
+COPY --from=build /usr/bin/uname /usr/bin/uname
+
+# Application code
 COPY --from=build /code /code
 
-# Ensure the virtual environment is made available on the system `PATH`
-ENV PATH=/venv/bin:$PATH
+ENV PYTHONFAULTHANDLER=1
+ENV PATH=/usr/local/bin:/usr/bin:/bin
+ENV HOME=/tmp
+ENV XDG_CACHE_HOME=/tmp
+ENV GUNICORN_CMD_ARGS="--pid /tmp/gunicorn.pid --worker-tmp-dir /tmp --access-logfile - --error-logfile -"
 
-# Listen on the specified port at runtime
-# Note that this does not actually publish the port.
-# This also assumes TCP.
 EXPOSE 8000
 
-# Reinstall system libraries required for PostgreSQL drivers
-RUN apt-get update \
-    # Update the database of available packages
-    && apt-get -y install libpq-dev libnss3-dev libexpat1-dev\
-    # Reinstall the C library needed for `psycopg2`
-    && chmod +x entrypoint.sh
-    # Add execution permission for the entrypoint shell script
-
 # Opens a shell on the entrypoint.
-# This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
-ENTRYPOINT ["/bin/bash"]
+# This allows the `./docker/entrypoint.sh` shell script or any other tooling to be ran from the container
+ENTRYPOINT ["/usr/bin/zsh"]
 
 # Runs the production server by default
-CMD ["./entrypoint.sh"]
+CMD ["./docker/entrypoint.sh"]

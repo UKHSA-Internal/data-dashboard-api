@@ -26,3 +26,25 @@ class TestThemeManager:
 
         # Then
         assert get_all_names_and_ids.count() == 3
+
+    @pytest.mark.django_db
+    def test_query_get_name_by_id(self):
+        """
+        Given a number of existing `Topic` records
+        When `get_all_names_and_ids` is called
+        Then a unique set of `Topic` records is returned.
+        """
+        # Given
+        fake_theme_name_one = "respiratory"
+        fake_theme_name_two = "infectious_disease"
+        fake_theme_name_three = "immunisation"
+
+        ThemeFactory(name=fake_theme_name_one)
+        ThemeFactory(name=fake_theme_name_two)
+        ThemeFactory(name=fake_theme_name_three)
+
+        # When
+        get_name_by_id = Theme.objects.get_name_by_id(2)
+
+        # Then
+        assert get_name_by_id == fake_theme_name_two

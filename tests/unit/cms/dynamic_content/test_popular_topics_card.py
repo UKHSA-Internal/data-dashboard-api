@@ -3,6 +3,7 @@ import pytest
 from cms.dynamic_content.blocks import (
     POPULAR_TOPICS_BOTTOM_RIGHT_COLUMN_COUNT,
     POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT,
+    PageLinkChooserBlock,
     PopularTopicsMetricNumberBlockTypes,
     PopularTopicsRightColumnBottomRowBlockTypes,
 )
@@ -65,12 +66,16 @@ class TestPopularTopicsSecondColumnBottomRowBlockTypes:
         """
         # Given
         bottom_row_block_types = PopularTopicsRightColumnBottomRowBlockTypes()
-
         # When
         selected_field = bottom_row_block_types.child_blocks.get("headline_metric_card")
 
         # Then
         assert isinstance(selected_field, PopularTopicsMetricNumberBlockTypes)
+        assert isinstance(
+            selected_field.child_blocks.get("topic_page"), PageLinkChooserBlock
+        )
+        assert selected_field.child_blocks.get("topic_page") is not None
+
         assert selected_field.meta.min_num == POPULAR_TOPICS_BOTTOM_RIGHT_COLUMN_COUNT
         assert selected_field.meta.max_num == POPULAR_TOPICS_BOTTOM_RIGHT_COLUMN_COUNT
 
