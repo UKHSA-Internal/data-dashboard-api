@@ -107,7 +107,7 @@ class TestValidateIsPublicStatus:
                 filename=self.PUBLIC_FILENAME,
             )
 
-        mock_logger.info.assert_called_once_with(
+        mock_logger.warning.assert_called_once_with(
             "Missing is_public field in %s", self.PUBLIC_FILENAME
         )
 

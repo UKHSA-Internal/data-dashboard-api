@@ -94,7 +94,7 @@ def _is_is_public_consistent_in_data_fields(
     for field in fields:
         if "is_public" not in field:
             if ALLOW_MISSING_IS_PUBLIC_FIELD:
-                logger.info("Missing is_public field in %s", filename)
+                logger.warning("Missing is_public field in %s", filename)
                 continue
 
             # Only ALLOW_MISSING_IS_PUBLIC_FIELD=false will reach this error
