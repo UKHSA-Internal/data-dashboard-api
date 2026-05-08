@@ -13,23 +13,25 @@ from cms.topic.models import TopicPage
 from django.db.models import Q, Exists, OuterRef
 
 
-# TODO: Changed to use dict - not sure if this will also be required when my auth issues are resolved
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
+    if not isinstance(user_permissions, list):
+        return False
+    
     for permission in user_permissions:
-        if permission["theme"]["id"] == "-1":
+        permission_theme_id = permission.get("theme", {}).get("id")
+        permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
+        permission_topic_id = permission.get("topic", {}).get("id")
+
+        if permission_theme_id == "-1":
             return True
-        if (
-            permission["theme"]["id"] == theme_id
-            and permission["sub_theme"]["id"] == "-1"
-        ):
+        
+        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
             return True
+        
         if (
-            permission["theme"]["id"] == theme_id
-            and (permission["sub_theme"]["id"] == sub_theme_id)
-            and (
-                permission["topic"]["id"] == "-1"
-                or permission["topic"]["id"] == topic_id
-            )
+            permission_theme_id == theme_id 
+            and permission_sub_theme_id == sub_theme_id
+            and (permission_topic_id == "-1" or permission_topic_id == topic_id)
         ):
             return True
 
@@ -69,7 +71,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 `<PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
 
         """
-
         queryset = super().get_queryset()
 
         req = self.request
@@ -100,13 +101,11 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             )
 
         else:
-            user_permissions = req.user.permission_sets["permission_set_hierarchy"]
-            print(f"USER PERMISSIONS: {user_permissions}")
-
             if req.user.permission_sets["has_global_access"]:
                 filtered_queryset = queryset
 
             else:
+                user_permissions = req.user.permission_sets["permission_set_hierarchy"]
                 allowed_pages = []
                 for page in queryset.type(TopicPage):
                     if page.topicpage.is_public:

@@ -17,25 +17,29 @@ class TestMetricsDocumentationChildEntry:
         """
         # Given
         metric_name = "influenza_headline_positivityLatest"
-        Metric.objects.create(name=metric_name)
+        created_metric = Metric.objects.create(name=metric_name)
         Topic.objects.create(name=metric_name.split("_")[0].title())
 
-        _create_metrics_documentation_child_entry(metric_name=metric_name, path="doc_1")
+        _create_metrics_documentation_child_entry(metric_name=metric_name, metric_id=created_metric.pk, path="doc_1")
 
         # When / Then
         with pytest.raises(ValidationError):
             _create_metrics_documentation_child_entry(
-                metric_name=metric_name, path="doc_2"
+                metric_name=metric_name, metric_id=created_metric.pk, path="doc_2"
             )
 
 
 def _create_metrics_documentation_child_entry(
     metric_name: str,
+    metric_id: int,
     path: str,
 ) -> MetricsDocumentationChildEntry:
     MetricsDocumentationChildEntry.objects.create(
-        metric=metric_name,
+        metric=metric_id,
         title=metric_name,
+        theme="test",
+        sub_theme="test",
+        topic=1,
         path=path,
         depth=1,
         slug=metric_name,

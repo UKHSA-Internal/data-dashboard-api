@@ -19,7 +19,6 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
 from cms.metrics_interface.field_choices_callables import (
-    get_a_list_of_all_topic_names,
     get_all_metric_names_and_ids,
 )
 
@@ -81,7 +80,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         null=True,
         blank=True,
     )
-    
+
     theme = models.CharField(max_length=255, blank=True, default="", null=True,)
     sub_theme = models.CharField(max_length=255, blank=True, default="", null=True,)
     topic = models.CharField(
@@ -152,41 +151,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         super().__init__(*args, **kwargs)
         self._meta.get_field("metric").choices = get_all_metric_names_and_ids()
 
-    def find_topic(self, *, topics: list[str]) -> str:
-        """Finds the required topic from a list of strings based on the metric name.
-
-        Args:
-            topics: list of strings representing topic names.
-
-        Returns:
-            A string of the topic checked against the models metric value.
-
-        Raises:
-            `InvalidTopicForChosenMetricForChildEntry`: If the
-                selected metric cannot be matched to a `Topic`
-
-        """
-        extracted_topic = self.metric.split("_")[0].lower()
-        try:
-            return next(topic for topic in topics if extracted_topic == topic.lower())
-        except StopIteration as error:
-            logger.info(
-                "StopIteration Error: extracted topic not present in the topics list. %s",
-                extracted_topic,
-            )
-            raise InvalidTopicForChosenMetricForChildEntryError(
-                topic=extracted_topic, metric=self.metric
-            ) from error
-
-    def get_topic(self) -> str:
-        """Finds the required topic name based on the selected metric name.
-
-        Returns:
-            a topic name as a string
-        """
-        topics = get_a_list_of_all_topic_names()
-        return self.find_topic(topics=topics)
-
     def save(self, *args, **kwargs):
         """Retrieves a topic based on the selected metric
 
@@ -197,7 +161,16 @@ class MetricsDocumentationChildEntry(UKHSAPage):
 
     @property
     def metric_group(self) -> str:
-        return self.metric.split("_")[1]
+        field = self._meta.get_field("metric")
+        choices = getattr(field, "choices", []) or []
+
+        display_name = next((item[1] for item in choices if item[0] == self.metric), None)
+
+        if not display_name or "_" not in display_name:
+            return ""
+
+        parts = display_name.split("_")
+        return parts[1] if len(parts) > 1 else ""
 
     def clean(self):
         super().clean()

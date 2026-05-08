@@ -5,10 +5,6 @@ import pytest
 from wagtail.admin.panels import FieldPanel
 from wagtail.api.conf import APIField
 
-from cms.metrics_documentation.models import child
-from cms.metrics_documentation.models.child import (
-    InvalidTopicForChosenMetricForChildEntryError,
-)
 from tests.fakes.factories.cms.metrics_documentation_child_entry_factory import (
     FakeMetricsDocumentationChildEntryFactory,
 )
@@ -89,154 +85,90 @@ class TestMetricsDocumentationChildEntry:
             fake_metrics_documentation_child_entry_page, expected_content_panel_name
         )
 
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
-    @mock.patch.object(child.MetricsDocumentationChildEntry, "find_topic")
-    @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    def test_get_topic_delegates_calls_correctly(
-        self,
-        mock_get_all_metric_names_and_ids: mock.MagicMock,
-        spy_find_topic: mock.MagicMock,
-        spy_get_a_list_of_all_topic_names: mock.MagicMock,
-    ):
-        """
-        Given a blank `MetricsDocumentationChildEntryPage` model.
-        When `get_topic()` is called.
-        Then the `get_a_list_of_all_topic_names()` method and `find_topic()`
-            methods are called.
-        """
-        # Given
-        fake_topics = ["COVID-19", "Influenza"]
-        fake_metrics_documentation_child_entry_page = (
-            FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
-        )
-        fake_metrics_documentation_child_entry_page.metric = (
-            "COVID-19_cases_rateRollingMean"
-        )
-
-        # When
-        spy_get_a_list_of_all_topic_names.return_value = fake_topics
-        fake_metrics_documentation_child_entry_page.get_topic()
-
-        # Then
-        spy_get_a_list_of_all_topic_names.assert_called_once()
-        spy_find_topic.assert_called_once()
-
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @pytest.mark.parametrize(
-        "metric_name, metric_group",
+        "metric_id, metric_group",
         [
-            ("COVID-19_cases_rateRollingMean", "cases"),
-            ("COVID-19_headline_vaccines_autumn23Total", "headline"),
-            ("COVID-19_vaccinations_autumn22_uptakeByDay", "vaccinations"),
-            ("COVID-19_deaths_ONSByWeek", "deaths"),
+            (1, "cases"),
+            (2, "headline"),
+            (3, "vaccinations"),
+            (4, "deaths"),
         ],
     )
     def test_metric_group_returns_expected_string(
         self,
         get_all_metric_names_and_ids: mock.MagicMock,
-        mock_get_all_topic_names: mock.MagicMock,
-        metric_name: str,
+        metric_id: int,
         metric_group: str,
     ):
         """
         Given a blank `MetricsDocumentationChildEntryPage` model.
-        When a metric name is supplied to the `metric` property.
+        When a metric id is supplied to the `metric` property.
         Then the metric_group will be correctly extracted from the string.
         """
         # Given
+        get_all_metric_names_and_ids.return_value = [
+            (1, "COVID-19_cases_rateRollingMean"),
+            (2, "COVID-19_headline_vaccines_autumn23Total"),
+            (3, "COVID-19_vaccinations_autumn22_uptakeByDay"),
+            (4, "COVID-19_deaths_ONSByWeek"),
+        ]
         fake_metrics_documentation_child_entry_page = (
             FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
         )
 
         # When
-        fake_metrics_documentation_child_entry_page.metric = metric_name
+        fake_metrics_documentation_child_entry_page.metric = metric_id
 
         # Then
         assert fake_metrics_documentation_child_entry_page.metric_group == metric_group
 
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     @pytest.mark.parametrize(
-        "selected_metric, extracted_topic",
-        [
-            ("COVID-19_cases_rateRollingMean", "COVID-19"),
-            ("influenza_headline_ICUHDUadmissionRatePercentChange", "Influenza"),
-            ("hMPV_testing_positivityByWeek", "hMPV"),
-            ("parainfluenza_headline_positivityLatest", "Parainfluenza"),
-            ("rhinovirus_headline_positivityLatest", "Rhinovirus"),
-            ("RSV_headline_admissionRateLatest", "RSV"),
-            ("adenovirus_headline_positivityLatest", "Adenovirus"),
-        ],
+        "metric_id",
+        [1,2,3,4,5],
     )
-    def test_find_topic_returns_expected_topic_name(
-        self,
-        spy_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_metric_names_and_ids: mock.MagicMock(),
-        selected_metric: str,
-        extracted_topic: str,
-    ):
+    def test_metric_group_returns_emptry_string_with_missing_values(self, get_all_metric_names_and_ids: mock.MagicMock, metric_id: int):
         """
-        Given a blank `MetricsDocumentationChildEntryPage` model
-            a list of topics and a metric name.
-        When the `find_topic()` method is called.
-        Then the expected topic name will be matched from the list
-            using the metric name.
+        Given a blank `MetricsDocumentationChildEntryPage` model.
+        When a metric id is supplied to the `metric` property with invalid choices returned.
+        Then the metric_group will return an empty string.
         """
         # Given
+        get_all_metric_names_and_ids.return_value = [
+            (1, "COVID-19casesrateRollingMean"),
+            (2, "COVID-19_"),
+            (3, ""),
+            (4, None),
+        ]
         fake_metrics_documentation_child_entry_page = (
             FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
         )
-        fake_topics = [
-            "COVID-19",
-            "Influenza",
-            "RSV",
-            "hMPV",
-            "Parainfluenza",
-            "Rhinovirus",
-            "Adenovirus",
-        ]
-        fake_metrics_documentation_child_entry_page.metric = selected_metric
 
         # When
-        return_topic = fake_metrics_documentation_child_entry_page.find_topic(
-            topics=fake_topics
-        )
-
+        fake_metrics_documentation_child_entry_page.metric = metric_id
+        
         # Then
-        assert return_topic == extracted_topic
+        assert fake_metrics_documentation_child_entry_page.metric_group == ""
 
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
-    def test_find_topic_raises_error(
-        self,
-        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
-        mock_get_all_metric_names_and_ids: mock.MagicMock(),
-    ):
+    def test_metric_group_returns_emptry_string_with_empty_metrics(self, get_all_metric_names_and_ids: mock.MagicMock):
         """
-        Given a metric name that does not include a valid topic.
-        When the `find_topic()` method is called with a list of topics.
-        Then an `InvalidTopicForChosenMetricForChildEntryError` is raised.
+        Given a blank `MetricsDocumentationChildEntryPage` model.
+        When a metric id is supplied to the `metric` property with no choices returned.
+        Then the metric_group will return an empty string.
         """
         # Given
-        fake_invalid_metric = "invalid_metric_contains_no_topic"
-        fake_topics = [
-            "COVID-19",
-            "Influenza",
-            "RSV",
-            "hMPV",
-            "Parainfluenza",
-            "Rhinovirus",
-            "Adenovirus",
-        ]
+        get_all_metric_names_and_ids.return_value = []
         fake_metrics_documentation_child_entry_page = (
             FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
         )
-        fake_metrics_documentation_child_entry_page.metric = fake_invalid_metric
 
-        # When / Then
-        with pytest.raises(InvalidTopicForChosenMetricForChildEntryError):
-            fake_metrics_documentation_child_entry_page.find_topic(topics=fake_topics)
+        # When
+        fake_metrics_documentation_child_entry_page.metric = 1
+        
+        # Then
+        assert fake_metrics_documentation_child_entry_page.metric_group == ""
 
     @mock.patch(
         "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
@@ -247,10 +179,8 @@ class TestMetricsDocumentationChildEntry:
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_public_error_raised_if_invalid_classification(
         self,
-        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
         mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,
@@ -281,10 +211,8 @@ class TestMetricsDocumentationChildEntry:
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_public_page_clears_page_classification(
         self,
-        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
         mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,
@@ -317,10 +245,8 @@ class TestMetricsDocumentationChildEntry:
         return_value=None,
     )
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_non_public_page_doesnt_clean_page_classification(
         self,
-        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
         mock_get_all_metric_names_and_ids: mock.MagicMock(),
         mock_slug_raise_error,
         mock_seo_title_raise_error,

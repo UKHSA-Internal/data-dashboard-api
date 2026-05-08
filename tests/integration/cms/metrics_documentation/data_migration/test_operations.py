@@ -36,9 +36,12 @@ class TestRemoveMetricsDocumentationChildEntries:
             path="abc",
             depth=1,
             title="Test",
+            theme="test",
+            sub_theme="test",
             slug="test",
             page_description="xyz",
-            metric=metric.name,
+            metric=metric.pk,
+            topic=metric.topic,
             seo_title="Test",
         )
         assert MetricsDocumentationChildEntry.objects.exists()
@@ -127,7 +130,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         # Then
         healthcare_admission_rate_child_entry = (
             MetricsDocumentationChildEntry.objects.get(
-                metric=healthcare_admission_metric.name
+                metric=healthcare_admission_metric.pk
             )
         )
 
