@@ -21,7 +21,7 @@ brew install postgresql
 
 ### Install node / npm and packages
 
-Run the following command to install both node and npm: 
+Run the following command to install both node and npm - we need this to support jest for JavaScript testing: 
 
 ```bash
 brew install node
