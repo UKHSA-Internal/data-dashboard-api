@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
+from wagtail import blocks
 from wagtail.blocks import (
     CharBlock,
     ChoiceBlock,
@@ -263,3 +265,28 @@ class SectionFooterLink(StructBlock):
 
     class Meta:
         icon = "link"
+
+
+class HealthTopicSectionLink(blocks.StructBlock):
+    heading = blocks.TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    page = PageLinkChooserBlock(
+        page_type=["topics_list.TopicsListPage"],
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
+    )
+
+    class Meta:
+        icon = "link"
+
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> dict | None:
+        if value:
+            page = value.get("page")
+            api_url = (
+                reverse("wagtailapi:pages:detail", args=[page.id]) if page else None
+            )
+            return {
+                "heading": value["heading"],
+                "page": api_url,
+            }
+        return None
