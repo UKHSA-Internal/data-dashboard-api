@@ -25,6 +25,9 @@ class TestCMSPagesAPIViewSetPermissions:
         private_metric = Metric.objects.create(
             name="COVID-19_headline_cases_7DayTotals", topic=covid_topic
         )
+        private_metric_two = Metric.objects.create(
+            name="COVID-19_headline_7DayAdmissionsChange", topic=covid_topic
+        )
 
         home = Page.objects.get(id=2)
         
@@ -39,6 +42,9 @@ class TestCMSPagesAPIViewSetPermissions:
 
         private_metrics = MetricsDocumentationChildEntry(title="Private Metric", page_description="test", slug="private-metric", theme="2", sub_theme="test", topic="test", metric=private_metric.pk, is_public=False, seo_title="private-metrics")
         home.add_child(instance=private_metrics)
+
+        private_metrics_two = MetricsDocumentationChildEntry(title="Private Metric 2", page_description="test", slug="private-metric-two", theme="1", sub_theme="test", topic="test", metric=private_metric_two.pk, is_public=False, seo_title="private-metrics-two")
+        home.add_child(instance=private_metrics_two)
         
         standard_page = CommonPage(title="Standard", body="test", slug="standard", seo_title="standard-page")
         home.add_child(instance=standard_page)
@@ -80,6 +86,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Standard" in titles
         assert "Private Topic" not in titles
         assert "Private Metric" not in titles
+        assert "Private Metric 2" not in titles
 
     def test_global_access_user(self, setup_pages):
         """
@@ -116,6 +123,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Standard" in titles
         assert "Private Topic" in titles
         assert "Private Metric" in titles
+        assert "Private Metric 2" in titles
 
     def test_restricted_user_with_permission(self, setup_pages):
         """
@@ -148,4 +156,5 @@ class TestCMSPagesAPIViewSetPermissions:
         # Then
         titles = [p.title for p in result]
         assert "Private Topic" in titles
+        assert "Private Metric 2" in titles
         assert "Private Metrics" not in titles
