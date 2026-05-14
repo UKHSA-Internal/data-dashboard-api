@@ -16,7 +16,6 @@ from metrics.domain.models import (
     ChartRequestParams,
 )
 from metrics.domain.common.utils import ChartTypes
-from metrics.domain.models.charts.dual_category_charts import Segments
 from metrics.domain.models.charts.segments import SegmentParameters
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
@@ -189,9 +188,8 @@ def fake_chart_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_dual_category_chart_segments() -> Segments:
-    return Segments(
-        [
+def fake_dual_category_chart_segments() -> SegmentParameters:
+    return [
             SegmentParameters(
                 secondary_field_value="00-04",
                 colour=RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
@@ -203,7 +201,7 @@ def fake_dual_category_chart_segments() -> Segments:
                 label="5 to 11 years",
             ),
         ]
-    )
+
 
 @pytest.fixture
 def fake_chart_request_params(

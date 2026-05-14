@@ -1,20 +1,18 @@
+from metrics.domain.models.charts.segments import SegmentParameters
 import datetime
 from decimal import Decimal
 from unittest import mock
 
 import pytest
 
+from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
+    ChartRequestParams,
     PlotGenerationData,
     PlotParameters,
-    ChartRequestParams,
 )
-from metrics.domain.models.charts.dual_category_charts import (
-    DualCategoryChartRequestParams,
-    Segments,
-)
+from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams
 from metrics.domain.models.plots import CompletePlotData
-from metrics.domain.common.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     DataNotFoundForPlotError,
@@ -22,9 +20,9 @@ from metrics.interfaces.plots.access import (
     PlotsInterface,
     QuerySetResult,
     _build_age_display_name,
+    aggregate_results_by_age,
     convert_type,
     get_aggregated_results,
-    aggregate_results_by_age,
 )
 from metrics.interfaces.plots.dual_category_plots_interface import (
     DualCategoryPlotsInterface,
@@ -1084,11 +1082,11 @@ class TestBuildAgeDisplayName:
 
 
 class TestDualCategoryPlotsInterface:
-    # @mock.patch.object(DualCategoryPlotsInterface, "build_plot_data_from_parameters")
+    @mock.patch.object(DualCategoryPlotsInterface, "build_plot_data_from_parameters")
     def test_build_plots_data_delegates_call_for_each_plot(
         self,
         spy_build_plot_data_from_parameters: mock.MagicMock,
-        fake_dual_category_chart_segments: Segments,
+        fake_dual_category_chart_segments: list[SegmentParameters],
     ):
         """
         TODO:
@@ -1099,7 +1097,7 @@ class TestDualCategoryPlotsInterface:
         """
         # Given
         fake_chart_request_params = DualCategoryChartRequestParams(
-            segments=fake_dual_category_chart_segments,            
+            segments=fake_dual_category_chart_segments,
             file_format="png",
             chart_width=123,
             chart_height=456,
@@ -1112,6 +1110,7 @@ class TestDualCategoryPlotsInterface:
             core_model_manager=mock.Mock(),
         )
 
+        assert True
         # When
         plots_data = interface.build_plots_data()
 

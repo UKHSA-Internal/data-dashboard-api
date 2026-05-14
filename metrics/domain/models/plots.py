@@ -1,3 +1,4 @@
+from metrics.domain.models.charts.segments import SegmentParameters
 import datetime
 from collections.abc import Iterable
 from decimal import Decimal
@@ -175,6 +176,73 @@ class PlotGenerationData(BaseModel):
         }
         return cls(
             parameters=parameters,
+            x_axis_values=aggregated_results[parameters.x_axis_value],
+            y_axis_values=aggregated_results[parameters.y_axis_value],
+            additional_values=additional_values,
+            latest_date=latest_date,
+        )
+
+    @property
+    def start_of_reporting_delay_period_index(self) -> int:
+        """Fetches the index of the start of the reporting delay period
+
+        Raises:
+            `ReportingDelayNotProvidedToPlotsError`: If the
+                reporting delay period was never provided
+                to the `PlotsData` model
+            `NoReportingDelayPeriodFoundError`: If there
+                is no detectable reporting delay period.
+                This can happen when all the booleans
+                are returned as False.
+                i.e. When a dataset does not yet
+                support a reporting delay period.
+
+        Returns:
+            An integer representing the index of the
+            first occurrence of `True` in the reporting
+            delay periods. This can be used to draw the
+            reporting delay period on charts.
+
+        """
+        try:
+            reporting_delay_period_values = self.additional_values[
+                "in_reporting_delay_period"
+            ]
+        except (KeyError, TypeError) as error:
+            raise ReportingDelayNotProvidedToPlotsError from error
+
+        for index, in_reporting_delay_period in enumerate(
+            reporting_delay_period_values
+        ):
+            if in_reporting_delay_period is True:
+                return index
+        raise NoReportingDelayPeriodFoundError
+
+
+class DualCategoryPlotGenerationData(BaseModel):
+    """Holds all the information needed to draw an individual plot, including the parameters and hydrated data."""
+
+    segments: list[SegmentParameters]
+    x_axis_values: Any
+    y_axis_values: Any
+    additional_values: dict[str, Any] | None = {}
+    latest_date: Any = None  # noqa: UP007
+
+    @classmethod
+    def create_from_segments(
+        cls, segments: list[SegmentParameters], aggregated_results: dict, latest_date: str
+    ) -> Self:
+        keys_to_exclude = []
+        for segment in segments:
+            keys_to_exclude.append(segment.x_axis_values)
+            keys_to_exclude.append(segment.y_axis_values)
+        additional_values = {
+            key: value
+            for key, value in aggregated_results.items()
+            if key not in keys_to_exclude
+        }
+        return cls(
+            segments=segments,
             x_axis_values=aggregated_results[parameters.x_axis_value],
             y_axis_values=aggregated_results[parameters.y_axis_value],
             additional_values=additional_values,

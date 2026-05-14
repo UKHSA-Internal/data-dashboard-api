@@ -1,3 +1,4 @@
+from metrics.domain.models.charts.segments import SegmentParameters
 from dataclasses import dataclass
 
 from django.db.models import Manager
@@ -65,3 +66,6 @@ class DualCategoryPlotsInterface:
         self.chart_request_params = chart_request_params
         self.core_model_manager = core_model_manager
         self.topic_model_manager = topic_model_manager
+
+    def build_plot_data_from_parameters(self, *args, **kwargs):
+        pass

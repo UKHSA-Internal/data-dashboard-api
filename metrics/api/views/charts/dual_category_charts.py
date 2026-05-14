@@ -26,7 +26,7 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
     "chart_height": 200,
     "chart_width": 320,
     "x_axis": "metric",
-    "primary_field_values": ["m", "f"],
+    "primary_field_values": ["m", "f"],  # primary category
     "y_axis": "sex",
     "x_axis_title": "",
     "y_axis_title": "",
@@ -57,6 +57,11 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
             "secondary_field_value": "05-11",
             "colour": RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
             "label": "5 to 11 years",
+        },
+        {
+            "secondary_field_value": "11-25",
+            "colour": RGBAChartLineColours.ORANGE.name,
+            "label": "11 to 25 years",
         },
     ],
 }
