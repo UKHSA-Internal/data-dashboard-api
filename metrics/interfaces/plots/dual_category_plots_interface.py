@@ -67,9 +67,9 @@ class DualCategoryPlotsInterface:
         self.core_model_manager = core_model_manager
         self.topic_model_manager = topic_model_manager
 
-    def build_plot_data_from_parameters(self, *, segment_parameters: list[SegmentParameters]):
-        return ""
+    def build_plot_data_from_parameters(self, *, segment_parameter: SegmentParameters):
+        return "banana"
 
     def build_plots_data(self, *, segment_parameters: list[SegmentParameters]):
-        self.build_plot_data_from_parameters(segment_parameters=segment_parameters)
-        return ""
+        return [self.build_plot_data_from_parameters(segment_parameter=sp)
+                for sp in segment_parameters ]

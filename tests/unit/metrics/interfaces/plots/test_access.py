@@ -1133,7 +1133,7 @@ class TestDualCategoryPlotsInterface:
         # Check that `build_plot_data_from_parameters()` method
         # is called for each of the provided `PlotParameters` models
         expected_calls = [
-            mock.call(segment_parameters=fake_chart_request_params.segments),
+            mock.call(segment_parameter=fake_chart_request_params.segments),
         ]
         spy_build_plot_data_from_parameters.assert_has_calls(
             calls=expected_calls,
