@@ -236,6 +236,15 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
         date_to="2023-12-31",
     )
 
+@pytest.fixture
+def fake_dual_category_chart_segments_covid_cases() -> Segments:
+    return PlotParameters(
+        chart_type="line_multi_coloured",
+        topic="COVID-19",
+        metric="COVID-19_deaths_ONSByDay",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
+    )
 
 @pytest.fixture
 def valid_plot_parameters() -> PlotParameters:
