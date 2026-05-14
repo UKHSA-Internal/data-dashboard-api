@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			let url = baseUrl;
 			const sep = url.includes('?') ? '&' : '?';
 			url += sep + 'embargo_time=' + encodeURIComponent(embargoTime || 'now');
+			url += sep + 'route=preview' // preview route
 			window.open(url, '_blank', 'noopener');
 		});
 	}

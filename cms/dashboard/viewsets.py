@@ -17,7 +17,7 @@ from cms.dashboard.serializers import ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
 
-from validation.shared import (
+from common.page_previews import (
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
     validate_preview_hmac_token,
