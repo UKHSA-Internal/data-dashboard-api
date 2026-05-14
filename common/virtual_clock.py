@@ -7,17 +7,17 @@ that is presently restricted.
 """
 
 import contextvars
-import datetime
 import logging
-import typing as t
+from datetime import datetime
+from typing import Any
 
 from django.conf import settings
 from django.utils import timezone
 
-from validation.shared import validate_preview_hmac_token
+from common.page_previews import validate_preview_hmac_token
 
-_embargo_time_ctx: contextvars.ContextVar[datetime.datetime | None] = (
-    contextvars.ContextVar("embargo_time", default=None)
+_embargo_time_ctx: contextvars.ContextVar[datetime | None] = contextvars.ContextVar(
+    "embargo_time", default=None
 )
 _logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class EmbargoDateNotSupportedError(Exception):
 EMBARGO_DATE_NOT_SUPPORTED_MESSAGE = '"Embargo Date" is not supported on this server.'
 
 
-def parse_embargo_time_value(embargo_time_value: t.Any) -> datetime.datetime | None:
+def parse_embargo_time_value(embargo_time_value: Any) -> datetime | None:
     """Parse embargo time value into a timezone-aware datetime.
 
     Accepted values:
@@ -52,19 +52,20 @@ def parse_embargo_time_value(embargo_time_value: t.Any) -> datetime.datetime | N
         return None
 
     try:
-        return datetime.datetime.fromtimestamp(epoch_seconds, tz=datetime.UTC)
+        dt = datetime.fromtimestamp(epoch_seconds)
+        return timezone.make_aware(dt, timezone.get_current_timezone())
     except (OverflowError, OSError, ValueError):
         return None
 
 
-def set_embargo_time(embargo_time_value: object, *, token: str) -> bool:
+def set_embargo_time(*, embargo_time_value: object, token: str) -> bool:
     """Set embargo time for current request context after validation.
 
     The value must be either `now` or valid epoch seconds.
     """
     page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)
     if not page_previews_enabled:
-        _embargo_time_ctx.set(timezone.now())
+        _embargo_time_ctx.set(None)
         _logger.error(EMBARGO_DATE_NOT_SUPPORTED_MESSAGE)
         raise EmbargoDateNotSupportedError(EMBARGO_DATE_NOT_SUPPORTED_MESSAGE)
 
@@ -79,20 +80,15 @@ def set_embargo_time(embargo_time_value: object, *, token: str) -> bool:
     return True
 
 
-def get_embargo_time() -> datetime.datetime:
+def get_embargo_time() -> datetime:
     """Return the embargo_time for the current request context.
     Falls back to timezone.now().
     """
     embargo_time = _embargo_time_ctx.get()
-    if isinstance(embargo_time, datetime.datetime):
+    if isinstance(embargo_time, datetime):
         return embargo_time
 
     return timezone.now()
-
-
-def get_embargo_time_context() -> contextvars.ContextVar[datetime.datetime | None]:
-    """Return the shared request-scoped embargo time context variable."""
-    return _embargo_time_ctx
 
 
 def clear_embargo_time() -> None:

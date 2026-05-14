@@ -76,7 +76,7 @@ class TestEmbargoMiddleware:
 
         spy_validate_token.assert_called_once_with("validtoken")
         spy_set_embargo_time.assert_called_once_with(
-            1,
+            embargo_time_value=1,
             token="validtoken",
         )
 
@@ -273,4 +273,6 @@ class TestEmbargoMiddleware:
         response = middleware(request)
 
         self._assert_invalid_token_response(response)
-        spy_set_embargo_time.assert_called_once_with(1, token="validtoken")
+        spy_set_embargo_time.assert_called_once_with(
+            embargo_time_value=1, token="validtoken"
+        )

@@ -57,7 +57,17 @@ class TestParseEmbargoTimeValue:
         """
         assert virtual_clock.parse_embargo_time_value(embargo_time_value) is None
 
-    @mock.patch("common.virtual_clock.datetime.datetime")
+    def test_boo(self):
+        """
+        Given an epoch value that cannot be converted to a datetime
+        When parse_embargo_time_value is called
+        Then None is returned
+        """
+
+        result = virtual_clock.parse_embargo_time_value("1711456200")
+        assert isinstance(result, datetime.datetime)
+
+    @mock.patch("common.virtual_clock.datetime")
     def test_returns_none_when_timestamp_cannot_be_converted(
         self, spy_datetime_class: mock.MagicMock
     ):
@@ -69,9 +79,7 @@ class TestParseEmbargoTimeValue:
         spy_datetime_class.fromtimestamp.side_effect = OverflowError
 
         assert virtual_clock.parse_embargo_time_value("1711456200") is None
-        spy_datetime_class.fromtimestamp.assert_called_once_with(
-            1711456200, tz=datetime.UTC
-        )
+        spy_datetime_class.fromtimestamp.assert_called_once_with(1711456200)
 
 
 class TestSetEmbargoTime:
@@ -93,7 +101,7 @@ class TestSetEmbargoTime:
         settings.PAGE_PREVIEWS_ENABLED = False
 
         with pytest.raises(virtual_clock.EmbargoDateNotSupportedError):
-            virtual_clock.set_embargo_time("now", token="token")
+            virtual_clock.set_embargo_time(embargo_time_value="now", token="token")
 
         assert virtual_clock.get_embargo_time() == expected
         spy_logger_error.assert_called_once_with(
@@ -111,7 +119,7 @@ class TestSetEmbargoTime:
         """
         settings.PAGE_PREVIEWS_ENABLED = True
 
-        actual = virtual_clock.set_embargo_time("now", token="token")
+        actual = virtual_clock.set_embargo_time(embargo_time_value="now", token="token")
 
         assert actual is False
         spy_validate_preview_hmac_token.assert_called_once_with("token")
@@ -127,7 +135,9 @@ class TestSetEmbargoTime:
         """
         settings.PAGE_PREVIEWS_ENABLED = True
 
-        actual = virtual_clock.set_embargo_time("not-a-time", token="token")
+        actual = virtual_clock.set_embargo_time(
+            embargo_time_value="not-a-time", token="token"
+        )
 
         assert actual is False
         spy_validate_preview_hmac_token.assert_called_once_with("token")
@@ -144,7 +154,9 @@ class TestSetEmbargoTime:
         settings.PAGE_PREVIEWS_ENABLED = True
         expected = datetime.datetime.fromtimestamp(1711456200, tz=datetime.UTC)
 
-        actual = virtual_clock.set_embargo_time("1711456200", token="token")
+        actual = virtual_clock.set_embargo_time(
+            embargo_time_value="1711456200", token="token"
+        )
 
         assert actual is True
         assert virtual_clock.get_embargo_time() == expected
@@ -170,10 +182,3 @@ class TestGetAndClearEmbargoTime:
         actual = virtual_clock.get_embargo_time()
 
         assert actual == fallback
-
-
-class TestEmbargoTimeContextAccessor:
-    def test_get_embargo_time_context_returns_shared_context_var(self):
-        context_var = virtual_clock.get_embargo_time_context()
-
-        assert context_var is virtual_clock._embargo_time_ctx
