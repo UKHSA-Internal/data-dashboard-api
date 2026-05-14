@@ -50,12 +50,12 @@ class TestWagtailHooksPagePreviews:
 
         mock_rewrite.assert_called_once_with(request=request, page=page)
 
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url")
+    @patch("cms.dashboard.wagtail_hooks._build_frontend_redirect_url")
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=False)
     def test_rewrite_post_publish_view_live_button_url_returns_when_previews_disabled(
         self,
         _mock_settings,
-        mock_build_view_live_url,
+        mock_build_frontend_redirect_url,
     ):
         """
         Given page previews are disabled
@@ -69,14 +69,14 @@ class TestWagtailHooksPagePreviews:
             request=request, page=page
         )
 
-        mock_build_view_live_url.assert_not_called()
+        mock_build_frontend_redirect_url.assert_not_called()
 
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url")
+    @patch("cms.dashboard.wagtail_hooks._build_frontend_redirect_url")
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_returns_when_page_not_live(
         self,
         _mock_settings,
-        mock_build_view_live_url,
+        mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled but the page is not live
@@ -90,18 +90,20 @@ class TestWagtailHooksPagePreviews:
             request=request, page=page
         )
 
-        mock_build_view_live_url.assert_not_called()
+        mock_build_frontend_redirect_url.assert_not_called()
 
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url", return_value=None)
+    @patch(
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url", return_value=None
+    )
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_returns_when_no_live_url(
         self,
         _mock_settings,
-        mock_build_view_live_url,
+        mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled and the page is live
-        When _build_view_live_url returns no URL
+        When _build_frontend_redirect_url returns no URL
         Then the rewrite flow exits after attempting to build the live URL
         """
         request = mock.Mock()
@@ -111,17 +113,19 @@ class TestWagtailHooksPagePreviews:
             request=request, page=page
         )
 
-        mock_build_view_live_url.assert_called_once_with(page=page)
+        mock_build_frontend_redirect_url.assert_called_once_with(
+            page=page, route="nocache"
+        )
 
     @patch(
-        "cms.dashboard.wagtail_hooks._build_view_live_url",
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
         return_value="http://localhost:3000/x/",
     )
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_returns_when_no_message_storage(
         self,
         _mock_settings,
-        _mock_build_view_live_url,
+        _mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled and request has no message storage
@@ -136,14 +140,14 @@ class TestWagtailHooksPagePreviews:
         )
 
     @patch(
-        "cms.dashboard.wagtail_hooks._build_view_live_url",
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
         return_value="http://localhost:3000/x/",
     )
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_continues_when_messages_list_empty(
         self,
         _mock_settings,
-        _mock_build_view_live_url,
+        _mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled and message storage contains no messages
@@ -159,14 +163,14 @@ class TestWagtailHooksPagePreviews:
         )
 
     @patch(
-        "cms.dashboard.wagtail_hooks._build_view_live_url",
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
         return_value="http://localhost:3000/x/",
     )
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_continues_when_no_view_live_text(
         self,
         _mock_settings,
-        _mock_build_view_live_url,
+        _mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled and message text has no View live anchor
@@ -217,34 +221,37 @@ class TestWagtailHooksPagePreviews:
 
     @patch("cms.dashboard.wagtail_hooks.logger.exception")
     @patch(
-        "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_frontend_route_url",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_frontend_route_url",
         side_effect=ImproperlyConfigured,
     )
-    def test_build_view_live_url_invalid_base_returns_none(
+    def test_build_frontend_redirect_url_invalid_base_returns_none(
         self, _mock_route_url, spy_logger_exception
     ):
         """
         Given FRONTEND_URL is missing or non-absolute
-        When _build_view_live_url is called
+        When _build_frontend_redirect_url is called
         Then None is returned to avoid generating a relative URL
         """
         page = mock.Mock()
         page.slug = "access-our-data"
-        assert wagtail_hooks._build_view_live_url(page) is None
+        assert (
+            wagtail_hooks._build_frontend_redirect_url(page=page, route="nocache")
+            is None
+        )
 
         spy_logger_exception.assert_called_once()
 
     @patch("cms.dashboard.wagtail_hooks.reverse", return_value="/admin/preview/888")
-    def test__build_frontend_preview_url(self, mock_reverse):
+    def test__build_frontend_redirect_url(self, mock_reverse):
         """
         Given a page,
-        When _build_frontend_preview_url is called,
+        When _build_frontend_redirect_url is called,
         Then it returns the preview URL from reverse.
         """
         page = mock.Mock()
         page.pk = 888
-        url = wagtail_hooks._build_frontend_preview_url(page=page)
-        assert url == "/admin/preview/888"
+        url = wagtail_hooks._build_frontend_redirect_url(page=page, route="preview")
+        assert url == "/admin/preview/888?route=preview"
         """
         Given label 'View Live' and live_url is falsy,
         When frontend_preview_button is called and reverse raises NoReverseMatch,
@@ -261,7 +268,7 @@ class TestWagtailHooksPagePreviews:
                 return_value="View Live",
             ):
                 with mock.patch(
-                    "cms.dashboard.wagtail_hooks._build_view_live_url",
+                    "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
                     return_value=None,
                 ):
                     with mock.patch(
@@ -269,7 +276,7 @@ class TestWagtailHooksPagePreviews:
                         side_effect=NoReverseMatch(),
                     ):
                         with mock.patch(
-                            "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_route_slug",
+                            "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_route_slug",
                             return_value="sluggy",
                         ):
                             with mock.patch(
@@ -282,11 +289,11 @@ class TestWagtailHooksPagePreviews:
                                 assert result == []
 
     @patch(
-        "cms.dashboard.wagtail_hooks.FrontendPreviewAction",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectAction",
         side_effect=lambda **kwargs: type("FPA", (), kwargs)(),
     )
     @patch(
-        "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_route_slug",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_route_slug",
         return_value="sluggy",
     )
     @patch("cms.dashboard.wagtail_hooks.reverse", side_effect=NoReverseMatch())
@@ -319,7 +326,9 @@ class TestWagtailHooksPagePreviews:
         side_effect=lambda **kwargs: type("Btn", (), kwargs)(),
     )
     @patch("cms.dashboard.wagtail_hooks.reverse", return_value="/admin/preview/42")
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url", return_value=None)
+    @patch(
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url", return_value=None
+    )
     @patch(
         "cms.dashboard.wagtail_hooks._get_preview_button_label",
         return_value="View Live",
@@ -330,16 +339,14 @@ class TestWagtailHooksPagePreviews:
     ):
         """
         Given label 'View Live' and live_url is falsy,
-        When frontend_preview_button is called and reverse succeeds,
-        Then it returns a Button with the preview URL from reverse.
+        Then it returns no Button
         """
         page = mock.Mock()
         page.pk = 42
         result = wagtail_hooks.frontend_preview_button(
             page, user=None, next_url=None, view_name="edit"
         )
-        assert len(result) == 1
-        assert getattr(result[0], "url", None) == "/admin/preview/42"
+        assert len(result) == 0
 
     @patch(
         "cms.dashboard.wagtail_hooks.Button",
@@ -371,10 +378,10 @@ class TestWagtailHooksPagePreviews:
                 page, user=None, next_url=None, view_name="edit"
             )
         assert len(result) == 1
-        assert getattr(result[0], "url", None) == "/admin/preview/42"
+        assert getattr(result[0], "url", None) == "/admin/preview/42?route=nocache"
 
     @patch(
-        "cms.dashboard.wagtail_hooks.FrontendPreviewAction",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectAction",
         side_effect=lambda **kwargs: type("FPA", (), kwargs)(),
     )
     @patch("cms.dashboard.wagtail_hooks.reverse", return_value="/admin/preview/99")
@@ -388,7 +395,7 @@ class TestWagtailHooksPagePreviews:
         """
         Given label 'Preview' and reverse succeeds,
         When add_frontend_preview_action is called,
-        Then it inserts a FrontendPreviewAction with the preview URL from reverse.
+        Then it inserts a FrontendRedirectAction with the preview URL from reverse.
         """
         page = mock.Mock()
         page.pk = 99
@@ -398,10 +405,10 @@ class TestWagtailHooksPagePreviews:
             menu_items, request=None, context=context
         )
         assert len(menu_items) == 1
-        assert getattr(menu_items[0], "url", None) == "/admin/preview/99"
+        assert getattr(menu_items[0], "url", None) == "/admin/preview/99?route=preview"
 
     @patch(
-        "cms.dashboard.wagtail_hooks.FrontendPreviewAction",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectAction",
         side_effect=lambda **kwargs: type("FPA", (), kwargs)(),
     )
     @patch(
@@ -418,7 +425,7 @@ class TestWagtailHooksPagePreviews:
         """
         Given label 'Preview' and reverse succeeds,
         When add_frontend_preview_action is called,
-        Then it inserts a FrontendPreviewAction with the preview URL from reverse (explicit branch coverage).
+        Then it inserts a FrontendRedirectAction with the preview URL from reverse (explicit branch coverage).
         """
         page = mock.Mock()
         page.pk = 77
@@ -428,18 +435,18 @@ class TestWagtailHooksPagePreviews:
             menu_items, request=None, context=context
         )
         assert len(menu_items) == 1
-        assert getattr(menu_items[0], "url", None) == "/admin/preview/77"
+        assert getattr(menu_items[0], "url", None) == "/admin/preview/77?route=preview"
         # Reset menu_items before the next call to avoid accumulation
         menu_items = []
         wagtail_hooks.add_frontend_preview_action(
             menu_items, request=None, context=context
         )
         assert len(menu_items) == 1
-        assert getattr(menu_items[0], "url", None) == "/admin/preview/99"
+        assert getattr(menu_items[0], "url", None) == "/admin/preview/99?route=preview"
 
-    @patch("cms.dashboard.wagtail_hooks._build_frontend_preview_url")
+    @patch("cms.dashboard.wagtail_hooks._build_frontend_redirect_url")
     @patch(
-        "cms.dashboard.wagtail_hooks.FrontendPreviewAction",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectAction",
         side_effect=lambda **kwargs: type("FPA", (), kwargs)(),
     )
     @patch(
@@ -458,22 +465,23 @@ class TestWagtailHooksPagePreviews:
         page.pk = 123
         menu_items = []
         context = {"page": page}
-        mock_build_url.return_value = "/admin/preview/123"
+        mock_build_url.return_value = "/admin/preview/123?route=preview"
 
         wagtail_hooks.add_frontend_preview_action(
             menu_items, request=None, context=context
         )
 
-        mock_build_url.assert_called_once_with(page=page)
+        mock_build_url.assert_called_once_with(page=page, route="preview")
         assert len(menu_items) == 1
-        assert getattr(menu_items[0], "url", None) == "/admin/preview/123"
+        assert getattr(menu_items[0], "url", None) == "/admin/preview/123?route=preview"
 
     @patch(
         "cms.dashboard.wagtail_hooks.Button",
         side_effect=lambda **kwargs: type("Btn", (), kwargs)(),
     )
     @patch(
-        "cms.dashboard.wagtail_hooks._build_view_live_url", return_value="https://live"
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
+        return_value="https://live",
     )
     @patch(
         "cms.dashboard.wagtail_hooks._get_preview_button_label",
@@ -533,14 +541,16 @@ class TestWagtailHooksPagePreviews:
         assert wagtail_hooks._get_preview_button_label(page) is None
 
     @patch(
-        "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_route_slug",
+        "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_route_slug",
         return_value="sluggy",
     )
     @patch(
         "cms.dashboard.wagtail_hooks.settings",
     )
     @patch("cms.dashboard.wagtail_hooks.reverse", side_effect=NoReverseMatch())
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url", return_value=None)
+    @patch(
+        "cms.dashboard.wagtail_hooks._build_frontend_redirect_url", return_value=None
+    )
     @patch(
         "cms.dashboard.wagtail_hooks._get_preview_button_label",
         return_value="View Live",
@@ -584,7 +594,7 @@ class TestWagtailHooksPagePreviews:
                 return_value="View Live",
             ):
                 with mock.patch(
-                    "cms.dashboard.wagtail_hooks._build_view_live_url",
+                    "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
                     return_value=None,
                 ):
                     wagtail_hooks.add_frontend_preview_action(menu_items, None, context)
@@ -625,33 +635,43 @@ class TestWagtailHooksPagePreviews:
         page.live = False
         assert wagtail_hooks._get_preview_button_label(page) is None
 
-    def test_build_view_live_url_exception_and_slug(self):
+    @patch(
+        "cms.dashboard.wagtail_hooks.reverse",
+        return_value="cms/admin/redirect-to-frontend",
+    )
+    def test_build_redirect_url_exception_and_slug(self, mock_reverse):
         """
-        Given a page where get_url_parts raises AttributeError,
-        When _build_view_live_url is called,
-        Then it returns slug url or None.
+        When _build_frontend_redirect_url is called,
+        Then it returns "redirect-to-frontend" reverse lookup
+        i.e. the api endpoint registered in register_admin_urls
         """
-        config.FRONTEND_URL = "http://localhost:3000"
         page = mock.Mock()
-        page.get_url_parts.side_effect = AttributeError()
         page.slug = "sluggy"
-        build_view_live_url = wagtail_hooks._build_view_live_url(page)
-        assert build_view_live_url == "http://localhost:3000/nocache/sluggy"
-        page.slug = ""
-        build_view_live_url = wagtail_hooks._build_view_live_url(page)
-        assert build_view_live_url == "http://localhost:3000/nocache"
+        build_view_live_url = wagtail_hooks._build_frontend_redirect_url(
+            page=page, route="nocache"
+        )
+        assert build_view_live_url == "cms/admin/redirect-to-frontend?route=nocache"
 
-    def test_build_view_live_url_success(self):
+    @patch(
+        "cms.dashboard.wagtail_hooks.reverse",
+        return_value="cms/admin/redirect-to-frontend",
+    )
+    def test_build_frontend_redirect_url_success(self, mock_reverse):
         """
         Given a page where get_url_parts returns a path,
-        When _build_view_live_url is called,
+        When _build_frontend_redirect_url is called,
         Then it returns the correct live URL using the path.
         """
-        config.FRONTEND_URL = "http://localhost:3000"
         page = mock.Mock()
-        page.get_url_parts.return_value = ("http", "domain", "/foo/bar/")
-        view_live_url = wagtail_hooks._build_view_live_url(page)
-        assert view_live_url == "http://localhost:3000/nocache/foo/bar"
+        page.get_url_parts.return_value = (
+            "http",
+            "domain",
+            "cms/admin/redirect-to-frontend",
+        )
+        view_live_url = wagtail_hooks._build_frontend_redirect_url(
+            page=page, route="nocache"
+        )
+        assert view_live_url == "cms/admin/redirect-to-frontend?route=nocache"
 
     def test_frontend_preview_button_label_none(self):
         """
@@ -687,7 +707,7 @@ class TestWagtailHooksPagePreviews:
                 return_value="View Live",
             ):
                 with mock.patch(
-                    "cms.dashboard.wagtail_hooks._build_view_live_url",
+                    "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
                     return_value=None,
                 ):
                     with mock.patch(
@@ -699,7 +719,7 @@ class TestWagtailHooksPagePreviews:
                             FRONTEND_URL="https://frontend.test",
                         ):
                             with mock.patch(
-                                "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_route_slug",
+                                "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_route_slug",
                                 return_value="sluggy",
                             ):
                                 result = wagtail_hooks.frontend_preview_button(
@@ -770,19 +790,19 @@ class TestWagtailHooksPagePreviews:
         assert 'target="_blank"' in result
         assert 'rel="noreferrer"' in result
 
-    @patch("cms.dashboard.wagtail_hooks._build_view_live_url")
+    @patch("cms.dashboard.wagtail_hooks._build_frontend_redirect_url")
     @patch("cms.dashboard.wagtail_hooks.settings", PAGE_PREVIEWS_ENABLED=True)
     def test_rewrite_post_publish_view_live_button_url_updates_message(
         self,
         _mock_settings,
-        mock_build_view_live_url,
+        mock_build_frontend_redirect_url,
     ):
         """
         Given previews are enabled and a queued publish message contains View live
         When _rewrite_post_publish_view_live_button_url is called
         Then the backend live link is replaced with the frontend live link
         """
-        mock_build_view_live_url.return_value = (
+        mock_build_frontend_redirect_url.return_value = (
             "http://localhost:3000/weather-health-alerts/"
         )
 
@@ -934,7 +954,7 @@ def disable_wagtail_hooks():
         yield
 
 
-class TestAddFrontendPreviewActionBranches:
+class TestAddFrontendRedirectActionBranches:
     @pytest.mark.parametrize(
         "pk,reverse_side_effect,slug,expected_url",
         [
@@ -946,10 +966,10 @@ class TestAddFrontendPreviewActionBranches:
                 "https://frontend.test/preview?slug=sluggy",
             ),
             # reverse returns preview url
-            (99, "/admin/preview/99", None, "/admin/preview/99"),
+            (99, "/admin/preview/99", None, "/admin/preview/99?route=preview"),
             # explicit branch coverage, two calls
-            (77, "/admin/preview/77", None, "/admin/preview/77"),
-            (99, "/admin/preview/99", None, "/admin/preview/99"),
+            (77, "/admin/preview/77", None, "/admin/preview/77?route=preview"),
+            (99, "/admin/preview/99", None, "/admin/preview/99?route=preview"),
         ],
     )
     def test_add_frontend_preview_action_branches(
@@ -978,7 +998,7 @@ class TestAddFrontendPreviewActionBranches:
                 ):
                     build_route_slug_patch = (
                         mock.patch(
-                            "cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView.build_route_slug",
+                            "cms.dashboard.wagtail_hooks.FrontendRedirectView.build_route_slug",
                             return_value=slug,
                         )
                         if slug
@@ -994,11 +1014,11 @@ class TestAddFrontendPreviewActionBranches:
                             return obj
 
                         with mock.patch(
-                            "cms.dashboard.wagtail_hooks.FrontendPreviewAction",
+                            "cms.dashboard.wagtail_hooks.FrontendRedirectAction",
                             side_effect=fpa_mock,
                         ):
                             with mock.patch(
-                                "cms.dashboard.wagtail_hooks._build_frontend_preview_url",
+                                "cms.dashboard.wagtail_hooks._build_frontend_redirect_url",
                                 return_value=expected_url,
                             ):
                                 wagtail_hooks.add_frontend_preview_action(
@@ -1106,14 +1126,14 @@ class TestBuildLinkProps:
         assert link_props == expected_props
 
 
-class TestFrontendPreviewAction:
+class TestFrontendRedirectAction:
     def test_get_url_returns_url(self):
         """
-        Given a FrontendPreviewAction instance with a URL,
+        Given a FrontendRedirectAction instance with a URL,
         When get_url is called,
         Then it returns the correct URL.
         """
-        action = wagtail_hooks.FrontendPreviewAction(
+        action = wagtail_hooks.FrontendRedirectAction(
             url="/test-url/", label="Test", order=1
         )
         assert action.get_url(parent_context=None) == "/test-url/"

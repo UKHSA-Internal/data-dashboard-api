@@ -23,15 +23,16 @@ disabled, the request is rejected with `HTTP 501 (Not Implemented)`.
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
-from common.request_caching import disable_request_caching
-from common.virtual_clock import EMBARGO_DATE_NOT_SUPPORTED_MESSAGE, set_embargo_time
-from validation.shared import (
+from common.page_previews import (
     CMS_AUTH_HEADER,
-    get_cache_control_header,
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
     validate_preview_hmac_token,
 )
+from common.request_caching import disable_request_caching, get_cache_control_header
+from common.virtual_clock import EMBARGO_DATE_NOT_SUPPORTED_MESSAGE, set_embargo_time
+
+INVALID_TOKEN_DETAIL = {"detail": "The token was invalid"}
 
 
 class EmbargoMiddleware:
@@ -42,8 +43,6 @@ class EmbargoMiddleware:
         - Invalid/missing headers do not block requests.
         - Context is always cleared after the request completes.
     """
-
-    INVALID_TOKEN_DETAIL = {"detail": "The token was invalid"}
 
     def __init__(self, get_response):
         """Store the downstream callable for middleware execution."""
@@ -78,12 +77,12 @@ class EmbargoMiddleware:
         if token is None:
             has_auth_header = bool(request.headers.get(CMS_AUTH_HEADER, ""))
             if has_auth_header:
-                return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
+                return JsonResponse(INVALID_TOKEN_DETAIL, status=401)
             return None
 
         is_valid = validate_preview_hmac_token(token)
         if not is_valid:
-            return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
+            return JsonResponse(INVALID_TOKEN_DETAIL, status=401)
 
         payload = get_cms_auth_payload(token) or {}
 
@@ -97,9 +96,9 @@ class EmbargoMiddleware:
                 status=501,
             )
 
-        was_set = set_embargo_time(embargo_time, token=token)
+        was_set = set_embargo_time(embargo_time_value=embargo_time, token=token)
         if not was_set:
-            return JsonResponse(cls.INVALID_TOKEN_DETAIL, status=401)
+            return JsonResponse(INVALID_TOKEN_DETAIL, status=401)
 
         return None
 
@@ -119,6 +118,17 @@ class RequestScopedCachingConfigMiddleware:
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Apply request_no_cache context for eligible API requests before dispatch."""
+        token = get_cms_auth_bearer_token(request.headers)
+
+        # exit if we don't have a token
+        if token is None:
+            return self.get_response(request)
+
+        # response 401 (Unauthorized i.e. not authenticated) if token is invalid
+        is_valid = validate_preview_hmac_token(token)
+        if not is_valid:
+            return JsonResponse(INVALID_TOKEN_DETAIL, status=401)
+
         if self._is_custom_api_request(request=request):
             self._set_no_cache_if_header_is_valid(request=request)
         return self.get_response(request)

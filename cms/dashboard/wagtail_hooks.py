@@ -3,7 +3,6 @@ import re
 from typing import Any
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
 from django.urls import NoReverseMatch, re_path, reverse
@@ -18,14 +17,15 @@ from wagtail.admin.widgets import Button
 from wagtail.models import Page
 from wagtail.whitelist import check_url
 
-from cms.dashboard.views import PreviewToFrontendRedirectView
+from cms.dashboard.views import FrontendRedirectView
 
 VIEW_LIVE_LABEL = "View Live"
 PREVIEW_LABEL = "Preview"
+ROUTES = {PREVIEW_LABEL: "preview", VIEW_LIVE_LABEL: "nocache"}
 logger = logging.getLogger(__name__)
 
 
-class FrontendPreviewAction(ActionMenuItem):
+class FrontendRedirectAction(ActionMenuItem):
     """Primary action-menu item that links editors to the frontend preview flow."""
 
     name = "action-preview"
@@ -60,20 +60,14 @@ def _get_preview_button_label(page: Page) -> str | None:
     return None
 
 
-def _build_view_live_url(page: Page) -> str | None:
-    """Build the absolute frontend URL used by the View Live action."""
-    base_url = getattr(settings, "FRONTEND_URL", "")
-    route_path = PreviewToFrontendRedirectView.build_route_slug(page=page)
+def _build_frontend_redirect_url(page: Page, route: str) -> str | None:
+    """Build the admin redirect URL used by the top-level View Live action."""
     try:
-        return PreviewToFrontendRedirectView.build_frontend_route_url(
-            base_url=base_url,
-            route_slug=route_path,
-        )
-    except ImproperlyConfigured:
-        logger.exception(
-            "FRONTEND_URL is not a supported http(s) URL. Hiding View Live action"
-        )
-        return None
+        return f"{reverse('redirect-to-frontend', args=[page.pk])}?route={route}"
+    except NoReverseMatch as e:
+        error_message = f"Could not reverse_lookup 'redirect-to-frontend'.  Has this url been registered correctly in register_admin_urls? {e}"
+        logger.exception(error_message)
+    return None
 
 
 @hooks.register("insert_global_admin_css")
@@ -190,27 +184,15 @@ def frontend_preview_button(
     if button_label is None:
         return []
 
-    # If the label is 'View Live', use the route-style live URL
-    if button_label == VIEW_LIVE_LABEL:
-        live_url = _build_view_live_url(page=page)
-        if live_url:
-            return [
-                Button(
-                    label=button_label,
-                    url=live_url,
-                    priority=10,
-                    attrs={"target": "_blank", "rel": "noopener noreferrer"},
-                )
-            ]
-    # Otherwise, use the preview redirect
-    admin_url = _build_frontend_preview_url(page=page)
-    if not admin_url:
+    url = _build_frontend_redirect_url(page=page, route=ROUTES[button_label])
+
+    if url is None:
         return []
 
     return [
         Button(
             label=button_label,
-            url=admin_url,
+            url=url,
             priority=10,
             attrs={"target": "_blank", "rel": "noopener noreferrer"},
         )
@@ -256,16 +238,16 @@ def register_admin_urls():
     """Register admin URLs for CMS dashboard views.
 
     We register an admin redirect endpoint
-    (`/admin/preview-to-frontend/<pk>/`) that signs a short-lived
+    (`/admin/redirect-to-frontend/<pk>/`) that signs a short-lived
     preview token and redirects the user to the external frontend.
     The redirect logic is implemented in `cms.dashboard.views`.
     """
     return [
         re_path(
-            r"^preview-to-frontend/(?P<pk>[0-9]+)/$",
-            PreviewToFrontendRedirectView.as_view(),
-            name="cms_preview_to_frontend",
-        ),
+            r"^redirect-to-frontend/(?P<pk>[0-9]+)/$",
+            FrontendRedirectView.as_view(),
+            name="redirect-to-frontend",
+        )
     ]
 
 
@@ -319,34 +301,17 @@ def add_frontend_preview_action(
             )
             return
 
-        action_url = None
-        if button_label == VIEW_LIVE_LABEL:
-            action_url = _build_view_live_url(page=page) or _build_frontend_preview_url(
-                page=page
-            )
-        elif button_label == PREVIEW_LABEL:
-            action_url = _build_frontend_preview_url(page=page)
+        action_url = _build_frontend_redirect_url(page=page, route=ROUTES[button_label])
 
         if action_url:
-            preview_item = FrontendPreviewAction(
+            redirect_item = FrontendRedirectAction(
                 url=action_url, label=button_label, order=0
             )
-            menu_items.insert(0, preview_item)
+            menu_items.insert(0, redirect_item)
     except (AttributeError, TypeError, ValueError, LookupError, RuntimeError):
         logger.debug(
             "Failed to construct frontend preview action; editor UI will continue"
         )
-
-
-def _build_frontend_preview_url(page: Page) -> str | None:
-    """Build the admin redirect URL used by the top-level Preview action."""
-    try:
-        return reverse("cms_preview_to_frontend", args=[page.pk])
-    except NoReverseMatch:
-        logger.debug(
-            "Preview admin URL cannot be reversed; preview actions will be hidden"
-        )
-        return None
 
 
 def _replace_view_live_button_href(message_html: str, target_url: str) -> str:
@@ -391,7 +356,7 @@ def _rewrite_post_publish_view_live_button_url(
     if not getattr(page, "live", False):
         return
 
-    live_url = _build_view_live_url(page=page)
+    live_url = _build_frontend_redirect_url(page=page, route=ROUTES[VIEW_LIVE_LABEL])
     if not live_url:
         return
 
