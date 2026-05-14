@@ -9,6 +9,7 @@ from wagtail.models.i18n import Locale
 
 from caching.private_api.management import CacheManagement
 from cms.home.models.home_page import UKHSARootPage
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models import (
     PlotGenerationData,
     PlotParameters,
@@ -16,6 +17,7 @@ from metrics.domain.models import (
 )
 from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models.charts.dual_category_charts import Segments
+from metrics.domain.models.charts.segments import SegmentParameters
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
     Subplots,
@@ -185,19 +187,23 @@ def fake_chart_plot_parameters() -> PlotParameters:
         y_axis="metric",
     )
 
+
 @pytest.fixture
 def fake_dual_category_chart_segments() -> Segments:
     return Segments(
-        chart_type="line_multi_coloured",
-        topic="COVID-19",
-        metric="COVID-19_testing_positivity7DayRolling",
-        stratum="default",
-        date_from="2023-01-01",
-        date_to="2023-12-31",
-        x_axis="date",
-        y_axis="metric",
+        [
+            SegmentParameters(
+                secondary_field_value="00-04",
+                colour=RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
+                label="0 to 4 years",
+            ),
+            SegmentParameters(
+                secondary_field_value="05-11",
+                colour=RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
+                label="5 to 11 years",
+            ),
+        ]
     )
-
 
 @pytest.fixture
 def fake_chart_request_params(
@@ -236,15 +242,6 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
         date_to="2023-12-31",
     )
 
-@pytest.fixture
-def fake_dual_category_chart_segments_covid_cases() -> Segments:
-    return PlotParameters(
-        chart_type="line_multi_coloured",
-        topic="COVID-19",
-        metric="COVID-19_deaths_ONSByDay",
-        date_from="2023-01-01",
-        date_to="2023-12-31",
-    )
 
 @pytest.fixture
 def valid_plot_parameters() -> PlotParameters:

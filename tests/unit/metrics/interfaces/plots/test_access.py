@@ -9,7 +9,10 @@ from metrics.domain.models import (
     PlotParameters,
     ChartRequestParams,
 )
-from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams, Segments
+from metrics.domain.models.charts.dual_category_charts import (
+    DualCategoryChartRequestParams,
+    Segments,
+)
 from metrics.domain.models.plots import CompletePlotData
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
@@ -23,7 +26,9 @@ from metrics.interfaces.plots.access import (
     get_aggregated_results,
     aggregate_results_by_age,
 )
-from metrics.interfaces.plots.dual_category_plots_interface import DualCategoryPlotsInterface
+from metrics.interfaces.plots.dual_category_plots_interface import (
+    DualCategoryPlotsInterface,
+)
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -1084,7 +1089,6 @@ class TestDualCategoryPlotsInterface:
         self,
         spy_build_plot_data_from_parameters: mock.MagicMock,
         fake_dual_category_chart_segments: Segments,
-        fake_dual_category_chart_segments_covid_cases: Segments,
     ):
         """
         TODO:
@@ -1095,7 +1099,7 @@ class TestDualCategoryPlotsInterface:
         """
         # Given
         fake_chart_request_params = DualCategoryChartRequestParams(
-            segments=[fake_dual_category_chart_segments, fake_dual_category_chart_segments_covid_cases],
+            segments=fake_dual_category_chart_segments,            
             file_format="png",
             chart_width=123,
             chart_height=456,
@@ -1115,8 +1119,7 @@ class TestDualCategoryPlotsInterface:
         # Check that `build_plot_data_from_parameters()` method
         # is called for each of the provided `PlotParameters` models
         expected_calls = [
-            mock.call(plot_parameters=fake_dual_category_chart_segments),
-            mock.call(plot_parameters=fake_dual_category_chart_segments_covid_cases),
+            mock.call(segments=fake_dual_category_chart_segments),
         ]
         spy_build_plot_data_from_parameters.assert_has_calls(
             calls=expected_calls,

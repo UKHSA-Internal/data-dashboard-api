@@ -1,10 +1,11 @@
-from pydantic import BaseModel, model_validator
-from metrics.data.models.core_models import CoreTimeSeries, Topic
-from metrics.domain.models import (
-    DualCategoryChartRequestParams
-)
-from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
+from dataclasses import dataclass
+
 from django.db.models import Manager
+from pydantic import BaseModel, model_validator
+
+from metrics.data.models.core_models import CoreTimeSeries, Topic
+from metrics.domain.models import DualCategoryChartRequestParams
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_TOPIC_MANAGER = Topic.objects
@@ -13,6 +14,7 @@ DEFAULT_TOPIC_MANAGER = Topic.objects
 # =========================================================
 # 📦 DATA LAYER (PURE MATRIX ONLY)
 # =========================================================
+
 
 class DualCategoryPlots(BaseModel):
     """
@@ -36,21 +38,22 @@ class DualCategoryPlots(BaseModel):
         """
 
         if len(self.plots) != len(self.primary_labels):
-            raise ValueError(
-                "plots row count must match primary_labels length"
-            )
+            error_message = "plots row count must match primary_labels length"
+            raise ValueError(error_message)
 
         expected_cols = len(self.secondary_labels)
 
         for i, row in enumerate(self.plots):
             if len(row) != expected_cols:
-                raise ValueError(
-                    f"Row {i} has length {len(row)} "
-                    f"but expected {expected_cols}"
+                error_message = (
+                    f"Row {i} has length {len(row)} but expected {expected_cols}"
                 )
+                raise ValueError(error_message)
 
         return self
 
+
+@dataclass
 class DualCategoryPlotsInterface:
     def __init__(
         self,

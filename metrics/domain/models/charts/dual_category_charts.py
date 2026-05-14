@@ -5,6 +5,7 @@ from metrics.domain.models.charts.segments import SegmentParameters
 
 type Segments = list[SegmentParameters]
 
+
 class StaticFields(BaseModel):
     theme: str
     sub_theme: str

@@ -10,4 +10,6 @@ from .subplot_plots import (
     SubplotChartGenerationPayload,
     SubplotGenerationData,
 )
-from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams
+from metrics.domain.models.charts.dual_category_charts import (
+    DualCategoryChartRequestParams,
+)
