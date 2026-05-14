@@ -15,6 +15,7 @@ from metrics.domain.models import (
     ChartRequestParams,
 )
 from metrics.domain.common.utils import ChartTypes
+from metrics.domain.models.charts.dual_category_charts import Segments
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
     Subplots,
@@ -174,6 +175,19 @@ def fake_subcategory_choices_grouped_by_categories() -> dict[str, list[str]]:
 @pytest.fixture
 def fake_chart_plot_parameters() -> PlotParameters:
     return PlotParameters(
+        chart_type="line_multi_coloured",
+        topic="COVID-19",
+        metric="COVID-19_testing_positivity7DayRolling",
+        stratum="default",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
+        x_axis="date",
+        y_axis="metric",
+    )
+
+@pytest.fixture
+def fake_dual_category_chart_segments() -> Segments:
+    return Segments(
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_testing_positivity7DayRolling",

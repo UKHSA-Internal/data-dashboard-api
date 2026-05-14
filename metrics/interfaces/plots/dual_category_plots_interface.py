@@ -62,30 +62,3 @@ class DualCategoryPlotsInterface:
         self.chart_request_params = chart_request_params
         self.core_model_manager = core_model_manager
         self.topic_model_manager = topic_model_manager
-        self.validate_plot_parameters()
-
-    def validate_plot_parameters(self) -> None:
-        """Validates each plot parameters model on the `PlotCollection`
-
-        Returns:
-            None
-
-        Raises:
-            `InvalidPlotParametersError`: If an underlying
-                validation check has failed.
-                This could be because there is
-                an invalid topic and metric selection.
-                Or because the selected dates are not in
-                the expected chronological order.
-
-        """
-        for plot_parameters in self.chart_request_params.plots:
-            validation = PlotValidation(plot_parameters=plot_parameters)
-            try:
-                validation.validate()
-            except (
-                MetricDoesNotSupportTopicError,
-                DatesNotInChronologicalOrderError,
-            ) as error:
-                logger.warning(error)
-                raise InvalidPlotParametersError from error
