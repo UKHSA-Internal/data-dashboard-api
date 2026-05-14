@@ -18,7 +18,7 @@ from cms.topic.models import TopicPage
 from common.auth.logging import log_user_permission_summary
 from common.auth.permissions import check_page_permissions
 
-from validation.shared import (
+from common.page_previews import (
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
     validate_preview_hmac_token,
