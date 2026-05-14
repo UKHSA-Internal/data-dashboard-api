@@ -17,7 +17,7 @@ from cms.dashboard.views import (
     InvalidPreviewFrontendUrlError,
     LinkBrowseView,
     MissingPreviewFrontendHostConfigurationError,
-    PreviewToFrontendRedirectView,
+    FrontendRedirectView,
 )
 
 MODULE_PATH = "cms"
@@ -73,7 +73,7 @@ class TestEmbargoTime:
         """
         assert parse_embargo_time_value(embargo_time_value) is None
 
-    @mock.patch("common.virtual_clock.datetime.datetime")
+    @mock.patch("common.virtual_clock.datetime")
     def test_returns_none_when_timestamp_cannot_be_converted(
         self, spy_datetime_class: mock.MagicMock
     ):
@@ -97,12 +97,12 @@ class TestEmbargoTime:
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
         request = RequestFactory().get(
-            "/cms-admin/preview-to-frontend/1/",
+            "/cms-admin/redirect-to-frontend/1/",
             data={"embargo_time": "now"},
         )
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
 
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -123,12 +123,12 @@ class TestEmbargoTime:
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
         request = RequestFactory().get(
-            "/cms-admin/preview-to-frontend/1/",
+            "/cms-admin/redirect-to-frontend/1/",
             data={"embargo_time": "1711456200"},
         )
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
 
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -149,12 +149,12 @@ class TestEmbargoTime:
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
         request = RequestFactory().get(
-            "/cms-admin/preview-to-frontend/1/",
+            "/cms-admin/redirect-to-frontend/1/",
             data={"embargo_time": "   "},
         )
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
 
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -175,12 +175,12 @@ class TestEmbargoTime:
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
         request = RequestFactory().get(
-            "/cms-admin/preview-to-frontend/1/",
+            "/cms-admin/redirect-to-frontend/1/",
             data={"embargo_time": "not-a-time"},
         )
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
 
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -191,8 +191,8 @@ class TestEmbargoTime:
         assert "et" not in parsed_query
 
 
-class TestAddFrontendPreviewActionExceptions:
-    @mock.patch("cms.dashboard.wagtail_hooks.PreviewToFrontendRedirectView")
+class TestAddFrontendRedirectActionExceptions:
+    @mock.patch("cms.dashboard.wagtail_hooks.FrontendRedirectView")
     @mock.patch("cms.dashboard.wagtail_hooks.reverse", side_effect=NoReverseMatch)
     def test_no_reverse_match_hides_preview_action(self, mock_reverse, mock_view):
         """
@@ -335,7 +335,47 @@ class TestFrontendPreviewButton:
         assert buttons == []
 
 
-class TestPreviewToFrontendRedirectView:
+class TestFrontendRedirectView:
+    @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
+    def test_get_raises_error_for_unspported_routes(self, spy_get_object_or_404):
+        """
+        Given an unsupported route querystring parameter
+        When get is called
+        Then ValueError must be raised
+        """
+
+        route = "hackerpath"
+
+        spy_get_object_or_404.return_value = FakePage(pk=1, slug="s", can_edit=True)
+
+        request = RequestFactory().get(
+            f"/cms-admin/redirect-to-frontend/1/?route={route}"
+        )
+        request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
+        view = FrontendRedirectView()
+        with pytest.raises(ValueError) as e:
+            view.get(request=request, pk=1)
+
+        assert (
+            str(e.value)
+            == "route querystring parameter must be either 'preview' or 'nocache'"
+        )
+
+    def test_build_frontend_base_url_raises_error_for_unspported_routes(self):
+        """
+        Given an unsupported route hackerpath
+        When build_frontend_base_url is called
+          with an unsupported route e.g. hackerpath
+        Then ValueError must be raised
+        """
+        base_url = "http://localhost:8000"
+        route = "hackerpath"
+
+        with pytest.raises(ValueError) as e:
+            FrontendRedirectView.build_frontend_base_url(base_url=base_url, route=route)
+
+        assert str(e.value) == "route must be 'preview' or 'nocache'"
+
     def test_build_route_slug_uses_nested_page_path_when_available(self):
         """
         Given get_url_parts returns a nested page path
@@ -348,7 +388,7 @@ class TestPreviewToFrontendRedirectView:
             "https://frontend.test",
             "/respiratory-viruses/covid-19/",
         )
-        route_slug = PreviewToFrontendRedirectView.build_route_slug(page=page)
+        route_slug = FrontendRedirectView.build_route_slug(page=page)
         assert route_slug == "respiratory-viruses/covid-19"
 
     @pytest.mark.parametrize("page_path", [None, "", "/", "///"])
@@ -361,7 +401,7 @@ class TestPreviewToFrontendRedirectView:
         page = mock.MagicMock(slug="fallback-slug")
         page.get_url_parts.return_value = (1, "https://frontend.test", page_path)
 
-        route_slug = PreviewToFrontendRedirectView.build_route_slug(page=page)
+        route_slug = FrontendRedirectView.build_route_slug(page=page)
 
         assert route_slug == "fallback-slug"
 
@@ -377,7 +417,7 @@ class TestPreviewToFrontendRedirectView:
         page = mock.MagicMock(slug="fallback-slug")
         page.get_url_parts.side_effect = exception
 
-        route_slug = PreviewToFrontendRedirectView.build_route_slug(page=page)
+        route_slug = FrontendRedirectView.build_route_slug(page=page)
 
         assert route_slug == "fallback-slug"
 
@@ -390,30 +430,41 @@ class TestPreviewToFrontendRedirectView:
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="s", can_edit=False)
 
-        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request = RequestFactory().get("/cms-admin/redirect-to-frontend/1/")
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         with pytest.raises(PermissionDenied):
             view.get(request=request, pk=1)
 
+    @pytest.mark.parametrize(
+        ("route", "expected"),
+        [
+            ("preview", "https://frontend.test/preview/cover?t="),
+            ("nocache", "https://frontend.test/nocache/cover?t="),
+        ],
+    )
     @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
-    def test_success_redirects(self, spy_get_object_or_404: mock.MagicMock, settings):
+    def test_success_redirects(
+        self, spy_get_object_or_404: mock.MagicMock, route, expected
+    ):
         """
         Given an editable page and a frontend preview base URL
         When the preview redirect view is requested
         Then the response redirects to the frontend preview URL with a token
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
-        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request = RequestFactory().get(
+            f"/cms-admin/redirect-to-frontend/1/?route={route}"
+        )
 
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
             response.url if hasattr(response, "url") else response.get("Location")
         )
-        assert location.startswith("https://frontend.test/preview/cover?t=")
+        assert location.startswith(expected)
 
     @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
     def test_success_redirects_with_nested_route_slug(
@@ -431,10 +482,12 @@ class TestPreviewToFrontendRedirectView:
             "/respiratory-viruses/covid-19/",
         )
         spy_get_object_or_404.return_value = page
-        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request = RequestFactory().get(
+            "/cms-admin/redirect-to-frontend/1/?route=preview"
+        )
 
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -454,10 +507,10 @@ class TestPreviewToFrontendRedirectView:
         Then the redirect query includes slug, token, and page_id
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
-        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request = RequestFactory().get("/cms-admin/redirect-to-frontend/1/")
 
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = "https://frontend.test"
         response = view.get(request=request, pk=1)
         location = (
@@ -477,7 +530,7 @@ class TestPreviewToFrontendRedirectView:
         """
         config.FRONTEND_URL = "https://frontend.test"
 
-        validated_url = PreviewToFrontendRedirectView.validate_frontend_redirect_url(
+        validated_url = FrontendRedirectView.validate_frontend_redirect_url(
             frontend_url="https://frontend.test/preview?slug=cover&t=signed-token"
         )
 
@@ -494,7 +547,7 @@ class TestPreviewToFrontendRedirectView:
         config.FRONTEND_URL = "https://frontend.test"
 
         with pytest.raises(ImproperlyConfigured):
-            PreviewToFrontendRedirectView.validate_frontend_redirect_url(
+            FrontendRedirectView.validate_frontend_redirect_url(
                 frontend_url="https://malicious.test/preview?slug=cover&t=signed-token"
             )
 
@@ -507,7 +560,7 @@ class TestPreviewToFrontendRedirectView:
         config.FRONTEND_URL = "https://frontend.test"
 
         with pytest.raises(ImproperlyConfigured):
-            PreviewToFrontendRedirectView.validate_frontend_redirect_url(
+            FrontendRedirectView.validate_frontend_redirect_url(
                 frontend_url="/preview?slug=cover&t=signed-token"
             )
 
@@ -521,7 +574,7 @@ class TestPreviewToFrontendRedirectView:
         """
         config.FRONTEND_URL = ""
         with pytest.raises(ImproperlyConfigured):
-            PreviewToFrontendRedirectView.validate_frontend_redirect_url(
+            FrontendRedirectView.validate_frontend_redirect_url(
                 frontend_url="https://frontend.test/preview?slug=cover&t=signed-token"
             )
 
@@ -535,7 +588,7 @@ class TestPreviewToFrontendRedirectView:
         """
         config.FRONTEND_URL = "https://frontend.test"
 
-        route_url = PreviewToFrontendRedirectView.build_frontend_route_url(
+        route_url = FrontendRedirectView.build_frontend_route_url(
             base_url="https://frontend.test",
             route_slug="respiratory-viruses/covid-19",
         )
@@ -552,26 +605,40 @@ class TestPreviewToFrontendRedirectView:
         """
         config.FRONTEND_URL = "https://frontend.test"
 
-        route_url = PreviewToFrontendRedirectView.build_frontend_route_url(
+        route_url = FrontendRedirectView.build_frontend_route_url(
             base_url="https://frontend.test",
             route_slug="",
         )
 
         assert route_url == "https://frontend.test/nocache"
 
-    def test_build_frontend_preview_base_url_appends_preview_path(self, settings):
+    def test_build_frontend_base_url_appends_preview_path(self, settings):
         """
         Given a valid frontend base URL
-        When build_frontend_preview_base_url is called
+        When build_frontend_base_url is called
         Then it returns the validated frontend preview endpoint URL
         """
         config.FRONTEND_URL = "https://frontend.test"
 
-        preview_url = PreviewToFrontendRedirectView.build_frontend_preview_base_url(
-            base_url="https://frontend.test"
+        preview_url = FrontendRedirectView.build_frontend_base_url(
+            base_url="https://frontend.test", route="preview"
         )
 
         assert preview_url == "https://frontend.test/preview"
+
+    def test_build_frontend_base_url_appends_nocache_path(self, settings):
+        """
+        Given a valid frontend base URL
+        When build_frontend_base_url is called
+        Then it returns the validated frontend preview endpoint URL
+        """
+        config.FRONTEND_URL = "https://frontend.test"
+
+        preview_url = FrontendRedirectView.build_frontend_base_url(
+            base_url="https://frontend.test", route="nocache"
+        )
+
+        assert preview_url == "https://frontend.test/nocache"
 
     @mock.patch(f"{MODULE_PATH}.dashboard.views.get_object_or_404")
     def test_redirect_raises_when_base_url_is_not_absolute(
@@ -583,17 +650,17 @@ class TestPreviewToFrontendRedirectView:
         Then an ImproperlyConfigured error is raised instead of redirecting
         """
         spy_get_object_or_404.return_value = FakePage(pk=1, slug="cover", can_edit=True)
-        request = RequestFactory().get("/cms-admin/preview-to-frontend/1/")
+        request = RequestFactory().get("/cms-admin/redirect-to-frontend/1/")
         request.user = type("U", (), {"is_authenticated": True, "pk": 5})()
 
-        view = PreviewToFrontendRedirectView()
+        view = FrontendRedirectView()
         config.FRONTEND_URL = ""
 
         with pytest.raises(ImproperlyConfigured):
             view.get(request=request, pk=1)
 
 
-class TestAddFrontendPreviewAction:
+class TestAddFrontendRedirectAction:
     def test_missing_page_or_pk_returns_none(self):
         """
         Given missing page context or an unsaved page without pk
@@ -758,7 +825,7 @@ class TestLinkBrowseView:
         )
 
         spy_reverse.side_effect = (
-            lambda name, args=None: f"/admin/preview-to-frontend/{args[0]}/"
+            lambda name, args=None: f"/admin/redirect-to-frontend/{args[0]}/"
         )
 
         # When

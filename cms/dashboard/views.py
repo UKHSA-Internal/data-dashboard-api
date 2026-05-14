@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Literal
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
 from django.conf import settings
@@ -39,7 +40,7 @@ class PreviewFrontendHostNotAllowedError(ImproperlyConfigured):
         )
 
 
-class PreviewToFrontendRedirectView(View):
+class FrontendRedirectView(View):
     """Generate a signed preview token and redirect to the frontend.
 
     This view is intentionally simple: it performs a permission check on the
@@ -130,7 +131,7 @@ class PreviewToFrontendRedirectView(View):
         return frontend_url
 
     @staticmethod
-    def build_preview_url(
+    def build_redirect_url(
         *,
         raw_url: str,
         slug: str,
@@ -201,20 +202,28 @@ class PreviewToFrontendRedirectView(View):
         return cls.validate_frontend_redirect_url(frontend_url=frontend_url)
 
     @classmethod
-    def build_frontend_preview_base_url(cls, *, base_url: str) -> str:
-        """Build and validate the frontend preview endpoint URL.
+    def build_frontend_base_url(
+        cls, *, base_url: str, route: Literal["preview", "nocache"]
+    ) -> str:
+        """Build and validate the frontend preview or
+            view live (nocache) endpoint URL.
 
         Args:
             base_url: Frontend base URL from settings.
 
         Returns:
-            str: Absolute frontend `/preview` endpoint URL.
+            str: Absolute frontend `/preview` or `/nocache` endpoint URL.
 
         Raises:
             ImproperlyConfigured: If the resulting URL is not on the trusted
                 frontend host allow-list.
         """
-        frontend_url = f"{base_url.rstrip('/')}/preview"
+
+        if route not in {"preview", "nocache"}:
+            error_message = "route must be 'preview' or 'nocache'"
+            raise ValueError(error_message)
+
+        frontend_url = f"{base_url.rstrip('/')}/{route}"
         return cls.validate_frontend_redirect_url(frontend_url=frontend_url)
 
     def get(self, request, pk):
@@ -225,7 +234,8 @@ class PreviewToFrontendRedirectView(View):
             response. This blocks open-redirect scenarios where a hostile
             or incorrect URL could send CMS users to an untrusted domain.
 
-                        Input handling summary for audit/review:
+                        Input handling summary:
+                        - `route` can be only 'preview' or 'nocache' and defaults to 'nocache'
                         - `pk` arrives via a digits-only route and is resolved via
                             `get_object_or_404`, so invalid IDs do not proceed.
                         - `embargo_time` is treated as untrusted and parsed as either
@@ -253,6 +263,14 @@ class PreviewToFrontendRedirectView(View):
             raise PermissionDenied
 
         embargo_time_value = request.GET.get("embargo_time")
+        route = request.GET.get("route", "nocache")
+
+        if route not in {"preview", "nocache"}:
+            error_message = (
+                "route querystring parameter must be either 'preview' or 'nocache'"
+            )
+            raise ValueError(error_message)
+
         parsed_embargo_time = None
         if embargo_time_value is not None:
             embargo_time_value = embargo_time_value.strip()
@@ -283,10 +301,11 @@ class PreviewToFrontendRedirectView(View):
 
         route_slug = self.build_route_slug(page=page)
 
-        frontend_url = self.build_frontend_preview_base_url(
-            base_url=config.FRONTEND_URL
+        frontend_url = self.build_frontend_base_url(
+            base_url=config.FRONTEND_URL, route=route
         )
-        frontend_url = self.build_preview_url(
+
+        frontend_url = self.build_redirect_url(
             raw_url=frontend_url,
             slug=route_slug,
             token=token,
