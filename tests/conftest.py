@@ -188,7 +188,7 @@ def fake_chart_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_dual_category_chart_segments() -> SegmentParameters:
+def fake_dual_category_chart_segments() -> list[SegmentParameters]:
     return [
             SegmentParameters(
                 secondary_field_value="00-04",

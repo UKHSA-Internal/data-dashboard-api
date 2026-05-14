@@ -1127,18 +1127,18 @@ class TestDualCategoryPlotsInterface:
         )
 
         # When
-        plots_data = interface.build_plots_data()
+        plots_data = interface.build_plots_data(segment_parameters=fake_chart_request_params.segments)
 
-        # # Then
-        # # Check that `build_plot_data_from_parameters()` method
-        # # is called for each of the provided `PlotParameters` models
-        # expected_calls = [
-        #     mock.call(segments=fake_dual_category_chart_segments),
-        # ]
-        # spy_build_plot_data_from_parameters.assert_has_calls(
-        #     calls=expected_calls,
-        #     any_order=False,
-        # )
+        # Then
+        # Check that `build_plot_data_from_parameters()` method
+        # is called for each of the provided `PlotParameters` models
+        expected_calls = [
+            mock.call(segment_parameters=fake_chart_request_params.segments),
+        ]
+        spy_build_plot_data_from_parameters.assert_has_calls(
+            calls=expected_calls,
+            any_order=False,
+        )
 
-        # expected_plots_data = [spy_build_plot_data_from_parameters.return_value] * 2
-        # assert plots_data == expected_plots_data
+        expected_plots_data = [spy_build_plot_data_from_parameters.return_value] * 2
+        assert plots_data == expected_plots_data
