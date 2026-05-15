@@ -12,16 +12,20 @@ from ingestion.data_transfer_models.time_series import (
 )
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from validation.data_transfer_models.base import MissingFieldError
+from validation.is_public import validate_is_public
 
 
 def build_time_series_dto_from_source(
     *,
     source_data: INCOMING_DATA_TYPE,
+    filename: str,
 ) -> TimeSeriesDTO:
-    """Enriches a `TimeSeriesDTO` with the corresponding fields from the `source_data`
+    """
+    Enriches a `TimeSeriesDTO` with the corresponding fields from the `source_data`
 
     Args:
-        source_data: The inbound source data to be validated
+        source_data: The incoming source data to be validated
+        filename: The incoming filename, eg "my_file.json"
 
     Returns:
         An enriched `InboundTimeSeriesDTO`
@@ -33,21 +37,25 @@ def build_time_series_dto_from_source(
         `ValueError`: If the "time_series" value is given as None
         `ValidationError`: If any of the fields do not conform
             to the underlying validation checks
-
     """
     return _build_dto_from_source(
         source_data=source_data,
+        filename=filename,
         key_for_specific_fields="time_series",
         extract_specific_fields_function=_build_enriched_time_series_specific_fields,
         build_dto_function=_build_time_series_dto,
     )
 
 
-def build_headline_dto_from_source(*, source_data: INCOMING_DATA_TYPE) -> HeadlineDTO:
-    """Enriches a `HeadlineDTO` with the corresponding fields from the `source_data`
+def build_headline_dto_from_source(
+    *, source_data: INCOMING_DATA_TYPE, filename: str
+) -> HeadlineDTO:
+    """
+    Enriches a `HeadlineDTO` with the corresponding fields from the `source_data`
 
     Args:
-        source_data: The inbound source data to be validated
+        source_data: The incoming source data to be validated
+        filename: The incoming filename, eg "my_file.json"
 
     Returns:
         An enriched `InboundTimeSeriesDTO`
@@ -59,10 +67,10 @@ def build_headline_dto_from_source(*, source_data: INCOMING_DATA_TYPE) -> Headli
         `ValueError`: If the "time_series" value is given as None
         `ValidationError`: If any of the fields do not conform
             to the underlying validation checks
-
     """
     return _build_dto_from_source(
         source_data=source_data,
+        filename=filename,
         key_for_specific_fields="data",
         extract_specific_fields_function=_build_enriched_headline_specific_fields,
         build_dto_function=_build_headline_dto,
@@ -72,6 +80,7 @@ def build_headline_dto_from_source(*, source_data: INCOMING_DATA_TYPE) -> Headli
 def _build_dto_from_source(
     *,
     source_data: INCOMING_DATA_TYPE,
+    filename: str,
     key_for_specific_fields: str,
     extract_specific_fields_function: Callable,
     build_dto_function: Callable,
@@ -86,6 +95,13 @@ def _build_dto_from_source(
     # If that same field was provided as None, raise an error
     if incoming_individual_specific_fields is None:
         raise ValueError
+
+    # ValueErrors raised inside function
+    validate_is_public(
+        source_data=source_data,
+        fields=incoming_individual_specific_fields,
+        filename=filename,
+    )
 
     # Using the injected `extract_specific_fields_function`
     # try and extract a list of enriched models for the specific fields

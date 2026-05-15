@@ -75,7 +75,9 @@ The `geography_code` is validated against the `geography_type` to ensure it foll
 Note that this is not an exhaustive list.
 See the `validate_geography_code()` function for details on the implementation of how we validate geography codes.
 
----
+## Public / Non-public
+
+The documentation for the `is_public`/`OFF-SENS_`files validation lives in `validation/is_public.py`.
 
 ## Guides
 

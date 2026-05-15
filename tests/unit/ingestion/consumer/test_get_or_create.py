@@ -6,7 +6,9 @@ from ingestion.utils import type_hints
 
 class TestConsumerGetOrCreateMethods:
     def test_get_or_create_theme(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -21,7 +23,9 @@ class TestConsumerGetOrCreateMethods:
         spy_theme_manager.get_or_create.return_value = expected_model, True
 
         consumer = Consumer(
-            source_data=example_headline_data, theme_manager=spy_theme_manager
+            source_data=example_headline_data,
+            filename=test_filename,
+            theme_manager=spy_theme_manager,
         )
 
         # When
@@ -34,7 +38,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_sub_theme(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -51,6 +57,7 @@ class TestConsumerGetOrCreateMethods:
         mocked_theme = mock.Mock()
         consumer = Consumer(
             source_data=example_headline_data,
+            filename=test_filename,
             sub_theme_manager=spy_sub_theme_manager,
         )
 
@@ -64,7 +71,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_topic(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -80,7 +89,9 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_sub_theme = mock.Mock()
         consumer = Consumer(
-            source_data=example_headline_data, topic_manager=spy_topic_manager
+            source_data=example_headline_data,
+            filename=test_filename,
+            topic_manager=spy_topic_manager,
         )
 
         # When
@@ -93,7 +104,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography_type(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -109,6 +122,7 @@ class TestConsumerGetOrCreateMethods:
 
         consumer = Consumer(
             source_data=example_headline_data,
+            filename=test_filename,
             geography_type_manager=spy_geography_type_manager,
         )
 
@@ -122,7 +136,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -139,6 +155,7 @@ class TestConsumerGetOrCreateMethods:
         mocked_geography_type = mock.Mock()
         consumer = Consumer(
             source_data=example_headline_data,
+            filename=test_filename,
             geography_manager=spy_geography_manager,
         )
 
@@ -156,7 +173,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_metric_group(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -173,6 +192,7 @@ class TestConsumerGetOrCreateMethods:
         mocked_topic = mock.Mock()
         consumer = Consumer(
             source_data=example_headline_data,
+            filename=test_filename,
             metric_group_manager=spy_metric_group_manager,
         )
 
@@ -187,7 +207,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_metric(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -204,7 +226,9 @@ class TestConsumerGetOrCreateMethods:
         mocked_topic = mock.Mock()
         mocked_metric_group = mock.Mock()
         consumer = Consumer(
-            source_data=example_headline_data, metric_manager=spy_metric_manager
+            source_data=example_headline_data,
+            filename=test_filename,
+            metric_manager=spy_metric_manager,
         )
 
         # When
@@ -221,7 +245,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_stratum(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -236,7 +262,9 @@ class TestConsumerGetOrCreateMethods:
         spy_stratum_manager.get_or_create.return_value = expected_model, True
 
         consumer = Consumer(
-            source_data=example_headline_data, stratum_manager=spy_stratum_manager
+            source_data=example_headline_data,
+            filename=test_filename,
+            stratum_manager=spy_stratum_manager,
         )
 
         # When
@@ -249,7 +277,9 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_age(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -264,7 +294,9 @@ class TestConsumerGetOrCreateMethods:
         spy_age_manager.get_or_create.return_value = expected_model, True
 
         consumer = Consumer(
-            source_data=example_headline_data, age_manager=spy_age_manager
+            source_data=example_headline_data,
+            filename=test_filename,
+            age_manager=spy_age_manager,
         )
 
         # When

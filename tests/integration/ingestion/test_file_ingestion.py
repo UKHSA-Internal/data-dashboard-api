@@ -1,4 +1,6 @@
 import zoneinfo
+from copy import deepcopy
+from unittest import mock
 
 import pytest
 
@@ -6,6 +8,9 @@ from ingestion.file_ingestion import data_ingester
 from ingestion.utils import type_hints
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from validation.is_public import (
+    MISSING_IS_PUBLIC_FIELD_ERROR,
+)
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
@@ -13,7 +18,9 @@ EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 class TestDataIngester:
     @pytest.mark.django_db
     def test_creates_core_headlines_from_data(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming headline type data
@@ -25,7 +32,7 @@ class TestDataIngester:
         assert CoreHeadline.objects.all().count() == 0
 
         # When
-        data_ingester(data=data)
+        data_ingester(data=data, filename=test_filename)
 
         # Then
         # Check that 2 `CoreHeadline` records are created per row of data
@@ -71,7 +78,9 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_core_time_series_from_data(
-        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming time series type data
@@ -83,7 +92,7 @@ class TestDataIngester:
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
-        data_ingester(data=data)
+        data_ingester(data=data, filename=test_filename)
 
         # Then
         # Check that 1 `CoreTimeSeries` record is created per row of data
@@ -127,7 +136,9 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_api_time_series_from_data(
-        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given incoming time series type data
@@ -139,7 +150,7 @@ class TestDataIngester:
         assert APITimeSeries.objects.all().count() == 0
 
         # When
-        data_ingester(data=data)
+        data_ingester(data=data, filename=test_filename)
 
         # Then
         # Check that 1 `APITimeSeries` record is created per row of data
@@ -164,7 +175,6 @@ class TestDataIngester:
         assert (
             core_time_series.refresh_date.strftime("%Y-%m-%d") == data["refresh_date"]
         )
-
         assert (
             core_time_series.date.strftime("%Y-%m-%d") == data["time_series"][0]["date"]
         )
@@ -175,3 +185,22 @@ class TestDataIngester:
             core_time_series.embargo.strftime("%Y-%m-%d %H:%M:%S")
             == data["time_series"][0]["embargo"]
         )
+
+    @pytest.mark.django_db
+    @mock.patch("validation.is_public.ALLOW_MISSING_IS_PUBLIC_FIELD", False)
+    def test_rejects_time_series_when_is_public_is_missing(
+        self,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        data = deepcopy(example_time_series_data)
+        for time_series_data in data["time_series"]:
+            time_series_data.pop("is_public")
+
+        with pytest.raises(ValueError) as exc_info:
+            data_ingester(data=data, filename=test_filename)
+
+        assert str(exc_info.value) == MISSING_IS_PUBLIC_FIELD_ERROR
+
+        assert CoreTimeSeries.objects.count() == 0
+        assert APITimeSeries.objects.count() == 0

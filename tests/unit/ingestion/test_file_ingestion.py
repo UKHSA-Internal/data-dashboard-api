@@ -7,7 +7,6 @@ from _pytest.logging import LogCaptureFixture
 from ingestion.consumer import Consumer
 from ingestion.file_ingestion import (
     FileIngestionFailedError,
-    _open_data_from_file,
     _upload_data_as_file,
     data_ingester,
     upload_data,
@@ -26,6 +25,7 @@ class TestDataIngester:
         spy_process_core_headlines: mock.MagicMock,
         spy_process_core_and_api_timeseries: mock.MagicMock,
         example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given data which has a "metric_group" value of "headline"
@@ -38,7 +38,7 @@ class TestDataIngester:
         fake_data = example_headline_data
 
         # When
-        data_ingester(data=fake_data)
+        data_ingester(data=fake_data, filename=test_filename)
 
         # Then
         spy_process_core_headlines.assert_called_once()
@@ -72,6 +72,7 @@ class TestDataIngester:
         metric_group: str,
         topic: str,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given data which has a "metric_group" value other than "headline"
@@ -87,7 +88,7 @@ class TestDataIngester:
         fake_data["topic"] = topic
 
         # When
-        data_ingester(data=fake_data)
+        data_ingester(data=fake_data, filename=test_filename)
 
         # Then
         spy_process_core_and_api_timeseries.assert_called_once()
@@ -97,7 +98,10 @@ class TestDataIngester:
 class TestUploadData:
     @mock.patch(f"{MODULE_PATH}.data_ingester")
     def test_delegates_call_to_data_ingester(
-        self, spy_data_ingester: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        spy_data_ingester: mock.MagicMock,
+        caplog: LogCaptureFixture,
+        test_filename: str,
     ):
         """
         Given mocked data and a file key
@@ -110,20 +114,25 @@ class TestUploadData:
 
         """
         # Given
-        mocked_key = mock.Mock()
+        mocked_key = f"in/{test_filename}"
         mocked_data = mock.Mock()
 
         # When
         upload_data(key=mocked_key, data=mocked_data)
 
         # Then
-        spy_data_ingester.assert_called_once_with(data=mocked_data)
+        spy_data_ingester.assert_called_once_with(
+            data=mocked_data, filename=test_filename
+        )
         assert f"Uploading {mocked_key}" in caplog.text
         assert f"Completed ingestion of {mocked_key}" in caplog.text
 
     @mock.patch(f"{MODULE_PATH}.data_ingester")
     def test_raises_error_with_correct_log_statement(
-        self, mocked_data_ingester: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        mocked_data_ingester: mock.MagicMock,
+        caplog: LogCaptureFixture,
+        test_filename: str,
     ):
         """
         Given mocked data and a file key
@@ -137,7 +146,7 @@ class TestUploadData:
 
         """
         # Given
-        mocked_key = mock.Mock()
+        mocked_key = f"in/{test_filename}"
         mocked_data = mock.Mock()
         error = Exception()
         mocked_data_ingester.side_effect = [error]
@@ -151,59 +160,33 @@ class TestUploadData:
 
 class TestUploadDataAsFile:
     @mock.patch(f"{MODULE_PATH}.upload_data")
-    @mock.patch(f"{MODULE_PATH}._open_data_from_file")
-    @mock.patch("builtins.open")
+    @mock.patch(f"{MODULE_PATH}.json.load")
+    @mock.patch("builtins.open", new_callable=mock.mock_open)
     def test_opens_file_and_delegates_to_upload_data(
         self,
         mocked_open: mock.MagicMock,
-        spy_open_data_from_file: mock.MagicMock,
+        mocked_json_load: mock.MagicMock,
         spy_upload_data: mock.MagicMock,
     ):
         """
-        Given a fake file
+        Given a fake file path
         When `_upload_data_as_file()` is called
-        Then the call is delegated to open the data from the file
-        And then to pass it to the call to the `upload_data`()` function
+        Then the file is opened and parsed as JSON
+        And the parsed data is passed to `upload_data()` function
 
         Patches:
             `mocked_open`: To prevent the side effects of having
                 to open a real file from the local filesystem
-            `spy_open_data_from_file`: To check the opened
-                file is passed to this function for the data
-                to be extracted as a dict
+            `mocked_json_load`: To mock the JSON parsing
             `spy_upload_data`: For the main assertion
-
         """
         # Given
         fake_path = Path("abc.json")
+        expected_data = {"test": "data"}
+        mocked_json_load.return_value = expected_data
 
         # When
         _upload_data_as_file(filepath=fake_path)
 
         # Then
-        spy_open_data_from_file.assert_called_with(
-            file=mocked_open.return_value.__enter__.return_value
-        )
-        spy_upload_data.assert_called_once_with(
-            key=fake_path.name, data=spy_open_data_from_file.return_value
-        )
-
-
-class TestOpenDataFromFile:
-    @mock.patch(f"{MODULE_PATH}.json")
-    def test_delegates_calls_successfully(self, spy_json: mock.MagicMock):
-        """
-        Given a mocked file object
-        When `_open_data_from_file()` is called
-        Then the call is delegated to read the file
-            and to pass it to the call to be deserialized
-        """
-        # Given
-        mocked_file = mock.MagicMock()
-
-        # When
-        _open_data_from_file(file=mocked_file)
-
-        # Then
-        mocked_file.readlines.assert_called_once()
-        spy_json.loads.assert_called_once_with(mocked_file.readlines.return_value[0])
+        spy_upload_data.assert_called_once_with(key=fake_path.name, data=expected_data)
