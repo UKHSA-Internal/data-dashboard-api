@@ -342,4 +342,6 @@
 
   // Initialize when DOM is ready
   document.addEventListener("DOMContentLoaded", initialize);
-})();
+  module.exports = { setToWildcard, WILDCARD_ID_VALUE };
+}
+)();

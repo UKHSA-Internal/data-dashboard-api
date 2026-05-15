@@ -34,3 +34,6 @@ venv/
 
 # Existing local SQLite database
 db.sqlite3
+
+# Spec files used for jest tests
+**/*.spec.js

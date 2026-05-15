@@ -7,7 +7,9 @@ function _tests_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  unit                      - run all unit tests"
+    echo "  unit                      - run all Python unit tests"
+    echo "  jest                      - run all jest tests"
+    echo "  jest-ci                   - run all jest tests optimised for CI"
     echo "  integration               - run all integration tests"
     echo "  system                    - run all system tests"
     echo "  migrations                - run all migration tests"
@@ -24,6 +26,8 @@ function _tests() {
 
     case $verb in
         "unit") _tests_unit $args ;;
+        "jest") _tests_jest $args ;;
+        "jest-ci") _tests_jest_ci $args ;;
         "integration") _tests_integration $args ;;
         "system") _tests_system $args ;;
         "migrations") _tests_migrations $args ;;
@@ -37,6 +41,17 @@ function _tests() {
 function _tests_unit() {
     uhd venv activate
     pytest tests/unit "$@"
+}
+
+function _tests_jest() {
+    npm run test # see package.json (scripts section)
+    echo "Html report 👉 file://${PWD}/coverage/index.html" # link to jest coverage report
+    return 0
+}
+
+function _tests_jest_ci() {
+    npm run test:ci # see package.json (scripts section)
+    return 0
 }
 
 function _tests_integration() {
