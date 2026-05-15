@@ -2,7 +2,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 
 from cms.dashboard.enums import (
@@ -17,7 +17,11 @@ from cms.dashboard.models import (
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_SECTION_LINK
 from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.blocks import HealthTopicSectionLink
 from cms.home.managers import LandingPageManager
+
+HEALTH_TOPIC_SECTION_LINK_MIN_NUM: int = 1
+HEALTH_TOPIC_SECTION_LINK_MAX_NUM: int = 1
 
 
 class LandingPage(UKHSAPage):
@@ -31,6 +35,13 @@ class LandingPage(UKHSAPage):
         help_text=help_texts.PAGE_DESCRIPTION_FIELD,
     )
     body = ALLOWABLE_BODY_CONTENT_SECTION_LINK
+    health_topic = StreamField(
+        block_types=[("health_topic", HealthTopicSectionLink())],
+        min_num=HEALTH_TOPIC_SECTION_LINK_MIN_NUM,
+        max_num=HEALTH_TOPIC_SECTION_LINK_MAX_NUM,
+        default=list,
+        use_json_field=True,
+    )
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -49,6 +60,7 @@ class LandingPage(UKHSAPage):
         FieldPanel("sub_title"),
         FieldPanel("page_description"),
         FieldPanel("body"),
+        FieldPanel("health_topic"),
     ]
 
     api_fields = UKHSAPage.api_fields + [
@@ -56,6 +68,7 @@ class LandingPage(UKHSAPage):
         APIField("sub_title"),
         APIField("page_description"),
         APIField("body"),
+        APIField("health_topic"),
         APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),
