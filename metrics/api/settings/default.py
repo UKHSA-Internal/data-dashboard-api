@@ -15,6 +15,9 @@ from pathlib import Path
 
 import config
 
+
+import common.signals
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -90,6 +93,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "metrics.api.middleware.current_user.CurrentUserMiddleware",
 ]
 
 APPEND_SLASH = True
@@ -192,6 +196,9 @@ LOGGING = {
         "standard": {
             "format": f"%(asctime)s [%(levelname)s] [ENVIRONMENT:{config.APIENV}] [%(name)s - %(funcName)s] %(message)s"
         },
+        "audit": {
+            "format": f"[AUDIT_EVENT] %(asctime)s [ENVIRONMENT:{config.APIENV}] [User=%(user)s - %(action)s - %(target)s]"
+        }
     },
     "handlers": {
         "console": {
@@ -199,6 +206,11 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "standard",
         },
+        "audit_console": {
+            "level": config.LOG_LEVEL,
+            "class": "logging.StreamHandler",
+            "formatter": "audit",
+        }
     },
     "loggers": {
         "": {  # Default logger
@@ -208,6 +220,11 @@ LOGGING = {
         },
         "django": {
             "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": False,
+        },
+        "audit": {
+            "handlers": ["audit_console"],
             "level": config.LOG_LEVEL,
             "propagate": False,
         },
