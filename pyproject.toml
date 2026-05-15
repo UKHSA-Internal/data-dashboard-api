@@ -333,8 +333,9 @@ ignore_imports = [
     "ingestion.metrics_interface.interface -> metrics.data.enums",
     "ingestion.metrics_interface.interface -> metrics.domain.common.utils",
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
-    "ingestion.data_transfer_models.headline -> metrics.api.settings.auth",             # Allowance for `AUTH_ENABLED` setting
-    "ingestion.data_transfer_models.time_series -> metrics.api.settings.auth",          # Allowance for `AUTH_ENABLED` setting
+    "ingestion.data_transfer_models.headline -> metrics.api.settings.auth",             # allowance for `AUTH_ENABLED` setting
+    "ingestion.data_transfer_models.time_series -> metrics.api.settings.auth",          # allowance for `AUTH_ENABLED` setting
+    "validation.is_public -> metrics.api.settings.auth",                                # allowance for `AUTH_ENABLED` setting
     "ingestion.data_transfer_models.* -> validation.data_transfer_models.base",
     "ingestion.data_transfer_models.* -> validation",
 ]
@@ -358,6 +359,7 @@ forbidden_modules = [
 ignore_imports = [
     "validation.metrics_interface.interface -> metrics.domain.common.utils",
     "validation.metrics_interface.interface -> metrics.data.enums",
+    "validation.is_public -> metrics.api.settings.auth",                                # allowance for `AUTH_ENABLED` setting
 ]
 #------------------------------------------ Metrics Domain library contracts ------------------------------------------#
 [[tool.importlinter.contracts]]

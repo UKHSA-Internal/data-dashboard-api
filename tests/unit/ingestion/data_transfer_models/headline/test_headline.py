@@ -39,6 +39,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=VALID_DATETIME,
             metric_value=123,
+            is_public=True,
         )
 
         # Then
@@ -65,6 +66,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=fake_embargo,
             metric_value=123,
+            is_public=True,
         )
 
         # Then
@@ -89,6 +91,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             metric_value=123,
             embargo=None,
+            is_public=True,
         )
 
         # Then
@@ -113,6 +116,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             metric_value=123,
             embargo=None,
+            is_public=True,
         )
 
         # Then
@@ -141,6 +145,7 @@ class TestInboundHeadlineSpecificFields:
             period_end=fake_period_end,
             embargo=fake_embargo,
             metric_value=123,
+            is_public=True,
         )
 
         # Then
@@ -218,6 +223,7 @@ class TestHeadlineDTO:
                 metric_value=123,
                 lower_confidence=80,
                 embargo=None,
+                is_public=True,
             )
         assert headline_dto is None
 
@@ -230,6 +236,7 @@ class TestHeadlineDTO:
                 metric_value=123,
                 lower_confidence=None,
                 embargo=None,
+                is_public=True,
             )
         assert headline_dto is None
 
@@ -242,6 +249,7 @@ class TestHeadlineDTO:
                 metric_value=123,
                 lower_confidence=126,
                 embargo=None,
+                is_public=True,
             )
         assert headline_dto is None
 
@@ -254,6 +262,7 @@ class TestHeadlineDTO:
                 metric_value=123,
                 lower_confidence=124,
                 embargo=None,
+                is_public=True,
             )
         assert headline_dto is None
 
@@ -265,6 +274,7 @@ class TestHeadlineDTO:
             metric_value=123,
             lower_confidence=123,
             embargo=None,
+            is_public=True,
         )
         assert headline_dto is not None
 
@@ -276,6 +286,7 @@ class TestHeadlineDTO:
             metric_value=123,
             lower_confidence=122,
             embargo=None,
+            is_public=True,
         )
         assert headline_dto is not None
 
@@ -287,5 +298,6 @@ class TestHeadlineDTO:
             metric_value=123,
             lower_confidence=123,
             embargo=None,
+            is_public=True,
         )
         assert headline_dto is not None

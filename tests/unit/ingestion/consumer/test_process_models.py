@@ -11,6 +11,7 @@ class TestConsumerProcessModels:
         spy_clear_stale_headlines: mock.MagicMock,
         spy_create_core_headlines: mock.MagicMock,
         example_headline_data,
+        test_filename: str,
     ):
         """
         Given incoming headline data
@@ -23,7 +24,7 @@ class TestConsumerProcessModels:
         spy_manager = mock.Mock()
         spy_manager.attach_mock(spy_clear_stale_headlines, "spy_clear_stale_headlines")
         spy_manager.attach_mock(spy_create_core_headlines, "spy_create_core_headlines")
-        consumer = Consumer(source_data=example_headline_data)
+        consumer = Consumer(source_data=example_headline_data, filename=test_filename)
 
         # When
         consumer.process_core_headlines()
@@ -42,6 +43,7 @@ class TestConsumerProcessModels:
         spy_clear_stale_timeseries: mock.MagicMock,
         spy_create_core_and_api_timeseries: mock.MagicMock,
         example_headline_data,
+        test_filename: str,
     ):
         """
         Given incoming timeseries data
@@ -58,7 +60,7 @@ class TestConsumerProcessModels:
         spy_manager.attach_mock(
             spy_create_core_and_api_timeseries, "spy_create_core_and_api_timeseries"
         )
-        consumer = Consumer(source_data=example_headline_data)
+        consumer = Consumer(source_data=example_headline_data, filename=test_filename)
 
         # When
         consumer.process_core_and_api_timeseries()

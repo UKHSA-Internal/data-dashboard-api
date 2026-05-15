@@ -12,6 +12,7 @@ class TestConsumerInit:
         self,
         spy_build_headline_dto_from_source: mock.MagicMock,
         example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given headline type source data
@@ -28,12 +29,12 @@ class TestConsumerInit:
         fake_data = example_headline_data
 
         # When
-        consumer = Consumer(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
         dto = consumer.dto
 
         # Then
         spy_build_headline_dto_from_source.assert_called_once_with(
-            source_data=fake_data
+            source_data=fake_data, filename=test_filename
         )
         assert dto == spy_build_headline_dto_from_source.return_value
 
@@ -42,6 +43,7 @@ class TestConsumerInit:
         self,
         spy_build_time_series_dto_from_source: mock.MagicMock,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given time series type source data
@@ -58,11 +60,11 @@ class TestConsumerInit:
         fake_data = example_time_series_data
 
         # When
-        consumer = Consumer(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
         dto = consumer.dto
 
         # Then
         spy_build_time_series_dto_from_source.assert_called_once_with(
-            source_data=fake_data
+            source_data=fake_data, filename=test_filename
         )
         assert dto == spy_build_time_series_dto_from_source.return_value

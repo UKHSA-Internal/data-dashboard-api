@@ -6,11 +6,12 @@ from ingestion.consumer import Consumer
 
 
 @pytest.fixture()
-def consumer_with_mocked_model_managers() -> Consumer:
+def consumer_with_mocked_model_managers(test_filename: str) -> Consumer:
     mocked_manager = mock.Mock()
     mocked_manager.get_or_create.return_value = mock.Mock(), mock.Mock()
     return Consumer(
         source_data=mock.MagicMock(),
+        filename=test_filename,
         dto=mock.Mock(),
         theme_manager=mocked_manager,
         sub_theme_manager=mocked_manager,
