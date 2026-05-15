@@ -35,14 +35,8 @@ class TestHealthTopicSectionLink:
             "page": fake_page,
         }
 
-        with mock.patch(
-            "cms.dynamic_content.blocks.reverse", return_value="/api/pages/456/"
-        ):
-            # When
-            api_representation_result = block.get_api_representation(value=value)
-
         # Then
-        assert api_representation_result == {
+        assert block.get_api_representation(value=value) == {
             "heading": "Health themes",
-            "page": "/api/pages/456/",
+            "page": 456,
         }

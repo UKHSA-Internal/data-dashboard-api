@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.urls import reverse
 from wagtail import blocks
 from wagtail.blocks import (
     CharBlock,
@@ -282,11 +281,9 @@ class HealthTopicSectionLink(blocks.StructBlock):
     def get_api_representation(cls, value, context=None) -> dict | None:
         if value:
             page = value.get("page")
-            api_url = (
-                reverse("wagtailapi:pages:detail", args=[page.id]) if page else None
-            )
+
             return {
                 "heading": value["heading"],
-                "page": api_url,
+                "page": page.id if page else None,
             }
         return None
