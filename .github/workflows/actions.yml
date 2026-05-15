@@ -131,6 +131,18 @@ jobs:
         run: |
           source uhd.sh
           uhd tests unit
+      - name: Run jest tests
+        run: |
+          source uhd.sh
+          uhd tests jest-ci
+      - name: Unit tests coverage comment
+        # must use the full sha1 to satisfy Sonar.
+        # we are using v1 - full sha1 below.
+        uses: ukhsa-internal/jest-coverage-comment-action@35f93b7420c590576a1484506b85578f87a6bb4a
+        with:
+          coverage-summary-path: ./coverage/coverage-summary.json
+          junitxml-path: ./junit.xml
+          title: Unit tests coverage
 
   ###############################################################################
   # Integration tests

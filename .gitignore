@@ -249,3 +249,18 @@ fabric.properties
 
 # Static files collected by the Django app
 metrics/static/
+
+# Node dependencies
+node_modules/
+
+# Jest coverage output
+coverage/
+
+# Jest cache
+.jest-cache/
+
+# npm logs
+npm-debug.log*
+
+# Junit
+junit.xml
