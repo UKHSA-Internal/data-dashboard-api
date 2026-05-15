@@ -4,8 +4,11 @@ from http import HTTPStatus
 from django.http import FileResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from common.auth.cognito_jwt import JSONWebTokenAuthentication
 
 import config
 from caching.private_api.decorators import cache_response
@@ -25,7 +28,6 @@ from metrics.interfaces.plots.access import (
 )
 
 CHARTS_API_TAG = "charts"
-
 
 class ChartsView(APIView):
     permission_classes = []
@@ -218,6 +220,7 @@ class ChartsView(APIView):
 
 
 class EncodedChartsView(APIView):
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
     permission_classes = []
 
     @classmethod
@@ -340,8 +343,6 @@ class EncodedChartsView(APIView):
             serializer.is_valid(raise_exception=True)
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+            return Response(status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)})
 
         return Response(data=serializer.data)

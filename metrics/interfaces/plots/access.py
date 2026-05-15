@@ -162,7 +162,8 @@ class PlotsInterface:
             plot_params["fields_to_export"].append("lower_confidence")
 
         return self.core_model_manager.query_for_data(
-            **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions
+            **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions,
+            jwt_permissions=self.chart_request_params.jwt_permissions,
         )
 
     def build_plot_data_from_parameters_with_complete_queryset(

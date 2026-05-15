@@ -15,6 +15,10 @@ from django.utils import timezone
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
+from metrics.data.managers.permissions import (
+    check_permissions_hierarchy,
+)
+from metrics.data.models.core_models.supporting import Topic
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -334,6 +338,7 @@ class CoreHeadlineManager(models.Manager):
         theme: str = "",
         sub_theme: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
+        jwt_permissions: dict | None = None,
         **kwargs,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
@@ -364,7 +369,7 @@ class CoreHeadlineManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-            theme: The name of the theme being queried.
+             theme: The name of the theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
             sub_theme: The name of the sub theme being queried.
@@ -373,6 +378,9 @@ class CoreHeadlineManager(models.Manager):
             rbac_permissions: The RBAC permissions available
                 to the given request. This dictates whether the given
                 request is permitted access to non-public data or not.
+            jwt_permissions: JWT permissions dict extracted from Cognito token.
+                Contains 'has_global_access' (bool) and 'permission_set_hierarchy' (list).
+                Used for new JWT-based authorization (takes precedence over RBAC permissions).
 
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
@@ -383,15 +391,45 @@ class CoreHeadlineManager(models.Manager):
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
         rbac_permissions = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography=geography,
-            geography_type=geography_type,
-            rbac_permissions=rbac_permissions,
-        )
+        jwt_permissions = jwt_permissions or {}
+
+        # Check JWT permissions first (new authorization, takes precedence)
+        has_access_to_non_public_data: bool = False
+
+        if jwt_permissions:
+            has_global_access = jwt_permissions.get("has_global_access", False)
+            if has_global_access:
+                has_access_to_non_public_data = True
+            else:
+                permission_set_hierarchy = jwt_permissions.get(
+                    "permission_set_hierarchy", []
+                )
+                topic_record = Topic.objects.filter(
+                    name=topic,
+                    sub_theme__name=sub_theme,
+                    sub_theme__theme__name=theme,
+                ).first()
+
+                if topic_record:
+                    has_access_to_non_public_data = check_permissions_hierarchy(
+                        user_permission_hierarchy=permission_set_hierarchy,
+                        theme_id=str(topic_record.sub_theme.theme_id),
+                        sub_theme_id=str(topic_record.sub_theme_id),
+                        topic_id=str(topic_record.id),
+                    )
+                else:
+                    has_access_to_non_public_data = False
+        else:
+            # LEGACY PERMISSIONS (NOT IN USE) - Fallback to RBAC if no JWT permissions
+            has_access_to_non_public_data = validate_permissions_for_non_public(
+                theme=theme,
+                sub_theme=sub_theme,
+                topic=topic,
+                metric=metric,
+                geography=geography,
+                geography_type=geography_type,
+                rbac_permissions=rbac_permissions,
+            )
 
         if has_access_to_non_public_data:
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(

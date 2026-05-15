@@ -21,6 +21,54 @@ from metrics.data.models.core_models.supporting import (
 )
 
 
+def convert_permission_set_into_hierarchy(raw_permission_sets: dict) -> dict:
+    """
+    Convert a "permission_set" back into a "permission_set_hierarchy" again
+    (the NormalizedPermission class does it the other way round)
+
+    @param raw_permission_sets {dict} example:
+        {
+            "permission_sets": [
+                {
+                    "theme": {"id": "100", "name": "immunisation"},
+                    "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+                    "topic": {"id": None, "name": None},
+                }
+            ],
+            "summary": {
+                "has_global_access": False
+            },
+        }
+
+    @return {dict} example:
+        {
+            "permission_set_hierarchy": [
+                {
+                    "theme": {"id": "100", "name": "immunisation"},
+                    "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+                    "topic": {"id": None, "name": None},
+                }
+            ],
+            "has_global_access": False,
+        }
+    """
+
+    permission_set_hierarchy = raw_permission_sets.get("permission_set_hierarchy")
+    if permission_set_hierarchy is None:
+        permission_set_hierarchy = raw_permission_sets.get("permission_sets", [])
+
+    has_global_access = raw_permission_sets.get("has_global_access")
+    if has_global_access is None:
+        has_global_access = raw_permission_sets.get("summary", {}).get(
+            "has_global_access", False
+        )
+
+    return {
+        "permission_set_hierarchy": permission_set_hierarchy,
+        "has_global_access": bool(has_global_access),
+    }
+
+
 @dataclass
 class NormalizedPermission:
     """

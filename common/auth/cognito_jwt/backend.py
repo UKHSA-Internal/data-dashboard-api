@@ -46,7 +46,8 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         try:
             token_validator = self.get_token_validator(request)
             jwt_payload = token_validator.validate(jwt_token)
-        except TokenError:
+        except TokenError as error:
+            logger.warning("JWT validation failed: %s", error)
             raise exceptions.AuthenticationFailed from None
 
         custom_user_manager = self.get_custom_user_manager()
