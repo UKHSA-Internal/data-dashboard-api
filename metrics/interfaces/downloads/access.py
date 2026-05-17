@@ -78,7 +78,7 @@ def merge_and_process_timeseries_querysets(
         complete_plots: List of `CompletePlotData` models
             for which the querysets should be merged
 
-    Returns:
+    Returns
         A single queryset containing the merged results
         in chronological order, starting from the latest records
     """

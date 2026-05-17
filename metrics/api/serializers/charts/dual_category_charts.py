@@ -49,7 +49,7 @@ class StaticFieldsSerializer(PlotSerializer):
 class DualCategoryChartSerializer(BaseChartsSerializer):
     chart_type = serializers.ChoiceField(
         help_text=help_texts.CHART_TYPE_FIELD,
-        choices=ChartTypes.selectable_choices(),
+        choices=ChartTypes.dual_category_chart_options(),
         required=True,
     )
     primary_field_values = serializers.ListField(
@@ -76,11 +76,19 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
+        static_fields: dict[str, str | int] = self.validated_data.pop("static_fields")
+
         for plot in self.data["segments"]:
             plot["x_axis"] = x_axis
             plot["y_axis"] = y_axis
+            plot["line_colour"] = plot["colour"]
+            plot.update(
+                {
+                    **static_fields,
+                }
+            )
 
-        return DualCategoryChartRequestParams(
+        result = DualCategoryChartRequestParams(
             chart_type=self.data["chart_type"],
             primary_field_values=self.data["primary_field_values"],
             secondary_category=self.data["secondary_category"],
@@ -98,3 +106,4 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
             request=request,
         )
+        return result
