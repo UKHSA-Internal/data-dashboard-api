@@ -22,7 +22,7 @@ def example_headline_args() -> dict[str, str]:
         "stratum": "default",
         "age": "all",
         "sex": "all",
-        "is_public": True
+        "is_public": True,
     }
 
 

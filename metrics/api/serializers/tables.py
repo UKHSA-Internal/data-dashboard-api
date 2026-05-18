@@ -55,8 +55,6 @@ class TablesSerializer(serializers.Serializer):
         help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
     )
-    
-    
 
     def __init__(self, *args, **kwargs):
         with contextlib.suppress(OperationalError):
@@ -70,8 +68,8 @@ class TablesSerializer(serializers.Serializer):
             chart_width=DEFAULT_CHART_WIDTH,
             x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
             y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
-            is_public = self.data.get("is_public", True),
-            data_classification = self.data.get("data_classification"),
+            is_public=self.data.get("is_public", True),
+            data_classification=self.data.get("data_classification"),
             request=request,
         )
 

@@ -68,7 +68,7 @@ class HeadlineParameters(BaseModel):
             "sex": self.sex_name,
             "rbac_permissions": self.rbac_permissions,
         }
-        
+
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
         return getattr(self.request, "rbac_permissions", [])

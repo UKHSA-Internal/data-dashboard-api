@@ -158,16 +158,14 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         allow_null=True,
     )
     is_public = serializers.BooleanField(
-        required=False,
-        default=True,
-        help_text=help_texts.IS_PUBLIC_FIELD
+        required=False, default=True, help_text=help_texts.IS_PUBLIC_FIELD
     )
     data_classification = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         default=None,
-        help_text=help_texts.DATA_CLASSIFICATION_FIELD
+        help_text=help_texts.DATA_CLASSIFICATION_FIELD,
     )
 
     chart_parameters = ChartParametersSerializer()
@@ -208,7 +206,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
                     }
                 )
                 plot["metric_value_ranges"] = metric_value_ranges
-                
+
         is_public: bool = self.validated_data.get("is_public", True)
         data_classification: str | None = self.validated_data.get("data_classification")
 

@@ -20,7 +20,7 @@ class Subplots(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-        
+
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
         return getattr(self.request, "rbac_permissions", [])
