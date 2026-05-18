@@ -12,6 +12,7 @@ WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
 
+
 class TestWrapText:
     def test_wraps_text_into_br_separated_lines(self):
         """
@@ -27,15 +28,17 @@ class TestWrapText:
         result = wrap_text(text, max_chars_per_line=max_chars)
 
         # Then
-        expected = "<br>".join([
-            "This is a",
-            "long",
-            "string",
-            "that",
-            "should be",
-            "wrapped",
-            "properly",
-        ])
+        expected = "<br>".join(
+            [
+                "This is a",
+                "long",
+                "string",
+                "that",
+                "should be",
+                "wrapped",
+                "properly",
+            ]
+        )
         assert result == expected
 
     def test_returns_single_line_when_text_is_short(self):
@@ -67,8 +70,9 @@ class TestWrapText:
 
         # Then
         assert result == ""
-    
+
     from unittest import mock
+
 
 class TestPostInitAppliesWatermark:
     @mock.patch(f"{MODULE_PATH}.ChartOutput._apply_watermark")
@@ -130,9 +134,11 @@ class TestPostInitAppliesWatermark:
 
         # Then
         spy_apply_watermark.assert_not_called()
-        
+
+
 from unittest import mock
 import plotly.graph_objects as go
+
 
 class TestApplyWatermark:
     @mock.patch(f"{MODULE_PATH}.wrap_text")

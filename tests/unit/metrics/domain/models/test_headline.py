@@ -13,7 +13,7 @@ class TestHeadlineParameters:
         "stratum": "default",
         "sex": "all",
         "age": "all",
-        "is_public": True
+        "is_public": True,
     }
 
     @pytest.mark.parametrize(

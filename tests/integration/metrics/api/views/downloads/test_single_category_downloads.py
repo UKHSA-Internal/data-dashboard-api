@@ -62,7 +62,7 @@ class TestDownloadsView:
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
                 }
-            ]
+            ],
         }
 
     def _build_valid_headline_payload(self) -> dict[str, str | list[dict[str, str]]]:
@@ -78,7 +78,7 @@ class TestDownloadsView:
                     "age": self.core_headline_data["age"],
                     "sex": self.core_headline_data["sex"],
                     "geography": self.core_headline_data["geography"],
-                    "geography_type": self.core_headline_data["geography_type"]
+                    "geography_type": self.core_headline_data["geography_type"],
                 }
             ],
         }
