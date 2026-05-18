@@ -142,6 +142,8 @@ class ChartsInterface:
             figure=figure,
             description=description,
             is_headline=self.is_headline_data,
+            is_public=self.chart_request_params.is_public,
+            data_classification=self.chart_request_params.data_classification,
         )
 
     def _build_chart_figure(
