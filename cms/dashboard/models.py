@@ -12,6 +12,7 @@ from wagtail.models import Orderable, Page, SiteRootPath
 from wagtail.search import index
 
 from cms import seo
+from metrics.interfaces.data_classification.access import DataClassification
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
@@ -33,12 +34,14 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
+
 class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "official"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PROTECTIVE_MARKING_NOT_SET = "protective_marking_not_set"
-    SECRET = "secret"  # nosec #noqa: S105
-    TOP_SECRET = "top_secret"  # nosec #noqa: S105
+    OFFICIAL = (DataClassification.official.value).lower()
+    OFFICIAL_SENSITIVE = (DataClassification.official_sensitive.value).lower()
+    PROTECTIVE_MARKING_NOT_SET = (DataClassification.protective_marking_not_set.value).lower()
+    SECRET = (DataClassification.secret.value).lower()
+    TOP_SECRET = (DataClassification.top_secret.value).lower()
+
 
 
 class UKHSAPage(Page):

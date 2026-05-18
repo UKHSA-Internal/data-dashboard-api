@@ -20,7 +20,7 @@ class Subplots(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-
+        
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
         return getattr(self.request, "rbac_permissions", [])
@@ -42,6 +42,8 @@ class SubplotChartRequestParameters(BaseModel):
     target_threshold: float | None = None
     target_threshold_label: str | None = ""
     request: Request | None = None
+    is_public: bool
+    data_classification: str | None = None
 
     subplots: list[Subplots]
 
@@ -131,6 +133,8 @@ class SubplotChartRequestParameters(BaseModel):
                 y_axis_minimum_value=self.y_axis_minimum_value,
                 y_axis_maximum_value=self.y_axis_maximum_value,
                 request=self.request,
+                is_public=self.is_public,
+                data_classification=self.data_classification,
             )
 
             overall_payload.append(grouped_subplot)

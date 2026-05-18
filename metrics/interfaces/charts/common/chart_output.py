@@ -2,7 +2,12 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
+from metrics.interfaces.data_classification.access import DataClassification
+
 HEX_COLOUR_BLACK = "#0b0c0c"
+WATERMARK_FONT_SIZE = 40
+WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
+WATERMARK_OPACITY = 0.58
 
 
 @dataclass
@@ -11,6 +16,36 @@ class ChartOutput:
     description: str
     is_headline: bool
     is_subplot: bool = False
+    is_public: bool = True
+    data_classification: str | None = None
+    
+    def __post_init__(self) -> None:
+        if not self.is_public:
+            self._apply_watermark()
+
+            
+    def _apply_watermark(self) -> None:
+        """
+        Adds a diagonal watermark to the Plotly figure.
+
+        The watermark is added directly to the figure as a layout
+        annotation using paper coordinates, so it is consistently
+        rendered in static SVG exports, interactive Plotly outputs,
+        and any downloaded chart artefacts.
+        """
+        watermark_text = DataClassification[self.data_classification].value
+        
+        self.figure.add_annotation(
+            text=watermark_text,
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+            font={"size": WATERMARK_FONT_SIZE, "color": WATERMARK_FONT_COLOUR},
+            textangle=-30,
+            opacity=WATERMARK_OPACITY,
+        )
 
     @property
     def interactive_chart_figure_output(self) -> dict:

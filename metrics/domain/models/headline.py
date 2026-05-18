@@ -12,6 +12,8 @@ class HeadlineParameters(BaseModel):
     geography_type: str
     sex: str
     age: str
+    is_public: bool
+    data_classification: str | None = None
     request: Request | None = None
 
     class Config:
@@ -66,7 +68,7 @@ class HeadlineParameters(BaseModel):
             "sex": self.sex_name,
             "rbac_permissions": self.rbac_permissions,
         }
-
+        
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
         return getattr(self.request, "rbac_permissions", [])
