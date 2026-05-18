@@ -1,6 +1,8 @@
+import io
 import logging
 from http import HTTPStatus
 
+from django.http import FileResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -15,6 +17,7 @@ from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
 )
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
+from metrics.interfaces.charts.dual_category_charts import access
 
 CHARTS_API_TAG = "charts"
 
@@ -88,10 +91,6 @@ class DualCategoryChartsView(APIView):
         request_serializer.is_valid(raise_exception=True)
 
         chart_request_params = request_serializer.to_models(request=request)
+        chart_image: bytes = access.generate_chart_as_file(chart_request_params=chart_request_params)
 
-        logger.info("This endpoint is not yet complete")
-
-        temporary_dict_representation = chart_request_params.model_dump()
-        temporary_dict_representation.pop("request")
-
-        return Response(data=temporary_dict_representation)
+        return FileResponse(io.BytesIO(chart_image), content_type=f"image/{chart_request_params.file_format}")

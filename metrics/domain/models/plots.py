@@ -42,6 +42,7 @@ class PlotParameters(BaseModel):
     metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
     theme: str = ""
     sub_theme: str = ""
+    secondary_group_by: str | None = None
 
     @property
     def metric_group(self) -> str:

@@ -1,3 +1,4 @@
+from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams
 import datetime
 import logging
 from collections import defaultdict
@@ -62,7 +63,7 @@ class PlotsInterface:
     def __init__(
         self,
         *,
-        chart_request_params: ChartRequestParams,
+        chart_request_params: ChartRequestParams | DualCategoryChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
         topic_model_manager: Manager = DEFAULT_TOPIC_MANAGER,
     ):
@@ -354,6 +355,8 @@ def get_aggregated_results(
     if not result:
         raise DataNotFoundForPlotError
 
+    print(plot_parameters)
+    print(result)
     return result
 
 

@@ -13,7 +13,7 @@ from metrics.domain.common.utils import (
     ChartTypes,
     DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
-from metrics.domain.models.charts import DualCategoryChartRequestParams
+from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams
 
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
@@ -76,16 +76,36 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
-        for plot in self.data["segments"]:
-            plot["x_axis"] = x_axis
-            plot["y_axis"] = y_axis
+        primary_field_values = self.data.get("primary_field_values")
+        static_fields: dict[str, str | int] = self.validated_data.pop("static_fields")
+
+        if static_fields["date_to"]:
+            static_fields["date_to"] = static_fields["date_to"].isoformat()
+
+        if static_fields["date_from"]:
+            static_fields["date_from"] = static_fields["date_from"].isoformat()
+
+        groups_plots = []
+
+        for primary_field_value in primary_field_values:
+            for segment in self.data["segments"]:
+                plot = {
+                    **static_fields,
+                    "x_axis": x_axis,
+                    "y_axis": y_axis,
+                    "line_color": segment["colour"],
+                    x_axis: primary_field_value,
+                    self.data.get("secondary_category"): segment["secondary_field_value"],
+                    "secondary_group_by": segment["secondary_field_value"],
+                }
+                groups_plots.append(plot)
 
         return DualCategoryChartRequestParams(
             chart_type=self.data["chart_type"],
             primary_field_values=self.data["primary_field_values"],
             secondary_category=self.data["secondary_category"],
             static_fields=self.data["static_fields"],
-            segments=self.data["segments"],
+            plots=groups_plots,
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
