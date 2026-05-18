@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
-from metrics.domain.models.plots import PlotParameters
 
 
 class SegmentParameters(BaseModel):

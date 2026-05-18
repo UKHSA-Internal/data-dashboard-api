@@ -5,6 +5,7 @@ from datetime import datetime
 import plotly.graph_objects as go
 from django.db.models import Manager
 from scour import scour
+from sqlalchemy.dialects.postgresql import plainto_tsquery
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 #from metrics.domain.charts import ()
@@ -12,7 +13,7 @@ from metrics.domain.common.utils import (
     ChartTypes,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import ChartRequestParams
+from metrics.domain.models.plots import ChartRequestParams
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams
 )
@@ -34,7 +35,7 @@ class DualCategoryChartsInterface:
         self,
         *,
         chart_reqeust_params: DualCategoryChartRequestParams,
-        core_model_manager:  CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_model_manager:  CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
         self.chart_reqeust_params = chart_reqeust_params
@@ -42,7 +43,7 @@ class DualCategoryChartsInterface:
         self.metric_group = extract_metric_group_from_metric(
             metric=self.chart_reqeust_params.static_fields.metric,
         )
-        self.core_model_manager = core_model_manager
+        self.core_model_manager = core_model_manager or self._set_core_model_manager()
         self.plots_interface = plots_interface or PlotsInterface(
             chart_request_params=self.chart_reqeust_params,
             core_model_manager=self.core_model_manager,
@@ -51,9 +52,17 @@ class DualCategoryChartsInterface:
         self._latest_date: str = ""
 
     @property
-    def in_headline_data(self) -> bool:
+    def is_headline_data(self) -> bool:
         return self.chart_reqeust_params.plots[0].is_headline_data
 
+    def _build_plots_data(self):
+        plots_data = self.plots_interface.build_plots_data()
+
+        return plots_data
+
+    def _build_chart_generation_payload(self):
+        plots_data = self._build_plots_data()
+        return plots_data
 
     def _set_core_model_manager(self) -> bool:
         """Returns `core_model_manger` based on the `metric_group`.
@@ -69,13 +78,18 @@ class DualCategoryChartsInterface:
             Manager: either `CoreTimeSeries` or `CoreHeadline`
         """
         if self.is_headline_data:
-            return DEFAULT_CORE_TIME_SERIES_MANAGER
+            return DEFAULT_CORE_HEADLINE_MANAGER
 
-        return DEFAULT_CORE_HEADLINE_MANAGER
+        return DEFAULT_CORE_TIME_SERIES_MANAGER
 
 
     def generate_chart_output(self) -> ChartOutput:
-        pass
+        chart_generation_payload = (
+            self._build_chart_generation_payload()
+        )
+
+        return None
+
 
     def build_chart_generation_payload(self):
         pass
