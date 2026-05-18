@@ -29,7 +29,7 @@ class ChartOutput:
     data_classification: str | None = None
 
     def __post_init__(self) -> None:
-        if (not self.is_public) and self.data_classification and AUTH_ENABLED:
+        if (not self.is_public) and (self.data_classification) and (AUTH_ENABLED):
             self._apply_watermark()
 
     def _apply_watermark(self) -> None:

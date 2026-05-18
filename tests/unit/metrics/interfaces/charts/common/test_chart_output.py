@@ -76,7 +76,8 @@ class TestWrapText:
 
 class TestPostInitAppliesWatermark:
     @mock.patch(f"{MODULE_PATH}.ChartOutput._apply_watermark")
-    def test_applies_watermark_when_not_public_and_classified(
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    def test_applies_watermark_when_not_public_and_classified_and_auth_enabled(
         self, spy_apply_watermark: mock.MagicMock
     ):
         """
@@ -97,6 +98,7 @@ class TestPostInitAppliesWatermark:
         spy_apply_watermark.assert_called_once()
 
     @mock.patch(f"{MODULE_PATH}.ChartOutput._apply_watermark")
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     def test_does_not_apply_watermark_when_public(
         self, spy_apply_watermark: mock.MagicMock
     ):
@@ -117,6 +119,7 @@ class TestPostInitAppliesWatermark:
         spy_apply_watermark.assert_not_called()
 
     @mock.patch(f"{MODULE_PATH}.ChartOutput._apply_watermark")
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     def test_does_not_apply_watermark_when_no_classification(
         self, spy_apply_watermark: mock.MagicMock
     ):
@@ -135,18 +138,35 @@ class TestPostInitAppliesWatermark:
         # Then
         spy_apply_watermark.assert_not_called()
 
+    @mock.patch(f"{MODULE_PATH}.ChartOutput._apply_watermark")
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
+    def test_does_not_apply_watermark_when_no_auth_enabled(
+        self, spy_apply_watermark: mock.MagicMock
+    ):
+        """
+        Given an instance that has no data_classification
+        When __post_init__() is triggered
+        Then _apply_watermark() is not called
+        """
+        # Given / When
+        ChartOutput(
+            figure=go.Figure(),
+            description="Test chart",
+            is_headline=False,
+            is_public=False,
+            data_classification="official",
+        )
 
-from unittest import mock
-import plotly.graph_objects as go
+        # Then
+        spy_apply_watermark.assert_not_called()
 
 
 class TestApplyWatermark:
     @mock.patch(f"{MODULE_PATH}.wrap_text")
     @mock.patch(f"{MODULE_PATH}.DataClassification")
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     def test_adds_wrapped_watermark_annotation(
-        self,
-        mock_data_classification,
-        mock_wrap_text,
+        self, mock_data_classification, mock_wrap_text
     ):
         """
         Given a ChartOutput with a valid data_classification
