@@ -83,7 +83,7 @@ class ChartsSerializer(BaseChartsSerializer):
             plot["x_axis"] = x_axis
             plot["y_axis"] = y_axis
 
-        # If not provided, assume data is public --> is this right?
+        # If not provided, default to public data
         is_public: bool = self.data.get("is_public", True)
         data_classification: str | None = self.data.get("data_classification")
 
