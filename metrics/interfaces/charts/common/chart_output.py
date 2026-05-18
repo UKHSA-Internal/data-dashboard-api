@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
+from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.interfaces.data_classification.access import DataClassification
 
 HEX_COLOUR_BLACK = "#0b0c0c"
@@ -28,7 +29,7 @@ class ChartOutput:
     data_classification: str | None = None
 
     def __post_init__(self) -> None:
-        if (not self.is_public) and self.data_classification:
+        if (not self.is_public) and self.data_classification and AUTH_ENABLED:
             self._apply_watermark()
 
     def _apply_watermark(self) -> None:
