@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import textwrap
 
 import plotly.graph_objects as go
 
@@ -9,6 +10,11 @@ WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
 
+def wrap_text(text: str, max_chars_per_line: int = 20) -> str:
+        """
+        Wrap text into multiple lines using <br> for watermarks
+        """
+        return "<br>".join(textwrap.wrap(text, width=max_chars_per_line))
 
 @dataclass
 class ChartOutput:
@@ -22,7 +28,7 @@ class ChartOutput:
     def __post_init__(self) -> None:
         if not self.is_public:
             self._apply_watermark()
-
+    
             
     def _apply_watermark(self) -> None:
         """
@@ -34,9 +40,10 @@ class ChartOutput:
         and any downloaded chart artefacts.
         """
         watermark_text = DataClassification[self.data_classification].value
+        wrapped_watermark_text = wrap_text(watermark_text, 16)
         
         self.figure.add_annotation(
-            text=watermark_text,
+            text=wrapped_watermark_text,
             xref="paper",
             yref="paper",
             x=0.5,
