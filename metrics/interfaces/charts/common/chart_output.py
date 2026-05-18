@@ -26,7 +26,7 @@ class ChartOutput:
     data_classification: str | None = None
     
     def __post_init__(self) -> None:
-        if not self.is_public:
+        if (not self.is_public) and self.data_classification:
             self._apply_watermark()
     
             
@@ -39,6 +39,7 @@ class ChartOutput:
         rendered in static SVG exports, interactive Plotly outputs,
         and any downloaded chart artefacts.
         """
+
         watermark_text = DataClassification[self.data_classification].value
         wrapped_watermark_text = wrap_text(watermark_text, 16)
         
