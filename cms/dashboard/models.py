@@ -36,11 +36,11 @@ MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
 class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = (DataClassification.official.value).lower()
-    OFFICIAL_SENSITIVE = (DataClassification.official_sensitive.value).lower()
-    PROTECTIVE_MARKING_NOT_SET = (DataClassification.protective_marking_not_set.value).lower()
-    SECRET = (DataClassification.secret.value).lower()
-    TOP_SECRET = (DataClassification.top_secret.value).lower()
+    OFFICIAL = "official"
+    OFFICIAL_SENSITIVE = "official_sensitive"
+    PROTECTIVE_MARKING_NOT_SET = "protective_marking_not_set"
+    SECRET = "secret"  # nosec #noqa: S105
+    TOP_SECRET = "top_secret"  # nosec #noqa: S105
 
 
 
