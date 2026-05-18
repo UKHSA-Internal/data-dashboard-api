@@ -20,7 +20,7 @@ class BaseChartRequestParams(BaseModel):
     request: Request | None = None
     confidence_intervals: bool | None = False
     confidence_colour: str | None = ""
-    is_public: bool
+    is_public: bool | None = True
     data_classification: str | None = None
 
     class Config:

@@ -42,7 +42,7 @@ class SubplotChartRequestParameters(BaseModel):
     target_threshold: float | None = None
     target_threshold_label: str | None = ""
     request: Request | None = None
-    is_public: bool
+    is_public: bool | None = True
     data_classification: str | None = None
 
     subplots: list[Subplots]
