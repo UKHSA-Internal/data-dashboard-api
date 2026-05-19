@@ -82,7 +82,7 @@
    * @param {HTMLSelectElement} dropdown - The select element to populate
    * @param {Array} choices - Array of [id, name] tuples
    */
-  function populateDropdown(dropdown, choices) {
+  function populateDropdown(dropdown, choices, metrics = null) {
     const currentValue = dropdown.value
     dropdown.disabled = false
     dropdown.innerHTML = ""
