@@ -1,6 +1,6 @@
 import pytest
 
-from auth_content.models.users import User
+from cms.auth_content.models.users import User
 from tests.factories.auth_content.models.permission_sets import PermissionSetFactory
 from tests.factories.auth_content.models.users import UserFactory
 

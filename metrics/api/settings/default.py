@@ -52,6 +52,7 @@ if config.APP_MODE != "INGESTION":
         "metrics.api",
         "cms.acknowledgement",
         "cms.home",
+        "cms.auth_content",
         "cms.topic",
         "cms.topics_list",
         "cms.dashboard",
@@ -78,7 +79,6 @@ if config.APP_MODE != "INGESTION":
         "wagtail_trash",
         "modelcluster",
         "taggit",
-        "auth_content",
     ]
 
 MIDDLEWARE = [
@@ -115,6 +115,7 @@ TEMPLATES = [
 
 COGNITO_USER_MANAGER = "common.auth.cognito_jwt.user_manager.CognitoManager"
 COGNITO_AWS_REGION = config.COGNITO_AWS_REGION
+COGNITO_JWT_AUTH_HEADER = config.COGNITO_JWT_AUTH_HEADER
 COGNITO_USER_POOL = config.COGNITO_USER_POOL
 COGNITO_AUDIENCE = None
 COGNITO_PUBLIC_KEYS_CACHING_ENABLED = True

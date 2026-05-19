@@ -491,7 +491,7 @@ class TestBuildPermissionHierarchy:
         Then no deduplication occurs
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
         perm = PermissionSetFactory.create_permission_set(
@@ -521,7 +521,7 @@ class TestBuildPermissionHierarchy:
         Then only permission A is returned
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
 
@@ -564,7 +564,7 @@ class TestBuildPermissionHierarchy:
         Then both are kept
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
 
@@ -603,7 +603,7 @@ class TestBuildPermissionHierarchy:
         Then correct deduplication occurs
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
 
@@ -658,7 +658,7 @@ class TestBuildPermissionHierarchy:
         Then summary contains accurate statistics
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
 
@@ -696,7 +696,7 @@ class TestBuildPermissionHierarchy:
         Then each permission has correct structure
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
         perm = PermissionSetFactory.create_permission_set(
@@ -743,7 +743,7 @@ class TestGetDeduplicatedPermissions:
         Then returns list of NormalizedPermission objects
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
         perm = PermissionSetFactory.create_permission_set(
@@ -772,7 +772,7 @@ class TestGetDeduplicatedPermissions:
         Then subsumed permissions are removed
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
 
@@ -810,7 +810,7 @@ class TestGetDeduplicatedPermissions:
         Then returns empty hierarchy with zero counts
         """
         # Given
-        from auth_content.models.permission_sets import PermissionSet
+        from cms.auth_content.models.permission_sets import PermissionSet
 
         # When
         result = build_permission_hierarchy(PermissionSet.objects.none())
@@ -829,7 +829,7 @@ class TestGetDeduplicatedPermissions:
         Then handles gracefully without errors
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
         perm = PermissionSetFactory.create(
@@ -859,7 +859,7 @@ class TestGetDeduplicatedPermissions:
         Then correctly handles all wildcard combinations
         """
         # Given
-        from auth_content.models.users import User
+        from cms.auth_content.models.users import User
 
         user = User.objects.create(user_id=uuid4())
         perm1 = PermissionSetFactory.create_permission_set(

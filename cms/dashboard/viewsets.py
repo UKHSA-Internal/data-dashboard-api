@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef, Q
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
@@ -7,10 +8,38 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
+from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
+from cms.topic.models import TopicPage
+
+
+def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
+    if not isinstance(user_permissions, list):
+        return False
+
+    for permission in user_permissions:
+        permission_theme_id = permission.get("theme", {}).get("id")
+        permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
+        permission_topic_id = permission.get("topic", {}).get("id")
+
+        if permission_theme_id == "-1":
+            return True
+
+        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
+            return True
+
+        if (
+            permission_theme_id == theme_id
+            and permission_sub_theme_id == sub_theme_id
+            and (permission_topic_id in {"-1", topic_id})
+        ):
+            return True
+
+    return False
 
 
 @extend_schema(tags=["cms"])
 class CMSPagesAPIViewSet(PagesAPIViewSet):
+    # This is the /pages (or proxy/pages env dependent endpoint)
     permission_classes = []
     base_serializer_class = ListablePageSerializer
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
@@ -39,7 +68,76 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
         """
         queryset = super().get_queryset()
-        return queryset.specific()
+
+        req = self.request
+
+        if req.auth is None:
+            filtered_queryset = queryset.annotate(
+                is_public_topic_page=Exists(
+                    TopicPage.objects.filter(
+                        page_ptr_id=OuterRef("pk"),
+                        is_public=True,
+                    )
+                ),
+                is_public_metrics_doc_child_page=Exists(
+                    MetricsDocumentationChildEntry.objects.filter(
+                        page_ptr_id=OuterRef("pk"),
+                        is_public=True,
+                    )
+                ),
+            ).filter(
+                Q(is_public_topic_page=True)
+                | Q(is_public_metrics_doc_child_page=True)
+                | ~Q(
+                    content_type__model__in=[
+                        "topicpage",
+                        "metricsdocumentationchildentry",
+                    ]
+                )
+            )
+
+        else:
+            user_permissions = req.user.permission_sets["permission_sets"]
+            has_global_access = req.user.permission_sets["summary"]["has_global_access"]
+
+            if has_global_access:
+                filtered_queryset = queryset
+
+            else:
+                user_permissions = req.user.permission_sets
+                allowed_pages = []
+                allowed_pages = [
+                    page.id
+                    for page in queryset.type(TopicPage)
+                    if page.topicpage.is_public
+                    or check_permissions(
+                        user_permissions,
+                        page.topicpage.theme,
+                        page.topicpage.sub_theme,
+                        page.topicpage.topic,
+                    )
+                ]
+
+                allowed_pages = [
+                    page.id
+                    for page in queryset.type(MetricsDocumentationChildEntry)
+                    if page.metricsdocumentationchildentry.is_public
+                    or check_permissions(
+                        user_permissions,
+                        page.metricsdocumentationchildentry.theme,
+                        page.metricsdocumentationchildentry.sub_theme,
+                        page.metricsdocumentationchildentry.topic,
+                    )
+                ]
+
+                public_pages = queryset.not_type(
+                    TopicPage, MetricsDocumentationChildEntry
+                )
+                permitted_private_pages = queryset.filter(id__in=allowed_pages)
+
+                filtered_queryset = public_pages | permitted_private_pages
+
+        return filtered_queryset.specific()
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:

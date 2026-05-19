@@ -4,7 +4,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from auth_content.constants import WILDCARD_ID_VALUE
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 from tests.factories.metrics.geography import GeographyFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE

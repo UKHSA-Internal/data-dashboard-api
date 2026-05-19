@@ -5,7 +5,7 @@ import pytest
 
 from django.core.exceptions import ValidationError
 
-from cms.topic.models import TopicPage
+from cms.topic.models import TopicPage, TopicPageAdminForm
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -14,6 +14,108 @@ from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties im
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from wagtail.search.index import SearchField
+
+
+class TestTopicPageAdminForm:
+    MOCK_THEME_FIELDS = [
+        {"field_name": "theme", "label": "Theme", "required": True},
+        {"field_name": "sub_theme", "label": "Sub Theme", "required": False},
+    ]
+
+    def _make_form(self, instance=None):
+        """
+        Instantiate TopicPageAdminForm with all Wagtail
+        internals patched.
+        """
+        with (
+            mock.patch(
+                "wagtail.admin.panels.WagtailAdminPageForm.__init__", return_value=None
+            ),
+            mock.patch("cms.topic.models.THEME_FIELDS", self.MOCK_THEME_FIELDS),
+            mock.patch(
+                "cms.topic.models._create_form_field",
+                side_effect=lambda field: mock.MagicMock(name=field["field_name"]),
+            ),
+        ):
+            form = TopicPageAdminForm.__new__(TopicPageAdminForm)
+            form.fields = {}
+            form.instance = instance or mock.MagicMock(pk=None)
+            form.__init__()
+            return form
+
+    def test_theme_fields_are_added_on_init(self):
+        """
+        When a new form is instantieated
+        Then a form field is added to `fields` for each entry in `THEME_FIELDS`.
+        """
+        form = self._make_form()
+
+        assert len(form.fields) == 2
+        assert "theme" in form.fields
+        assert "sub_theme" in form.fields
+
+    def test_dependent_fields_initialised_for_saved_instance(self):
+        """
+        Given a new form
+        When an instance has a pk value set
+        Then `_initialize_dependent_fields` is called
+        """
+        with mock.patch.object(
+            TopicPageAdminForm, "_initialize_dependent_fields"
+        ) as init_fields_mock:
+            self._make_form(instance=mock.MagicMock(pk=1))
+        init_fields_mock.assert_called_once()
+
+    def test_dependent_fields_not_initialised_for_new_instance(self):
+        """
+        Given a new form
+        When an instance does not have a pk value set
+        Then `_initialize_dependent_fields` is not called
+        """
+        with mock.patch.object(
+            TopicPageAdminForm, "_initialize_dependent_fields"
+        ) as init_fields_mock:
+            self._make_form(instance=mock.MagicMock(pk=None))
+        init_fields_mock.assert_not_called()
+
+    def test_widget_choices_set_when_sub_theme_has_value(self):
+        """
+        Given a new form with a sub_theme
+        When `_initialize_dependent_fields` is called
+        Then the sub_theme choices are set
+        """
+        instance = mock.MagicMock(pk=1, sub_theme=5, topic=None)
+        form = self._make_form(instance=instance)
+        mock_widget = mock.MagicMock()
+        form.fields["sub_theme"] = mock.MagicMock(widget=mock_widget)
+        form.fields["topic"] = mock.MagicMock(widget=mock.MagicMock())
+
+        form._initialize_dependent_fields()
+
+        assert mock_widget.choices == [
+            ("", "Select theme first"),
+            (5, "Loading... (ID: 5)"),
+        ]
+
+    def test_widget_choices_not_set_when_value_is_none(self):
+        """
+        Given a new form with no sub_theme or topic
+        When `_initialize_dependent_fields` is called
+        Then widget choices are left untouched.
+        """
+        instance = mock.MagicMock(pk=1, sub_theme=None, topic=None)
+        form = self._make_form(instance=instance)
+        mock_widget = mock.MagicMock(choices=[])
+        form.fields["sub_theme"] = mock.MagicMock(widget=mock_widget)
+        form.fields["topic"] = mock.MagicMock(widget=mock.MagicMock(choices=[]))
+
+        form._initialize_dependent_fields()
+
+        assert mock_widget.choices == []
+
+    def test_get_field_choices_returns_correct_structure(self):
+        result = TopicPageAdminForm._get_field_choices(42, "Select theme first")
+        assert result == [("", "Select theme first"), (42, "Loading... (ID: 42)")]
 
 
 class TestTopicPage:
@@ -714,10 +816,116 @@ class TestCleanMethod:
 
         fake_covid_topic_page.is_public = False
         fake_covid_topic_page.page_classification = None
+        fake_covid_topic_page.theme = "test"
+        fake_covid_topic_page.sub_theme = "test"
+        fake_covid_topic_page.topic = "test"
 
         # When/Then
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError) as e:
             fake_covid_topic_page.clean()
+
+        assert "Please select a classification level for this non-public page" in str(
+            e.value
+        )
+
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_public_error_raised_if_invalid_theme(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When no page theme is given.
+        Then a `ValidationError` is raised.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = False
+        fake_covid_topic_page.page_classification = "test"
+        fake_covid_topic_page.theme = None
+        fake_covid_topic_page.sub_theme = "test"
+        fake_covid_topic_page.topic = "test"
+
+        # When/Then
+        with pytest.raises(ValidationError) as e:
+            fake_covid_topic_page.clean()
+
+        assert "Please select a theme for this non-public page" in str(e.value)
+
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_public_error_raised_if_invalid_sub_theme(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When no page sub theme is given.
+        Then a `ValidationError` is raised.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = False
+        fake_covid_topic_page.page_classification = "test"
+        fake_covid_topic_page.theme = "test"
+        fake_covid_topic_page.sub_theme = None
+        fake_covid_topic_page.topic = "test"
+
+        # When/Then
+        with pytest.raises(ValidationError) as e:
+            fake_covid_topic_page.clean()
+
+        assert "Please select a sub theme for this non-public page" in str(e.value)
+
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
+        return_value=None,
+    )
+    @mock.patch(
+        "cms.dashboard.models.UKHSAPage._raise_error_if_slug_not_unique",
+        return_value=None,
+    )
+    def test_public_error_raised_if_invalid_topic(
+        self,
+        mock_slug_raise_error,
+        mock_seo_title_raise_error,
+    ):
+        """
+        Given is_public is False (i.e the page is a non public page).
+        When no page topic is given.
+        Then a `ValidationError` is raised.
+        """
+        # Given
+        fake_covid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+
+        fake_covid_topic_page.is_public = False
+        fake_covid_topic_page.page_classification = "test"
+        fake_covid_topic_page.theme = "test"
+        fake_covid_topic_page.sub_theme = "test"
+        fake_covid_topic_page.topic = None
+
+        # When/Then
+        with pytest.raises(ValidationError) as e:
+            fake_covid_topic_page.clean()
+
+        assert "Please select a topic for this non-public page" in str(e.value)
 
     @mock.patch(
         "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
@@ -772,6 +980,9 @@ class TestCleanMethod:
 
         fake_covid_topic_page.is_public = False
         fake_covid_topic_page.page_classification = "official"
+        fake_covid_topic_page.theme = "infectious_disease"
+        fake_covid_topic_page.sub_theme = "respiratory"
+        fake_covid_topic_page.topic = "COVID-19"
 
         # When
         fake_covid_topic_page.clean()

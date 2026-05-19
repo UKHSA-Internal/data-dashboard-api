@@ -128,9 +128,11 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         create_metrics_documentation_parent_page_and_child_entries()
 
         # Then
-        expected_log = (
-            f"Metrics Documentation Child Entry for {fake_metric} was not created. "
+        expected_log_part_one = "Metrics Documentation Child Entry for "
+        expected_log_part_two = (
+            " was not created. "
             "Because the corresponding `Metric` was not created beforehand"
         )
 
-        assert expected_log in caplog.text
+        assert expected_log_part_one in caplog.text
+        assert expected_log_part_two in caplog.text

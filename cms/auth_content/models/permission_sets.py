@@ -1,13 +1,13 @@
-from collections.abc import Callable
 from itertools import starmap
 
-from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
-from auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
+from cms.auth_content.auth_utils import _create_form_field
+from cms.auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
+from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
     get_all_geography_type_names_and_ids,
@@ -18,41 +18,14 @@ from cms.metrics_interface.field_choices_callables import (
 )
 
 
-def get_theme_child_map():
-    """Returns an object of all parent to child mappings
-    e.g.
-    {
-        infectious_disease: [vaccine_preventable, respiratory ....],
-        extreme_event: [weather_alert, mortality_report...]
-        ...
-    }
-
-    """
-    return {}
-
-
-def _create_form_field(field: dict[str, str | Callable | None]) -> forms.CharField:
-    choices = [
-        ("", field["field_choice_default"]),
-    ]
-
-    if field["field_choice_wildcard"]:
-        choices += [(WILDCARD_ID_VALUE, field["field_choice_wildcard"])]
-
-    if field["field_choice_callable"]:
-        choices += field["field_choice_callable"]()
-
-    return forms.CharField(
-        required=True, label=field["field_label"], widget=forms.Select(choices=choices)
-    )
-
-
-class PermissionSetForm(WagtailAdminModelForm):
+class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(field)
+            self.fields[field["field_name"]] = _create_form_field(
+                field, WILDCARD_ID_VALUE
+            )
 
         if self.instance and self.instance.pk:
             self._initialize_dependent_fields()
@@ -118,6 +91,12 @@ class PermissionSet(models.Model):
         editable=False,
         help_text="Auto-generated display name",
     )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text=help_texts.PERMISSION_SET_DISPLAY_NAME,
+    )
     theme = models.CharField(max_length=255, blank=False, default="")
     sub_theme = models.CharField(max_length=255, blank=False, default="")
     topic = models.CharField(max_length=255, blank=False, default="")
@@ -133,6 +112,7 @@ class PermissionSet(models.Model):
         return mark_safe("<br>".join(parts))
 
     panels = [
+        FieldPanel("display_name"),
         FieldPanel("theme"),
         FieldPanel("sub_theme"),
         FieldPanel("topic"),
@@ -153,7 +133,12 @@ class PermissionSet(models.Model):
                     "geography",
                 ],
                 name="unique_permission_set",
-            )
+            ),
+            models.UniqueConstraint(
+                fields=["display_name"],
+                condition=models.Q(display_name__isnull=False),
+                name="unique_non_null_display_name",
+            ),
         ]
 
     def save(self, *args, **kwargs):
@@ -241,4 +226,4 @@ class PermissionSet(models.Model):
         )
 
     def __str__(self):
-        return self.name or f"Permission Set {self.id}"
+        return self.display_name or self.name or f"Permission Set {self.id}"
