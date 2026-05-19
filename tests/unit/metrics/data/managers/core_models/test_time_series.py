@@ -1,9 +1,27 @@
 from unittest import mock
+import datetime
+
+import pytest
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
 class TestCoreTimeSeriesManager:
+    def test_query_for_data_raises_error_for_unexpected_kwargs(self):
+        """
+        Given a query_for_data call that includes an unsupported keyword argument
+        When the manager attempts to execute the query
+        Then a TypeError is raised for the unexpected keyword argument
+        """
+        # Given / When / Then
+        with pytest.raises(TypeError, match="unexpected keyword argument"):
+            CoreTimeSeriesManager().query_for_data(
+                topic="COVID-19",
+                metric="COVID-19_cases",
+                date_from=datetime.date(2023, 1, 1),
+                unsupported_field="value",
+            )
+
     @mock.patch.object(CoreTimeSeriesManager, "query_for_superseded_data")
     def test_delete_superseded_data(
         self, spy_query_for_superseded_data: mock.MagicMock

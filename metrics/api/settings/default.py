@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import hmac
 import os
+from base64 import urlsafe_b64encode
+from hashlib import sha512
 from pathlib import Path
 
 # Unused import - makes the signals available in the application
@@ -93,6 +96,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "metrics.api.middleware.current_user.CurrentUserMiddleware",
+    "metrics.api.middleware.EmbargoMiddleware",
+    "metrics.api.middleware.RequestScopedCachingConfigMiddleware",
 ]
 
 APPEND_SLASH = True
@@ -313,12 +318,11 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-WAGTAILADMIN_BASE_URL = "http://example.com"
+WAGTAILADMIN_BASE_URL = "http://example.com"  # NOSONAR
 
 # Controls the maximum number of results which can be requested from the pages API.
 # Set to None for no limit.
 WAGTAILAPI_LIMIT_MAX = None
-
 
 CSRF_TRUSTED_ORIGINS = ["https://*.ukhsa-dashboard.data.gov.uk"]
 CSRF_COOKIE_SECURE = True
@@ -326,3 +330,40 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "false").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+PAGE_PREVIEWS_TOKEN_TTL_SECONDS = int(
+    os.environ.get("PAGE_PREVIEWS_TOKEN_TTL_SECONDS", "30")
+)
+
+
+def _build_page_previews_token_salt() -> str:
+    """Build a process-stable 120-character signing salt for preview tokens.
+
+    The value is derived from Django's SECRET_KEY so all workers with the same
+    application secret produce the same opaque salt without requiring a
+    separate environment variable.
+    """
+    secret_key = SECRET_KEY.encode("utf-8")
+    namespace_primary = b"page-previews-token-salt:v1"
+    namespace_secondary = b"page-previews-token-salt:v1:secondary"
+    primary = (
+        urlsafe_b64encode(hmac.new(secret_key, namespace_primary, sha512).digest())
+        .decode("ascii")
+        .rstrip("=")
+    )
+    secondary = (
+        urlsafe_b64encode(hmac.new(secret_key, namespace_secondary, sha512).digest())
+        .decode("ascii")
+        .rstrip("=")
+    )
+    return (primary + secondary)[:120]
+
+
+PAGE_PREVIEWS_TOKEN_SALT = _build_page_previews_token_salt()

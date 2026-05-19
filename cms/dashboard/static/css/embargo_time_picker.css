@@ -1,0 +1,214 @@
+#embargo-time-modal {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    z-index: 9999;
+    max-width: none;
+    max-height: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+#embargo-time-modal[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#embargo-time-modal::backdrop {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.embargo-modal-content {
+    background: #fff;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+}
+
+.embargo-modal-title {
+    margin: 0 0 1em 0;
+    font-size: 1.19em;
+    font-weight: 700;
+    color: #111;
+}
+
+.embargo-modal-buttons {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 1.5em;
+}
+
+.embargo-modal-content .embargo-modal-btn {
+    margin: 0.5em 0.5em 0 0;
+    font-size: 0.85em;
+    padding: 0.3em 1.1em;
+    height: 2.1em;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.embargo-modal-content .embargo-modal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.embargo-picker-input,
+.flatpickr-calendar .embargo-native-header-hidden {
+    display: none;
+}
+
+.flatpickr-calendar .embargo-native-header-hidden,
+.flatpickr-calendar .embargo-native-header-hidden .flatpickr-month {
+    display: none;
+}
+
+/* Prevent accidental text highlighting on Embargo Date controls. */
+#embargo-time-btn-preview,
+#embargo-time-btn-preview *,
+.embargo-modal-btn,
+.embargo-modal-btn *,
+.flatpickr-calendar .embargo-nav-btn,
+.flatpickr-calendar .embargo-nav-btn *,
+.flatpickr-calendar .embargo-nav-label,
+.flatpickr-calendar .embargo-month-display,
+.flatpickr-calendar .embargo-year-btn,
+.flatpickr-calendar .embargo-year-display {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.flatpickr-calendar .embargo-custom-nav {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(8em, 1fr) auto;
+    align-items: center;
+    gap: 6px;
+    min-height: 1.8em;
+    width: 100%;
+    margin-bottom: 8px;
+    white-space: nowrap;
+}
+
+.flatpickr-calendar .embargo-custom-nav-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+    justify-self: start;
+}
+
+.flatpickr-calendar .embargo-custom-nav-group-end {
+    justify-self: end;
+}
+
+.flatpickr-calendar .embargo-nav-btn {
+    border: 0;
+    background: transparent;
+    color: #111;
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 1;
+    padding: 0 4px;
+    height: 1.8em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flatpickr-calendar .embargo-nav-btn:hover {
+    color: #0b57d0;
+}
+
+.flatpickr-calendar .embargo-nav-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 8em;
+    text-align: center;
+    line-height: 1.8em;
+    color: #111;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.flatpickr-calendar .flatpickr-monthDropdown-months {
+    font-size: 0.95em;
+    padding: 0 2px;
+    margin: 0;
+    height: 1.8em;
+}
+
+.flatpickr-calendar .embargo-month-display {
+    min-width: 6.4em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    height: 1.8em;
+    text-align: center;
+    line-height: 1.8em;
+}
+
+.flatpickr-calendar .numInputWrapper {
+    overflow: visible;
+    padding-bottom: 8px;
+}
+
+.flatpickr-calendar .numInput.cur-year {
+    font-size: 0.95em;
+    width: 3.5em;
+    height: auto;
+    line-height: 1.2;
+    padding-bottom: 0;
+}
+
+.flatpickr-calendar .embargo-year-controls {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    flex: 0 0 auto;
+    gap: 3px;
+    margin: 0;
+    position: static;
+}
+
+.flatpickr-calendar .embargo-year-btn {
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    border-radius: 4px;
+    width: 1.8em;
+    height: 1.8em;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+}
+
+.flatpickr-calendar .embargo-year-btn:hover {
+    background: #f5f5f5;
+}
+
+.flatpickr-calendar .embargo-year-display {
+    min-width: 2.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.8em;
+    text-align: center;
+    line-height: 1.8em;
+}
+
+.flatpickr-calendar .arrowUp,
+.flatpickr-calendar .arrowDown {
+    height: 0.7em;
+}
+
+.flatpickr-calendar .flatpickr-prev-month,
+.flatpickr-calendar .flatpickr-next-month {
+    display: none !important;
+}
+
