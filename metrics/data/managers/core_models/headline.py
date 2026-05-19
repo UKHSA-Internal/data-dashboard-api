@@ -15,7 +15,7 @@ from django.utils import timezone
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
-from metrics.data.managers.permissions import (
+from metrics.utils.permissions import (
     check_permissions_hierarchy,
 )
 from metrics.data.models.core_models.supporting import Topic
