@@ -16,9 +16,8 @@ from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
 from metrics.utils.permissions import (
-    check_permissions_hierarchy,
+    check_if_any_permissions_allow_access,
 )
-from metrics.data.models.core_models.supporting import Topic
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -390,37 +389,31 @@ class CoreHeadlineManager(models.Manager):
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
+
         rbac_permissions = rbac_permissions or []
         jwt_permissions = jwt_permissions or {}
 
-        # Check JWT permissions first (new authorization, takes precedence)
+        # Only allow access, if permissions checks below are passed
         has_access_to_non_public_data: bool = False
 
+        # Check JWT permissions first (new authorization takes precedence)
         if jwt_permissions:
             has_global_access = jwt_permissions.get("has_global_access", False)
+
             if has_global_access:
                 has_access_to_non_public_data = True
             else:
-                permission_set_hierarchy = jwt_permissions.get(
-                    "permission_set_hierarchy", []
+                has_access_to_non_public_data = check_if_any_permissions_allow_access(
+                    jwt_permissions=jwt_permissions,
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography_type=geography_type,
+                    geography=geography,
                 )
-                topic_record = Topic.objects.filter(
-                    name=topic,
-                    sub_theme__name=sub_theme,
-                    sub_theme__theme__name=theme,
-                ).first()
-
-                if topic_record:
-                    has_access_to_non_public_data = check_permissions_hierarchy(
-                        user_permission_hierarchy=permission_set_hierarchy,
-                        theme_id=str(topic_record.sub_theme.theme_id),
-                        sub_theme_id=str(topic_record.sub_theme_id),
-                        topic_id=str(topic_record.id),
-                    )
-                else:
-                    has_access_to_non_public_data = False
         else:
-            # LEGACY PERMISSIONS (NOT IN USE) - Fallback to RBAC if no JWT permissions
+            # TODO: THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
             has_access_to_non_public_data = validate_permissions_for_non_public(
                 theme=theme,
                 sub_theme=sub_theme,

@@ -19,9 +19,9 @@ VALID_AUTH_HEADER_LENGTH = 2
 def get_authorization_header(request):
     """
     Return request's authentication header, as a bytestring.
-
     Hide some test client ickyness where the header can be unicode.
     """
+
     auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "Authorization")
     auth = request.META.get(auth_header, b"")
     if isinstance(auth, str):
@@ -31,13 +31,18 @@ def get_authorization_header(request):
 
 
 class JSONWebTokenAuthentication(BaseAuthentication):
-    """Token based authentication using the JSON Web Token standard.
+    """
+    Token based authentication using the JSON Web Token standard.
     Based on https://github.com/labd/django-cognito-jwt and modified
     to suit our use case
     """
 
     def authenticate(self, request):
-        """Entrypoint for Django Rest Framework"""
+        """
+        The JWT token has arrived at an API endpoint and the journey starts here.
+        Entrypoint for the Django Rest Framework.
+        """
+
         jwt_token = self.get_jwt_token(request)
         if jwt_token is None:
             return None

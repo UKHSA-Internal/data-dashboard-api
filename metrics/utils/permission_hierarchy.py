@@ -26,13 +26,13 @@ def convert_permission_set_into_hierarchy(raw_permission_sets: dict) -> dict:
     Convert a "permission_set" back into a "permission_set_hierarchy" again
     (the NormalizedPermission class does it the other way round)
 
-    @param raw_permission_sets {dict} example:
+    @param {dict} raw_permission_sets example:
         {
             "permission_sets": [
                 {
                     "theme": {"id": "100", "name": "immunisation"},
                     "sub_theme": {"id": "133", "name": "childhood-vaccines"},
-                    "topic": {"id": None, "name": None},
+                    "topic": {"id": "-1", "name": "* (All)"},
                 }
             ],
             "summary": {
@@ -46,7 +46,7 @@ def convert_permission_set_into_hierarchy(raw_permission_sets: dict) -> dict:
                 {
                     "theme": {"id": "100", "name": "immunisation"},
                     "sub_theme": {"id": "133", "name": "childhood-vaccines"},
-                    "topic": {"id": None, "name": None},
+                    "topic": {"id": "-1", "name": "* (All)"},
                 }
             ],
             "has_global_access": False,

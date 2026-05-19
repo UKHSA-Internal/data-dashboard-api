@@ -8,10 +8,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from common.auth.cognito_jwt import JSONWebTokenAuthentication
-
 import config
 from caching.private_api.decorators import cache_response
+from common.auth.cognito_jwt import JSONWebTokenAuthentication
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
@@ -28,6 +27,7 @@ from metrics.interfaces.plots.access import (
 )
 
 CHARTS_API_TAG = "charts"
+
 
 class ChartsView(APIView):
     permission_classes = []
@@ -343,6 +343,8 @@ class EncodedChartsView(APIView):
             serializer.is_valid(raise_exception=True)
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
-            return Response(status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)})
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
 
         return Response(data=serializer.data)
