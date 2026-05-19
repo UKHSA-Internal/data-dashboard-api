@@ -2,6 +2,12 @@ import datetime
 import pytest
 from django.utils import timezone
 
+from cms.common.models import UKHSAPage
+from cms.topic.models import TopicPage
+from tests.factories.cms.topic import TopicPageFactory
+from tests.factories.cms.page import CommonPageFactory
+
+
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
@@ -103,6 +109,44 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         )
         for i in range(2)
     ]
+
+
+@pytest.fixture
+def topics() -> list[TopicPage]:
+    topics = []
+    for i in range(5):
+        title = f"title topic {i}"
+        if i % 2 == 0:
+            title += " rare"
+        topics = topics + [
+            TopicPageFactory.create(
+                path=f"topic-{i}",
+                depth=1,
+                title=title,
+                slug=f"slug-{i}",
+                seo_title=f"seo_title {i}",
+                body=f"body text {i}",
+            )
+        ]
+    return topics
+
+
+@pytest.fixture
+def other_pages() -> list[UKHSAPage]:
+    pages = []
+    for i in range(5):
+        pages = pages + [
+            CommonPageFactory.create(
+                path=f"page-{i}",
+                depth=1,
+                title=f"title other {i}",
+                slug=f"slug-page{i}",
+                seo_title=f"seo_title {i}",
+                body=f"body text {i}",
+            )
+        ]
+
+    return pages
 
 
 @pytest.fixture
