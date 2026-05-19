@@ -28,7 +28,9 @@ class TestTopicPageAdminForm:
         internals patched.
         """
         with (
-            mock.patch("wagtail.admin.panels.WagtailAdminPageForm.__init__", return_value=None),
+            mock.patch(
+                "wagtail.admin.panels.WagtailAdminPageForm.__init__", return_value=None
+            ),
             mock.patch("cms.topic.models.THEME_FIELDS", self.MOCK_THEME_FIELDS),
             mock.patch(
                 "cms.topic.models._create_form_field",
@@ -40,7 +42,7 @@ class TestTopicPageAdminForm:
             form.instance = instance or mock.MagicMock(pk=None)
             form.__init__()
             return form
-        
+
     def test_theme_fields_are_added_on_init(self):
         """
         When a new form is instantieated
@@ -58,7 +60,9 @@ class TestTopicPageAdminForm:
         When an instance has a pk value set
         Then `_initialize_dependent_fields` is called
         """
-        with mock.patch.object(TopicPageAdminForm, "_initialize_dependent_fields") as init_fields_mock:
+        with mock.patch.object(
+            TopicPageAdminForm, "_initialize_dependent_fields"
+        ) as init_fields_mock:
             self._make_form(instance=mock.MagicMock(pk=1))
         init_fields_mock.assert_called_once()
 
@@ -68,7 +72,9 @@ class TestTopicPageAdminForm:
         When an instance does not have a pk value set
         Then `_initialize_dependent_fields` is not called
         """
-        with mock.patch.object(TopicPageAdminForm, "_initialize_dependent_fields") as init_fields_mock:
+        with mock.patch.object(
+            TopicPageAdminForm, "_initialize_dependent_fields"
+        ) as init_fields_mock:
             self._make_form(instance=mock.MagicMock(pk=None))
         init_fields_mock.assert_not_called()
 
@@ -86,7 +92,10 @@ class TestTopicPageAdminForm:
 
         form._initialize_dependent_fields()
 
-        assert mock_widget.choices == [("", "Select theme first"), (5, "Loading... (ID: 5)")]
+        assert mock_widget.choices == [
+            ("", "Select theme first"),
+            (5, "Loading... (ID: 5)"),
+        ]
 
     def test_widget_choices_not_set_when_value_is_none(self):
         """
@@ -815,7 +824,9 @@ class TestCleanMethod:
         with pytest.raises(ValidationError) as e:
             fake_covid_topic_page.clean()
 
-        assert "Please select a classification level for this non-public page" in str(e.value)
+        assert "Please select a classification level for this non-public page" in str(
+            e.value
+        )
 
     @mock.patch(
         "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",

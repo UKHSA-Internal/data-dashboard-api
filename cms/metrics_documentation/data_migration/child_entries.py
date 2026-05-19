@@ -3,8 +3,6 @@ from pathlib import Path
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from metrics.data.models.core_models import Metric
-
 
 def build_sections(*, sections: list[tuple[str, str]]) -> list[dict]:
     """Build metric documentation page sections.

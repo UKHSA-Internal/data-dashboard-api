@@ -1,6 +1,6 @@
 from cms.metrics_interface.field_choices_callables import (
-    get_all_theme_names_and_ids,
     get_all_metric_names_and_ids,
+    get_all_theme_names_and_ids,
 )
 
 THEME_FIELDS = [
@@ -33,4 +33,3 @@ THEME_FIELDS = [
         "field_choice_callable": get_all_metric_names_and_ids,
     },
 ]
-

@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef, Q
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
@@ -10,13 +11,11 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSeria
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
 
-from django.db.models import Q, Exists, OuterRef
-
 
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
     if not isinstance(user_permissions, list):
         return False
-    
+
     for permission in user_permissions:
         permission_theme_id = permission.get("theme", {}).get("id")
         permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
@@ -24,14 +23,14 @@ def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> boo
 
         if permission_theme_id == "-1":
             return True
-        
+
         if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
             return True
-        
+
         if (
-            permission_theme_id == theme_id 
+            permission_theme_id == theme_id
             and permission_sub_theme_id == sub_theme_id
-            and (permission_topic_id == "-1" or permission_topic_id == topic_id)
+            and (permission_topic_id in {"-1", topic_id})
         ):
             return True
 
@@ -99,8 +98,8 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
         else:
             user_permissions = req.user.permission_sets["permission_sets"]
-            has_global_access = req.user.permission_sets['summary']["has_global_access"]
-            
+            has_global_access = req.user.permission_sets["summary"]["has_global_access"]
+
             if has_global_access:
                 filtered_queryset = queryset
 
@@ -110,28 +109,24 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 for page in queryset.type(TopicPage):
                     if page.topicpage.is_public:
                         allowed_pages.append(page.id)
-                    else:
-                        if check_permissions(
-                            user_permissions,
-                            page.topicpage.theme,
-                            page.topicpage.sub_theme,
-                            page.topicpage.topic,
-                        ):
-                            print(f"Non Public Page: {page.title} added to allowed pages")
-                            allowed_pages.append(page.id)
+                    elif check_permissions(
+                        user_permissions,
+                        page.topicpage.theme,
+                        page.topicpage.sub_theme,
+                        page.topicpage.topic,
+                    ):
+                        allowed_pages.append(page.id)
 
                 for page in queryset.type(MetricsDocumentationChildEntry):
                     if page.metricsdocumentationchildentry.is_public:
                         allowed_pages.append(page.id)
-                    else:
-                        if check_permissions(
-                            user_permissions,
-                            page.metricsdocumentationchildentry.theme,
-                            page.metricsdocumentationchildentry.sub_theme,
-                            page.metricsdocumentationchildentry.topic,
-                        ):
-                            print(f"Non Public Page: {page.title} added to allowed pages")
-                            allowed_pages.append(page.id)
+                    elif check_permissions(
+                        user_permissions,
+                        page.metricsdocumentationchildentry.theme,
+                        page.metricsdocumentationchildentry.sub_theme,
+                        page.metricsdocumentationchildentry.topic,
+                    ):
+                        allowed_pages.append(page.id)
 
                 public_pages = queryset.not_type(
                     TopicPage, MetricsDocumentationChildEntry

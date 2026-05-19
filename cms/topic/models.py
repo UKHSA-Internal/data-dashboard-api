@@ -2,7 +2,6 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
-
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel,
@@ -16,6 +15,7 @@ from wagtail.fields import RichTextField
 from wagtail.search import index
 
 from cms.auth_content.auth_utils import _create_form_field
+from cms.dashboard.constants import THEME_FIELDS
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -31,7 +31,6 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
-from cms.dashboard.constants import THEME_FIELDS
 from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
@@ -65,7 +64,7 @@ class TopicPageAdminForm(WagtailAdminPageForm):
     def _get_field_choices(value, placeholder):
         """Generate choices list based on field value"""
         return [("", placeholder), (value, f"Loading... (ID: {value})")]
-    
+
     class Media:
         js = ["js/toggle_available_fields_on_is_public.js"]
 
@@ -283,23 +282,16 @@ class TopicPage(UKHSAPage):
             )
         elif not self.theme:
             raise ValidationError(
-                {
-                    "theme": "Please select a theme for this non-public page"
-                }
+                {"theme": "Please select a theme for this non-public page"}
             )
         elif not self.sub_theme:
             raise ValidationError(
-                {
-                    "sub_theme": "Please select a sub theme for this non-public page"
-                }
+                {"sub_theme": "Please select a sub theme for this non-public page"}
             )
         elif not self.topic:
             raise ValidationError(
-                {
-                    "topic": "Please select a topic for this non-public page"
-                }
+                {"topic": "Please select a topic for this non-public page"}
             )
-        
 
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):

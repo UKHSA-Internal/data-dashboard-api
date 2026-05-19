@@ -129,7 +129,8 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
 
         # Then
         expected_log_part_one = "Metrics Documentation Child Entry for "
-        expected_log_part_two = (" was not created. "
+        expected_log_part_two = (
+            " was not created. "
             "Because the corresponding `Metric` was not created beforehand"
         )
 

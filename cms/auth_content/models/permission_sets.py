@@ -1,4 +1,3 @@
-from collections.abc import Callable
 from itertools import starmap
 
 from django.core.exceptions import ValidationError
@@ -18,12 +17,15 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_topic_names_and_ids,
 )
 
+
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(field, WILDCARD_ID_VALUE)
+            self.fields[field["field_name"]] = _create_form_field(
+                field, WILDCARD_ID_VALUE
+            )
 
         if self.instance and self.instance.pk:
             self._initialize_dependent_fields()
@@ -90,7 +92,11 @@ class PermissionSet(models.Model):
         help_text="Auto-generated display name",
     )
     display_name = models.CharField(
-        max_length=255, blank=True, default="", help_text=help_texts.PERMISSION_SET_DISPLAY_NAME, unique=True
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=help_texts.PERMISSION_SET_DISPLAY_NAME,
+        unique=True,
     )
     theme = models.CharField(max_length=255, blank=False, default="")
     sub_theme = models.CharField(max_length=255, blank=False, default="")

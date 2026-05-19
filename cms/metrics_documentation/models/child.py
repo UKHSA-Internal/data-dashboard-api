@@ -46,7 +46,6 @@ class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
         dependent_fields = {
             "sub_theme": ("Select theme first"),
             "topic": ("Select sub-theme first"),
-            # "metric": ("Select topic first"),
         }
 
         for field_name, (placeholder) in dependent_fields.items():
@@ -81,14 +80,19 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         blank=True,
     )
 
-    theme = models.CharField(max_length=255, blank=True, default="", null=True,)
-    sub_theme = models.CharField(max_length=255, blank=True, default="", null=True,)
-    topic = models.CharField(
+    theme = models.CharField(
         max_length=255,
         blank=True,
         default="",
-        null=True
+        null=True,
     )
+    sub_theme = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        null=True,
+    )
+    topic = models.CharField(max_length=255, blank=True, default="", null=True)
     body = ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 
     # Fields to index for searching within the CMS application.
@@ -164,7 +168,9 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         field = self._meta.get_field("metric")
         choices = getattr(field, "choices", []) or []
 
-        display_name = next((item[1] for item in choices if item[0] == self.metric), None)
+        display_name = next(
+            (item[1] for item in choices if item[0] == self.metric), None
+        )
 
         if not display_name or "_" not in display_name:
             return ""
@@ -181,7 +187,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
             self.theme = None
             self.sub_theme = None
             self.topic = None
-            
+
         # If not public page, non-public fields must be set
         elif not self.page_classification:
             raise ValidationError(
@@ -191,21 +197,15 @@ class MetricsDocumentationChildEntry(UKHSAPage):
             )
         elif not self.theme:
             raise ValidationError(
-                {
-                    "theme": "Please select a theme for this non-public page"
-                }
+                {"theme": "Please select a theme for this non-public page"}
             )
         elif not self.sub_theme:
             raise ValidationError(
-                {
-                    "sub_theme": "Please select a subtheme for this non-public page"
-                }
+                {"sub_theme": "Please select a subtheme for this non-public page"}
             )
         elif not self.topic:
             raise ValidationError(
-                {
-                    "topic": "Please select a topic for this non-public page"
-                }
+                {"topic": "Please select a topic for this non-public page"}
             )
 
 
