@@ -10,8 +10,8 @@ from collections.abc import Iterable
 from typing import Optional, Self
 
 from django.db import models
-from django.utils import timezone
 
+from common.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
@@ -66,7 +66,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         queryset: Self,
         geography: str,
         geography_type: str,
-        geography_code: str,
+        geography_code: str | None,
         stratum: str,
         sex: str,
         age: str,
@@ -280,7 +280,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             The filtered queryset which excludes embargoed data
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
@@ -301,7 +301,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         try:
             return (
                 self.filter(metric__name__in=metrics, embargo__lte=current_time)
