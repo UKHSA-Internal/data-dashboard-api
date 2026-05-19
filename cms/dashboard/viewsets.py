@@ -104,29 +104,31 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 filtered_queryset = queryset
 
             else:
-                user_permissions = req.user.permission_sets["permission_sets"]
+                user_permissions = req.user.permission_sets
                 allowed_pages = []
-                for page in queryset.type(TopicPage):
-                    if page.topicpage.is_public:
-                        allowed_pages.append(page.id)
-                    elif check_permissions(
+                allowed_pages = [
+                    page.id
+                    for page in queryset.type(TopicPage)
+                    if page.topicpage.is_public
+                    or check_permissions(
                         user_permissions,
                         page.topicpage.theme,
                         page.topicpage.sub_theme,
                         page.topicpage.topic,
-                    ):
-                        allowed_pages.append(page.id)
+                    )
+                ]
 
-                for page in queryset.type(MetricsDocumentationChildEntry):
-                    if page.metricsdocumentationchildentry.is_public:
-                        allowed_pages.append(page.id)
-                    elif check_permissions(
+                allowed_pages = [
+                    page.id
+                    for page in queryset.type(MetricsDocumentationChildEntry)
+                    if page.metricsdocumentationchildentry.is_public
+                    or check_permissions(
                         user_permissions,
                         page.metricsdocumentationchildentry.theme,
                         page.metricsdocumentationchildentry.sub_theme,
                         page.metricsdocumentationchildentry.topic,
-                    ):
-                        allowed_pages.append(page.id)
+                    )
+                ]
 
                 public_pages = queryset.not_type(
                     TopicPage, MetricsDocumentationChildEntry
