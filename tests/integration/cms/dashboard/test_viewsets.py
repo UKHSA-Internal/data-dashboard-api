@@ -149,8 +149,8 @@ class TestCMSPagesAPIViewSetPermissions:
 
         mock_user = MagicMock()
         mock_user.permission_sets = {
-            "has_global_access": True,
-            "permission_set_hierarchy": [],
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
         }
 
         request.user = mock_user
@@ -186,10 +186,8 @@ class TestCMSPagesAPIViewSetPermissions:
 
         mock_user = MagicMock()
         mock_user.permission_sets = {
-            "has_global_access": False,
-            "permission_set_hierarchy": [
-                {"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}
-            ],
+            "permission_sets": [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
+            "summary": {"has_global_access": False},
         }
 
         request.user = mock_user
