@@ -94,9 +94,8 @@ class PermissionSet(models.Model):
     display_name = models.CharField(
         max_length=255,
         blank=True,
-        default="",
+        null=True,
         help_text=help_texts.PERMISSION_SET_DISPLAY_NAME,
-        unique=True,
     )
     theme = models.CharField(max_length=255, blank=False, default="")
     sub_theme = models.CharField(max_length=255, blank=False, default="")
@@ -106,6 +105,15 @@ class PermissionSet(models.Model):
     geography = models.CharField(max_length=255, blank=False, default="")
 
     base_form_class = PermissionSetForm
+    
+    class Meta:       
+        constraints = [
+            models.UniqueConstraint(
+                fields=["display_name"],
+                condition=models.Q(display_name__isnull=False),
+                name="unique_non_null_display_name",
+            )]
+
 
     @property
     def permission_set_details(self):
