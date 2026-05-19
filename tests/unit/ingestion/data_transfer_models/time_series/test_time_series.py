@@ -66,6 +66,7 @@ class TestInboundTimeSeriesSpecificFields:
                 date=fake_date,
                 embargo=fake_embargo,
                 metric_value=fake_metric_value,
+                is_public=True,
             )
         )
 
@@ -92,6 +93,7 @@ class TestInboundTimeSeriesSpecificFields:
                 date=fake_date,
                 embargo=VALID_DATETIME,
                 metric_value=123,
+                is_public=True,
             )
 
     def test_raises_error_when_datetime_passed_to_period_end(self):
@@ -112,6 +114,7 @@ class TestInboundTimeSeriesSpecificFields:
                 epiweek=fake_epiweek,
                 embargo=fake_embargo,
                 metric_value=123,
+                is_public=True,
             )
 
     def test_raises_error_when_date_passed_to_embargo(self):
@@ -135,6 +138,7 @@ class TestInboundTimeSeriesSpecificFields:
                 epiweek=fake_epiweek,
                 embargo=fake_embargo,
                 metric_value=123,
+                is_public=True,
             )
         )
 

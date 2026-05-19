@@ -7,7 +7,9 @@ from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
 class TestConsumerClearStaleModels:
-    def test_clear_stale_headlines(self, example_headline_data: dict):
+    def test_clear_stale_headlines(
+        self, example_headline_data: dict, test_filename: str
+    ):
         """
         Given incoming headline data
         When `clear_stale_headlines()` is called
@@ -19,6 +21,7 @@ class TestConsumerClearStaleModels:
         spy_core_headline_manager = mock.Mock(spec_set=CoreHeadlineManager)
         consumer = Consumer(
             source_data=example_headline_data,
+            filename=test_filename,
             core_headline_manager=spy_core_headline_manager,
         )
 
@@ -44,7 +47,9 @@ class TestConsumerClearStaleModels:
             calls=expected_calls
         )
 
-    def test_clear_stale_timeseries(self, example_time_series_data: dict):
+    def test_clear_stale_timeseries(
+        self, example_time_series_data: dict, test_filename: str
+    ):
         """
         Given incoming timeseries data
         When `clear_stale_timeseries()` is called
@@ -58,6 +63,7 @@ class TestConsumerClearStaleModels:
         spy_api_timeseries_manager = mock.Mock(spec_set=APITimeSeriesManager)
         consumer = Consumer(
             source_data=example_time_series_data,
+            filename=test_filename,
             core_timeseries_manager=spy_core_timeseries_manager,
             api_timeseries_manager=spy_api_timeseries_manager,
         )

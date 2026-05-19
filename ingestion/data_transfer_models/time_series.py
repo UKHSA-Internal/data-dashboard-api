@@ -6,9 +6,7 @@ from pydantic.fields import Field
 import validation
 from ingestion.utils import type_hints
 from metrics.api.settings.auth import ALLOW_MISSING_IS_PUBLIC_FIELD
-from validation.data_transfer_models.base import (
-    IncomingBaseDataModel,
-)
+from validation.data_transfer_models.base import IncomingBaseDataModel
 
 
 class InboundTimeSeriesSpecificFields(BaseModel):
