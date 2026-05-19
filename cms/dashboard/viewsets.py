@@ -46,9 +46,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
     detail_only_fields = []
 
-    # **
-    # TODO: Is this endpoint used for nonpublic data?
-    # I would assume so, which means we need to change the caching - use the decorator?
     def get_queryset(self):
         """Returns the queryset as per the individual models
 
@@ -101,11 +98,14 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             )
 
         else:
-            if req.user.permission_sets["has_global_access"]:
+            user_permissions = req.user.permission_sets["permission_sets"]
+            has_global_access = req.user.permission_sets['summary']["has_global_access"]
+            
+            if has_global_access:
                 filtered_queryset = queryset
 
             else:
-                user_permissions = req.user.permission_sets["permission_set_hierarchy"]
+                user_permissions = req.user.permission_sets["permission_sets"]
                 allowed_pages = []
                 for page in queryset.type(TopicPage):
                     if page.topicpage.is_public:
