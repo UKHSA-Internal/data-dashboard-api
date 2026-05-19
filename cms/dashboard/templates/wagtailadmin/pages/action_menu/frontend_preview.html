@@ -1,0 +1,34 @@
+{% load static wagtailadmin_tags %}
+{% if url %}
+    <a id="preview-btn" class="button{% if classname %} {{ classname }}{% endif %}" data-url="{{ url }}" href="{{ url }}" target="_blank" rel="noopener noreferrer">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</a>
+    {% if label != "View Live" %}
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Date (<span id="embargo-time-btn-label">now</span>)</button>
+    {% endif %}
+{% else %}
+    <button id="preview-btn" type="submit" name="{{ name }}" value="{{ label }}" class="button{% if classname %} {{ classname }}{% endif %}">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
+    {% if label != "View Live" %}
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Date (<span id="embargo-time-btn-label">now</span>)</button>
+    {% endif %}
+{% endif %}
+
+<dialog id="embargo-time-modal" aria-labelledby="embargo-modal-title">
+    <div class="embargo-modal-content">
+        <h2 id="embargo-modal-title" class="embargo-modal-title">Select embargo time</h2>
+        <section id="embargo-calendar-container" aria-label="Date picker"></section>
+        <div class="embargo-modal-buttons">
+            <button id="embargo-ok-btn" type="button" class="button embargo-modal-btn" disabled>OK</button>
+            <button id="embargo-now-btn" type="button" class="button embargo-modal-btn">Now</button>
+            <button id="embargo-cancel-btn" type="button" class="button button-secondary embargo-modal-btn">Cancel</button>
+        </div>
+    </div>
+</dialog>
+
+{% if label != "View Live" %}
+    <!-- Vendor CSS source: https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css -->
+    <link rel="stylesheet" href="{% static 'css/vendor/flatpickr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/embargo_time_picker.css' %}">
+    <!-- Vendor JS source: https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js -->
+    <script src="{% static 'js/vendor/flatpickr.min.js' %}"></script>
+    <script src="{% static 'js/embargo_time_picker.js' %}"></script>
+    <script src="{% static 'js/embargo_time_preview_controls.js' %}"></script>
+{% endif %}
