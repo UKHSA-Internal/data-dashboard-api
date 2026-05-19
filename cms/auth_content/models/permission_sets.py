@@ -8,6 +8,7 @@ from wagtail.admin.panels import FieldPanel, mark_safe
 
 from cms.auth_content.auth_utils import _create_form_field
 from cms.auth_content.constants import PERMISSION_SET_FIELDS, WILDCARD_ID_VALUE
+from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
     get_all_geography_type_names_and_ids,
@@ -88,6 +89,9 @@ class PermissionSet(models.Model):
         editable=False,
         help_text="Auto-generated display name",
     )
+    display_name = models.CharField(
+        max_length=255, blank=True, default="", help_text=help_texts.PERMISSION_SET_DISPLAY_NAME, unique=True
+    )
     theme = models.CharField(max_length=255, blank=False, default="")
     sub_theme = models.CharField(max_length=255, blank=False, default="")
     topic = models.CharField(max_length=255, blank=False, default="")
@@ -103,6 +107,7 @@ class PermissionSet(models.Model):
         return mark_safe("<br>".join(parts))
 
     panels = [
+        FieldPanel("display_name"),
         FieldPanel("theme"),
         FieldPanel("sub_theme"),
         FieldPanel("topic"),
@@ -211,4 +216,4 @@ class PermissionSet(models.Model):
         )
 
     def __str__(self):
-        return self.name or f"Permission Set {self.id}"
+        return self.display_name or self.name or f"Permission Set {self.id}"
