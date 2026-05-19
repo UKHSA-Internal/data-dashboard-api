@@ -41,7 +41,10 @@ function _tests_unit() {
 
 function _tests_integration() {
     uhd venv activate
-    python -m pytest tests/integration "$@"
+    rm -f test.sqlite3
+    uhd django migrate
+    uhd bootstrap all
+    pytest tests/integration "$@"
 }
 
 function _tests_system() {
