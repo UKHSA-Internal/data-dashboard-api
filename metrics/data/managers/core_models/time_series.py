@@ -11,9 +11,9 @@ from typing import Self
 
 from django.db import models
 from django.db.models.query_utils import Q
-from django.utils import timezone
 
 from common.auth.permissions import PermissionSetsType, check_chart_permissions_by_name
+from common.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
@@ -470,7 +470,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             The filtered queryset which excludes emargoed data
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
@@ -518,7 +518,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        current_time = timezone.now()
+
+        current_time = get_embargo_time()
         try:
             return (
                 self.filter(metric__name__in=metrics, embargo__lte=current_time)
@@ -533,6 +534,27 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
+    @staticmethod
+    def _has_access_to_non_public_data(
+        *,
+        topic: str,
+        metric: str,
+        geography: str | None,
+        geography_type: str | None,
+        theme: str,
+        sub_theme: str,
+        rbac_permissions: Iterable[RBACPermission],
+    ) -> bool:
+        return validate_permissions_for_non_public(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
+            rbac_permissions=rbac_permissions,
+        )
+
     def query_for_data(
         self,
         *,
@@ -542,16 +564,10 @@ class CoreTimeSeriesManager(models.Manager):
         fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
         field_to_order_by: str = "date",
-        geography: str | None = None,
-        geography_type: str | None = None,
-        stratum: str | None = None,
-        sex: str | None = None,
-        age: str | None = None,
-        theme: str = "",
-        sub_theme: str = "",
         metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
         permission_sets: PermissionSetsType | None = None,
+        **kwargs,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -628,6 +644,41 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
+        allowed_kwargs = {
+            "geography",
+            "geography_type",
+            "stratum",
+            "sex",
+            "age",
+            "theme",
+            "sub_theme",
+        }
+        unexpected_kwargs = set(kwargs) - allowed_kwargs
+        if unexpected_kwargs:
+            unexpected = ", ".join(sorted(unexpected_kwargs))
+            message = (
+                "query_for_data() got unexpected keyword argument(s): " f"{unexpected}"
+            )
+            raise TypeError(message)
+
+        geography: str | None = kwargs.get("geography")
+        geography_type: str | None = kwargs.get("geography_type")
+        stratum: str | None = kwargs.get("stratum")
+        sex: str | None = kwargs.get("sex")
+        age: str | None = kwargs.get("age")
+        theme: str = kwargs.get("theme") or ""
+        sub_theme: str = kwargs.get("sub_theme") or ""
+
+        rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
+        has_access_to_non_public_data: bool = self._has_access_to_non_public_data(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
+            rbac_permissions=rbac_permissions,
+        )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
