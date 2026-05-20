@@ -149,9 +149,9 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         Then the correct child entries are created
             for the corresponding `Metric` records
         """
-        
+
         # Given
-        
+
         entries = get_metrics_definitions()
         assert entries, "No metric definitions found"
 
@@ -169,7 +169,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         create_metrics_documentation_parent_page_and_child_entries()
 
         # Then
-        
+
         child_entry = MetricsDocumentationChildEntry.objects.get(metric=metric.pk)
 
         expected_title = test_entry["title"]
@@ -184,7 +184,6 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
             == child_entry.page_description
             == test_entry["page_description"]
         )
-
 
     @pytest.mark.django_db
     def test_existing_child_entries_are_removed_correctly(
