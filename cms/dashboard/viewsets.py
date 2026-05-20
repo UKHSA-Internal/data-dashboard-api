@@ -106,7 +106,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             else:
                 user_permissions = req.user.permission_sets
                 allowed_pages = []
-                allowed_pages = [
+                allowed_pages += [
                     page.id
                     for page in queryset.type(TopicPage)
                     if page.topicpage.is_public
@@ -118,7 +118,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                     )
                 ]
 
-                allowed_pages = [
+                allowed_pages += [
                     page.id
                     for page in queryset.type(MetricsDocumentationChildEntry)
                     if page.metricsdocumentationchildentry.is_public
