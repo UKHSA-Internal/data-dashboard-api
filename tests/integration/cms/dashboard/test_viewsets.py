@@ -11,6 +11,19 @@ from cms.topic.models import TopicPage
 from metrics.data.models.core_models import Metric, Topic
 
 
+class MockPermissionSets(list):
+    def __init__(self, permissions, has_global_access=False):
+        super().__init__(permissions)
+        self._summary = {"has_global_access": has_global_access}
+
+    def __getitem__(self, key):
+        if key == "permission_sets":
+            return list(self)
+        if key == "summary":
+            return self._summary
+        return super().__getitem__(key)
+
+
 @pytest.mark.django_db
 class TestCMSPagesAPIViewSetPermissions:
 
@@ -148,10 +161,10 @@ class TestCMSPagesAPIViewSetPermissions:
         request = Request(django_request)
 
         mock_user = MagicMock()
-        mock_user.permission_sets = {
-            "permission_sets": [],
-            "summary": {"has_global_access": True},
-        }
+        mock_user.permission_sets = MockPermissionSets(
+            [],
+            has_global_access=True,
+        )
 
         request.user = mock_user
         request.auth = "token"
@@ -185,10 +198,10 @@ class TestCMSPagesAPIViewSetPermissions:
         request = Request(django_request)
 
         mock_user = MagicMock()
-        mock_user.permission_sets = {
-            "permission_sets": [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
-            "summary": {"has_global_access": False},
-        }
+        mock_user.permission_sets = MockPermissionSets(
+            [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
+            has_global_access=False,
+        )
 
         request.user = mock_user
         request.auth = "token"
