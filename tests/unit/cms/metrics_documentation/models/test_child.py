@@ -7,19 +7,26 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.api.conf import APIField
 
 from cms.dashboard.constants import THEME_FIELDS
-from cms.metrics_documentation.models.child import MetricsDocumentationChildEntryAdminForm, InvalidTopicForChosenMetricForChildEntryError
+from cms.metrics_documentation.models.child import (
+    MetricsDocumentationChildEntryAdminForm,
+    InvalidTopicForChosenMetricForChildEntryError,
+)
 from tests.fakes.factories.cms.metrics_documentation_child_entry_factory import (
     FakeMetricsDocumentationChildEntryFactory,
 )
 
 MODULE_PATH = "cms.metrics_documentation.models.child"
 
+
 class TestInvalidTopicForChosenMetricForChildEntryError:
     def test_exception_has_expected_message(self):
-        actual = InvalidTopicForChosenMetricForChildEntryError("test_topic", "test_metric")
+        actual = InvalidTopicForChosenMetricForChildEntryError(
+            "test_topic", "test_metric"
+        )
         expected = "InvalidTopicForChosenMetricForChildEntryError('The `test_topic` is not available for selected metric of `test_metric`')"
 
         assert expected == repr(actual)
+
 
 class TestMetricsDocumentationChildEntryAdminForm:
     MOCK_THEME_FIELDS = [
@@ -53,7 +60,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
             form.instance = instance or MagicMock(pk=None)
             form.__init__()
             return form
-        
+
     def _make_form_with_instance(self, sub_theme=None, topic=None):
         """
         Instantiate MetricsDocumentationChildEntryAdminForm with all Wagtail
@@ -71,7 +78,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
             form.fields[field_name] = MagicMock(widget=mock_widget)
 
         return form
-    
+
     def test_creates_field_for_every_theme_field(self):
         """
         When a new form is instantiated
@@ -87,9 +94,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
     @mock.patch("cms.metrics_documentation.models.child._create_form_field")
     @mock.patch("wagtail.admin.panels.WagtailAdminPageForm.__init__")
     def test_field_creation_uses_create_form_field_helper(
-        self,
-        spy_init_admin_form: mock.MagicMock,
-        spy_create_form_field: mock.MagicMock
+        self, spy_init_admin_form: mock.MagicMock, spy_create_form_field: mock.MagicMock
     ):
         """
         Given a new form is created
@@ -288,9 +293,11 @@ class TestMetricsDocumentationChildEntry:
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
     @pytest.mark.parametrize(
         "metric_id",
-        [1,2,3,4,5],
+        [1, 2, 3, 4, 5],
     )
-    def test_metric_group_returns_emptry_string_with_missing_values(self, get_all_metric_names_and_ids: mock.MagicMock, metric_id: int):
+    def test_metric_group_returns_emptry_string_with_missing_values(
+        self, get_all_metric_names_and_ids: mock.MagicMock, metric_id: int
+    ):
         """
         Given a blank `MetricsDocumentationChildEntryPage` model.
         When a metric id is supplied to the `metric` property with invalid choices returned.
@@ -309,12 +316,14 @@ class TestMetricsDocumentationChildEntry:
 
         # When
         fake_metrics_documentation_child_entry_page.metric = metric_id
-        
+
         # Then
         assert fake_metrics_documentation_child_entry_page.metric_group == ""
 
     @mock.patch(f"{MODULE_PATH}.get_all_metric_names_and_ids")
-    def test_metric_group_returns_emptry_string_with_empty_metrics(self, get_all_metric_names_and_ids: mock.MagicMock):
+    def test_metric_group_returns_emptry_string_with_empty_metrics(
+        self, get_all_metric_names_and_ids: mock.MagicMock
+    ):
         """
         Given a blank `MetricsDocumentationChildEntryPage` model.
         When a metric id is supplied to the `metric` property with no choices returned.
@@ -328,7 +337,7 @@ class TestMetricsDocumentationChildEntry:
 
         # When
         fake_metrics_documentation_child_entry_page.metric = 1
-        
+
         # Then
         assert fake_metrics_documentation_child_entry_page.metric_group == ""
 
@@ -367,7 +376,9 @@ class TestMetricsDocumentationChildEntry:
         with pytest.raises(ValidationError) as e:
             fake_metrics_documentation_child_entry_page.clean()
 
-        assert "Please select a classification level for this non-public page" in str(e.value)
+        assert "Please select a classification level for this non-public page" in str(
+            e.value
+        )
 
     @mock.patch(
         "cms.dashboard.models.UKHSAPage._raise_error_if_seo_title_tag_not_provided",
@@ -477,7 +488,7 @@ class TestMetricsDocumentationChildEntry:
         # When/Then
         with pytest.raises(ValidationError) as e:
             fake_metrics_documentation_child_entry_page.clean()
-        
+
         assert "Please select a topic for this non-public page" in str(e.value)
 
     @mock.patch(

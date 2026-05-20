@@ -7,7 +7,9 @@ from ingestion.metrics_interface.interface import DataSourceFileType
 
 class TestConsumerProperties:
     def test_is_headline_data_returns_true_for_headline_metric_group(
-        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given input data with a `metric_group` value of "headline"
@@ -17,7 +19,7 @@ class TestConsumerProperties:
         """
         # Given
         fake_data = example_headline_data
-        consumer = Consumer(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
 
         # When
         is_headline_data: bool = consumer.is_headline_data
@@ -49,6 +51,7 @@ class TestConsumerProperties:
         metric_group: str,
         topic: str,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
     ):
         """
         Given input data with a `metric_group` value other than "headline"
@@ -61,7 +64,7 @@ class TestConsumerProperties:
         fake_data["metric_group"] = metric_group
         fake_data["metric"] = metric
         fake_data["topic"] = topic
-        consumer = Consumer(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data, filename=test_filename)
 
         # When
         is_headline_data: bool = consumer.is_headline_data

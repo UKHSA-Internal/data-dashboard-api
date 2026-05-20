@@ -13,7 +13,7 @@ from metrics.data.models.core_models import Metric, Topic
 
 @pytest.mark.django_db
 class TestCMSPagesAPIViewSetPermissions:
-    
+
     @pytest.fixture
     def setup_pages(self):
         influenza_topic = Topic.objects.create(name="Influenza")
@@ -30,31 +30,77 @@ class TestCMSPagesAPIViewSetPermissions:
         )
 
         home = Page.objects.get(id=2)
-        
-        public_topic = TopicPage(title="Public Topic", page_description="test", slug="public-topic", is_public=True, theme="1", seo_title="public-topic")
+
+        public_topic = TopicPage(
+            title="Public Topic",
+            page_description="test",
+            slug="public-topic",
+            is_public=True,
+            theme="1",
+            seo_title="public-topic",
+        )
         home.add_child(instance=public_topic)
-        
-        private_topic = TopicPage(title="Private Topic", page_description="test", slug="private-topic", is_public=False, theme="1", sub_theme="test", topic="test", page_classification="official_sensitive", seo_title="private-topic")
+
+        private_topic = TopicPage(
+            title="Private Topic",
+            page_description="test",
+            slug="private-topic",
+            is_public=False,
+            theme="1",
+            sub_theme="test",
+            topic="test",
+            page_classification="official_sensitive",
+            seo_title="private-topic",
+        )
         home.add_child(instance=private_topic)
-        
-        public_metrics = MetricsDocumentationChildEntry(title="Public Metric", page_description="test", slug="public-metric", metric=metric.pk, is_public=True, seo_title="public-metrics")
+
+        public_metrics = MetricsDocumentationChildEntry(
+            title="Public Metric",
+            page_description="test",
+            slug="public-metric",
+            metric=metric.pk,
+            is_public=True,
+            seo_title="public-metrics",
+        )
         home.add_child(instance=public_metrics)
 
-        private_metrics = MetricsDocumentationChildEntry(title="Private Metric", page_description="test", slug="private-metric", theme="2", sub_theme="test", topic="test", metric=private_metric.pk, is_public=False, seo_title="private-metrics")
+        private_metrics = MetricsDocumentationChildEntry(
+            title="Private Metric",
+            page_description="test",
+            slug="private-metric",
+            theme="2",
+            sub_theme="test",
+            topic="test",
+            metric=private_metric.pk,
+            is_public=False,
+            seo_title="private-metrics",
+        )
         home.add_child(instance=private_metrics)
 
-        private_metrics_two = MetricsDocumentationChildEntry(title="Private Metric 2", page_description="test", slug="private-metric-two", theme="1", sub_theme="test", topic="test", metric=private_metric_two.pk, is_public=False, seo_title="private-metrics-two")
+        private_metrics_two = MetricsDocumentationChildEntry(
+            title="Private Metric 2",
+            page_description="test",
+            slug="private-metric-two",
+            theme="1",
+            sub_theme="test",
+            topic="test",
+            metric=private_metric_two.pk,
+            is_public=False,
+            seo_title="private-metrics-two",
+        )
         home.add_child(instance=private_metrics_two)
-        
-        standard_page = CommonPage(title="Standard", body="test", slug="standard", seo_title="standard-page")
+
+        standard_page = CommonPage(
+            title="Standard", body="test", slug="standard", seo_title="standard-page"
+        )
         home.add_child(instance=standard_page)
-        
+
         return {
             "public_topic": public_topic,
             "private_topic": private_topic,
             "public_metrics": public_metrics,
             "private_metrics": private_metrics,
-            "standard_page": standard_page
+            "standard_page": standard_page,
         }
 
     def test_anonymous_user_access(self, setup_pages):
@@ -103,8 +149,8 @@ class TestCMSPagesAPIViewSetPermissions:
 
         mock_user = MagicMock()
         mock_user.permission_sets = {
-            "has_global_access": True,
-            "permission_set_hierarchy": []
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
         }
 
         request.user = mock_user
@@ -115,7 +161,7 @@ class TestCMSPagesAPIViewSetPermissions:
 
         # When
         result = view.get_queryset()
-        
+
         # Then
         titles = [p.title for p in result]
         assert "Public Topic" in titles
@@ -140,8 +186,8 @@ class TestCMSPagesAPIViewSetPermissions:
 
         mock_user = MagicMock()
         mock_user.permission_sets = {
-            "has_global_access": False,
-            "permission_set_hierarchy": [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}]
+            "permission_sets": [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
+            "summary": {"has_global_access": False},
         }
 
         request.user = mock_user
@@ -152,7 +198,7 @@ class TestCMSPagesAPIViewSetPermissions:
 
         # When
         result = view.get_queryset()
-        
+
         # Then
         titles = [p.title for p in result]
         assert "Private Topic" in titles

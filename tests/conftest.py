@@ -26,8 +26,19 @@ from metrics.domain.models.subplot_plots import (
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
+from validation.is_public import NON_PUBLIC_DATA_PREFIX
 
 DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
+
+
+@pytest.fixture
+def test_filename() -> str:
+    return "test.json"
+
+
+@pytest.fixture
+def non_public_test_filename() -> str:
+    return f"{NON_PUBLIC_DATA_PREFIX}test.json"
 
 
 @pytest.fixture

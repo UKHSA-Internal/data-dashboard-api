@@ -12,6 +12,7 @@ class TestConsumerCreateModelMethods:
         self,
         spy_build_core_headlines: mock.MagicMock,
         spy_create_records: mock.MagicMock,
+        test_filename: str,
     ):
         """
         Given an instance of the `Consumer`
@@ -26,7 +27,9 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(
+            source_data=mock.Mock(), filename=test_filename, dto=mock.Mock()
+        )
 
         # When
         consumer.create_core_headlines()
@@ -44,6 +47,7 @@ class TestConsumerCreateModelMethods:
         self,
         spy_build_core_time_series: mock.MagicMock,
         spy_create_records: mock.MagicMock,
+        test_filename: str,
     ):
         """
         Given an instance of the `Consumer`
@@ -58,7 +62,9 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(
+            source_data=mock.Mock(), filename=test_filename, dto=mock.Mock()
+        )
 
         # When
         consumer.create_core_time_series()
@@ -76,6 +82,7 @@ class TestConsumerCreateModelMethods:
         self,
         spy_build_api_time_series: mock.MagicMock,
         spy_create_records: mock.MagicMock,
+        test_filename: str,
     ):
         """
         Given an instance of the `Consumer`
@@ -90,7 +97,9 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(
+            source_data=mock.Mock(), filename=test_filename, dto=mock.Mock()
+        )
 
         # When
         consumer.create_api_time_series()
@@ -108,6 +117,7 @@ class TestConsumerCreateModelMethods:
         self,
         spy_create_core_time_series: mock.MagicMock,
         spy_create_api_time_series: mock.MagicMock,
+        test_filename: str,
     ):
         """
         Given an instance of the `Consumer`
@@ -119,7 +129,9 @@ class TestConsumerCreateModelMethods:
             `spy_create_api_time_series`: For the main assertion
         """
         # Given
-        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(
+            source_data=mock.Mock(), filename=test_filename, dto=mock.Mock()
+        )
 
         # When
         consumer.create_core_and_api_timeseries()

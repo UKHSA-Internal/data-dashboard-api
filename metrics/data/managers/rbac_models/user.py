@@ -12,7 +12,6 @@ from django.db import models
 from cms.auth_content.models.permission_sets import PermissionSet
 
 
-
 class UserQuerySet(models.QuerySet):
     """Custom queryset for User model operations."""
 

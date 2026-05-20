@@ -20,7 +20,9 @@ class TestMetricsDocumentationChildEntry:
         created_metric = Metric.objects.create(name=metric_name)
         Topic.objects.create(name=metric_name.split("_")[0].title())
 
-        _create_metrics_documentation_child_entry(metric_name=metric_name, metric_id=created_metric.pk, path="doc_1")
+        _create_metrics_documentation_child_entry(
+            metric_name=metric_name, metric_id=created_metric.pk, path="doc_1"
+        )
 
         # When / Then
         with pytest.raises(ValidationError):

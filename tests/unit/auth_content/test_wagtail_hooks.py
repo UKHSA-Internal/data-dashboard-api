@@ -3,7 +3,11 @@ from django.test import TestCase
 from django.utils.safestring import SafeData
 
 from cms.auth_content.models.permission_sets import PermissionSet
-from cms.auth_content.wagtail_hooks import NoEditPermissionPolicy, PermissionSetViewSet, AuthGroup
+from cms.auth_content.wagtail_hooks import (
+    NoEditPermissionPolicy,
+    PermissionSetViewSet,
+    AuthGroup,
+)
 from cms.auth_content import wagtail_hooks
 
 
@@ -19,6 +23,7 @@ class TestWagtailHooks(TestCase):
         result = wagtail_hooks.permission_set_js()
         assert '<script src="/static/js/permission_set' in result
         assert '.js"></script>' in result
+
 
 class TestPermissionSetDetailsProperty(TestCase):
 
@@ -59,7 +64,7 @@ class TestNoEditPermissionPolicy(TestCase):
     def test_user_has_permission_calls_super(self, spy_user_has_permissions: MagicMock):
         spy_user_has_permissions.return_value = "parent_response"
         result = self.policy.user_has_permission(self.user, "view")
-            
+
         spy_user_has_permissions.assert_called_once_with(self.user, "view")
         assert result == "parent_response"
 
@@ -70,13 +75,22 @@ class TestNoEditPermissionPolicy(TestCase):
             )
         )
 
-    @patch("wagtail.permission_policies.ModelPermissionPolicy.user_has_permission_for_instance")
-    def test_user_has_permission_for_instance_calls_super(self, spy_user_has_permissions_for_instance: MagicMock):
+    @patch(
+        "wagtail.permission_policies.ModelPermissionPolicy.user_has_permission_for_instance"
+    )
+    def test_user_has_permission_for_instance_calls_super(
+        self, spy_user_has_permissions_for_instance: MagicMock
+    ):
         spy_user_has_permissions_for_instance.return_value = "parent_response"
-        result = self.policy.user_has_permission_for_instance(self.user, "view", self.instance)
-            
-        spy_user_has_permissions_for_instance.assert_called_once_with(self.user, "view", self.instance)
+        result = self.policy.user_has_permission_for_instance(
+            self.user, "view", self.instance
+        )
+
+        spy_user_has_permissions_for_instance.assert_called_once_with(
+            self.user, "view", self.instance
+        )
         assert result == "parent_response"
+
 
 class TestPermissionSetViewSet(TestCase):
 

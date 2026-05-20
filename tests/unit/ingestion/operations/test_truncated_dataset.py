@@ -224,3 +224,32 @@ class TestUploadTruncatedTestData:
 
         # Then
         spy_clear_metrics_tables.assert_called_once()
+
+    @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
+    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
+    def test_uploads_each_file_sequentially_when_multiprocessing_disabled(
+        self,
+        mocked_clear_metrics_tables: mock.MagicMock,
+        spy_upload_data_as_file: mock.MagicMock,
+    ):
+        """
+        Given `multiprocessing_enabled=False`
+        When `upload_truncated_test_data()` is called
+        Then `_upload_data_as_file()` is called once per source file
+            without delegating to `run_with_multiple_processes`
+
+        Patches:
+            `mocked_clear_metrics_tables`: To remove the side effect
+                of clearing records and having to hit the database
+            `spy_upload_data_as_file`: For the main assertion
+        """
+        # Given
+        test_source_data_file_paths = _gather_test_data_source_file_paths()
+
+        # When
+        upload_truncated_test_data(multiprocessing_enabled=False)
+
+        # Then
+        assert spy_upload_data_as_file.call_count == len(test_source_data_file_paths)
+        for filepath in test_source_data_file_paths:
+            spy_upload_data_as_file.assert_any_call(filepath=filepath)
