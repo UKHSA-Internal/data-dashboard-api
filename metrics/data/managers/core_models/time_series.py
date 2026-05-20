@@ -19,7 +19,7 @@ from metrics.api.permissions.fluent_permissions import (
 )
 from metrics.data.models import RBACPermission
 from metrics.utils.permissions import (
-    check_if_any_permissions_allow_access,
+    check_any_permissions_allow_access,
 )
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -620,19 +620,17 @@ class CoreTimeSeriesManager(models.Manager):
         """
 
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        jwt_permissions = jwt_permissions or {}
 
-        # Only allow access, if permissions checks below are passed
-        has_access_to_non_public_data: bool = False
+        has_access_to_non_public_data: bool
 
-        # Check JWT permissions first (new authorization takes precedence)
         if jwt_permissions:
+            # Check JWT permissions first (new authorization takes precedence)
             has_global_access = jwt_permissions.get("has_global_access", False)
 
             if has_global_access:
                 has_access_to_non_public_data = True
             else:
-                has_access_to_non_public_data = check_if_any_permissions_allow_access(
+                has_access_to_non_public_data = check_any_permissions_allow_access(
                     jwt_permissions=jwt_permissions,
                     theme=theme,
                     sub_theme=sub_theme,
@@ -642,7 +640,7 @@ class CoreTimeSeriesManager(models.Manager):
                     geography=geography,
                 )
         else:
-            # THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
+            # Legacy RBAC permissions (not in use) (to be removed in a future release)
             has_access_to_non_public_data = validate_permissions_for_non_public(
                 theme=theme,
                 sub_theme=sub_theme,

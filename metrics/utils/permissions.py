@@ -2,7 +2,6 @@
 Non-public permission validation, filtering and matching functions
 """
 
-import logging
 from typing import Literal, NotRequired, TypedDict
 
 from metrics.data.models.core_models.supporting import (
@@ -11,8 +10,6 @@ from metrics.data.models.core_models.supporting import (
     Metric,
     Topic,
 )
-
-logger = logging.getLogger(__name__)
 
 # Our permission resources, e.g. anything that you can filter by permission
 PermissionFilterResource = Literal[
@@ -31,7 +28,7 @@ class PermissionSetLevel(TypedDict):
     The "name" is just some blurb describing it.
     """
 
-    id: str  # can be "-1", therefore a string
+    id: str  # can be "-1" and therefore a string
     name: str
 
 
@@ -49,9 +46,9 @@ class PermissionHierarchy(TypedDict):
     geography: NotRequired[PermissionSetLevel]
 
 
-def check_if_any_permissions_allow_access(
+def check_any_permissions_allow_access(
     *,
-    jwt_permissions: dict | None,
+    jwt_permissions: dict,
     theme: str = "",
     sub_theme: str = "",
     topic: str,
@@ -66,19 +63,29 @@ def check_if_any_permissions_allow_access(
     of the passed API filters are being satisfied through
     the user's permissions defined in the jwt_permissions.
 
-    Any of our 6 passed permission fields is optional. If
-    none of them is set, no permission is given.
+    Any of the 6 of the passed API filters are optional. If
+    none of them is passed, return false, cause at this point
+    we already know user has_global_access=False
 
-    @param {dict | None} jwt_permissions, eg:
+    @param {dict} jwt_permissions, eg:
             {
                 "permission_set_hierarchy": [
                     {
                         "theme": {"id": "100", "name": "immunisation"},
-                        "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+                        "sub_theme": {"id": "200", "name": "childhood-vaccines"},
                         "topic": {"id": "-1", "name": "* (All)"},
                     }
                 ]
             }
+
+    @param {str} theme, eg:
+            "immunisation"
+
+    @param {str} sub_theme, eg:
+            "childhood-vaccines"
+
+    @param {str} topic, eg:
+            "MMR1"
 
     @return {bool}
     """
@@ -132,7 +139,7 @@ def check_if_any_permissions_allow_access(
     normalized_requested_filters: dict[PermissionFilterResource, str] = {
         key: str(value)
         for key, value in requested_filters.items()
-        if _permission_value_is_valid(value)
+        if _is_permission_value_valid(value)
     }
 
     matching_permissions = filter_permissions(
@@ -145,39 +152,38 @@ def check_if_any_permissions_allow_access(
 
 def filter_permissions(
     *,
-    jwt_permissions: dict | None,
+    jwt_permissions: dict,
     requested_filters: dict[PermissionFilterResource, str],
 ) -> list[dict[str, str]]:
     """
     Filter permissions that match the requested IDs.
     Returns a list of matching permissions containing IDs (without wildcards "-1").
 
-    @param {dict | None} jwt_permissions, eg:
+    @param {dict} jwt_permissions, eg:
             {
                 "permission_set_hierarchy": [
                     {
                         "theme": {"id": "100", "name": "immunisation"},
-                        "sub_theme": {"id": "133", "name": "childhood-vaccines"},
-                        "topic": {"id": "215", "name": "MMR1"},
+                        "sub_theme": {"id": "200", "name": "childhood-vaccines"},
+                        "topic": {"id": "-1", "name": "* (All)"},
                     }
                 ]
             }
 
     @param {dict} requested_filters, eg:
-            {"theme": "100", "sub_theme": "133", "topic": "114"}
+            {"theme": "100", "sub_theme": "200", "topic": "300"}
 
     @return {list}, eg:
-            [{"theme": "100", "sub_theme": "133"}]
+            [{"theme": "100", "sub_theme": "200"}]
     """
 
-    if not isinstance(
-        permission_set_hierarchy := (jwt_permissions or {}).get(
-            "permission_set_hierarchy"
-        ),
-        list,
-    ):
+    # Gotta have both of them to match permissions, cause at
+    # this point we already know user has_global_access=False
+    permission_set_hierarchy = jwt_permissions.get(
+        "permission_set_hierarchy"
+    )
+    if not isinstance(permission_set_hierarchy, list):
         return []
-
     if not requested_filters:
         return []
 
@@ -189,7 +195,7 @@ def filter_permissions(
 
         concrete_filters: dict[str, str] = {}
 
-        # Permission row must satisfy all requested dimensions, not just some
+        # All the requested filters must be present in the permission row or "-1"
         for filter_key, requested_value in requested_filters.items():
             permission_value = _extract_permission_id(
                 permission=permission,
@@ -197,25 +203,27 @@ def filter_permissions(
             )
 
             if permission_value == requested_value:
-                # Exact permission match also grants access on this dimension.
+                # Exact permission match grants access
                 concrete_filters[filter_key] = requested_value
                 continue
-            if permission_value == "-1":
-                # Wildcard grants access on this dimension.
+            elif permission_value == "-1":
+                # Wildcard also grants access
                 concrete_filters[filter_key] = requested_value
                 continue
 
-            # This permission row did not satisfy all requested filters
+            # This permission row did not satisfy all the requested filters
             break
         else:
-            # Only runs if loop didn't break -> full match.
+            # Only runs if loop didn't break -> full match
             matching_permissions.append(concrete_filters)
 
     return matching_permissions
 
 
 def _extract_permission_id(
-    *, permission: dict[str, object], filter_key: PermissionFilterResource
+    *,
+    permission: dict[str, object],
+    filter_key: PermissionFilterResource
 ) -> str | None:
     """
     Extract a permission id for one filter key from a permission entry.
@@ -223,7 +231,7 @@ def _extract_permission_id(
     @param {dict} permission, eg:
             {
                 "theme": {"id": "100", "name": "immunisation"},
-                "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+                "sub_theme": {"id": "200", "name": "childhood-vaccines"},
                 "topic": {"id": "-1", "name": "* (All)"},
             }
 
@@ -231,14 +239,14 @@ def _extract_permission_id(
         "sub_theme"
 
     @return {str | None}, eg:
-        "133"
+        "200"
     """
 
     # Do we offer permissions on this resource?
     if filter_key not in permission:
         return None
 
-    # Is permission resource present?
+    # Permission resource present?
     permission_resource = permission.get(filter_key)
     if not permission_resource:
         return None
@@ -247,16 +255,16 @@ def _extract_permission_id(
     if not isinstance(permission_resource, dict):
         return None
 
-    # Does it have a meaningful permission value?
+    # Permission value meaningful?
     permission_id = permission_resource.get("id")
-    if not _permission_value_is_valid(permission_id):
+    if not _is_permission_value_valid(permission_id):
         return None
 
-    # Return ID, if all is fine until here
+    # If all is fine up to here, return the ID
     return str(permission_id)
 
 
-def _permission_value_is_valid(value: object) -> bool:
+def _is_permission_value_valid(value: object) -> bool:
     """
     Is value a valid permission ID?
 
@@ -264,6 +272,7 @@ def _permission_value_is_valid(value: object) -> bool:
     Integers that exist as string types are fine, eg "5" instead of 5.
     The wildcard "-1" remains also valid.
     """
+
     if value is None:
         return False
 
@@ -281,9 +290,3 @@ def _permission_value_is_valid(value: object) -> bool:
         return False
 
     return numeric_value != 0
-
-
-class InvalidPermissionHierarchyError(ValueError):
-    """
-    Raised when a JWT permission hierarchy contains invalid values
-    """

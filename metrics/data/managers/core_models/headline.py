@@ -16,7 +16,7 @@ from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
 from metrics.utils.permissions import (
-    check_if_any_permissions_allow_access,
+    check_any_permissions_allow_access,
 )
 
 
@@ -368,7 +368,7 @@ class CoreHeadlineManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-             theme: The name of the theme being queried.
+            theme: The name of the theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
             sub_theme: The name of the sub theme being queried.
@@ -377,9 +377,10 @@ class CoreHeadlineManager(models.Manager):
             rbac_permissions: The RBAC permissions available
                 to the given request. This dictates whether the given
                 request is permitted access to non-public data or not.
-            jwt_permissions: JWT permissions dict extracted from Cognito token.
-                Contains 'has_global_access' (bool) and 'permission_set_hierarchy' (list).
-                Used for new JWT-based authorization (takes precedence over RBAC permissions).
+                The new JWT-based authorization below takes precedence
+                over RBAC permissions, which is not in use anymore.
+            jwt_permissions: The JWT permissions extracted from the Cognito token.
+                Contains 'permission_set_hierarchy' (list) and 'has_global_access' (bool).
 
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
@@ -391,19 +392,17 @@ class CoreHeadlineManager(models.Manager):
         """
 
         rbac_permissions = rbac_permissions or []
-        jwt_permissions = jwt_permissions or {}
 
-        # Only allow access, if permissions checks below are passed
-        has_access_to_non_public_data: bool = False
+        has_access_to_non_public_data: bool
 
-        # Check JWT permissions first (new authorization takes precedence)
         if jwt_permissions:
+            # Check JWT permissions first (new authorization takes precedence)
             has_global_access = jwt_permissions.get("has_global_access", False)
 
             if has_global_access:
                 has_access_to_non_public_data = True
             else:
-                has_access_to_non_public_data = check_if_any_permissions_allow_access(
+                has_access_to_non_public_data = check_any_permissions_allow_access(
                     jwt_permissions=jwt_permissions,
                     theme=theme,
                     sub_theme=sub_theme,
@@ -413,7 +412,7 @@ class CoreHeadlineManager(models.Manager):
                     geography=geography,
                 )
         else:
-            # THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
+            # Legacy RBAC permissions (not in use) (to be removed in a future release)
             has_access_to_non_public_data = validate_permissions_for_non_public(
                 theme=theme,
                 sub_theme=sub_theme,

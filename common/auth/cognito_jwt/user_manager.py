@@ -6,7 +6,7 @@ from django.contrib.auth.models import BaseUserManager
 
 from metrics.utils.permission_hierarchy import convert_permission_set_into_hierarchy
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # just for IDE checks
     from rest_framework.request import Request
 
 logger = logging.getLogger(__name__)
@@ -16,8 +16,7 @@ class CognitoManager(BaseUserManager):
 
     @staticmethod
     def get_or_create_for_cognito(jwt_payload):
-        """
-        Create an ephemeral user instance for this request.
+        """Create an ephemeral user instance for this request.
         We don't need to store or retrieve any info, we use what's in the JWT,
         so this speeds up the request by removing the need for any DB access
         """
@@ -26,14 +25,14 @@ class CognitoManager(BaseUserManager):
             username = jwt_payload["entraObjectId"]
             raw_permission_sets = jwt_payload["permissionSets"]
 
-            # Manual testing
+            # Manual testing (just for now)
             # username = "678a605b-16f3-4342-9f02-db74613701ac"
             # raw_permission_sets = {
             #     "permission_sets": [
             #         {
             #             "theme": {"id": "100", "name": "immunisation"},
-            #             "sub_theme": {"id": "133", "name": "childhood-vaccines"},
-            #             "topic": {"id": "-1", "name": None},
+            #             "sub_theme": {"id": "200", "name": "childhood-vaccines"},
+            #             "topic": {"id": "-1", "name": "* (All)"},
             #         }
             #     ],
             #     "summary": {"has_global_access": False},
@@ -52,9 +51,7 @@ class CognitoManager(BaseUserManager):
 
         logger.info(
             "JWT token for user '%s' with permissions: permission_count=%d, has_global_access=%s",
-            username,
-            permission_count,
-            has_global_access,
+            username, permission_count, has_global_access,
         )
 
         user_class = get_user_model()
@@ -72,10 +69,10 @@ def extract_jwt_permissions(*, request: "Request | None") -> dict:
     during JWT authentication. Lives here because it is the counterpart to
     the code above that "writes" user.permission_sets.
 
-    @param {Request | None} request example:
+    @param {Request | None} request, eg:
         <rest_framework.request.Request: POST '/api/charts/v3'>
 
-    @return {dict} example:
+    @return {dict}, eg:
         {
             "permission_set_hierarchy": [
                 {"theme": {"id": "100", "name": "immunisation"}, ...}
