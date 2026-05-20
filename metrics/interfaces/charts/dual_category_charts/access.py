@@ -168,20 +168,12 @@ class DualCategoryChartsInterface(ChartsInterface):
                 returned any data from the underlying queries
 
         """
-        print(chart_generation_payload)
         return line_single_simplified.generate_chart_figure(
             chart_generation_payload=chart_generation_payload
         )
 
     def build_chart_generation_payload(self) -> ChartGenerationPayload:
         plots_data: list[PlotGenerationData] = self._build_chart_plots_data()
-
-        grouped: dict[str, dict] = defaultdict(lambda: {"x_axis_values": set(), "y_axis_values": []})
-        for plot in plots_data:
-            label = plot.parameters.secondary_group_by
-            grouped[label]["x_axis_values"].add(*plot.x_axis_values)
-            grouped[label]["y_axis_values"].extend(plot.y_axis_values)
-
         return ChartGenerationPayload(
             plots=plots_data,
             x_axis_title=self.chart_request_params.x_axis_title,
@@ -215,8 +207,10 @@ class DualCategoryChartsInterface(ChartsInterface):
                 returned any data from the underlying queries
 
         """
-        plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
-        self._set_latest_date_from_plots_data(plots_data=plots_data)
+        # TODO build_combined_plots_data returns a dict[str, dict]
+        plots_data: dict[str, dict] = self.plots_interface.build_combined_plots_data()
+        # TODO this is broken due to the above
+        # self._set_latest_date_from_plots_data(plots_data=plots_data)
 
         return plots_data
 

@@ -320,6 +320,20 @@ class PlotsInterface:
 
         return plots_data
 
+    def build_combined_plots_data(self) -> dict[str, dict]:
+        grouped: dict[str, dict] = defaultdict(lambda: {"x_axis_values": [], "y_axis_values": [], "additional_values": {}})
+
+        for plot_parameters in self.chart_request_params.plots:
+            plot_data: PlotGenerationData = self.build_plot_data_from_parameters(
+                plot_parameters=plot_parameters
+            )
+            label = plot_parameters.secondary_group_by
+            grouped[label]["x_axis_values"].extend(plot_data.x_axis_values)
+            grouped[label]["y_axis_values"].extend(plot_data.y_axis_values)
+            grouped[label]["additional_values"] = plot_data.additional_values
+
+        return grouped
+
 
 def get_aggregated_results(
     *, plot_parameters: PlotParameters, queryset: QuerySet
@@ -355,8 +369,6 @@ def get_aggregated_results(
     if not result:
         raise DataNotFoundForPlotError
 
-    print(plot_parameters)
-    print(result)
     return result
 
 
