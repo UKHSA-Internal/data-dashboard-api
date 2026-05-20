@@ -7,6 +7,7 @@ from typing import Any
 from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
+from common.auth.cognito_jwt.user_manager import extract_jwt_permissions
 from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
@@ -162,7 +163,9 @@ class PlotsInterface:
             plot_params["fields_to_export"].append("lower_confidence")
 
         return self.core_model_manager.query_for_data(
-            **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions
+            **plot_params,
+            rbac_permissions=self.chart_request_params.rbac_permissions,  # legacy permissions to be removed
+            jwt_permissions=extract_jwt_permissions(request=self.chart_request_params.request),  # new permissions
         )
 
     def build_plot_data_from_parameters_with_complete_queryset(

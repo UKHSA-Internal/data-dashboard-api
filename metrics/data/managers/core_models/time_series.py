@@ -18,6 +18,9 @@ from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
 from metrics.data.models import RBACPermission
+from metrics.utils.permissions import (
+    check_if_any_permissions_allow_access,
+)
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
@@ -533,6 +536,7 @@ class CoreTimeSeriesManager(models.Manager):
         sub_theme: str = "",
         metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
+        jwt_permissions: dict | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -579,11 +583,14 @@ class CoreTimeSeriesManager(models.Manager):
                 i.e. to filter for all record with values
                 between 0 -> 80 AND 90 -> 100,
                 this can be provided as `[(0, 80), (90, 100)]`.
-            rbac_permissions: The RBAC permissions available
-                to the given request. This dictates whether the given
-                request is permitted access to non-public data or not.
+             rbac_permissions: The RBAC permissions available
+                 to the given request. This dictates whether the given
+                 request is permitted access to non-public data or not.
+             jwt_permissions: JWT permissions dict extracted from Cognito token.
+                 Contains 'has_global_access' (bool) and 'permission_set_hierarchy' (list).
+                 Used for new JWT-based authorization (takes precedence over RBAC permissions).
 
-        Notes:
+         Notes:
             If we have the following input `queryset`:
                 ----------------------------------------
                 | 2023-01-01 | 2023-01-02 | 2023-01-03 |
@@ -611,16 +618,40 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
+
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            rbac_permissions=rbac_permissions,
-        )
+        jwt_permissions = jwt_permissions or {}
+
+        # Only allow access, if permissions checks below are passed
+        has_access_to_non_public_data: bool = False
+
+        # Check JWT permissions first (new authorization takes precedence)
+        if jwt_permissions:
+            has_global_access = jwt_permissions.get("has_global_access", False)
+
+            if has_global_access:
+                has_access_to_non_public_data = True
+            else:
+                has_access_to_non_public_data = check_if_any_permissions_allow_access(
+                    jwt_permissions=jwt_permissions,
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography_type=geography_type,
+                    geography=geography,
+                )
+        else:
+            # THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
+            has_access_to_non_public_data = validate_permissions_for_non_public(
+                theme=theme,
+                sub_theme=sub_theme,
+                topic=topic,
+                metric=metric,
+                geography_type=geography_type,
+                geography=geography,
+                rbac_permissions=rbac_permissions,
+            )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
