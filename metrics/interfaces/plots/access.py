@@ -164,7 +164,7 @@ class PlotsInterface:
 
         return self.core_model_manager.query_for_data(
             **plot_params,
-            rbac_permissions=self.chart_request_params.rbac_permissions,  # TODO: legacy permissions to be removed
+            rbac_permissions=self.chart_request_params.rbac_permissions,  # legacy permissions to be removed
             jwt_permissions=extract_jwt_permissions(request=self.chart_request_params.request),  # new permissions
         )
 

@@ -413,7 +413,7 @@ class CoreHeadlineManager(models.Manager):
                     geography=geography,
                 )
         else:
-            # TODO: THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
+            # THESE LEGACY RBAC PERMISSIONS ARE NOT IN USE AND TO BE REMOVED IN A FUTURE RELEASE
             has_access_to_non_public_data = validate_permissions_for_non_public(
                 theme=theme,
                 sub_theme=sub_theme,

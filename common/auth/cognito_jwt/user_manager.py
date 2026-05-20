@@ -26,7 +26,7 @@ class CognitoManager(BaseUserManager):
             username = jwt_payload["entraObjectId"]
             raw_permission_sets = jwt_payload["permissionSets"]
 
-            # TODO: Testing
+            # Manual testing
             # username = "678a605b-16f3-4342-9f02-db74613701ac"
             # raw_permission_sets = {
             #     "permission_sets": [
