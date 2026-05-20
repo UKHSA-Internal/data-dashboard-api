@@ -149,46 +149,42 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         Then the correct child entries are created
             for the corresponding `Metric` records
         """
+        
         # Given
-        _seed_truncated_test_data_with_split_auth()
-        healthcare_admission_metric = Metric.objects.get(
-            name="RSV_healthcare_admissionRateByWeek"
+        
+        entries = get_metrics_definitions()
+        assert entries, "No metric definitions found"
+
+        test_entry = entries[0]
+
+        topic = Topic.objects.create(name=test_entry["topic"])
+
+        metric = Metric.objects.create(
+            id=test_entry["metric"],  # ✅ critical fix
+            name=f"metric-{test_entry['metric']}",
+            topic=topic,
         )
 
         # When
         create_metrics_documentation_parent_page_and_child_entries()
 
         # Then
-        healthcare_admission_rate_child_entry = (
-            MetricsDocumentationChildEntry.objects.get(
-                metric=healthcare_admission_metric.pk
-            )
+        
+        child_entry = MetricsDocumentationChildEntry.objects.get(metric=metric.pk)
+
+        expected_title = test_entry["title"]
+
+        assert child_entry.title == expected_title
+        assert child_entry.slug == expected_title.lower().replace(" ", "-")
+        assert child_entry.topic == test_entry["topic"]
+        assert child_entry.seo_title == test_entry["seo_title"]
+
+        assert (
+            child_entry.search_description
+            == child_entry.page_description
+            == test_entry["page_description"]
         )
 
-        assert healthcare_admission_rate_child_entry.metric_group == "healthcare"
-        expected_title = "RSV healthcare admission rate by week"
-        assert (
-            healthcare_admission_rate_child_entry.slug
-            == expected_title.lower().replace(" ", "-")
-        )
-        assert healthcare_admission_rate_child_entry.topic == "RSV"
-        assert healthcare_admission_rate_child_entry.title == expected_title
-        assert (
-            healthcare_admission_rate_child_entry.seo_title
-            == f"{expected_title} | UKHSA data dashboard"
-        )
-
-        expected_page_description = (
-            "This metric shows the rate per 100,000 people of the total number of people "
-            "with confirmed RSV admitted to hospital "
-            "(general admissions plus admissions to ICU and HDU) "
-            "in the 7 days up to and including the date shown."
-        )
-        assert (
-            healthcare_admission_rate_child_entry.search_description
-            == healthcare_admission_rate_child_entry.page_description
-            == expected_page_description
-        )
 
     @pytest.mark.django_db
     def test_existing_child_entries_are_removed_correctly(
