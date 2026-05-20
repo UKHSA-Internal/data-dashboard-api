@@ -83,6 +83,9 @@ class PermissionSetForm(WagtailAdminPageForm):
 
         return cleaned_data
 
+    class Media:
+        js = ["js/permission_set.js"]
+
 
 class PermissionSet(models.Model):
     name = models.CharField(

@@ -19,11 +19,6 @@ class TestWagtailHooks(TestCase):
         assert result.menu_order == AuthGroup.menu_order
         assert len(result.items) == 2
 
-    def test_permission_set_js(self):
-        result = wagtail_hooks.permission_set_js()
-        assert '<script src="/static/js/permission_set' in result
-        assert '.js"></script>' in result
-
 
 class TestPermissionSetDetailsProperty(TestCase):
 
