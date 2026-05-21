@@ -13,7 +13,10 @@ from metrics.domain.common.utils import (
     ChartTypes,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models.plots import ChartRequestParams
+from metrics.domain.charts import (
+
+)
+from metrics.domain.models.plots import ChartRequestParams, ChartGenerationPayload
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams
 )
@@ -55,6 +58,12 @@ class DualCategoryChartsInterface:
     def is_headline_data(self) -> bool:
         return self.chart_reqeust_params.plots[0].is_headline_data
 
+    def _build_chart_figure(self, *, chart_generation_payload):
+        if self.chart_type == "stacked_bar":
+            return self.generate_stacked_bar(
+                chart_generation_payload=self.chart_generation_payload,
+            )
+
     def _build_plots_data(self):
         plots_data = self.plots_interface.build_plots_data()
 
@@ -62,6 +71,7 @@ class DualCategoryChartsInterface:
 
     def _build_chart_generation_payload(self):
         plots_data = self._build_plots_data()
+
         return plots_data
 
     def _set_core_model_manager(self) -> bool:
@@ -84,11 +94,17 @@ class DualCategoryChartsInterface:
 
 
     def generate_chart_output(self) -> ChartOutput:
-        chart_generation_payload = (
-            self._build_chart_generation_payload()
+        chart_generation_payload = self._build_chart_generation_payload(),
+
+        figure = self._build_chart_figure(
+           chart_generation_payload=chart_generation_payload
         )
 
-        return None
+        return ChartOutput(
+            figure=figure,
+            description="testing testing 123",
+            is_headline=self.is_headline_data,
+        )
 
 
     def build_chart_generation_payload(self):

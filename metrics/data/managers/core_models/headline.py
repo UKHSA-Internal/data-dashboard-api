@@ -329,7 +329,7 @@ class CoreHeadlineManager(models.Manager):
         geography_type: str = "Nation",
         geography_code: str = "",
         stratum: str = "",
-        sex: str = "",
+        sex: [],
         age: str = "",
         theme: str = "",
         sub_theme: str = "",
