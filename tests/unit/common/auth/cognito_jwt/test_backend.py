@@ -43,7 +43,7 @@ def test_authenticate_no_token(rf):
     "cognito_user_manager",
     ["common.auth.cognito_jwt.user_manager.CognitoManager", None],
 )
-def test_authenticate_valid(
+def test_custom_user_manager(
     rf, monkeypatch, cognito_well_known_keys, jwk_private_key_one, cognito_user_manager
 ):
     settings.COGNITO_USER_MANAGER = cognito_user_manager
@@ -77,6 +77,79 @@ def test_authenticate_valid(
     assert user
     assert user.username == "entraOID"
     assert auth_token == token.encode("utf8")
+
+
+def test_authenticate_valid_token_with_permission_set(
+    rf, cognito_well_known_keys, jwk_private_key_one
+):
+    settings.COGNITO_USER_MANAGER = (
+        "common.auth.cognito_jwt.user_manager.CognitoManager"
+    )
+    token = create_jwt_token(
+        jwk_private_key_one,
+        {
+            "iss": "https://cognito-idp.eu-central-1.amazonaws.com/bla",
+            "aud": settings.COGNITO_AUDIENCE,
+            "sub": "username",
+            "entraObjectId": "entraOID",
+            "permissionSets": ["something"],
+        },
+    )
+
+    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    request = rf.get("/", **headers)
+    auth = backend.JSONWebTokenAuthentication()
+    user, auth_token = auth.authenticate(request)
+    assert user
+    assert user.username == "entraOID"
+    assert auth_token == token.encode("utf8")
+
+
+def test_authenticate_valid_token_without_permission_set(
+    rf, cognito_well_known_keys, jwk_private_key_one
+):
+    settings.COGNITO_USER_MANAGER = (
+        "common.auth.cognito_jwt.user_manager.CognitoManager"
+    )
+    token = create_jwt_token(
+        jwk_private_key_one,
+        {
+            "iss": "https://cognito-idp.eu-central-1.amazonaws.com/bla",
+            "aud": settings.COGNITO_AUDIENCE,
+            "sub": "username",
+            "entraObjectId": "entraOID",
+        },
+    )
+
+    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    request = rf.get("/", **headers)
+    auth = backend.JSONWebTokenAuthentication()
+    response = auth.authenticate(request)
+    assert response is None
+
+
+def test_authenticate_valid_token_with_empty_permission_set(
+    rf, cognito_well_known_keys, jwk_private_key_one
+):
+    settings.COGNITO_USER_MANAGER = (
+        "common.auth.cognito_jwt.user_manager.CognitoManager"
+    )
+    token = create_jwt_token(
+        jwk_private_key_one,
+        {
+            "iss": "https://cognito-idp.eu-central-1.amazonaws.com/bla",
+            "aud": settings.COGNITO_AUDIENCE,
+            "sub": "username",
+            "entraObjectId": "entraOID",
+            "permissionSets": [],
+        },
+    )
+
+    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    request = rf.get("/", **headers)
+    auth = backend.JSONWebTokenAuthentication()
+    response = auth.authenticate(request)
+    assert response is None
 
 
 def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):

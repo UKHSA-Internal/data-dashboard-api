@@ -34,3 +34,13 @@ def test_get_or_create_for_cognito_returns_none_without_permission_sets():
 
     user = CognitoManager.get_or_create_for_cognito(jwt_payload)
     assert user is None
+
+
+def test_get_or_create_for_cognito_returns_none_with_empty_permission_sets():
+    jwt_payload = {
+        "entraObjectId": "unique_user_id",
+        "permissionSets": [],
+    }
+
+    user = CognitoManager.get_or_create_for_cognito(jwt_payload)
+    assert user is None
