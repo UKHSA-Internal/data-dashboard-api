@@ -5,7 +5,6 @@ from http import HTTPStatus
 from django.http import FileResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import permissions
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import config
@@ -98,13 +97,7 @@ class DualCategoryChartsView(APIView):
 
         return FileResponse(
             io.BytesIO(chart_image),
-            content_type=f"image/png{chart_request_params.file_format}",
+            content_type=f"image/{chart_request_params.file_format}",
         )
 
         logger.info("This endpoint is not yet complete")
-
-
-        # temporary_dict_representation = chart_request_params.model_dump()
-        # temporary_dict_representation.pop("request")
-        #
-        # return Response(data=temporary_dict_representation)

@@ -13,7 +13,9 @@ from metrics.domain.common.utils import (
     ChartTypes,
     DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
-from metrics.domain.models.charts.dual_category_charts import DualCategoryChartRequestParams
+from metrics.domain.models.charts.dual_category_charts import (
+    DualCategoryChartRequestParams,
+)
 
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
@@ -95,7 +97,9 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
                     "line_colour": segment["colour"],
                     **static_fields,
                     x_axis: primary_field_value,
-                    self.data.get("secondary_category"): segment["secondary_field_value"],
+                    self.data.get("secondary_category"): segment[
+                        "secondary_field_value"
+                    ],
                 }
                 groups_plots.append(plot)
 
