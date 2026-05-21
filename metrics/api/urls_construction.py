@@ -24,6 +24,7 @@ from metrics.api.views import (
     BulkDownloadsView,
     ChartsView,
     ColdAlertViewSet,
+    DualCategoryTablesView,
     DownloadsView,
     EncodedChartsView,
     HeadlinesView,
@@ -190,6 +191,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}maps/v1", MapsView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}tables/subplot/v1", TablesSubplotView.as_view()),
+    re_path(f"^{API_PREFIX}tables/dual-category/v1", DualCategoryTablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),
 ]
 
