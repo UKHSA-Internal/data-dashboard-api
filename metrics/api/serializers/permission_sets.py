@@ -47,7 +47,9 @@ class SubThemeRequestSerializer(serializers.Serializer):
         theme_id = self.validated_data["theme_id"]
 
         if theme_id == PERMISSION_SET_WILDCARD_ID_VALUE:
-            return {"choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All sub-themes)"]]}
+            return {
+                "choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All sub-themes)"]]
+            }
 
         parent_theme_id = int(theme_id)
         sub_theme_tuples = _queryset_to_id_name_tuples(

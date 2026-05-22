@@ -254,7 +254,9 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
 
         # Handle wildcard
         if geography_type_id == PERMISSION_SET_WILDCARD_ID_VALUE:
-            return {"choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All geographies)"]]}
+            return {
+                "choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All geographies)"]]
+            }
 
         parent_geography_type_id = int(geography_type_id)
         geographies = (
