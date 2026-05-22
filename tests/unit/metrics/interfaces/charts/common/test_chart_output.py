@@ -179,7 +179,7 @@ class TestApplyWatermark:
         mock_data_classification.__getitem__.return_value.value = "Highly Confidential"
         mock_wrap_text.return_value = "Highly<br>Confidential"
 
-        instance = ChartOutput(
+        ChartOutput(
             figure=figure,
             description="Test",
             is_headline=False,
