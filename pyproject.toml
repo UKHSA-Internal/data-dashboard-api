@@ -226,9 +226,7 @@ ignore_imports = [
     "metrics.api.urls_construction -> feedback.api.urls",
     "cms.dynamic_content.elements -> validation.data_transfer_models.base",
     "cms.auth_content.models.users -> metrics.data.managers.rbac_models.user",  # Allow auth_content to be moved into CMS, consider refactor
-    "metrics.api.serializers.geographies -> cms.auth_content.constants", # Allow auth_content to be moved into CMS, consider refactor
     "metrics.api.serializers.user -> cms.auth_content.models.users",  # Allow auth_content to be moved into CMS, consider refactor
-    "metrics.api.serializers.permission_sets -> cms.auth_content.constants", # Allow auth_content to be moved into CMS, consider refactor
     "metrics.data.managers.rbac_models.user -> cms.auth_content.models.permission_sets", # Allow auth_content to be moved into CMS, consider refactor
     "metrics.utils.permission_hierarchy -> cms.auth_content.models.permission_sets", # Allow auth_content to be moved into CMS, consider refactor
 ]
