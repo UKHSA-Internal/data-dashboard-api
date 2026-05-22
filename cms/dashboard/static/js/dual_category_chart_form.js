@@ -52,8 +52,8 @@ class FormStateManger {
         this.secondary_field_value_state = Array.from(inputs).map(input => {
             const selectedValues = [];
 
-            for (let i = 0; i < input.options.length; i++) {
-                const option = input.options[i];
+            for (const element of input.options) {
+                const option = element;
                 if (option.selected && option.value !== "") {
                     selectedValues.push(option.value);
                 }
@@ -71,9 +71,7 @@ class FormStateManger {
      * @return {boolean} whether the value should be selected
      */
     isSecondaryFieldOptionValueSelected(value, segmentIndex) {
-        return this.secondary_field_value_state &&
-            this.secondary_field_value_state[segmentIndex] &&
-            this.secondary_field_value_state[segmentIndex].includes(value);
+        return this.secondary_field_value_state?.[segmentIndex]?.includes(value);
     }
 
     /**
@@ -83,17 +81,16 @@ class FormStateManger {
      * @return {boolean} whether the value should be selected
      */
     isPrimaryValueSelected(value) {
-        return this.primary_field_values_state &&
-            this.primary_field_values_state.includes(value)
+        return this.primary_field_values_state?.includes(value)
     }
 }
 
 
-class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blocks.StructBlockDefinition {
+class DualCategoryChartCardBlockDefinition extends globalThis.wagtailStreamField.blocks.StructBlockDefinition {
 
-   static SELECTORS = {
-        SEGMENTS_CONTAINER: '[class="dual-category-chart-card"] [data-streamfield-list-container]',
-        SEGMENT_ITEM: 'dual-category-chart-card__segments',
+    static SELECTORS = {
+        SEGMENTS_CONTAINER: '.dual-category-chart-segments-container-form',
+        SEGMENT_ITEM: '.dual-category-chart-card__segments',
         SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]'
     };
 
@@ -173,7 +170,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
         if (!this.geography_type_field) missingFields.push(FIELD_SUFFIXES.GEOGRAPHY);
         if (!this.secondary_category_field) missingFields.push(FIELD_SUFFIXES.SECONDARY_CATEGORY);
 
-        if(missingFields.length > 0) {
+        if (missingFields.length > 0) {
             console.error(`Category form fields not found: ${missingFields.join(', ')}`, {
                 prefix,
                 x_axis_field: this.x_axis_field,
@@ -203,12 +200,11 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
         const missingFields = [];
         if (!this.primary_field_values_inputs) missingFields.push(FIELD_SUFFIXES.PRIMARY_VALUES);
         if (!this.secondary_field_value_inputs) missingFields.push(FIELD_SUFFIXES.SECONDARY_VALUES);
-
         if (missingFields.length > 0) {
             console.error(`Sub-category form fields not found: ${missingFields.join(', ')}`, {
                 prefix,
-                primary_field_values: this.primary_field_values_inputs,
-                secondary_field_value: this.primary_field_values_inputs?.length || 0
+                primary_field_values: this.primary_field_values_inputs?.length || 0,
+                secondary_field_value: this.secondary_field_value_inputs?.length || 0,
             });
         }
     }
@@ -219,25 +215,25 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * and restore saved state for existing content
      */
     initialiseFieldOptions() {
-        if(!this.x_axis_field || !this.secondary_category_field || !this.secondary_category_choices) {
+        if (!this.x_axis_field || !this.secondary_category_field || !this.secondary_category_choices) {
             return;
         }
 
         const { DEFAULT_OPTION } = DualCategoryChartCardBlockDefinition;
 
-        if(this.x_axis_field && this.primary_field_values_inputs) {
+        if (this.x_axis_field && this.primary_field_values_inputs) {
             this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
         }
 
-        if(this.secondary_category_field && this.secondary_field_value_inputs) {
+        if (this.secondary_category_field && this.secondary_field_value_inputs) {
             this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
         }
 
-        if(!this.x_axis_field.value && this.primary_field_values_inputs) {
+        if (!this.x_axis_field.value && this.primary_field_values_inputs) {
             this.primary_field_values_inputs.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
         }
 
-        if(!this.secondary_category_field.value && this.secondary_field_value_inputs.length > 0) {
+        if (!this.secondary_category_field.value && this.secondary_field_value_inputs.length > 0) {
             this.secondary_field_value_inputs.forEach(input => {
                 input.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
             });
@@ -325,10 +321,10 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @param prefix
      */
     observeSegmentBlocks(prefix) {
-        const { SELECTORS } =  DualCategoryChartCardBlockDefinition;
+        const { SELECTORS } = DualCategoryChartCardBlockDefinition;
         const segments_container = document.querySelector(SELECTORS.SEGMENTS_CONTAINER)
 
-        if(!segments_container) {
+        if (!segments_container) {
             console.warn("Segments container not found - observer disabled");
             return;
         }
@@ -337,8 +333,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
             mutations.forEach((mutation) => {
                 if (mutation.type === "childList") {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1 && node.classList.contains(SELECTORS.SEGMENT_ITEM)) {
-
+                        if (node.nodeType === 1 && node.matches(SELECTORS.SEGMENT_ITEM)) {
                             this.stateManager.storeCurrentSelections(this.secondary_field_value_inputs);
 
                             this.setupSubCategoryFormFields(prefix);
@@ -374,15 +369,25 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
         this.secondary_category_field.addEventListener("change", (evt) => {
             this.stateManager.clearSecondaryFieldState();
             this.updateSecondaryFieldValueOptions(evt.target.value);
+
+            // clear all segments
+            document
+                .querySelectorAll('.dual-category-chart-card__segments')
+                .forEach(segments => {
+                    const section = segments.closest('section[id$="-section"]');
+                    section
+                        ?.querySelector('[data-streamfield-action="DELETE"]')
+                        ?.click();
+                });
         });
 
         this.geography_type_field.addEventListener("change", (evt) => {
-            if(this.x_axis_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
+            if (this.x_axis_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearPrimaryFieldState();
                 this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
             }
 
-            if(this.secondary_category_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
+            if (this.secondary_category_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearSecondaryFieldState();
                 this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
             }
@@ -390,6 +395,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
     }
 
     render(placeholder, prefix, initialState, initialError) {
+
         const block = super.render(placeholder, prefix, initialState, initialError);
 
         // initialise form state
@@ -414,7 +420,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
 
 }
 
-window.telepath.register(
+globalThis.telepath.register(
     'cms.dynamic_content.cards.DualCategoryChartCard',
     DualCategoryChartCardBlockDefinition,
 );
