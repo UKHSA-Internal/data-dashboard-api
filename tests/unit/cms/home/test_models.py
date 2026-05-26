@@ -21,6 +21,7 @@ class TestBlankLandingPage:
             "last_published_at",
             "seo_title",
             "search_description",
+            "health_topic",
         ),
     )
     def test_has_correct_api_fields(
@@ -51,6 +52,7 @@ class TestBlankLandingPage:
             "body",
             "related_links",
             "related_links_layout",
+            "health_topic",
         ],
     )
     def test_has_correct_content_panels(
@@ -122,3 +124,20 @@ class TestBlankLandingPage:
         assert url_parts[0] == expected_site_id
         assert url_parts[1] == root_url
         assert url_parts[2] == "" != page_path
+
+    def test_health_topic_is_required(self):
+        """
+        Given a blank `LandingPage` model
+        When inspecting the `health_topic` field
+        Then the field is required
+        """
+        # Given
+        landing_page = FakeLandingPageFactory.build_blank_page()
+
+        # When
+        health_topic_field = landing_page._meta.get_field("health_topic")
+
+        # Then
+        assert health_topic_field.stream_block.meta.min_num == 1
+        assert health_topic_field.stream_block.meta.max_num == 1
+        assert health_topic_field.stream_block.meta.required is True
