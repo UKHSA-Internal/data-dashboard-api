@@ -15,6 +15,9 @@ from django.utils import timezone
 from metrics.api.permissions.fluent_permissions import (
     validate_permissions_for_non_public,
 )
+from metrics.utils.permissions import (
+    check_any_permissions_allow_access,
+)
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -334,6 +337,7 @@ class CoreHeadlineManager(models.Manager):
         theme: str = "",
         sub_theme: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
+        jwt_permissions: dict | None = None,
         **kwargs,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
@@ -373,6 +377,10 @@ class CoreHeadlineManager(models.Manager):
             rbac_permissions: The RBAC permissions available
                 to the given request. This dictates whether the given
                 request is permitted access to non-public data or not.
+                The new JWT-based authorization below takes precedence
+                over RBAC permissions, which is not in use anymore.
+            jwt_permissions: The JWT permissions extracted from the Cognito token.
+                Contains 'permission_set_hierarchy' (list) and 'has_global_access' (bool).
 
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
@@ -382,16 +390,38 @@ class CoreHeadlineManager(models.Manager):
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
+
         rbac_permissions = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography=geography,
-            geography_type=geography_type,
-            rbac_permissions=rbac_permissions,
-        )
+
+        has_access_to_non_public_data: bool
+
+        if jwt_permissions:
+            # Check JWT permissions first (new authorization takes precedence)
+            has_global_access = jwt_permissions.get("has_global_access", False)
+
+            if has_global_access:
+                has_access_to_non_public_data = True
+            else:
+                has_access_to_non_public_data = check_any_permissions_allow_access(
+                    jwt_permissions=jwt_permissions,
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography_type=geography_type,
+                    geography=geography,
+                )
+        else:
+            # Legacy RBAC permissions (not in use) (to be removed in a future release)
+            has_access_to_non_public_data = validate_permissions_for_non_public(
+                theme=theme,
+                sub_theme=sub_theme,
+                topic=topic,
+                metric=metric,
+                geography=geography,
+                geography_type=geography_type,
+                rbac_permissions=rbac_permissions,
+            )
 
         if has_access_to_non_public_data:
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(

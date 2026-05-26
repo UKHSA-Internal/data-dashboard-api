@@ -37,7 +37,11 @@ class JSONWebTokenAuthentication(BaseAuthentication):
     """
 
     def authenticate(self, request):
-        """Entrypoint for Django Rest Framework"""
+        """
+        The JWT token has arrived at an API endpoint and the journey starts here.
+        Entrypoint for the Django Rest Framework.
+        """
+
         jwt_token = self.get_jwt_token(request)
         if jwt_token is None:
             return None
@@ -46,7 +50,8 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         try:
             token_validator = self.get_token_validator(request)
             jwt_payload = token_validator.validate(jwt_token)
-        except TokenError:
+        except TokenError as error:
+            logger.warning("JWT validation failed: %s", error)
             raise exceptions.AuthenticationFailed from None
 
         custom_user_manager = self.get_custom_user_manager()

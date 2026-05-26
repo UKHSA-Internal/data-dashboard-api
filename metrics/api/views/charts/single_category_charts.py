@@ -4,11 +4,13 @@ from http import HTTPStatus
 from django.http import FileResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import config
 from caching.private_api.decorators import cache_response
+from common.auth.cognito_jwt import JSONWebTokenAuthentication
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
@@ -218,6 +220,7 @@ class ChartsView(APIView):
 
 
 class EncodedChartsView(APIView):
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication]
     permission_classes = []
 
     @classmethod
