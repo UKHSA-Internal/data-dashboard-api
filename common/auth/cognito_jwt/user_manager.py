@@ -17,6 +17,12 @@ class CognitoManager(BaseUserManager):
         try:
             username = jwt_payload["entraObjectId"]
             permission_sets = jwt_payload["permissionSets"]
+            if not permission_sets:
+                logger.debug(
+                    "Empty permissionSets in token for user: '%s'",
+                    username,
+                )
+                return None
         except KeyError:
             logger.debug(
                 "Error getting entraObjectId and/or permissionSets field(s)"
