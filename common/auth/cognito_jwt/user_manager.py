@@ -1,7 +1,7 @@
 import logging
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import BaseUserManager, User
+from django.contrib.auth.models import BaseUserManager
 
 logger = logging.getLogger(__name__)
 
@@ -10,17 +10,28 @@ class CognitoManager(BaseUserManager):
 
     @staticmethod
     def get_or_create_for_cognito(jwt_payload):
-        username = jwt_payload["entraObjectId"]
+        """Create an ephemeral user instance for this request.
+        We don't need to store or retrieve any info, we use what's in the JWT,
+        so this speeds up the request by removing the need for any DB access
+        """
         try:
-            user = get_user_model().objects.get(username=username)
-            logger.debug("Found existing user %s", user.username)
-        except User.DoesNotExist:
-            password = None
-            user = get_user_model().objects.create_user(
-                username=username,
-                password=password,
+            username = jwt_payload["entraObjectId"]
+            permission_sets = jwt_payload["permissionSets"]
+            if not permission_sets:
+                logger.debug(
+                    "Empty permissionSets in token for user: '%s'",
+                    username,
+                )
+                return None
+        except KeyError:
+            logger.debug(
+                "Error getting entraObjectId and/or permissionSets field(s)"
+                " from jwt payload: '%s'",
+                jwt_payload,
             )
-            logger.info("Created user %s", user.username)
-            user.is_active = True
-            user.save()
+            return None
+
+        user_class = get_user_model()
+        user = user_class(username=username)
+        user.permission_sets = permission_sets
         return user

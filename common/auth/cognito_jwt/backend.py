@@ -1,3 +1,5 @@
+import logging
+
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
@@ -8,17 +10,20 @@ from rest_framework.authentication import BaseAuthentication
 
 from .validator import TokenError, TokenValidator
 
+logger = logging.getLogger(__name__)
+
 # 2 objects expected when parsing Auth Header: 'Bearer' + token
 VALID_AUTH_HEADER_LENGTH = 2
 
 
 def get_authorization_header(request):
     """
-    Return request's 'X-UHD-AUTH:' header, as a bytestring.
+    Return request's authentication header, as a bytestring.
 
     Hide some test client ickyness where the header can be unicode.
     """
-    auth = request.META.get("HTTP_X_UHD_AUTH", b"")
+    auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "Authorization")
+    auth = request.META.get(auth_header, b"")
     if isinstance(auth, str):
         # Work around django test client oddness
         auth = auth.encode(HTTP_HEADER_ENCODING)
@@ -50,6 +55,11 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         else:
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create_for_cognito(jwt_payload)
+        if not user:
+            logger.debug(
+                "Unable to create user from JWT, defaulting to unauthenticated"
+            )
+            return None
         return (user, jwt_token)
 
     @staticmethod
