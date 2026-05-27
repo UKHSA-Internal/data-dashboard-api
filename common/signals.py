@@ -13,7 +13,7 @@ AUDITABLE_RELATIONSHIPS = ["User_permission_sets"]
 
 def _concrete_field_names(instance):
     """Return attnames of all concrete (non-M2M) fields on this instance."""
-    return [f.attname for f in instance._meta.concrete_fields]
+    return [f.attname for f in instance._meta.concrete_fields] # noqa: E261 SLF001
 
 
 @receiver(pre_save)
@@ -30,7 +30,7 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
         return
 
     if update_fields is not None:
-        m2m_names = {f.name for f in instance._meta.get_fields() if f.many_to_many}
+        m2m_names = {f.name for f in instance._meta.get_fields() if f.many_to_many} # noqa: E261 SLF001
         instance.audit_fields_changed = bool(set(update_fields) - m2m_names)
         return
 
@@ -49,7 +49,7 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
     if sender.__name__ not in AUDITABLE_RELATIONSHIPS:
         return
 
-    if action not in set(["post_add", "post_remove", "post_clear"]):
+    if action not in {"post_add", "post_remove", "post_clear"}:
         return
 
     user = get_current_user()
