@@ -8,12 +8,12 @@ from cms.auth_content.wagtail_hooks import (
     PermissionSetViewSet,
     AuthGroup,
 )
-from cms.auth_content import wagtail_hooks
+from cms.auth_content.wagtail_hooks import register_auth_viewset
 
 
 class TestWagtailHooks(TestCase):
     def test_register_auth_viewset(self):
-        result = wagtail_hooks.register_auth_viewset()
+        result = register_auth_viewset()
         assert result.menu_label == AuthGroup.menu_label
         assert result.menu_icon == AuthGroup.menu_icon
         assert result.menu_order == AuthGroup.menu_order
