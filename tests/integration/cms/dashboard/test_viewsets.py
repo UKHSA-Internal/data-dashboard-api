@@ -216,4 +216,4 @@ class TestCMSPagesAPIViewSetPermissions:
         titles = [p.title for p in result]
         assert "Private Topic" in titles
         assert "Private Metric 2" in titles
-        assert "Private Metrics" not in titles
+        assert "Private Metric" not in titles
