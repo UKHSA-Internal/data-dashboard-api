@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.db.models.signals import post_save, post_delete, m2m_changed, pre_save
 from django.dispatch import receiver
 
 from metrics.api.middleware.current_user import get_current_user
@@ -11,10 +11,37 @@ audit_logger = logging.getLogger("audit")
 AUDITABLE_MODELS = ["PermissionSet", "User"]
 AUDITABLE_RELATIONSHIPS = ["User_permission_sets"]
 
-# TODO: This fires alongside post_save - what's the best way to handle that?
-#       We can just track certain fields in the model, and if changes to those
-#       aren't present then ignore and don't log?
-# TODO: Tests
+def _concrete_field_names(instance):
+    """Return attnames of all concrete (non-M2M) fields on this instance."""
+    return [f.attname for f in instance._meta.concrete_fields]
+
+@receiver(pre_save)
+def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs):
+    """
+    Stamp _audit_fields_changed on the instance before saving so that
+    audit_save_log can skip updates that only touched M2M relationships.
+    """
+    if sender.__name__ not in AUDITABLE_MODELS:
+        return
+    
+    if not instance.pk:
+        instance._audit_fields_changed = True
+        return
+    
+    if update_fields is not None:
+        m2m_names = {f.name for f in instance._meta.get_fields() if f.many_to_many}
+        instance._audit_fields_changed = bool(set(update_fields) - m2m_names)
+        return
+    
+    try:
+        stored = sender.objects.get(pk=instance.pk)
+        instance._audit_fields_changed = any(
+            getattr(instance, f) != getattr(stored, f)
+            for f in _concrete_field_names(instance)
+        )
+    except sender.DoesNotExist:
+        instance._audit_fields_changed = True
+
 @receiver(m2m_changed)
 def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
     if sender.__name__ not in AUDITABLE_RELATIONSHIPS:
@@ -48,25 +75,32 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
 
 @receiver(post_save)
 def audit_save_log(sender, instance, created, **kwargs):
-    if sender.__name__ in AUDITABLE_MODELS:
-        user = get_current_user()
-        user_id = user.id if user else "anonymous"
-        action = "CREATED" if created else "UPDATED"
+    if sender.__name__ not in AUDITABLE_MODELS:
+        return
+    
+    if not created and not getattr(instance, "_audit_fields_changed", True):
+        return
 
-        audit_logger.info("Model saved", extra={
-            "user": user_id,
-            "action": f"{action} {sender.__name__}",
-            "target": f"id={instance.pk}",
-        })
+    user = get_current_user()
+    user_id = user.id if user else "anonymous"
+    action = "CREATED" if created else "UPDATED"
+
+    audit_logger.info("Model saved", extra={
+        "user": user_id,
+        "action": f"{action} {sender.__name__}",
+        "target": f"id={instance.pk}",
+    })
 
 @receiver(post_delete)
 def audit_delete_log(sender, instance, **kwargs):
-    if sender.__name__ in AUDITABLE_MODELS:
-        user = get_current_user()
-        user_id = user.id if user else "anonymous"
+    if sender.__name__ not in AUDITABLE_MODELS:
+        return
 
-        audit_logger.info("Model deleted", extra={
-            "user": user_id,
-            "action": f"DELETE {sender.__name__}",
-            "target": f"id={instance.pk}",
-        })
+    user = get_current_user()
+    user_id = user.id if user else "anonymous"
+
+    audit_logger.info("Model deleted", extra={
+        "user": user_id,
+        "action": f"DELETE {sender.__name__}",
+        "target": f"id={instance.pk}",
+    })
