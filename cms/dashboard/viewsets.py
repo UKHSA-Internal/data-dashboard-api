@@ -10,6 +10,7 @@ from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 
 
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
@@ -21,16 +22,16 @@ def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> boo
         permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
         permission_topic_id = permission.get("topic", {}).get("id")
 
-        if permission_theme_id == "-1":
+        if permission_theme_id == WILDCARD_ID_VALUE:
             return True
 
-        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
+        if permission_theme_id == theme_id and permission_sub_theme_id == WILDCARD_ID_VALUE:
             return True
 
         if (
             permission_theme_id == theme_id
             and permission_sub_theme_id == sub_theme_id
-            and (permission_topic_id in {"-1", topic_id})
+            and (permission_topic_id in {WILDCARD_ID_VALUE, topic_id})
         ):
             return True
 
