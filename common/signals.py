@@ -13,7 +13,7 @@ AUDITABLE_RELATIONSHIPS = ["User_permission_sets"]
 
 def _concrete_field_names(instance):
     """Return attnames of all concrete (non-M2M) fields on this instance."""
-    return [f.attname for f in instance._meta.concrete_fields] # noqa: E261 SLF001
+    return [f.attname for f in instance._meta.concrete_fields]  # noqa: E261 SLF001
 
 
 @receiver(pre_save)
@@ -30,7 +30,11 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
         return
 
     if update_fields is not None:
-        m2m_names = {f.name for f in instance._meta.get_fields() if f.many_to_many} # noqa: E261 SLF001
+        m2m_names = {
+            f.name
+            for f in instance._meta.get_fields()  # noqa: E261 SLF001
+            if f.many_to_many
+        }
         instance.audit_fields_changed = bool(set(update_fields) - m2m_names)
         return
 

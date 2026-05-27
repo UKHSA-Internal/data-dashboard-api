@@ -198,7 +198,7 @@ LOGGING = {
         },
         "audit": {
             "format": f"[AUDIT_EVENT] %(asctime)s [ENVIRONMENT:{config.APIENV}] [User=%(user)s - %(action)s - %(target)s]"
-        }
+        },
     },
     "handlers": {
         "console": {
@@ -210,7 +210,7 @@ LOGGING = {
             "level": config.LOG_LEVEL,
             "class": "logging.StreamHandler",
             "formatter": "audit",
-        }
+        },
     },
     "loggers": {
         "": {  # Default logger
