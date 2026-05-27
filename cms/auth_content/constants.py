@@ -4,6 +4,8 @@ from cms.metrics_interface.field_choices_callables import (
 )
 
 WILDCARD_ID_VALUE = "-1"
+WILDCARD_NAME_VALUES = ["* (All themes)", "* (All sub-themes)", "* (All topics)"]
+
 PERMISSION_SET_FIELDS = [
     {
         "field_name": "theme",

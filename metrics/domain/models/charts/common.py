@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
@@ -5,6 +6,7 @@ from typing import Literal
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
+logger = logging.getLogger(__name__)
 
 class BaseChartRequestParams(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
@@ -27,3 +29,9 @@ class BaseChartRequestParams(BaseModel):
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
         return getattr(self.request, "rbac_permissions", [])
+
+    @property
+    def permission_sets(self) -> dict:
+        logger.info(f'Entered BaseChartRequestParams.permission_sets')
+
+        return getattr(self.request.user, "permission_sets", {})
