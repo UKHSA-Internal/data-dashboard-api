@@ -160,7 +160,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         topic = Topic.objects.create(name=test_entry["topic"])
 
         metric = Metric.objects.create(
-            id=test_entry["metric"],  # ✅ critical fix
+            id=test_entry["metric"],
             name=f"metric-{test_entry['metric']}",
             topic=topic,
         )
