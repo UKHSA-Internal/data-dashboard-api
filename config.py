@@ -63,6 +63,7 @@ AWS_PROFILE_NAME = os.environ.get("AWS_PROFILE_NAME")
 
 # Cognito configuration
 COGNITO_AWS_REGION = os.environ.get("COGNITO_AWS_REGION")
+COGNITO_JWT_AUTH_HEADER = os.environ.get("COGNITO_JWT_AUTH_HEADER")
 COGNITO_USER_POOL = os.environ.get("COGNITO_USER_POOL")
 
 # Database configuration
