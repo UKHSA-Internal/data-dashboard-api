@@ -7,8 +7,8 @@ from cms.auth_content.wagtail_hooks import (
     NoEditPermissionPolicy,
     PermissionSetViewSet,
     AuthGroup,
+    register_auth_viewset,
 )
-from cms.auth_content.wagtail_hooks import register_auth_viewset
 
 
 class TestWagtailHooks(TestCase):
