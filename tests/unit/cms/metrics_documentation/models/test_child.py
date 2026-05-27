@@ -130,7 +130,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
 
         mock_init_deps.assert_called_once()
 
-    def test_initialize_dependent_fields_called_when_instance_has_no_pk(self):
+    def test_initialize_dependent_fields_not_called_when_instance_has_no_pk(self):
         """
         Given a new form
         When an instance does not have a pk value set
