@@ -111,10 +111,12 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             else:
                 user_permissions = req.user.permission_sets
                 pages_to_check = chain(
-                ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
-                ((page.id, page.metricsdocumentationchildentry) for page in queryset.type(MetricsDocumentationChildEntry)
-                ),
-)
+                    ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
+                    (
+                        (page.id, page.metricsdocumentationchildentry)
+                        for page in queryset.type(MetricsDocumentationChildEntry)
+                    ),
+                )
                 allowed_page_ids = [
                     page_id
                     for page_id, page in pages_to_check
