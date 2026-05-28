@@ -45,7 +45,7 @@ class ChartOutput:
         
         width = self.figure.layout.width or 800
         
-        max_font_size = int((width * 0.9) / (len(watermark_text) * 0.5))
+        max_font_size = int((width * 0.85) / (len(watermark_text) * 0.65))
 
         WATERMARK_FONT_SIZE = max(12, min(max_font_size, 100))
 
