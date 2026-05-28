@@ -40,6 +40,34 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
+    def get_id_by_name(
+        self, theme_name: str, sub_theme_name: str, topic_name: str
+    ) -> tuple[int, int, int]:
+        """
+        Gets the theme, sub-theme and topic IDs matching the given names.
+
+        Args:
+            theme_name: The name of the parent theme
+            sub_theme_name: The name of the parent sub-theme
+            topic_name: The name of the topic to look up
+
+        Returns:
+            A tuple of (theme_id, sub_theme_id, topic_id) if found,
+            or the tuple (-2, -2, -2) otherwise
+        """
+        record = (
+            self.filter(
+                sub_theme__theme__name=theme_name,
+                sub_theme__name=sub_theme_name,
+                name=topic_name,
+            ).first()
+        )
+
+        if record:
+            return int(record.sub_theme.theme_id), int(record.sub_theme_id), int(record.id)
+
+        return -2, -2, -2
+
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all available unique topic names as a flat list queryset.
 
@@ -112,6 +140,28 @@ class TopicManager(models.Manager):
             None
         """
         return self.get_queryset().get_name_by_id(topic_id)
+
+    def get_id_by_name(
+        self, theme_name: str, sub_theme_name: str, topic_name: str
+    ) -> tuple[int, int, int]:
+        """Gets the theme, sub-theme and topic IDs matching the given names.
+
+        Args:
+            theme_name: The name of the parent theme
+            sub_theme_name: The name of the parent sub-theme
+            topic_name: The name of the topic to look up
+
+        Returns:
+            A tuple of (theme_id, sub_theme_id, topic_id) if found,
+            or (-2, -2, -2) if not found.
+
+        Examples:
+            >>> TopicManager.get_id_by_name("Infectious disease", "Respiratory", "COVID-19")
+            (1, 2, 3)
+            >>> TopicManager.get_id_by_name("Unknown", "Unknown", "Unknown")
+            (-2, -2, -2)
+        """
+        return self.get_queryset().get_id_by_name(theme_name, sub_theme_name, topic_name)
 
     def get_all_names(self) -> TopicQuerySet:
         """Gets all available topic names as a flat list queryset.

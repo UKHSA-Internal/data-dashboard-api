@@ -9,7 +9,6 @@ import datetime
 import logging
 from collections.abc import Iterable
 from typing import Self
-from cms.auth_content.auth_utils import check_permissions_by_name
 from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
@@ -162,8 +161,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def query_for_data(
         self,
         *,
-        theme: str,
-        sub_theme: str,
         topic: str,
         metric: str,
         date_from: datetime.date,
@@ -175,6 +172,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        theme: str,
+        sub_theme: str,
         metric_value_ranges: list[tuple[str | float | int]] | None = None,
         permission_sets: dict,
     ) -> models.QuerySet:
@@ -216,6 +215,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            theme: The name of the theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            sub_theme: The name of the sub theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
             metric_value_ranges: List of tuples whereby each
                 tuple represents a permissible metric value range.
                 i.e. to filter for all record with values
@@ -256,14 +261,17 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         if permission_sets:
             logger.info('Entered if permission_sets clause')
 
+            # TODO: Workaround cos circular import error when at the top of the file
+            from cms.auth_content.auth_utils import check_permissions_by_name
+
             if check_permissions_by_name(
                 permission_sets,
                 theme,
                 sub_theme,
                 topic,
-                # metric,
-                # geography_type,
-                # geography,
+                metric,
+                geography_type,
+                geography,
             ):
                 logger.info('Entered check_permissions_by_name() if clause')
 

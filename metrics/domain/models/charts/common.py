@@ -27,11 +27,15 @@ class BaseChartRequestParams(BaseModel):
         arbitrary_types_allowed = True
 
     @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
-        return getattr(self.request, "rbac_permissions", [])
-
-    @property
     def permission_sets(self) -> dict:
+        """Extract JWT permissions from the authenticated request"""
+
         logger.info(f'Entered BaseChartRequestParams.permission_sets')
 
         return getattr(self.request.user, "permission_sets", {})
+
+    @property
+    def rbac_permissions(self) -> Iterable["RBACPermission"]:
+        """TODO: RBAC-based permissions are legacy and will be removed in a future release"""
+
+        return getattr(self.request, "rbac_permissions", [])
