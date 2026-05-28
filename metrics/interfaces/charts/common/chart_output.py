@@ -7,7 +7,6 @@ from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.interfaces.data_classification.access import DataClassification
 
 HEX_COLOUR_BLACK = "#0b0c0c"
-WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
 
@@ -34,7 +33,7 @@ class ChartOutput:
 
     def _apply_watermark(self) -> None:
         """
-        Adds a diagonal watermark to the Plotly figure.
+        Adds a horizontal watermark to the Plotly figure.
 
         The watermark is added directly to the figure as a layout
         annotation using paper coordinates, so it is consistently
@@ -43,17 +42,21 @@ class ChartOutput:
         """
 
         watermark_text = DataClassification[self.data_classification].value
-        wrapped_watermark_text = wrap_text(watermark_text, 16)
+        
+        width = self.figure.layout.width or 800
+
+        WATERMARK_FONT_SIZE = max(20, int(width * 0.07))
+
 
         self.figure.add_annotation(
-            text=wrapped_watermark_text,
+            text=watermark_text,
             xref="paper",
             yref="paper",
             x=0.5,
             y=0.5,
             showarrow=False,
             font={"size": WATERMARK_FONT_SIZE, "color": WATERMARK_FONT_COLOUR},
-            textangle=-30,
+            textangle=0,
             opacity=WATERMARK_OPACITY,
         )
 
