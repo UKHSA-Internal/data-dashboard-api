@@ -41,6 +41,7 @@ class LandingPage(UKHSAPage):
         max_num=HEALTH_TOPIC_SECTION_LINK_MAX_NUM,
         default=list,
         use_json_field=True,
+        blank=True,
     )
 
     related_links_layout = models.CharField(
