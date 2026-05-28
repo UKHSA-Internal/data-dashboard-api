@@ -6,7 +6,7 @@ CacheControl==0.14.4
 certifi==2026.4.22
 cfgv==3.5.0
 charset-normalizer==3.4.7
-click==8.3.3
+click==8.4.1
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
