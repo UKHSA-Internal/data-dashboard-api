@@ -99,7 +99,8 @@ class DualCategoryChartCard {
     static SELECTORS = {
         SEGMENTS_CONTAINER: '.dual-category-chart-segments-container-form',
         SEGMENT_ITEM: '.dual-category-chart-card__segments',
-        SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]'
+        SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]',
+        DUAL_CATEGORY_CHART_CARD: 'dual-category-chart-card'
     };
 
     static FIELD_SUFFIXES = {
@@ -403,7 +404,11 @@ class DualCategoryChartCard {
     }
 
     render(prefix, initialState, block) {
-        const rootNode = block.container[4]
+        // from the telepath StructBlock representation, 
+        // find the DOM element in which this chart is rendered.
+        const rootNode = Array.from(block.container).find(
+            el => el.className === DualCategoryChartCard.SELECTORS.DUAL_CATEGORY_CHART_CARD
+        )
 
         // initialise form state
         this.stateManager.initialise(initialState);
