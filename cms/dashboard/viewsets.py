@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.db.models import Exists, OuterRef, Q
 from django.urls import path
 from django.urls.resolvers import RoutePattern
@@ -101,7 +103,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             )
 
         else:
-            user_permissions = req.user.permission_sets["permission_sets"]
             has_global_access = req.user.permission_sets["summary"]["has_global_access"]
 
             if has_global_access:
@@ -109,35 +110,29 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
             else:
                 user_permissions = req.user.permission_sets
-                allowed_pages = []
-                allowed_pages += [
-                    page.id
-                    for page in queryset.type(TopicPage)
-                    if page.topicpage.is_public
+                pages_to_check = chain(
+                    ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
+                    (
+                        (page.id, page.metricsdocumentationchildentry)
+                        for page in queryset.type(MetricsDocumentationChildEntry)
+                    ),
+                )
+                allowed_page_ids = [
+                    page_id
+                    for page_id, page in pages_to_check
+                    if page.is_public
                     or check_permissions(
                         user_permissions,
-                        page.topicpage.theme,
-                        page.topicpage.sub_theme,
-                        page.topicpage.topic,
-                    )
-                ]
-
-                allowed_pages += [
-                    page.id
-                    for page in queryset.type(MetricsDocumentationChildEntry)
-                    if page.metricsdocumentationchildentry.is_public
-                    or check_permissions(
-                        user_permissions,
-                        page.metricsdocumentationchildentry.theme,
-                        page.metricsdocumentationchildentry.sub_theme,
-                        page.metricsdocumentationchildentry.topic,
+                        page.theme,
+                        page.sub_theme,
+                        page.topic,
                     )
                 ]
 
                 public_pages = queryset.not_type(
                     TopicPage, MetricsDocumentationChildEntry
                 )
-                permitted_private_pages = queryset.filter(id__in=allowed_pages)
+                permitted_private_pages = queryset.filter(id__in=allowed_page_ids)
 
                 filtered_queryset = public_pages | permitted_private_pages
 
