@@ -24,11 +24,11 @@ class CognitoManager(BaseUserManager):
             #     "permission_sets": [
             #         {
             #             "theme": {"id": "100", "name": "immunisation"},
-            #             "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+            #             "sub_theme": {"id": "200", "name": "childhood-vaccines"},
             #             "topic": {"id": "-1", "name": "* (All)"},
             #             "metric": {"id": "-1", "name": "* (All)"},
-            #             "geography_type": {"id": "-1", "name": "* (All)"},
-            #             "geography": {"id": "-1", "name": "* (All)"},
+            #             "geography_type": {"id": "300", "name": "Nation"},
+            #             "geography": {"id": "400", "name": "England"},
             #         }
             #     ],
             #     "summary": {"has_global_access": False},
