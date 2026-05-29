@@ -11,13 +11,6 @@ WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
 
 
-def wrap_text(text: str, max_chars_per_line: int = 20) -> str:
-    """
-    Wrap text into multiple lines using <br> for watermarks
-    """
-    return "<br>".join(textwrap.wrap(text, width=max_chars_per_line))
-
-
 @dataclass
 class ChartOutput:
     figure: go.Figure
