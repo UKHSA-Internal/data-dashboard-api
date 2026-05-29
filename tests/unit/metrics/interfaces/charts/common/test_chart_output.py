@@ -8,70 +8,8 @@ from metrics.interfaces.charts.common.chart_output import ChartOutput, wrap_text
 
 MODULE_PATH = "metrics.interfaces.charts.common.chart_output"
 
-WATERMARK_FONT_SIZE = 40
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
-
-
-class TestWrapText:
-    def test_wraps_text_into_br_separated_lines(self):
-        """
-        Given a string longer than max_chars_per_line
-        When wrap_text() is called
-        Then the text is wrapped and joined with <br>
-        """
-        # Given
-        text = "This is a long string that should be wrapped properly"
-        max_chars = 10
-
-        # When
-        result = wrap_text(text, max_chars_per_line=max_chars)
-
-        # Then
-        expected = "<br>".join(
-            [
-                "This is a",
-                "long",
-                "string",
-                "that",
-                "should be",
-                "wrapped",
-                "properly",
-            ]
-        )
-        assert result == expected
-
-    def test_returns_single_line_when_text_is_short(self):
-        """
-        Given a string shorter than max_chars_per_line
-        When wrap_text() is called
-        Then the original text is returned without <br>
-        """
-        # Given
-        text = "Short text"
-
-        # When
-        result = wrap_text(text, max_chars_per_line=20)
-
-        # Then
-        assert result == text
-
-    def test_handles_empty_string(self):
-        """
-        Given an empty string
-        When wrap_text() is called
-        Then an empty string is returned
-        """
-        # Given
-        text = ""
-
-        # When
-        result = wrap_text(text, max_chars_per_line=10)
-
-        # Then
-        assert result == ""
-
-    from unittest import mock
 
 
 class TestPostInitAppliesWatermark:
@@ -162,22 +100,24 @@ class TestPostInitAppliesWatermark:
 
 
 class TestApplyWatermark:
-    @mock.patch(f"{MODULE_PATH}.wrap_text")
     @mock.patch(f"{MODULE_PATH}.DataClassification")
     @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_adds_wrapped_watermark_annotation(
-        self, mock_data_classification, mock_wrap_text
+    def test_adds_watermark_annotation(
+        self, mock_data_classification
     ):
         """
         Given a ChartOutput with a valid data_classification
         When _apply_watermark() is called
-        Then the watermark text is resolved, wrapped, and added as an annotation
+        Then the watermark text is resolved, and added as a scaled annotation
         """
         # Given / When (apply is called with postInit on instantiation)
         figure = mock.Mock(spec=go.Figure)
 
+        # mock layout.width for scaling logic
+        figure.layout.width = 800
+        expected_font_size = max(12, min(int((800 * 0.85) / (len("Highly Confidential") * 0.65)), 100))
+
         mock_data_classification.__getitem__.return_value.value = "Highly Confidential"
-        mock_wrap_text.return_value = "Highly<br>Confidential"
 
         ChartOutput(
             figure=figure,
@@ -187,21 +127,21 @@ class TestApplyWatermark:
             data_classification="official",
         )
 
+
         # Then
         mock_data_classification.__getitem__.assert_called_once_with("official")
-        mock_wrap_text.assert_called_once_with("Highly Confidential", 16)
 
         figure.add_annotation.assert_called_once_with(
-            text="Highly<br>Confidential",
+            text="Highly Confidential",
             xref="paper",
             yref="paper",
             x=0.5,
-            y=0.5,
+            y=0.8,
             showarrow=False,
             font={
-                "size": WATERMARK_FONT_SIZE,
+                "size": expected_font_size,
                 "color": WATERMARK_FONT_COLOUR,
             },
-            textangle=-30,
+            textangle=0,
             opacity=WATERMARK_OPACITY,
         )
