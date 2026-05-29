@@ -102,9 +102,7 @@ class TestPostInitAppliesWatermark:
 class TestApplyWatermark:
     @mock.patch(f"{MODULE_PATH}.DataClassification")
     @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_adds_watermark_annotation(
-        self, mock_data_classification
-    ):
+    def test_adds_watermark_annotation(self, mock_data_classification):
         """
         Given a ChartOutput with a valid data_classification
         When _apply_watermark() is called
@@ -115,7 +113,9 @@ class TestApplyWatermark:
 
         # mock layout.width for scaling logic
         figure.layout.width = 800
-        expected_font_size = max(12, min(int((800 * 0.85) / (len("Highly Confidential") * 0.65)), 100))
+        expected_font_size = max(
+            12, min(int((800 * 0.85) / (len("Highly Confidential") * 0.65)), 100)
+        )
 
         mock_data_classification.__getitem__.return_value.value = "Highly Confidential"
 
@@ -126,7 +126,6 @@ class TestApplyWatermark:
             is_public=False,
             data_classification="official",
         )
-
 
         # Then
         mock_data_classification.__getitem__.assert_called_once_with("official")

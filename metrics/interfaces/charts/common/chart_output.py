@@ -1,4 +1,3 @@
-import textwrap
 from dataclasses import dataclass
 
 import plotly.graph_objects as go
