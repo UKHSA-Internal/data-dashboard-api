@@ -4,7 +4,7 @@ import pytest
 import plotly.graph_objects as go
 
 
-from metrics.interfaces.charts.common.chart_output import ChartOutput, wrap_text
+from metrics.interfaces.charts.common.chart_output import ChartOutput
 
 MODULE_PATH = "metrics.interfaces.charts.common.chart_output"
 
