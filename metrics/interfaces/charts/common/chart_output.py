@@ -42,12 +42,12 @@ class ChartOutput:
         """
 
         watermark_text = DataClassification[self.data_classification].value
-        
+
         width = self.figure.layout.width or 800
-        
+
         max_font_size = int((width * 0.85) / (len(watermark_text) * 0.65))
 
-        WATERMARK_FONT_SIZE = max(12, min(max_font_size, 100))
+        watermark_font_size = max(12, min(max_font_size, 100))
 
         self.figure.add_annotation(
             text=watermark_text,
@@ -56,7 +56,7 @@ class ChartOutput:
             x=0.5,
             y=0.5,
             showarrow=False,
-            font={"size": WATERMARK_FONT_SIZE, "color": WATERMARK_FONT_COLOUR},
+            font={"size": watermark_font_size, "color": WATERMARK_FONT_COLOUR},
             textangle=0,
             opacity=WATERMARK_OPACITY,
         )
