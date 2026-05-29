@@ -46,7 +46,6 @@ class ChartOutput:
         width = self.figure.layout.width or 800
 
         max_font_size = int((width * 0.85) / (len(watermark_text) * 0.65))
-
         watermark_font_size = max(12, min(max_font_size, 100))
 
         self.figure.add_annotation(
@@ -54,7 +53,7 @@ class ChartOutput:
             xref="paper",
             yref="paper",
             x=0.5,
-            y=0.5,
+            y=0.8,
             showarrow=False,
             font={"size": watermark_font_size, "color": WATERMARK_FONT_COLOUR},
             textangle=0,
