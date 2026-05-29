@@ -17,6 +17,23 @@ class CognitoManager(BaseUserManager):
         try:
             username = jwt_payload["entraObjectId"]
             permission_sets = jwt_payload["permissionSets"]
+
+            # DEBUGGING: Manual testing (just for now)
+            # username = "{YOUR_ENTRA_OBJECT_ID}"
+            # permission_sets = {
+            #     "permission_sets": [
+            #         {
+            #             "theme": {"id": "100", "name": "immunisation"},
+            #             "sub_theme": {"id": "133", "name": "childhood-vaccines"},
+            #             "topic": {"id": "-1", "name": "* (All)"},
+            #             "metric": {"id": "-1", "name": "* (All)"},
+            #             "geography_type": {"id": "-1", "name": "* (All)"},
+            #             "geography": {"id": "-1", "name": "* (All)"},
+            #         }
+            #     ],
+            #     "summary": {"has_global_access": False},
+            # }
+
             if not permission_sets:
                 logger.debug(
                     "Empty permissionSets in token for user: '%s'",
