@@ -42,7 +42,7 @@ class TopicQuerySet(models.QuerySet):
 
     def get_id_by_name(
         self, theme_name: str, sub_theme_name: str, topic_name: str
-    ) -> tuple[int, int, int]:
+    ) -> tuple[int | None, int | None, int | None]:
         """
         Gets the theme, sub-theme and topic IDs matching the given names.
 
@@ -53,20 +53,26 @@ class TopicQuerySet(models.QuerySet):
 
         Returns:
             A tuple of (theme_id, sub_theme_id, topic_id) if found,
-            or the tuple (-2, -2, -2) otherwise
+            or (None, None, None) otherwise
         """
-        record = (
-            self.filter(
-                sub_theme__theme__name=theme_name,
-                sub_theme__name=sub_theme_name,
-                name=topic_name,
-            ).first()
-        )
+        record = self.filter(
+            sub_theme__theme__name=theme_name,
+            sub_theme__name=sub_theme_name,
+            name=topic_name,
+        ).first()
 
         if record:
-            return int(record.sub_theme.theme_id), int(record.sub_theme_id), int(record.id)
+            return (
+                int(record.sub_theme.theme_id),
+                int(record.sub_theme_id),
+                int(record.id),
+            )
 
-        return -2, -2, -2
+        return (
+            None,
+            None,
+            None,
+        )
 
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all available unique topic names as a flat list queryset.
@@ -143,7 +149,7 @@ class TopicManager(models.Manager):
 
     def get_id_by_name(
         self, theme_name: str, sub_theme_name: str, topic_name: str
-    ) -> tuple[int, int, int]:
+    ) -> tuple[int | None, int | None, int | None]:
         """Gets the theme, sub-theme and topic IDs matching the given names.
 
         Args:
@@ -153,15 +159,17 @@ class TopicManager(models.Manager):
 
         Returns:
             A tuple of (theme_id, sub_theme_id, topic_id) if found,
-            or (-2, -2, -2) if not found.
+            or (None, None, None) if not found.
 
         Examples:
             >>> TopicManager.get_id_by_name("Infectious disease", "Respiratory", "COVID-19")
             (1, 2, 3)
             >>> TopicManager.get_id_by_name("Unknown", "Unknown", "Unknown")
-            (-2, -2, -2)
+            (None, None, None)
         """
-        return self.get_queryset().get_id_by_name(theme_name, sub_theme_name, topic_name)
+        return self.get_queryset().get_id_by_name(
+            theme_name, sub_theme_name, topic_name
+        )
 
     def get_all_names(self) -> TopicQuerySet:
         """Gets all available topic names as a flat list queryset.

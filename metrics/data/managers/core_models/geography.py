@@ -47,7 +47,7 @@ class GeographyQuerySet(models.QuerySet):
             .first()
         )
 
-    def get_id_by_name(self, geography_name: str) -> int:
+    def get_id_by_name(self, geography_name: str) -> int | None:
         """
         Gets the geography ID for a given geography name.
 
@@ -55,10 +55,10 @@ class GeographyQuerySet(models.QuerySet):
             geography_name: The name of the geography to look up
 
         Returns:
-            The geography ID if found, or -2 otherwise
+            The geography ID if found, or None otherwise
         """
         record = self.filter(name=geography_name).first()
-        return int(record.id) if record else -2
+        return int(record.id) if record else None
 
     def get_all_geography_codes_by_geography_type(
         self, geography_type_name: str
@@ -180,20 +180,20 @@ class GeographyManager(models.Manager):
         """
         return self.get_queryset().get_name_by_code(geography_code)
 
-    def get_id_by_name(self, geography_name: str) -> int:
+    def get_id_by_name(self, geography_name: str) -> int | None:
         """Gets the geography ID which matches the given geography name.
 
         Args:
             geography_name: The name of the geography to look up
 
         Returns:
-            The geography ID if found, -2 otherwise
+            The geography ID if found, None otherwise
 
         Examples:
             >>> GeographyManager.get_id_by_name("England")
             6
             >>> GeographyManager.get_id_by_name("Unknown geography")
-            -2
+            None
         """
         return self.get_queryset().get_id_by_name(geography_name)
 

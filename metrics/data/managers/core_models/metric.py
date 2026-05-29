@@ -29,7 +29,7 @@ class MetricQuerySet(models.QuerySet):
         """
         return self.filter(id=metric_id).values_list("name", flat=True).first()
 
-    def get_id_by_name(self, metric_name: str) -> int:
+    def get_id_by_name(self, metric_name: str) -> int | None:
         """
         Gets the metric ID for a given metric name.
 
@@ -37,10 +37,10 @@ class MetricQuerySet(models.QuerySet):
             metric_name: The name of the metric to look up
 
         Returns:
-            The metric ID if found, or -2 otherwise
+            The metric ID if found, or None otherwise
         """
         record = self.filter(name=metric_name).first()
-        return int(record.id) if record else -2
+        return int(record.id) if record else None
 
     def get_all_names(self) -> models.QuerySet:
         """Gets all available metric names as a flat list queryset.
@@ -159,20 +159,20 @@ class MetricManager(models.Manager):
         """
         return self.get_queryset().get_name_by_id(metric_id)
 
-    def get_id_by_name(self, metric_name: str) -> int:
+    def get_id_by_name(self, metric_name: str) -> int | None:
         """Gets the metric ID which matches the given metric name.
 
         Args:
             metric_name: The name of the metric to look up
 
         Returns:
-            The metric ID if found, -2 otherwise
+            The metric ID if found, None otherwise
 
         Examples:
             >>> MetricManager.get_id_by_name("COVID-19_cases_countRollingMean")
             4
             >>> MetricManager.get_id_by_name("Unknown metric")
-            -2
+            None
         """
         return self.get_queryset().get_id_by_name(metric_name)
 

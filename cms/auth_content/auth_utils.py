@@ -1,12 +1,19 @@
 import logging
 from collections.abc import Callable
 
-from cms.auth_content.constants import WILDCARD_ID_VALUE
 from django import forms
+
+from cms.auth_content.constants import WILDCARD_ID_VALUE
 from cms.dynamic_content import help_texts
-from metrics.data.models.core_models.supporting import Geography, GeographyType, Metric, Topic
+from metrics.data.models.core_models.supporting import (
+    Geography,
+    GeographyType,
+    Metric,
+    Topic,
+)
 
 logger = logging.getLogger(__name__)
+
 
 def check_permissions_by_name(
     permission_sets,
@@ -22,17 +29,26 @@ def check_permissions_by_name(
     into ids. It is only used to check CHART permissions.
     """
 
-    logger.info(f'Entered check_permissions_by_name()')
+    logger.info("Entered check_permissions_by_name()")
 
-    theme_id, sub_theme_id, topic_id = Topic.objects.get_id_by_name(theme_name, sub_theme_name, topic_name)
+    theme_id, sub_theme_id, topic_id = Topic.objects.get_id_by_name(
+        theme_name, sub_theme_name, topic_name
+    )
     metric_id = Metric.objects.get_id_by_name(metric_name)
     geography_type_id = GeographyType.objects.get_id_by_name(geography_type)
     geography_id = Geography.objects.get_id_by_name(geography_name)
 
-    # Be safe, just in case a NAME doesn't have an ID
+    # Be safe, in case a NAME doesn't have an ID
     if any(
-        value == -2
-        for value in (theme_id, sub_theme_id, topic_id, metric_id, geography_type_id, geography_id)
+        value is None
+        for value in (
+            theme_id,
+            sub_theme_id,
+            topic_id,
+            metric_id,
+            geography_type_id,
+            geography_id,
+        )
     ):
         return False
 
@@ -77,7 +93,7 @@ def check_permission_set(
         }
     """
 
-    logger.info(f'Entered check_permission_set()')
+    logger.info("Entered check_permission_set()")
 
     if not isinstance(permission_sets, dict):
         return False
@@ -90,25 +106,26 @@ def check_permission_set(
 
     if permission_sets.get("summary").get("has_global_access"):
         return True
-    else:
-        return check_permissions(
-            permission_sets.get("permission_sets"),
-            theme_id,
-            sub_theme_id,
-            topic_id,
-            metric_id,
-            geography_type,
-            geography_id,
-        )
+
+    return check_permissions(
+        permission_sets.get("permission_sets"),
+        theme_id,
+        sub_theme_id,
+        topic_id,
+        metric_id,
+        geography_type,
+        geography_id,
+    )
+
 
 def check_permissions(
     permission_sets,
     theme_id,
     sub_theme_id,
     topic_id,
-    metric_id=0,
-    geography_type=0,
-    geography_id=0,
+    metric_id=None,
+    geography_type=None,
+    geography_id=None,
 ) -> bool:
     """
     This is our core permission-checking function It is
@@ -130,27 +147,35 @@ def check_permissions(
           ]
     """
 
-    logger.info(f'Entered check_permissions()')
+    logger.info("Entered check_permissions()")
 
     if not isinstance(permission_sets, list):
         return False
 
     for permission_set in permission_sets:
-        if (
-                check_metric_permissions(permission_set, theme_id, sub_theme_id, topic_id, metric_id) and
-                check_geography_permissions(permission_set, geography_type, geography_id)
+        # CHART permissions
+        if geography_type and geography_id:
+            if check_metric_related_permissions(
+                permission_set, theme_id, sub_theme_id, topic_id, metric_id
+            ) and check_geography_permissions(
+                permission_set, geography_type, geography_id
+            ):
+                return True
+        # PAGE permissions
+        elif check_metric_related_permissions(
+            permission_set, theme_id, sub_theme_id, topic_id, metric_id
         ):
             return True
 
     return False
 
 
-def check_metric_permissions(
+def check_metric_related_permissions(
     permission_set,
     theme_id,
     sub_theme_id,
     topic_id,
-    metric_id=0,
+    metric_id=None,
 ) -> bool:
     """
     Make sure that every theme, sub_theme, topic and metric
@@ -168,7 +193,7 @@ def check_metric_permissions(
           }
     """
 
-    logger.info(f'Entered check_metric_permissions()')
+    logger.info("Entered check_metric_related_permissions()")
 
     if not isinstance(permission_set, dict):
         return False
@@ -186,10 +211,7 @@ def check_metric_permissions(
     if permission_theme_id == WILDCARD_ID_VALUE:
         return True
 
-    if (
-        permission_theme_id == theme_id
-        and permission_sub_theme_id == WILDCARD_ID_VALUE
-    ):
+    if permission_theme_id == theme_id and permission_sub_theme_id == WILDCARD_ID_VALUE:
         return True
 
     if (
@@ -212,8 +234,8 @@ def check_metric_permissions(
 
 def check_geography_permissions(
     permission_set,
-    geography_type,
-    geography_id,
+    geography_type=None,
+    geography_id=None,
 ) -> bool:
     """
     Make sure that both geography_type and geography
@@ -231,7 +253,7 @@ def check_geography_permissions(
           }
     """
 
-    logger.info(f'Entered check_geography_permissions()')
+    logger.info("Entered check_geography_permissions()")
 
     if not isinstance(permission_set, dict):
         return False
@@ -245,13 +267,14 @@ def check_geography_permissions(
     if permission_geography_type == WILDCARD_ID_VALUE:
         return True
 
-    if (
-        permission_geography_type == geography_type
-        and permission_geography_id in {WILDCARD_ID_VALUE, geography_id}
-    ):
+    if permission_geography_type == geography_type and permission_geography_id in {
+        WILDCARD_ID_VALUE,
+        geography_id,
+    }:
         return True
 
     return False
+
 
 def _create_form_field(
     field: dict[str, str | Callable | None], wildcard_id_value=None

@@ -6,7 +6,10 @@ from typing import Literal
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
+from metrics.data.models import RBACPermission
+
 logger = logging.getLogger(__name__)
+
 
 class BaseChartRequestParams(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
@@ -28,11 +31,12 @@ class BaseChartRequestParams(BaseModel):
 
     @property
     def permission_sets(self) -> dict:
-        """Extract JWT permissions from the authenticated request"""
+        """Extract optional JWT permissions from the authenticated request"""
 
-        logger.info(f'Entered BaseChartRequestParams.permission_sets')
+        logger.info("Entered common.py:BaseChartRequestParams.permission_sets")
 
-        return getattr(self.request.user, "permission_sets", {})
+        request_user = getattr(self.request, "user", None)
+        return getattr(request_user, "permission_sets", {})
 
     @property
     def rbac_permissions(self) -> Iterable["RBACPermission"]:
