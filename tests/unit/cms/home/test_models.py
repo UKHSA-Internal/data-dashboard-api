@@ -125,11 +125,11 @@ class TestBlankLandingPage:
         assert url_parts[1] == root_url
         assert url_parts[2] == "" != page_path
 
-    def test_health_topic_is_required(self):
+    def test_health_topic_is_optional(self):
         """
         Given a blank `LandingPage` model
         When inspecting the `health_topic` field
-        Then the field is required
+        Then the field is NOT required
         """
         # Given
         landing_page = FakeLandingPageFactory.build_blank_page()
@@ -140,4 +140,4 @@ class TestBlankLandingPage:
         # Then
         assert health_topic_field.stream_block.meta.min_num == 1
         assert health_topic_field.stream_block.meta.max_num == 1
-        assert health_topic_field.stream_block.meta.required is True
+        assert health_topic_field.stream_block.meta.required is False
