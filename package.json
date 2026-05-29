@@ -1,0 +1,31 @@
+{
+  "name": "data-dashboard-api",
+  "version": "1.0.0",
+  "description": "This is a [Django](https://www.djangoproject.com/)  and [Wagtail](https://docs.wagtail.org/en/stable/getting_started/index.html) project.  The REST API is served via [Django-Rest-Framework](https://www.django-rest-framework.org/)",
+  "main": "jest.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest --coverage",
+    "test:ci": "jest --ci --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-burendo:UKHSA-Internal/data-dashboard-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
+    "@testing-library/jest-dom": "^6.9.1",
+    "babel-jest": "^30.3.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-junit": "^17.0.0"
+  }
+}
