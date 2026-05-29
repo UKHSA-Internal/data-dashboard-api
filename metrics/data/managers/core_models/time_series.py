@@ -9,19 +9,20 @@ import datetime
 import logging
 from collections.abc import Iterable
 from typing import Self
+
 from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
-    validate_permissions_for_non_public,
 )
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
 logger = logging.getLogger(__name__)
+
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
@@ -238,7 +239,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                     ]>`
 
         """
-        logger.info('Entered query_for_data()')
+
+        logger.info("Entered query_for_data()")
 
         queryset = self.filter(
             metric__topic__name=topic,
@@ -254,14 +256,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        public_queryset = queryset.filter(
-            is_public=True
-        )
+        public_queryset = queryset.filter(is_public=True)
 
         if permission_sets:
-            logger.info('Entered if permission_sets clause')
+            logger.info("Entered if permission_sets clause")
 
-            # TODO: Workaround cos circular import error when at the top of the file
+            # WORKAROUND: Cos circular import error when at the top of the file
             from cms.auth_content.auth_utils import check_permissions_by_name
 
             if check_permissions_by_name(
@@ -273,13 +273,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 geography_type,
                 geography,
             ):
-                logger.info('Entered check_permissions_by_name() if clause')
+                logger.info("Entered check_permissions_by_name() if clause")
 
-                queryset = public_queryset + queryset.filter(
-                    is_public=False
-                )
+                queryset = public_queryset + queryset.filter(is_public=False)
         else:
-            logger.info('Entered else permission_sets clause')
+            logger.info("Entered else permission_sets clause")
 
             queryset = public_queryset
 

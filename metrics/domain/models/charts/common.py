@@ -8,6 +8,7 @@ from rest_framework.request import Request
 
 logger = logging.getLogger(__name__)
 
+
 class BaseChartRequestParams(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
@@ -30,7 +31,7 @@ class BaseChartRequestParams(BaseModel):
     def permission_sets(self) -> dict:
         """Extract JWT permissions from the authenticated request"""
 
-        logger.info(f'Entered BaseChartRequestParams.permission_sets')
+        logger.info("Entered BaseChartRequestParams.permission_sets")
 
         return getattr(self.request.user, "permission_sets", {})
 

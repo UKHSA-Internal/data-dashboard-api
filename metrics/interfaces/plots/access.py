@@ -161,12 +161,12 @@ class PlotsInterface:
             plot_params["fields_to_export"].append("upper_confidence")
             plot_params["fields_to_export"].append("lower_confidence")
 
-        logger.info('Entered access.py')
+        logger.info("Entered access.py")
 
         return self.core_model_manager.query_for_data(
             **plot_params,
-            rbac_permissions=self.chart_request_params.rbac_permissions,  # TODO: Remove old permissions
-            permission_sets = self.chart_request_params.permission_sets,  # new permissions
+            rbac_permissions=self.chart_request_params.rbac_permissions,  # old permissions (remove)
+            permission_sets=self.chart_request_params.permission_sets,  # new permissions
         )
 
     def build_plot_data_from_parameters_with_complete_queryset(
