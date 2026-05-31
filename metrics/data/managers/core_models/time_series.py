@@ -266,13 +266,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             from cms.auth_content.auth_utils import check_permissions_by_name
 
             if check_permissions_by_name(
-                permission_sets,
-                theme,
-                sub_theme,
-                topic,
-                metric,
-                geography_type,
-                geography,
+                permission_sets=permission_sets,
+                theme_name=theme,
+                sub_theme_name=sub_theme,
+                topic_name=topic,
+                metric_name=metric,
+                geography_type=geography_type,
+                geography_name=geography,
             ):
                 logger.info("Entered check_permissions_by_name() if clause")
 

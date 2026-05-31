@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def check_permissions_by_name(
+    *,
     permission_sets,
     theme_name,
     sub_theme_name,
@@ -53,17 +54,18 @@ def check_permissions_by_name(
         return False
 
     return check_permission_set(
-        permission_sets,
-        theme_id,
-        sub_theme_id,
-        topic_id,
-        metric_id,
-        geography_type_id,
-        geography_id,
+        permission_sets=permission_sets,
+        theme_id=theme_id,
+        sub_theme_id=sub_theme_id,
+        topic_id=topic_id,
+        metric_id=metric_id,
+        geography_type=geography_type_id,
+        geography_id=geography_id,
     )
 
 
 def check_permission_set(
+    *,
     permission_sets,
     theme_id,
     sub_theme_id,
@@ -156,14 +158,24 @@ def check_permissions(
         # CHART permissions
         if geography_type and geography_id:
             if check_metric_related_permissions(
-                permission_set, theme_id, sub_theme_id, topic_id, metric_id
+                permission_set=permission_set,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+                metric_id=metric_id,
             ) and check_geography_permissions(
-                permission_set, geography_type, geography_id
+                permission_set=permission_set,
+                geography_type=geography_type,
+                geography_id=geography_id,
             ):
                 return True
         # PAGE permissions
         elif check_metric_related_permissions(
-            permission_set, theme_id, sub_theme_id, topic_id, metric_id
+            permission_set=permission_set,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+            metric_id=metric_id,
         ):
             return True
 
@@ -171,6 +183,7 @@ def check_permissions(
 
 
 def check_metric_related_permissions(
+    *,
     permission_set,
     theme_id,
     sub_theme_id,
@@ -233,6 +246,7 @@ def check_metric_related_permissions(
 
 
 def check_geography_permissions(
+    *,
     permission_set,
     geography_type=None,
     geography_id=None,
