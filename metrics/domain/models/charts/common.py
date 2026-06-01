@@ -6,8 +6,6 @@ from typing import Literal
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
-from metrics.data.models import RBACPermission
-
 logger = logging.getLogger(__name__)
 
 
@@ -39,7 +37,11 @@ class BaseChartRequestParams(BaseModel):
         return getattr(request_user, "permission_sets", {})
 
     @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
+    def rbac_permissions(
+        self,
+    ) -> Iterable[
+        object
+    ]:  # set to object instead of RBACPermission, cos of architectural constraints
         """TODO: RBAC-based permissions are legacy and will be removed in a future release"""
 
         return getattr(self.request, "rbac_permissions", [])

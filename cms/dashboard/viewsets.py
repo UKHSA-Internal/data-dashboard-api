@@ -9,10 +9,10 @@ from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
-from cms.auth_content.auth_utils import check_permissions
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
+from common.auth.permissions import check_permissions
 
 
 @extend_schema(tags=["cms"])

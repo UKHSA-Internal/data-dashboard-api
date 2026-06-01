@@ -14,6 +14,7 @@ from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
+from common.auth.permissions import check_permissions_by_name
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
@@ -261,9 +262,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         if permission_sets:
             logger.info("Entered if permission_sets clause")
-
-            # WORKAROUND: Cos circular import error when at the top of the file
-            from cms.auth_content.auth_utils import check_permissions_by_name
 
             if check_permissions_by_name(
                 permission_sets=permission_sets,
