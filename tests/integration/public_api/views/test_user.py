@@ -36,9 +36,9 @@ class TestPermissionSetByUser:
     @pytest.mark.django_db
     def test_returns_empty_permission_set_hierarchy_for_invalid_uuid(self):
         """
-        Given an invalid UUID format
+        Given a valid UUID format but no user
         When requesting hierarchy
-        Then a 400 is returned with validation error
+        Then an empty permissions set is returned
         """
         # Given
         client = APIClient()
@@ -87,7 +87,6 @@ class TestPermissionSetByUser:
         result = response.data
 
         summary = result["permission_sets"]["summary"]
-        print(summary)
 
         assert summary["total_permission_sets"] == 2
         assert summary["deduplicated_count"] == 1
