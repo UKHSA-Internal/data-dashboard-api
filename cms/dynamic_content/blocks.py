@@ -120,6 +120,7 @@ class MetricNumberBlock(StreamBlock):
 class ProgrammingLanguages(models.TextChoices):
     JAVASCRIPT = "Javascript"
     PYTHON = "Python"
+    R = "R"
     TEXT = "Text"
     JSON = "JSON"
 
