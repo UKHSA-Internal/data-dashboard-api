@@ -31,12 +31,6 @@ class TopicQuerySet(models.QuerySet):
 
         Returns:
             The topic name if found, None otherwise
-
-        Examples:
-            >>> TopicQuerySet.get_name_by_id(1)
-            'COVID-19'
-            >>> TopicQuerySet.get_name_by_id(999)
-            None
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
@@ -46,14 +40,9 @@ class TopicQuerySet(models.QuerySet):
         """
         Gets the theme, sub-theme and topic IDs matching the given names.
 
-        Args:
-            theme_name: The name of the parent theme
-            sub_theme_name: The name of the parent sub-theme
-            topic_name: The name of the topic to look up
-
         Returns:
             A tuple of (theme_id, sub_theme_id, topic_id) if found,
-            or (None, None, None) otherwise
+            or (None, None, None) if not found.
         """
         record = self.filter(
             sub_theme__theme__name=theme_name,
@@ -150,22 +139,12 @@ class TopicManager(models.Manager):
     def get_id_by_name(
         self, theme_name: str, sub_theme_name: str, topic_name: str
     ) -> tuple[int | None, int | None, int | None]:
-        """Gets the theme, sub-theme and topic IDs matching the given names.
-
-        Args:
-            theme_name: The name of the parent theme
-            sub_theme_name: The name of the parent sub-theme
-            topic_name: The name of the topic to look up
+        """
+        Gets the theme, sub-theme and topic IDs matching the given names.
 
         Returns:
             A tuple of (theme_id, sub_theme_id, topic_id) if found,
             or (None, None, None) if not found.
-
-        Examples:
-            >>> TopicManager.get_id_by_name("Infectious disease", "Respiratory", "COVID-19")
-            (1, 2, 3)
-            >>> TopicManager.get_id_by_name("Unknown", "Unknown", "Unknown")
-            (None, None, None)
         """
         return self.get_queryset().get_id_by_name(
             theme_name, sub_theme_name, topic_name

@@ -91,19 +91,14 @@ class GeographyTypeManager(models.Manager):
         return self.get_queryset().get_name_by_id(geography_type_id)
 
     def get_id_by_name(self, geography_type_name: str) -> int | None:
-        """Gets the geography type ID which matches the given geography type name.
+        """
+        Gets the geography type ID for a given geography type name.
 
         Args:
             geography_type_name: The name of the geography type to look up
 
         Returns:
-            The geography type ID if found, None otherwise
-
-        Examples:
-            >>> GeographyTypeManager.get_id_by_name("Nation")
-            5
-            >>> GeographyTypeManager.get_id_by_name("Unknown type")
-            None
+            The geography type ID if found, or None otherwise
         """
         return self.get_queryset().get_id_by_name(geography_type_name)
 

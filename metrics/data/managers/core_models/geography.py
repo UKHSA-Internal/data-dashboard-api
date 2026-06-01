@@ -181,19 +181,14 @@ class GeographyManager(models.Manager):
         return self.get_queryset().get_name_by_code(geography_code)
 
     def get_id_by_name(self, geography_name: str) -> int | None:
-        """Gets the geography ID which matches the given geography name.
+        """
+        Gets the geography ID which matches the given geography name.
 
         Args:
             geography_name: The name of the geography to look up
 
         Returns:
-            The geography ID if found, None otherwise
-
-        Examples:
-            >>> GeographyManager.get_id_by_name("England")
-            6
-            >>> GeographyManager.get_id_by_name("Unknown geography")
-            None
+            The geography ID if found, or None otherwise
         """
         return self.get_queryset().get_id_by_name(geography_name)
 

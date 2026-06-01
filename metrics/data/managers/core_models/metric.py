@@ -33,9 +33,6 @@ class MetricQuerySet(models.QuerySet):
         """
         Gets the metric ID for a given metric name.
 
-        Args:
-            metric_name: The name of the metric to look up
-
         Returns:
             The metric ID if found, or None otherwise
         """
@@ -160,19 +157,11 @@ class MetricManager(models.Manager):
         return self.get_queryset().get_name_by_id(metric_id)
 
     def get_id_by_name(self, metric_name: str) -> int | None:
-        """Gets the metric ID which matches the given metric name.
-
-        Args:
-            metric_name: The name of the metric to look up
+        """
+        Gets the metric ID for a given metric name.
 
         Returns:
-            The metric ID if found, None otherwise
-
-        Examples:
-            >>> MetricManager.get_id_by_name("COVID-19_cases_countRollingMean")
-            4
-            >>> MetricManager.get_id_by_name("Unknown metric")
-            None
+            The metric ID if found, or None otherwise
         """
         return self.get_queryset().get_id_by_name(metric_name)
 
