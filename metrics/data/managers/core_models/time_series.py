@@ -177,7 +177,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         theme: str = "",
         sub_theme: str = "",
         metric_value_ranges: list[tuple[str | float | int]] | None = None,
-        rbac_permissions: Iterable[RBACPermission] | None = None,
         permission_sets: dict | None = None,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.

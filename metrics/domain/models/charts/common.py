@@ -42,6 +42,6 @@ class BaseChartRequestParams(BaseModel):
     ) -> Iterable[
         object
     ]:  # set to object instead of RBACPermission, cos of architectural constraints
-        """TODO: RBAC-based permissions are legacy and will be removed in a future release"""
+        """RBAC-based permissions are legacy and will be removed in a future release"""
 
         return getattr(self.request, "rbac_permissions", [])
