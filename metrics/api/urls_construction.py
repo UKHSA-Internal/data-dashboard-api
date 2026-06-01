@@ -313,6 +313,7 @@ def construct_urlpatterns(
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
             )
+            constructed_url_patterns += permission_set_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
