@@ -12,3 +12,4 @@ from .linked_views import (
     TopicListView,
 )
 from .root_view import PublicAPIRootView
+from .user import UserPermissionSetsByUserIdView

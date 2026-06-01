@@ -30,6 +30,7 @@ from public_api.views import (
     ThemeListView,
     TopicDetailView,
     TopicListView,
+    UserPermissionSetsByUserIdView,
 )
 from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
@@ -77,65 +78,71 @@ def _construct_version_one_urls(
         List of `URLResolver` objects each representing a
         set of versioned URLS.
     """
+    timeseries_prefix = f"{prefix}timeseries/"
     return [
-        path(prefix, PublicAPIRootView.as_view(), name="public-api-root-version-1"),
-        path(f"{prefix}themes/", ThemeListView.as_view(), name="theme-list"),
+        path(timeseries_prefix, PublicAPIRootView.as_view(), name="public-api-root-version-1"),
+        path(f"{timeseries_prefix}themes/", ThemeListView.as_view(), name="theme-list"),
         path(
-            f"{prefix}themes/<str:theme>",
+            f"{timeseries_prefix}themes/<str:theme>",
             ThemeDetailView.as_view(),
             name="theme-detail",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/",
             SubThemeListView.as_view(),
             name="sub_theme-list",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>",
             SubThemeDetailView.as_view(),
             name="sub_theme-detail",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics",
             TopicListView.as_view(),
             name="topic-list",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
             TopicDetailView.as_view(),
             name="topic-detail",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
             GeographyTypeListView.as_view(),
             name="geography_type-list",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
             GeographyTypeDetailView.as_view(),
             name="geography_type-detail",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies",
             GeographyListView.as_view(),
             name="geography-list",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
             GeographyDetailView.as_view(),
             name="geography-detail",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
             MetricListView.as_view(),
             name="metric-list",
         ),
         path(
-            f"{prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
+            f"{timeseries_prefix}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
             APITimeSeriesViewSet.as_view(
                 {"get": "list"}, name=APITimeSeriesViewSet.name
             ),
             name="timeseries-list",
+        ),
+        path(
+            f"{prefix}user/<str:user_id>/permissions/hierarchy",
+            UserPermissionSetsByUserIdView.as_view(),
+            name="user-permissions-hierarchy",
         ),
     ]
 
@@ -153,69 +160,70 @@ def _construct_version_two_urls(
         List of `URLResolver` objects each representing a
         set of versioned URLS.
     """
+    timeseries_prefix = f"{prefix}timeseries/"
     return [
         path(
-            f"{prefix}v2/",
+            f"{timeseries_prefix}v2/",
             PublicAPIRootViewV2.as_view(),
             name="public-api-v2",
         ),
         path(
-            f"{prefix}v2/themes/",
+            f"{timeseries_prefix}v2/themes/",
             ThemeListViewV2.as_view(),
             name="theme-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>",
+            f"{timeseries_prefix}v2/themes/<str:theme>",
             ThemeDetailViewV2.as_view(),
             name="theme-detail-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/",
             SubThemeListViewV2.as_view(),
             name="sub_theme-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>",
             SubThemeDetailViewV2.as_view(),
             name="sub_theme-detail-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics",
             TopicListViewV2.as_view(),
             name="topic-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
             TopicDetailViewV2.as_view(),
             name="topic-detail-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
             GeographyTypeListViewV2.as_view(),
             name="geography_type-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
             GeographyTypeDetailViewV2.as_view(),
             name="geography_type-detail-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies",
             GeographyListViewV2.as_view(),
             name="geography-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
             GeographyDetailViewV2.as_view(),
             name="geography-detail-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
             MetricListViewV2.as_view(),
             name="metric-list-v2",
         ),
         path(
-            f"{prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
+            f"{timeseries_prefix}v2/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
             APITimeSeriesViewSetV2.as_view(
                 {"get": "list"}, name=APITimeSeriesViewSet.name
             ),
