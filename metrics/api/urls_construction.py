@@ -138,7 +138,7 @@ heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
 cold_alert_list = ColdAlertViewSet.as_view({"get": "list"})
 cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
 
-permission_set_urlpatterns = [
+generic_permission_set_urlpatterns = [
     path(
         f"{API_PREFIX}data-hierarchy/subthemes/<str:theme_id>",
         SubThemesByThemeView.as_view(),
@@ -159,6 +159,8 @@ permission_set_urlpatterns = [
         GeographiesByGeographyTypeView.as_view(),
         name="get_geographies",
     ),
+]
+permission_set_urlpatterns = [
     path(
         f"{API_PREFIX}user/<str:user_id>/permissions",
         UserPermissionSetsByUserIdView.as_view(),
@@ -313,7 +315,7 @@ def construct_urlpatterns(
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
             )
-            constructed_url_patterns += permission_set_urlpatterns
+            constructed_url_patterns += generic_permission_set_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
@@ -321,6 +323,7 @@ def construct_urlpatterns(
             )
         case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += generic_permission_set_urlpatterns
             constructed_url_patterns += permission_set_urlpatterns
         case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
