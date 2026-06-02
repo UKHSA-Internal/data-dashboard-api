@@ -1,12 +1,9 @@
-import logging
 from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
 
 from pydantic.main import BaseModel
 from rest_framework.request import Request
-
-logger = logging.getLogger(__name__)
 
 
 class BaseChartRequestParams(BaseModel):
@@ -30,8 +27,6 @@ class BaseChartRequestParams(BaseModel):
     @property
     def permission_sets(self) -> dict:
         """Extract optional JWT permissions from the authenticated request"""
-
-        logger.info("Entered common.py:BaseChartRequestParams.permission_sets")
 
         request_user = getattr(self.request, "user", None)
         return getattr(request_user, "permission_sets", {})

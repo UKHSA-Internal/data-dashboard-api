@@ -1,4 +1,3 @@
-import logging
 from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
@@ -10,7 +9,6 @@ from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.plots import PlotParameters
 
 OPTIONAL_STRING = str | None
-logger = logging.getLogger(__name__)
 
 
 class Subplots(BaseModel):
@@ -30,8 +28,6 @@ class Subplots(BaseModel):
     @property
     def permission_sets(self) -> dict:
         """Extract optional JWT permissions from the authenticated request"""
-
-        logger.info("Entered subplot_charts.py:BaseChartRequestParams.permission_sets")
 
         request_user = getattr(self.request, "user", None)
         return getattr(request_user, "permission_sets", {})

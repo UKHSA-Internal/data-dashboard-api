@@ -147,8 +147,6 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        logger.info("Entered access.py:get_queryset_from_core_model_manager()")
-
         if auth.AUTH_ENABLED:
             # Needed for the downstream permissions check
             topic = self.topic_model_manager.get_by_name(name=plot_params["topic"])

@@ -1,11 +1,8 @@
-import logging
 from typing import Any
 
 from django.apps import apps
 
 WILDCARD_ID_VALUE = "-1"
-
-logger = logging.getLogger(__name__)
 
 
 def check_permissions_by_name(
@@ -21,8 +18,6 @@ def check_permissions_by_name(
     """
     Convert permission resource names into ids before evaluating chart permissions.
     """
-
-    logger.info("Entered check_permissions_by_name()")
 
     if not isinstance(permission_sets, dict):
         return False
@@ -85,8 +80,6 @@ def check_permissions(
     Core permission evaluation shared by page and chart permission checks.
     """
 
-    logger.info("Entered check_permissions()")
-
     if not isinstance(permission_sets, list):
         return False
 
@@ -127,8 +120,6 @@ def check_metric_related_permissions(
     """
     Evaluate the theme/sub-theme/topic/metric portion of a permission row.
     """
-
-    logger.info("Entered check_metric_related_permissions()")
 
     if not isinstance(permission_set, dict):
         return False
@@ -176,8 +167,6 @@ def check_geography_permissions(
     """
     Evaluate the geography portion of a permission row.
     """
-
-    logger.info("Entered check_geography_permissions()")
 
     if not isinstance(permission_set, dict):
         return False
