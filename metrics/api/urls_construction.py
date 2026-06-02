@@ -342,5 +342,6 @@ def construct_urlpatterns(
             constructed_url_patterns += feedback_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
             constructed_url_patterns += permission_set_urlpatterns
+            constructed_url_patterns += generic_permission_set_urlpatterns
 
     return constructed_url_patterns
