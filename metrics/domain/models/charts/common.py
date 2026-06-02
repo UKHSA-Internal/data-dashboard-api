@@ -37,11 +37,13 @@ class BaseChartRequestParams(BaseModel):
         return getattr(request_user, "permission_sets", {})
 
     @property
-    def rbac_permissions(
-        self,
-    ) -> Iterable[
-        object
-    ]:  # set to object instead of RBACPermission, cos of architectural constraints
-        """RBAC-based permissions are legacy and will be removed in a future release"""
+    def rbac_permissions(self) -> Iterable[object]:
+        """
+        Legacy RBAC permissions - to be removed in a future release.
+
+        WORKAROUND: The return property is an object rather than RBACPermission,
+        because RBACPermission lives in metrics.domain.charts, which must
+        not import from metrics.data because of our architecture constraints.
+        """
 
         return getattr(self.request, "rbac_permissions", [])
