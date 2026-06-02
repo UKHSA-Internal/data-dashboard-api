@@ -31,6 +31,12 @@ class TopicQuerySet(models.QuerySet):
 
         Returns:
             The topic name if found, None otherwise
+
+        Examples:
+            >>> TopicQuerySet.get_name_by_id(1)
+            'COVID-19'
+            >>> TopicQuerySet.get_name_by_id(999)
+            None
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
