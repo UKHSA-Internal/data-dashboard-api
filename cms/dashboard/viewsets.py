@@ -109,7 +109,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 filtered_queryset = queryset
 
             else:
-                user_permissions = req.user.permission_sets
+                user_permissions = req.user.permission_sets["permission_sets"]
                 pages_to_check = chain(
                     ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
                     (
