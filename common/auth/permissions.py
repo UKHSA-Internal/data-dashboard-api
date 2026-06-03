@@ -1,19 +1,41 @@
-from typing import Any
+from typing import TypedDict
 
 from django.apps import apps
 
 WILDCARD_ID_VALUE = "-1"
 
+"""
+    A few classes with type hints to represent our complete 
+    JWT permission set hierarchy. Please do import and use 
+    this from other modules too to keep us safe & well.
+"""
+class PermissionRowType(TypedDict):
+    theme: dict[str, str]
+    sub_theme: dict[str, str]
+    topic: dict[str, str]
+    metric: dict[str, str]
+    geography_type: dict[str, str]
+    geography: dict[str, str]
+
+
+class PermissionSetSummaryType(TypedDict):
+    has_global_access: bool
+
+
+class PermissionSetsType(TypedDict):
+    permission_sets: list[PermissionRowType]
+    summary: PermissionSetSummaryType
+
 
 def check_permissions_by_name(
     *,
-    permission_sets,
-    theme_name,
-    sub_theme_name,
-    topic_name,
-    metric_name,
-    geography_type,
-    geography_name,
+    permission_sets: PermissionSetsType,
+    theme_name: str,
+    sub_theme_name: str,
+    topic_name: str,
+    metric_name: str,
+    geography_type: str,
+    geography_name: str,
 ) -> bool:
     """
     Convert permission resource names into ids before evaluating chart permissions.
@@ -31,17 +53,22 @@ def check_permissions_by_name(
     if permission_sets.get("summary").get("has_global_access"):
         return True
 
-    topic_model: Any = apps.get_model("data", "Topic")
-    metric_model: Any = apps.get_model("data", "Metric")
-    geography_type_model: Any = apps.get_model("data", "GeographyType")
-    geography_model: Any = apps.get_model("data", "Geography")
+    topic_model = apps.get_model("data", "Topic")
+    metric_model = apps.get_model("data", "Metric")
+    geography_type_model = apps.get_model("data", "GeographyType")
+    geography_model = apps.get_model("data", "Geography")
 
-    theme_id, sub_theme_id, topic_id = topic_model.objects.get_id_by_name(
+    topic_manager = getattr(topic_model, "objects")
+    metric_manager = getattr(metric_model, "objects")
+    geography_type_manager = getattr(geography_type_model, "objects")
+    geography_manager = getattr(geography_model, "objects")
+
+    theme_id, sub_theme_id, topic_id = topic_manager.get_id_by_name(
         theme_name, sub_theme_name, topic_name
     )
-    metric_id = metric_model.objects.get_id_by_name(metric_name)
-    geography_type_id = geography_type_model.objects.get_id_by_name(geography_type)
-    geography_id = geography_model.objects.get_id_by_name(geography_name)
+    metric_id = metric_manager.get_id_by_name(metric_name)
+    geography_type_id = geography_type_manager.get_id_by_name(geography_type)
+    geography_id = geography_manager.get_id_by_name(geography_name)
 
     if any(
         value is None
@@ -68,13 +95,13 @@ def check_permissions_by_name(
 
 
 def check_permissions(
-    permission_sets,
-    theme_id,
-    sub_theme_id,
-    topic_id,
-    metric_id=None,
-    geography_type=None,
-    geography_id=None,
+    permission_sets: list[PermissionRowType],
+    theme_id: int,
+    sub_theme_id: int,
+    topic_id: int,
+    metric_id: int | None = None,
+    geography_type: int | None = None,
+    geography_id: int | None = None,
 ) -> bool:
     """
     Core permission evaluation shared by page and chart permission checks.
@@ -111,11 +138,11 @@ def check_permissions(
 
 def check_metric_related_permissions(
     *,
-    permission_set,
-    theme_id,
-    sub_theme_id,
-    topic_id,
-    metric_id=None,
+    permission_set: PermissionRowType,
+    theme_id: int,
+    sub_theme_id: int,
+    topic_id: int,
+    metric_id: int | None = None,
 ) -> bool:
     """
     Evaluate the theme/sub-theme/topic/metric portion of a permission row.
@@ -160,9 +187,9 @@ def check_metric_related_permissions(
 
 def check_geography_permissions(
     *,
-    permission_set,
-    geography_type=None,
-    geography_id=None,
+    permission_set: PermissionRowType,
+    geography_type: int | None = None,
+    geography_id: int | None = None,
 ) -> bool:
     """
     Evaluate the geography portion of a permission row.

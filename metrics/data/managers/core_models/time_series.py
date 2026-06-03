@@ -13,7 +13,7 @@ from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
-from common.auth.permissions import check_permissions_by_name
+from common.auth.permissions import PermissionSetsType, check_permissions_by_name
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
@@ -174,7 +174,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         theme: str = "",
         sub_theme: str = "",
         metric_value_ranges: list[tuple[str | float | int]] | None = None,
-        permission_sets: dict | None = None,
+        permission_sets: PermissionSetsType | None = None,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -555,7 +555,7 @@ class CoreTimeSeriesManager(models.Manager):
         sub_theme: str = "",
         metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
-        permission_sets: dict | None = None,
+        permission_sets: PermissionSetsType | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
