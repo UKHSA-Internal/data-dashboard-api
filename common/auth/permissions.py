@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from django.apps import apps
+from ingestion.metrics_interface.interface import MetricsAPIInterface
 
 WILDCARD_ID_VALUE = "-1"
 
@@ -57,15 +57,10 @@ def check_permissions_by_name(
     if not theme_name or not sub_theme_name or not topic_name or not metric_name or not geography_type or not geography_name:
         return False
 
-    topic_model = apps.get_model("data", "Topic")
-    metric_model = apps.get_model("data", "Metric")
-    geography_type_model = apps.get_model("data", "GeographyType")
-    geography_model = apps.get_model("data", "Geography")
-
-    topic_manager = getattr(topic_model, "objects")
-    metric_manager = getattr(metric_model, "objects")
-    geography_type_manager = getattr(geography_type_model, "objects")
-    geography_manager = getattr(geography_model, "objects")
+    topic_manager = MetricsAPIInterface.get_topic_manager()
+    metric_manager = MetricsAPIInterface.get_metric_manager()
+    geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
+    geography_manager = MetricsAPIInterface.get_geography_manager()
 
     theme_id, sub_theme_id, topic_id = topic_manager.get_id_by_name(
         theme_name, sub_theme_name, topic_name
