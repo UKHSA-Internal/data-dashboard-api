@@ -53,6 +53,10 @@ def check_permissions_by_name(
     if permission_sets.get("summary").get("has_global_access"):
         return True
 
+    # Sanity check, because front-end will never send empty "" requests
+    if not theme_name or not sub_theme_name or not topic_name or not metric_name or not geography_type or not geography_name:
+        return False
+
     topic_model = apps.get_model("data", "Topic")
     metric_model = apps.get_model("data", "Metric")
     geography_type_model = apps.get_model("data", "GeographyType")
