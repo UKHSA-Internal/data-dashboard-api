@@ -12,9 +12,12 @@ from metrics.data.models.core_models import Metric, Topic
 
 
 class MockPermissionSets(list):
-    def __init__(self, permissions, has_global_access=False):
+    def __init__(self, permissions, has_global_access=False, total_permission_sets=0):
         super().__init__(permissions)
-        self._summary = {"has_global_access": has_global_access}
+        self._summary = {
+            "has_global_access": has_global_access,
+            "total_permission_sets": total_permission_sets,
+        }
 
     def __getitem__(self, key):
         if key == "permission_sets":
