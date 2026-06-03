@@ -3,7 +3,6 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_theme_names_and_ids,
 )
 
-WILDCARD_ID_VALUE = "-1"
 PERMISSION_SET_FIELDS = [
     {
         "field_name": "theme",
