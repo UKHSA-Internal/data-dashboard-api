@@ -13,7 +13,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models.charts.common import BaseChartRequestParams
+from metrics.domain.models.charts.common import ChartRequestParams
 
 
 class PlotParameters(BaseModel):
@@ -141,7 +141,7 @@ class PlotParameters(BaseModel):
         return RGBAChartLineColours.BLACK
 
 
-class ChartRequestParams(BaseChartRequestParams):
+class ChartRequestParams(ChartRequestParams):
     """Holds all the request information / params for a chart in its entirety."""
 
     metric_group: str | None = None

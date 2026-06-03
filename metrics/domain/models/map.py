@@ -1,8 +1,8 @@
 import datetime
-from collections.abc import Iterable
 
 from pydantic.main import BaseModel
-from rest_framework.request import Request
+
+from metrics.domain.models.common import BaseRequestParams
 
 OPTIONAL_STRING = str | None
 
@@ -37,17 +37,8 @@ class MapAccompanyingPoint(BaseModel):
     parameters: MapAccompanyingPointOptionalParameters
 
 
-class MapsParameters(BaseModel):
+class MapsParameters(BaseRequestParams):
     date_from: datetime.date
     date_to: datetime.date
     parameters: MapMainParameters
     accompanying_points: list[MapAccompanyingPoint]
-
-    request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
-
-    @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
-        return getattr(self.request, "rbac_permissions", [])

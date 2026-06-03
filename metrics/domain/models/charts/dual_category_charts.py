@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from metrics.domain.models.charts.common import BaseChartRequestParams
+from metrics.domain.models.charts.common import ChartRequestParams
 from metrics.domain.models.charts.segments import SegmentParameters
 
 
@@ -18,7 +18,7 @@ class StaticFields(BaseModel):
     date_to: str
 
 
-class DualCategoryChartRequestParams(BaseChartRequestParams):
+class DualCategoryChartRequestParams(ChartRequestParams):
     chart_type: str
     secondary_category: str
     primary_field_values: list[str]
