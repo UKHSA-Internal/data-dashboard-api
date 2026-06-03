@@ -57,6 +57,18 @@ VERSIONED_APP_NAMES = [
     "public_api",
 ]
 
+PERMISSION_SET_PATHS = [
+    "api/user/<str:user_id>/permissions",
+    "api/user/<str:user_id>/permissions/hierarchy",
+]
+
+GENERIC_PERMISSION_SET_PATHS = [
+    "api/data-hierarchy/subthemes/<str:theme_id>",
+    "api/data-hierarchy/topics/<str:sub_theme_id>",
+    "api/data-hierarchy/metrics/<str:topic_id>",
+    "api/data-hierarchy/geographies/<str:geography_type_id>",
+]
+
 
 def _flatten_urls(*, urlpatterns: list[URLPattern | URLResolver]) -> list[URLPattern]:
     """Takes a list of URLPatterns and URLResolvers and returns
@@ -183,7 +195,9 @@ class TestConstructUrlpatterns:
 
     @pytest.mark.parametrize(
         "private_api_endpoint_path",
-        PRIVATE_API_ENDPOINT_PATHS,
+        PRIVATE_API_ENDPOINT_PATHS
+        + PERMISSION_SET_PATHS
+        + GENERIC_PERMISSION_SET_PATHS,
     )
     def test_private_api_mode_returns_private_api_urls(
         self, private_api_endpoint_path: str
@@ -369,7 +383,7 @@ class TestConstructUrlpatterns:
 
     @pytest.mark.parametrize(
         "included_endpoint_path",
-        AUDIT_API_ENDPOINT_PATHS,
+        AUDIT_API_ENDPOINT_PATHS + GENERIC_PERMISSION_SET_PATHS,
     )
     def test_cms_admin_mode_returns_all_expected_urls(
         self, included_endpoint_path: str
@@ -392,7 +406,8 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS
+        + PERMISSION_SET_PATHS,
     )
     def test_cms_admin_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
