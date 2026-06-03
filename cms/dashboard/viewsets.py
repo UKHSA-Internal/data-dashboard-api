@@ -108,7 +108,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         else:
             logger.info(
                 "User %s has total permission sets: %s",
-                req.user.id,
+                req.user.username,
                 req.user.permission_sets["summary"]["total_permission_sets"],
             )
             has_global_access = req.user.permission_sets["summary"]["has_global_access"]
