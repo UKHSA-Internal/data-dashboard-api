@@ -110,26 +110,25 @@ def check_permissions(
         return False
 
     for permission_set in permission_sets:
-        if geography_type and geography_id:
-            if check_metric_related_permissions(
+        # Themes, ... metrics have their own dependency
+        # hierarchy (means wildcards can be at the end)
+        has_metric_permissions = check_metric_related_permissions(
                 permission_set=permission_set,
                 theme_id=theme_id,
                 sub_theme_id=sub_theme_id,
                 topic_id=topic_id,
                 metric_id=metric_id,
-            ) and check_geography_permissions(
+            )
+
+        # Geographies have their own dependency hierarchy too
+        if geography_type and geography_id:
+            if has_metric_permissions and check_geography_permissions(
                 permission_set=permission_set,
                 geography_type=geography_type,
                 geography_id=geography_id,
             ):
                 return True
-        elif check_metric_related_permissions(
-            permission_set=permission_set,
-            theme_id=theme_id,
-            sub_theme_id=sub_theme_id,
-            topic_id=topic_id,
-            metric_id=metric_id,
-        ):
+        elif has_metric_permissions:
             return True
 
     return False
@@ -144,7 +143,8 @@ def check_metric_related_permissions(
     metric_id: int | None = None,
 ) -> bool:
     """
-    Evaluate the theme/sub-theme/topic/metric portion of a permission row.
+    Evaluate the theme/sub-theme/topic/metric portion of a permission row
+    with their own dependency hierarchy (means wildcards can be at the end)
     """
 
     if not isinstance(permission_set, dict):
@@ -191,7 +191,8 @@ def check_geography_permissions(
     geography_id: int | None = None,
 ) -> bool:
     """
-    Evaluate the geography portion of a permission row.
+    Evaluate the geography portion of a permission row
+    with their own dependency hierarchy (means wildcards can be at the end)
     """
 
     if not isinstance(permission_set, dict):
