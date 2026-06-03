@@ -29,7 +29,6 @@ INSTALLED_APPS += ["debug_toolbar"]
 
 MIDDLEWARE += [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "metrics.api.middleware.sql_debug.SQLDebugMiddleware",
 ]
 
 INTERNAL_IPS = ["127.0.0.1"]
