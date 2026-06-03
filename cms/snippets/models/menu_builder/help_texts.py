@@ -7,6 +7,10 @@ MENU_LINK_BODY: str = """
 An optional body of text to display for this menu item.
 """
 
+MENU_PUBLIC_PAGE_ACKNOWLEDGEMENT: str = """
+Only public pages can be displayed in the menu. Please tick this box to confirm the page you are adding is public.
+"""
+
 SECONDARY_LINKS: str = """
 Optional secondary / submenu links to attach under the primary menu link.
 """

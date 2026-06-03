@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.blocks.struct_block import StructValue
@@ -32,6 +33,24 @@ class MenuLink(blocks.StructBlock):
         related_name="+",
         on_delete=models.CASCADE,
     )
+    is_page_public = blocks.BooleanBlock(
+        required=False,
+        default=True,
+        help_text=help_texts.MENU_PUBLIC_PAGE_ACKNOWLEDGEMENT,
+    )
+    
+    
+    def clean(self, value):
+        cleaned_data = super().clean(value)
+
+        if not cleaned_data.get("is_page_public"):
+            raise ValidationError({
+                "is_page_public": ValidationError("Only public pages can be added to the menu. Please review the pages added and ensure you have ticked the acknowledgement to say the page is public.")
+            })
+
+        return cleaned_data
+
+
 
     class Meta:
         icon = "link"
