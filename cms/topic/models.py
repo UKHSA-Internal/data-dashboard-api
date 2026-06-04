@@ -14,6 +14,8 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
+from cms.auth_content.auth_utils import _create_form_field
+from cms.dashboard.constants import THEME_FIELDS
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -36,8 +38,35 @@ DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
 class TopicPageAdminForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in THEME_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
+
+        if self.instance and self.instance.pk:
+            self._initialize_dependent_fields()
+
+    def _initialize_dependent_fields(self):
+        """Initialize choices for cascading dependent fields"""
+        dependent_fields = {
+            "sub_theme": ("Select theme first"),
+            "topic": ("Select sub-theme first"),
+        }
+
+        for field_name, (placeholder) in dependent_fields.items():
+            value = getattr(self.instance, field_name, None)
+            if value:
+                choices = self._get_field_choices(value, placeholder)
+                self.fields[field_name].widget.choices = choices
+
+    @staticmethod
+    def _get_field_choices(value, placeholder):
+        """Generate choices list based on field value"""
+        return [("", placeholder), (value, f"Loading... (ID: {value})")]
+
     class Media:
-        js = ["js/classification_toggle.js"]
+        js = ["js/toggle_available_fields_on_is_public.js"]
 
 
 class TopicPage(UKHSAPage):
@@ -66,6 +95,10 @@ class TopicPage(UKHSAPage):
         null=True,
     )
 
+    theme = models.CharField(max_length=255, blank=True, default="", null=True)
+    sub_theme = models.CharField(max_length=255, blank=True, default="", null=True)
+    topic = models.CharField(max_length=255, blank=True, default="", null=True)
+
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -87,6 +120,9 @@ class TopicPage(UKHSAPage):
         FieldPanel("enable_area_selector"),
         FieldPanel("is_public"),
         FieldPanel("page_classification"),
+        FieldPanel("theme"),
+        FieldPanel("sub_theme"),
+        FieldPanel("topic"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
@@ -230,15 +266,31 @@ class TopicPage(UKHSAPage):
     def clean(self):
         super().clean()
 
-        # If is_public is true, automatically clear classification
+        # If is_public is true, automatically clear non-public fields
         if self.is_public:
             self.page_classification = None
-        # If not public page, classification must be chosen
+            self.theme = None
+            self.sub_theme = None
+            self.topic = None
+
+        # If not public page, non-public fields must be set
         elif not self.page_classification:
             raise ValidationError(
                 {
                     "page_classification": "Please select a classification level for this non-public page"
                 }
+            )
+        elif not self.theme:
+            raise ValidationError(
+                {"theme": "Please select a theme for this non-public page"}
+            )
+        elif not self.sub_theme:
+            raise ValidationError(
+                {"sub_theme": "Please select a sub theme for this non-public page"}
+            )
+        elif not self.topic:
+            raise ValidationError(
+                {"topic": "Please select a topic for this non-public page"}
             )
 
 

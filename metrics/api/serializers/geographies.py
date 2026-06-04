@@ -3,12 +3,12 @@ from collections import defaultdict
 from django.db.models import QuerySet
 from rest_framework import serializers
 
-from auth_content.constants import WILDCARD_ID_VALUE
 from metrics.api.serializers import help_texts
 from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
+from metrics.data.models.constants import PERMISSION_SET_WILDCARD_ID_VALUE
 from metrics.data.models.core_models import (
     CoreTimeSeries,
     Geography,
@@ -234,7 +234,7 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
     @staticmethod
     def validate_geography_type_id(value: str) -> str | int:
         """Validate geography_type_id is either wildcard or a valid integer"""
-        if value == WILDCARD_ID_VALUE:
+        if value == PERMISSION_SET_WILDCARD_ID_VALUE:
             return value
 
         try:
@@ -253,8 +253,10 @@ class GeographyByGeographyTypeRequestSerializer(serializers.Serializer):
         geography_type_id = self.validated_data["geography_type_id"]
 
         # Handle wildcard
-        if geography_type_id == WILDCARD_ID_VALUE:
-            return {"choices": [[WILDCARD_ID_VALUE, "* (All geographies)"]]}
+        if geography_type_id == PERMISSION_SET_WILDCARD_ID_VALUE:
+            return {
+                "choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All geographies)"]]
+            }
 
         parent_geography_type_id = int(geography_type_id)
         geographies = (

@@ -37,10 +37,14 @@ def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, str | list[d
     """
     title: str = row[0]
     page_description: str = row[4]
-    metric: str = row[1]
+    metric = row[7]
+    topic = row[1].split("_")[0]
     sections: list[tuple[str, str]] = gather_sections_and_omit_if_needed(row=row)
     return {
         "title": title,
+        "topic": topic,
+        "theme": "test",
+        "sub_theme": "test",
         "seo_title": f"{title} | UKHSA data dashboard",
         "search_description": page_description,
         "page_description": page_description,
