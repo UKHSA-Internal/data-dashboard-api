@@ -80,17 +80,13 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         else:
             logger.info(
                 "User %s has total permission sets: %s",
-                req.user.id,
-                req.user.permission_sets["summary"].get(
-                    "total_permission_sets", "unknown"
-                ),
+                req.user.username,
+                req.user.permission_sets["summary"]["total_permission_sets"],
             )
-            has_global_access = req.user.permission_sets["summary"].get(
-                "has_global_access", False
-            )
+            has_global_access = req.user.permission_sets["summary"]["has_global_access"]
 
             if has_global_access:
-                logger.info("User %s has global access", req.user.id)
+                logger.info("User %s has global access", req.user.username)
                 filtered_queryset = queryset
 
             else:
