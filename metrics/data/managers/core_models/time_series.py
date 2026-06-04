@@ -252,10 +252,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        public_queryset = queryset.filter(is_public=True)
 
         if permission_sets:
-            if check_permissions_by_name(
+            # Else with permissions we'll keep both the public and non-public data
+            if not check_permissions_by_name(
                 permission_sets=permission_sets,
                 theme_name=theme,
                 sub_theme_name=sub_theme,
@@ -264,12 +264,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 geography_type=geography_type,
                 geography_name=geography,
             ):
-                # Spec says: Deliver both public and non-public data
-                queryset = public_queryset | queryset.filter(is_public=False)
-            else:
-                queryset = public_queryset
+                queryset = queryset.filter(is_public=True)
         else:
-            queryset = public_queryset
+            queryset = queryset.filter(is_public=True)
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self._filter_for_metric_value_ranges(
