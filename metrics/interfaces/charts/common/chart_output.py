@@ -15,9 +15,11 @@ class ChartOutput:
     figure: go.Figure
     description: str
     is_headline: bool
+    chart_width: int
     is_subplot: bool = False
     is_public: bool = True
     data_classification: str | None = None
+
 
     def __post_init__(self) -> None:
         if (not self.is_public) and (self.data_classification) and (AUTH_ENABLED):
@@ -35,9 +37,8 @@ class ChartOutput:
 
         watermark_text = DataClassification[self.data_classification].value
 
-        width = min(self.figure.layout.width or 800, 500)
 
-        font_size = int((width * 0.75) / (len(watermark_text) * 0.65))
+        font_size = int((self.chart_width * 0.9) / (len(watermark_text) * 0.65))
 
         watermark_font_size = max(10, min(font_size, 60))
 

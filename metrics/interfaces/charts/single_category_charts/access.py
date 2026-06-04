@@ -142,6 +142,7 @@ class ChartsInterface:
             figure=figure,
             description=description,
             is_headline=self.is_headline_data,
+            chart_width=self.chart_request_params.chart_width,
             is_public=self.chart_request_params.is_public,
             data_classification=self.chart_request_params.data_classification,
         )
