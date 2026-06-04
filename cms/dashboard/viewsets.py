@@ -114,7 +114,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             has_global_access = req.user.permission_sets["summary"]["has_global_access"]
 
             if has_global_access:
-                logger.info("User %s has global access", req.user.id)
+                logger.info("User %s has global access", req.user.username)
                 filtered_queryset = queryset
 
             else:
