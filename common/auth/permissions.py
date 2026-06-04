@@ -5,10 +5,12 @@ from ingestion.metrics_interface.interface import MetricsAPIInterface
 WILDCARD_ID_VALUE = "-1"
 
 """
-    A few classes with type hints to represent our complete 
-    JWT permission set hierarchy. Please do import and use 
+    A few classes with type hints to represent our complete
+    JWT permission set hierarchy. Please do import and use
     this from other modules too to keep us safe & well.
 """
+
+
 class PermissionRowType(TypedDict):
     theme: dict[str, str]
     sub_theme: dict[str, str]
@@ -54,7 +56,9 @@ def check_permissions_by_name(
         return True
 
     # Sanity check, because front-end will never send empty "" requests
-    if not theme_name or not sub_theme_name or not topic_name or not metric_name or not geography_type or not geography_name:
+    if not theme_name or not sub_theme_name or not topic_name or not metric_name:
+        return False
+    if not geography_type or not geography_name:
         return False
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
@@ -94,6 +98,7 @@ def check_permissions_by_name(
 
 
 def check_permissions(
+    *,
     permission_sets: list[PermissionRowType],
     theme_id: int,
     sub_theme_id: int,
@@ -113,12 +118,12 @@ def check_permissions(
         # Themes, ... metrics have their own dependency
         # hierarchy (means wildcards can be at the end)
         has_metric_permissions = check_metric_related_permissions(
-                permission_set=permission_set,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-                metric_id=metric_id,
-            )
+            permission_set=permission_set,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+            metric_id=metric_id,
+        )
 
         # Geographies have their own dependency hierarchy too
         if geography_type and geography_id:

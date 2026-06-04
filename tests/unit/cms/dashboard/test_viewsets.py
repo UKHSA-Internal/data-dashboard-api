@@ -62,7 +62,12 @@ class TestCheckPermissions:
         Then the function returns true
         """
         assert (
-            check_permissions(user_permissions, theme_id, sub_theme_id, topic_id)
+            check_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
             == True
         )
 
@@ -106,7 +111,12 @@ class TestCheckPermissions:
         Then the function returns false
         """
         assert (
-            check_permissions(user_permissions, theme_id, sub_theme_id, topic_id)
+            check_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
             == False
         )
 
@@ -147,7 +157,12 @@ class TestCheckPermissions:
         Then the function returns false
         """
         assert (
-            check_permissions(user_permissions, theme_id, sub_theme_id, topic_id)
+            check_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
             == False
         )
 

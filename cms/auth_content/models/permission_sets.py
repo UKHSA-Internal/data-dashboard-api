@@ -7,7 +7,6 @@ from wagtail.admin.panels import FieldPanel, mark_safe
 
 from cms.auth_content.auth_utils import _create_form_field
 from cms.auth_content.constants import PERMISSION_SET_FIELDS
-from common.auth.permissions import WILDCARD_ID_VALUE
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_and_codes,
@@ -17,6 +16,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_theme_names_and_ids,
     get_all_topic_names_and_ids,
 )
+from common.auth.permissions import WILDCARD_ID_VALUE
 
 
 class PermissionSetForm(WagtailAdminPageForm):
