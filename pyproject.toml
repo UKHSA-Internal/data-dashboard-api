@@ -225,6 +225,10 @@ ignore_imports = [
     "metrics.api.urls_construction -> cms.snippets.views",
     "metrics.api.urls_construction -> feedback.api.urls",
     "cms.dynamic_content.elements -> validation.data_transfer_models.base",
+    "cms.auth_content.models.users -> metrics.data.managers.rbac_models.user",  # Allow auth_content to be moved into CMS, consider refactor
+    "metrics.api.serializers.user -> cms.auth_content.models.users",  # Allow auth_content to be moved into CMS, consider refactor
+    "metrics.data.managers.rbac_models.user -> cms.auth_content.models.permission_sets", # Allow auth_content to be moved into CMS, consider refactor
+    "metrics.utils.permission_hierarchy -> cms.auth_content.models.permission_sets", # Allow auth_content to be moved into CMS, consider refactor
 ]
 
 [[tool.importlinter.contracts]]
@@ -237,7 +241,14 @@ layers = [
 ]
 ignore_imports = [
     "metrics.data.managers.core_models.time_series -> metrics.api.permissions.fluent_permissions",
-    "metrics.data.managers.core_models.headline -> metrics.api.permissions.fluent_permissions"
+    "metrics.data.managers.core_models.headline -> metrics.api.permissions.fluent_permissions",
+    "metrics.data.managers.rbac_models.user -> cms.auth_content.models.permission_sets", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.auth_content.models.permission_sets -> cms.metrics_interface.field_choices_callables", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.metrics_interface.field_choices_callables -> cms.metrics_interface", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.metrics_interface -> cms.metrics_interface.interface", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.metrics_interface.interface -> metrics.domain.charts.common_charts.plots.line_multi_coloured.properties", # Allow auth_content to be moved into CMS, consider refactor
+    "cms.metrics_interface.interface -> metrics.domain.common.utils", # Allow auth_content to be moved into CMS, consider refactor
 ]
 
 [[tool.importlinter.contracts]]

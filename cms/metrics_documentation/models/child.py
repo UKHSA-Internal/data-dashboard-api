@@ -12,13 +12,14 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.search import index
 
+from cms.auth_content.auth_utils import _create_form_field
+from cms.dashboard.constants import THEME_FIELDS
 from cms.dashboard.models import DataClassificationLevels, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
 from cms.metrics_interface.field_choices_callables import (
-    get_a_list_of_all_topic_names,
-    get_all_unique_metric_names,
+    get_all_metric_names_and_ids,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,8 +32,35 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 
 
 class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in THEME_FIELDS:
+            self.fields[field["field_name"]] = _create_form_field(field)
+
+        if self.instance and self.instance.pk:
+            self._initialize_dependent_fields()
+
+    def _initialize_dependent_fields(self):
+        """Initialize choices for cascading dependent fields"""
+        dependent_fields = {
+            "sub_theme": ("Select theme first"),
+            "topic": ("Select sub-theme first"),
+        }
+
+        for field_name, (placeholder) in dependent_fields.items():
+            value = getattr(self.instance, field_name, None)
+            if value:
+                choices = self._get_field_choices(value, placeholder)
+                self.fields[field_name].widget.choices = choices
+
+    @staticmethod
+    def _get_field_choices(value, placeholder):
+        """Generate choices list based on field value"""
+        return [("", placeholder), (value, f"Loading... (ID: {value})")]
+
     class Media:
-        js = ["js/classification_toggle.js"]
+        js = ["js/toggle_available_fields_on_is_public.js"]
 
 
 class MetricsDocumentationChildEntry(UKHSAPage):
@@ -51,24 +79,36 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         null=True,
         blank=True,
     )
-    topic = models.CharField(
+
+    theme = models.CharField(
         max_length=255,
+        blank=True,
         default="",
+        null=True,
     )
+    sub_theme = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        null=True,
+    )
+    topic = models.CharField(max_length=255, blank=True, default="", null=True)
     body = ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 
     # Fields to index for searching within the CMS application.
     search_fields = UKHSAPage.search_fields + [
-        index.SearchField("metric"),
         index.SearchField("body"),
     ]
 
     # Content panels to render for editing within the CMS application.
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("page_description"),
-        FieldPanel("metric"),
         FieldPanel("is_public"),
         FieldPanel("page_classification"),
+        FieldPanel("theme"),
+        FieldPanel("sub_theme"),
+        FieldPanel("topic"),
+        FieldPanel("metric"),
         FieldPanel("body"),
     ]
 
@@ -113,42 +153,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         load in the names dynamically from the metrics interface.
         """
         super().__init__(*args, **kwargs)
-        self._meta.get_field("metric").choices = get_all_unique_metric_names()
-
-    def find_topic(self, *, topics: list[str]) -> str:
-        """Finds the required topic from a list of strings based on the metric name.
-
-        Args:
-            topics: list of strings representing topic names.
-
-        Returns:
-            A string of the topic checked against the models metric value.
-
-        Raises:
-            `InvalidTopicForChosenMetricForChildEntry`: If the
-                selected metric cannot be matched to a `Topic`
-
-        """
-        extracted_topic = self.metric.split("_")[0].lower()
-        try:
-            return next(topic for topic in topics if extracted_topic == topic.lower())
-        except StopIteration as error:
-            logger.info(
-                "StopIteration Error: extracted topic not present in the topics list. %s",
-                extracted_topic,
-            )
-            raise InvalidTopicForChosenMetricForChildEntryError(
-                topic=extracted_topic, metric=self.metric
-            ) from error
-
-    def get_topic(self) -> str:
-        """Finds the required topic name based on the selected metric name.
-
-        Returns:
-            a topic name as a string
-        """
-        topics = get_a_list_of_all_topic_names()
-        return self.find_topic(topics=topics)
+        self._meta.get_field("metric").choices = get_all_metric_names_and_ids()
 
     def save(self, *args, **kwargs):
         """Retrieves a topic based on the selected metric
@@ -156,12 +161,22 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         Notes:
             This method will not be called when using `bulk_create()`
         """
-        self.topic = self.get_topic()
         super().save(*args, **kwargs)
 
     @property
     def metric_group(self) -> str:
-        return self.metric.split("_")[1]
+        field = self._meta.get_field("metric")
+        choices = getattr(field, "choices", []) or []
+
+        display_name = next(
+            (item[1] for item in choices if item[0] == self.metric), None
+        )
+
+        if not display_name or "_" not in display_name:
+            return ""
+
+        parts = display_name.split("_")
+        return parts[1] if len(parts) > 1 else ""
 
     def clean(self):
         super().clean()
@@ -169,12 +184,28 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         # If is_public is true, automatically clear classification
         if self.is_public:
             self.page_classification = None
-        # If not public page, classification must be chosen
+            self.theme = None
+            self.sub_theme = None
+            self.topic = None
+
+        # If not public page, non-public fields must be set
         elif not self.page_classification:
             raise ValidationError(
                 {
                     "page_classification": "Please select a classification level for this non-public page"
                 }
+            )
+        elif not self.theme:
+            raise ValidationError(
+                {"theme": "Please select a theme for this non-public page"}
+            )
+        elif not self.sub_theme:
+            raise ValidationError(
+                {"sub_theme": "Please select a subtheme for this non-public page"}
+            )
+        elif not self.topic:
+            raise ValidationError(
+                {"topic": "Please select a topic for this non-public page"}
             )
 
 

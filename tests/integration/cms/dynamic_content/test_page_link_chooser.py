@@ -28,6 +28,9 @@ class TestPageChooser:
             path="abc",
             depth=1,
             title="abc",
+            theme="test",
+            sub_theme="test",
+            topic=1,
             live=True,
             seo_title="ABC",
         )

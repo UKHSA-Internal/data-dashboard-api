@@ -31,7 +31,7 @@ grimp==3.14
 gunicorn==26.0.0
 html5lib==1.1
 identify==2.6.19
-idna==3.16
+idna==3.17
 importlib-metadata==9.0.0
 inflection==0.5.1
 iniconfig==2.3.0
@@ -55,7 +55,7 @@ packaging==26.2
 pathspec==1.1.1
 pbr==7.0.3
 Pillow==12.2.0
-platformdirs==4.9.6
+platformdirs==4.10.0
 plotly==6.7.0
 pluggy==1.6.0
 pyjwt==2.13.0
@@ -75,7 +75,7 @@ scour==0.38.2
 setuptools==82.0.1
 six==1.17.0
 sortedcontainers==2.4.0
-soupsieve==2.8.3
+soupsieve==2.8.4
 sqlparams==6.2.0
 telepath==0.3.1
 toml==0.10.2
@@ -83,7 +83,7 @@ tomli==2.4.1
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.7.0
-virtualenv==21.3.1
+virtualenv==21.3.3
 wagtail==7.3.2
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.3.0

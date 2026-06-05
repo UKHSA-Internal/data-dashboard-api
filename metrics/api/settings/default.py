@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+# Unused import - makes the signals available in the application
+import common.signals  # noqa: F401
 import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,6 +54,7 @@ if config.APP_MODE != "INGESTION":
         "metrics.api",
         "cms.acknowledgement",
         "cms.home",
+        "cms.auth_content",
         "cms.topic",
         "cms.topics_list",
         "cms.dashboard",
@@ -78,7 +81,6 @@ if config.APP_MODE != "INGESTION":
         "wagtail_trash",
         "modelcluster",
         "taggit",
-        "auth_content",
     ]
 
 MIDDLEWARE = [
@@ -90,6 +92,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "metrics.api.middleware.current_user.CurrentUserMiddleware",
 ]
 
 APPEND_SLASH = True
@@ -193,12 +196,20 @@ LOGGING = {
         "standard": {
             "format": f"%(asctime)s [%(levelname)s] [ENVIRONMENT:{config.APIENV}] [%(name)s - %(funcName)s] %(message)s"
         },
+        "audit": {
+            "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]"
+        },
     },
     "handlers": {
         "console": {
             "level": config.LOG_LEVEL,
             "class": "logging.StreamHandler",
             "formatter": "standard",
+        },
+        "audit_console": {
+            "level": config.LOG_LEVEL,
+            "class": "logging.StreamHandler",
+            "formatter": "audit",
         },
     },
     "loggers": {
@@ -209,6 +220,11 @@ LOGGING = {
         },
         "django": {
             "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": False,
+        },
+        "audit": {
+            "handlers": ["audit_console"],
             "level": config.LOG_LEVEL,
             "propagate": False,
         },

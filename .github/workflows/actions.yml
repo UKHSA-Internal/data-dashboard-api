@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04-arm
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
 
@@ -45,7 +45,7 @@ jobs:
     needs: [secret-scan]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
@@ -57,11 +57,11 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
 
       - name: Scan dependencies
         run: |
@@ -73,7 +73,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Scan for vulnerabilities
@@ -90,7 +90,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run linters
@@ -107,7 +107,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Check architectural constraints
@@ -124,7 +124,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run unit tests
@@ -141,7 +141,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run integration tests
@@ -158,7 +158,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run system tests
@@ -175,7 +175,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run migration tests
@@ -192,7 +192,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Evaluate test coverage
@@ -209,7 +209,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Build main API Docker image
         run: docker build -t be-main-test -f Dockerfile .
@@ -278,7 +278,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
@@ -306,7 +306,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
@@ -328,13 +328,13 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Generate ephemeral deployment token
         id: generate-deployment-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
         with:
-          app-id: ${{ secrets.DEPLOYMENT_TOKEN_FACTORY_APP_ID }}
+          client-id: ${{ secrets.DEPLOYMENT_TOKEN_FACTORY_APP_ID }}
           private-key: ${{ secrets.DEPLOYMENT_TOKEN_FACTORY_PRIVATE_KEY }}
           skip-token-revoke: false
           # Although this is the default, this is explicitly set so that
