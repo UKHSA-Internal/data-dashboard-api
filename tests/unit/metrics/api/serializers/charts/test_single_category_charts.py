@@ -1,10 +1,10 @@
 import pytest
 from rest_framework.exceptions import ValidationError
+from metrics.api.serializers.charts.common import EncodedChartResponseSerializer
 
 from metrics.api.serializers.charts import (
     ChartPlotSerializer,
     ChartsSerializer,
-    EncodedChartResponseSerializer,
     EncodedChartsRequestSerializer,
 )
 from metrics.domain.charts import colour_scheme

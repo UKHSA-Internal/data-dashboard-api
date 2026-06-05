@@ -112,13 +112,3 @@ class EncodedChartsRequestSerializer(ChartsSerializer):
         help_text=help_texts.ENCODED_CHARTS_FILE_FORMAT_FIELD,
         default="svg",
     )
-
-
-class EncodedChartResponseSerializer(serializers.Serializer):
-    last_updated = serializers.CharField(
-        help_text=help_texts.ENCODED_CHARTS_LAST_UPDATED,
-        allow_blank=True,
-    )
-    chart = serializers.CharField(help_text=help_texts.ENCODED_CHARTS_RESPONSE)
-    alt_text = serializers.CharField(help_text=help_texts.CHARTS_ALT_TEXT)
-    figure = serializers.DictField(help_text=help_texts.CHARTS_FIGURE_OUTPUT)

@@ -10,10 +10,15 @@ from metrics.domain.common.utils import (
     DEFAULT_CHART_WIDTH,
     DEFAULT_X_AXIS,
     DEFAULT_Y_AXIS,
+    ChartAxisFields,
     ChartTypes,
+    DataSourceFileType,
     DEFAULT_Y_AXIS_MINIMUM_VAlUE,
+    extract_metric_group_from_metric,
 )
-from metrics.domain.models.charts import DualCategoryChartRequestParams
+from metrics.domain.models.charts.dual_category_charts import (
+    DualCategoryChartRequestParams,
+)
 
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
@@ -33,30 +38,17 @@ class DualCategoryChartSegmentSerializer(serializers.Serializer):
     )
 
 
-class StaticFieldsSerializer(PlotSerializer):
-    theme = serializers.CharField(
-        required=True,
-        allow_blank=True,
-        allow_null=True,
-    )
-    sub_theme = serializers.CharField(
-        required=True,
-        allow_blank=True,
-        allow_null=True,
-    )
-
-
 class DualCategoryChartSerializer(BaseChartsSerializer):
     chart_type = serializers.ChoiceField(
         help_text=help_texts.CHART_TYPE_FIELD,
-        choices=ChartTypes.selectable_choices(),
+        choices=ChartTypes.dual_category_chart_options(),
         required=True,
     )
     primary_field_values = serializers.ListField(
         child=serializers.CharField(),
         help_text="List of primary field values for this segment",
-        required=True,
-        allow_empty=False,
+        required=False,
+        allow_empty=True,
     )
 
     secondary_category = serializers.CharField(
@@ -64,7 +56,7 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         required=True,
     )
 
-    static_fields = StaticFieldsSerializer()
+    static_fields = PlotSerializer()
 
     segments = serializers.ListField(
         child=DualCategoryChartSegmentSerializer(),
@@ -72,20 +64,99 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         required=True,
     )
 
+    @classmethod
+    def validate(cls, attrs: dict) -> dict:
+        """Validate primary_field_values based on the selected x-axis."""
+        x_axis = attrs.get("x_axis") or DEFAULT_X_AXIS
+        primary_field_values = attrs.get("primary_field_values") or []
+        metric = attrs["static_fields"]["metric"]
+        metric_group = extract_metric_group_from_metric(metric=metric)
+        is_timeseries_data = DataSourceFileType[metric_group].is_timeseries
+
+        if is_timeseries_data:
+            if primary_field_values:
+                raise serializers.ValidationError(
+                    {
+                        "primary_field_values": (
+                            "This field should not be provided for timeseries data."
+                        )
+                    }
+                )
+            if x_axis != ChartAxisFields.date.name:
+                raise serializers.ValidationError(
+                    {
+                        "x_axis": (
+                            "This field should be set to 'date' for timeseries data."
+                        )
+                    }
+                )
+
+        elif not is_timeseries_data and not primary_field_values:
+            raise serializers.ValidationError(
+                {"primary_field_values": ("This field is required for headline data.")}
+            )
+
+        return attrs
+
     def to_models(self, request: Request) -> DualCategoryChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
-        for plot in self.data["segments"]:
-            plot["x_axis"] = x_axis
-            plot["y_axis"] = y_axis
+        primary_field_values = self.data.get("primary_field_values") or []
+        secondary_category = self.data["secondary_category"]
+        static_fields: dict[str, str | int] = self.validated_data.pop("static_fields")
+
+        if static_fields["date_to"]:
+            static_fields["date_to"] = static_fields["date_to"].isoformat()
+
+        if static_fields["date_from"]:
+            static_fields["date_from"] = static_fields["date_from"].isoformat()
+
+        groups_plots = []
+        segments: list[dict] = self.data["segments"]
+
+        metric_group = extract_metric_group_from_metric(metric=static_fields["metric"])
+        is_timeseries_data = DataSourceFileType[metric_group].is_timeseries
+
+        # If timeseries data
+        if is_timeseries_data:
+            plots = [
+                {
+                    "x_axis": x_axis,
+                    "y_axis": y_axis,
+                    "line_colour": segment["colour"],
+                    **static_fields,
+                    secondary_category: segment["secondary_field_value"],
+                    "chart_type": self.data["chart_type"],
+                    "label": segment["label"],
+                }
+                for segment in segments
+            ]
+            groups_plots.extend(plots)
+
+        else:
+            for primary_field_value in primary_field_values:
+                plots = [
+                    {
+                        "x_axis": x_axis,
+                        "y_axis": y_axis,
+                        "line_colour": segment["colour"],
+                        **static_fields,
+                        x_axis: primary_field_value,
+                        secondary_category: segment["secondary_field_value"],
+                        "chart_type": self.data["chart_type"],
+                        "label": segment["label"],
+                    }
+                    for segment in segments
+                ]
+                groups_plots.extend(plots)
 
         return DualCategoryChartRequestParams(
             chart_type=self.data["chart_type"],
-            primary_field_values=self.data["primary_field_values"],
+            primary_field_values=primary_field_values,
             secondary_category=self.data["secondary_category"],
             static_fields=self.data["static_fields"],
-            segments=self.data["segments"],
+            plots=groups_plots,
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
@@ -97,4 +168,5 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
             request=request,
+            legend_title=self.data.get("legend_title", ""),
         )
