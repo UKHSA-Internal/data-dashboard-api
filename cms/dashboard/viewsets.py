@@ -79,23 +79,26 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
         """
         queryset = super().get_queryset()
-        print(f"🦄 Queryset: {type(queryset)}")
 
         if AUTH_ENABLED:
 
             req = self.request
 
             if req.auth is None:
-                topic_page_id_with_is_public = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
-                metric_doc_child_page_id_with_is_public = MetricsDocumentationChildEntry.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+                
+                # Get all page ids for pages with is_public
+                public_topic_page_ids = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+                public_metric_doc_child_page_ids = MetricsDocumentationChildEntry.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
 
                 # Combine all public pages into one queryset
-                topic_public_pages = queryset.filter(id__in=topic_page_id_with_is_public)
-                metric_child_public_pages = queryset.filter(id__in=metric_doc_child_page_id_with_is_public)
-                is_public_pages = topic_public_pages | metric_child_public_pages
+                all_public_page_ids = list(public_topic_page_ids) + list(public_metric_doc_child_page_ids)
+                is_public_pages = queryset.filter(id__in=all_public_page_ids)
+
+                # Get always public pages
                 pages_without_is_public = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
-                public_pages = is_public_pages | pages_without_is_public
-                filtered_queryset = public_pages
+                
+                # Combine into single unified queryset
+                filtered_queryset = is_public_pages | pages_without_is_public
 
             else:
                 logger.info(
