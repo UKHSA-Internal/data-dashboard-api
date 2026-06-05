@@ -1,7 +1,6 @@
 import logging
 from itertools import chain
 
-from django.db.models import Exists, OuterRef, Q
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
@@ -85,18 +84,28 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             req = self.request
 
             if req.auth is None:
-                
+
                 # Get all page ids for pages with is_public
-                public_topic_page_ids = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
-                public_metric_doc_child_page_ids = MetricsDocumentationChildEntry.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+                public_topic_page_ids = TopicPage.objects.filter(
+                    is_public=True, page_ptr__in=queryset
+                ).values_list("page_ptr_id", flat=True)
+                public_metric_doc_child_page_ids = (
+                    MetricsDocumentationChildEntry.objects.filter(
+                        is_public=True, page_ptr__in=queryset
+                    ).values_list("page_ptr_id", flat=True)
+                )
 
                 # Combine all public pages into one queryset
-                all_public_page_ids = list(public_topic_page_ids) + list(public_metric_doc_child_page_ids)
+                all_public_page_ids = list(public_topic_page_ids) + list(
+                    public_metric_doc_child_page_ids
+                )
                 is_public_pages = queryset.filter(id__in=all_public_page_ids)
 
                 # Get always public pages
-                pages_without_is_public = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
-                
+                pages_without_is_public = queryset.not_type(
+                    TopicPage, MetricsDocumentationChildEntry
+                )
+
                 # Combine into single unified queryset
                 filtered_queryset = is_public_pages | pages_without_is_public
 
