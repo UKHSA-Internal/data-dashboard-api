@@ -79,35 +79,23 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
         """
         queryset = super().get_queryset()
+        print(f"🦄 Queryset: {type(queryset)}")
 
         if AUTH_ENABLED:
 
             req = self.request
 
             if req.auth is None:
-                filtered_queryset = queryset.annotate(
-                    is_public_topic_page=Exists(
-                        TopicPage.objects.filter(
-                            page_ptr_id=OuterRef("pk"),
-                            is_public=True,
-                        )
-                    ),
-                    is_public_metrics_doc_child_page=Exists(
-                        MetricsDocumentationChildEntry.objects.filter(
-                            page_ptr_id=OuterRef("pk"),
-                            is_public=True,
-                        )
-                    ),
-                ).filter(
-                    Q(is_public_topic_page=True)
-                    | Q(is_public_metrics_doc_child_page=True)
-                    | ~Q(
-                        content_type__model__in=[
-                            "topicpage",
-                            "metricsdocumentationchildentry",
-                        ]
-                    )
-                )
+                topic_page_id_with_is_public = TopicPage.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+                metric_doc_child_page_id_with_is_public = MetricsDocumentationChildEntry.objects.filter(is_public=True, page_ptr__in=queryset).values_list("page_ptr_id", flat=True)
+
+                # Combine all public pages into one queryset
+                topic_public_pages = queryset.filter(id__in=topic_page_id_with_is_public)
+                metric_child_public_pages = queryset.filter(id__in=metric_doc_child_page_id_with_is_public)
+                is_public_pages = topic_public_pages | metric_child_public_pages
+                pages_without_is_public = queryset.not_type(TopicPage, MetricsDocumentationChildEntry)
+                public_pages = is_public_pages | pages_without_is_public
+                filtered_queryset = public_pages
 
             else:
                 logger.info(
