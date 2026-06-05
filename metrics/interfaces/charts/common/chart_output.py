@@ -20,7 +20,6 @@ class ChartOutput:
     is_public: bool = True
     data_classification: str | None = None
 
-
     def __post_init__(self) -> None:
         if (not self.is_public) and (self.data_classification) and (AUTH_ENABLED):
             self._apply_watermark()
@@ -36,11 +35,9 @@ class ChartOutput:
         """
 
         watermark_text = DataClassification[self.data_classification].value
-
-
-        font_size = int((self.chart_width * 0.9) / (len(watermark_text) * 0.65))
-
-        watermark_font_size = max(10, min(font_size, 60))
+        target_px = self.chart_width * 0.75
+        font_size = target_px / (max(len(watermark_text), 1) * 0.6)
+        watermark_font_size = round(max(8, min(font_size, 300)))
 
         self.figure.add_annotation(
             text=watermark_text,
