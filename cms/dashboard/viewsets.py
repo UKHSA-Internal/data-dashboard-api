@@ -15,6 +15,7 @@ from cms.auth_content.constants import WILDCARD_ID_VALUE
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
+from metrics.api.settings import auth
 
 logger = logging.getLogger(__name__)
 AUTH_ENABLED = is_auth_enabled()
