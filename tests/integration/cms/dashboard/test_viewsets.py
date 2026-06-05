@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest import mock
 from django.test import RequestFactory
 from rest_framework.request import Request
 from wagtail.models import Page
@@ -119,6 +119,7 @@ class TestCMSPagesAPIViewSetPermissions:
             "standard_page": standard_page,
         }
 
+    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_anonymous_user_access(self, setup_pages):
         """
         Given a request is made by an unauthenticated user
@@ -132,7 +133,7 @@ class TestCMSPagesAPIViewSetPermissions:
 
         request = Request(django_request)
 
-        mock_user = MagicMock()
+        mock_user = mock.MagicMock()
         request.user = mock_user
 
         view = CMSPagesAPIViewSet()
@@ -163,7 +164,7 @@ class TestCMSPagesAPIViewSetPermissions:
 
         request = Request(django_request)
 
-        mock_user = MagicMock()
+        mock_user = mock.MagicMock()
         mock_user.permission_sets = MockPermissionSets(
             [],
             has_global_access=True,
@@ -187,6 +188,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric" in titles
         assert "Private Metric 2" in titles
 
+    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_restricted_user_with_permission(self, setup_pages):
         """
         Given a request is made by an authenticated user with access to some private pages
@@ -200,7 +202,7 @@ class TestCMSPagesAPIViewSetPermissions:
 
         request = Request(django_request)
 
-        mock_user = MagicMock()
+        mock_user = mock.MagicMock()
         mock_user.permission_sets = MockPermissionSets(
             [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
             has_global_access=False,
