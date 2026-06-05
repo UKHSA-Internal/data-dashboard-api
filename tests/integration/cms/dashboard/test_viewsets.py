@@ -151,6 +151,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric" not in titles
         assert "Private Metric 2" not in titles
 
+    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_global_access_user(self, setup_pages):
         """
         Given a request is made by an authenticated user with global access
