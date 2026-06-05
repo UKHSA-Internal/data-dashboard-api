@@ -155,15 +155,23 @@ def check_metric_related_permissions(
     if not isinstance(permission_set, dict):
         return False
 
-    theme_id = str(theme_id)
-    sub_theme_id = str(sub_theme_id)
-    topic_id = str(topic_id)
-    metric_id = str(metric_id)
+    theme_id = _get_id_string_or_none(theme_id)
+    sub_theme_id = _get_id_string_or_none(sub_theme_id)
+    topic_id = _get_id_string_or_none(topic_id)
+    metric_id = _get_id_string_or_none(metric_id)
 
-    permission_theme_id = str(permission_set.get("theme", {}).get("id"))
-    permission_sub_theme_id = str(permission_set.get("sub_theme", {}).get("id"))
-    permission_topic_id = str(permission_set.get("topic", {}).get("id"))
-    permission_metric_id = str(permission_set.get("metric", {}).get("id"))
+    permission_theme_id = _get_id_string_or_none(
+        permission_set.get("theme", {}).get("id")
+    )
+    permission_sub_theme_id = _get_id_string_or_none(
+        permission_set.get("sub_theme", {}).get("id")
+    )
+    permission_topic_id = _get_id_string_or_none(
+        permission_set.get("topic", {}).get("id")
+    )
+    permission_metric_id = _get_id_string_or_none(
+        permission_set.get("metric", {}).get("id")
+    )
 
     if permission_theme_id == WILDCARD_ID_VALUE:
         return True
@@ -203,23 +211,29 @@ def check_geography_permissions(
     if not isinstance(permission_set, dict):
         return False
 
-    geography_type = str(geography_type)
-    geography_id = str(geography_id)
+    geography_type = _get_id_string_or_none(geography_type)
+    geography_id = _get_id_string_or_none(geography_id)
 
-    permission_geography_type = str(permission_set.get("geography_type", {}).get("id"))
-    permission_geography_id = str(permission_set.get("geography", {}).get("id"))
+    permission_geography_type = _get_id_string_or_none(
+        permission_set.get("geography_type", {}).get("id")
+    )
+    permission_geography_id = _get_id_string_or_none(
+        permission_set.get("geography", {}).get("id")
+    )
 
     if permission_geography_type == WILDCARD_ID_VALUE:
         return True
 
     if (  # noqa: SIM103
         permission_geography_type == geography_type
-        and permission_geography_id
-        in {
-            WILDCARD_ID_VALUE,
-            geography_id,
-        }
+        and permission_geography_id in {WILDCARD_ID_VALUE, geography_id}
     ):
         return True
 
     return False
+
+
+def _get_id_string_or_none(my_id: int | str | None) -> str | None:
+    """Normalize ID to STRING whilst preserving None values"""
+
+    return str(my_id) if my_id is not None else None
