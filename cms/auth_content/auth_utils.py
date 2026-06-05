@@ -1,5 +1,6 @@
 import os
 from collections.abc import Callable
+import os
 
 from django import forms
 
@@ -25,7 +26,6 @@ def _create_form_field(
         widget=forms.Select(choices=choices),
         help_text=help_texts.NON_PUBLIC_PAGE_REQUIRED,
     )
-
 
 def is_auth_enabled() -> bool:
     return str(os.environ.get("AUTH_ENABLED", "")).lower() in {"true", "1"}
