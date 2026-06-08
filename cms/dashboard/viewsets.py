@@ -1,4 +1,3 @@
-import logging
 from itertools import chain
 
 from django.urls import path
@@ -15,7 +14,6 @@ from cms.metrics_documentation.models.child import MetricsDocumentationChildEntr
 from cms.topic.models import TopicPage
 from common.auth.permissions import check_page_permissions
 
-logger = logging.getLogger(__name__)
 AUTH_ENABLED = is_auth_enabled()
 
 
@@ -82,19 +80,12 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 filtered_queryset = is_public_pages | pages_without_is_public
 
             else:
-                logger.info(
-                    "User %s has total permission sets: %s",
-                    req.user.username,
-                    req.user.permission_sets["summary"]["total_permission_sets"],
-                )
                 has_global_access = req.user.permission_sets["summary"][
                     "has_global_access"
                 ]
 
                 if has_global_access:
-                    logger.info("User %s has global access", req.user.username)
                     filtered_queryset = queryset
-
                 else:
                     user_permissions = req.user.permission_sets["permission_sets"]
                     pages_to_check = chain(
