@@ -116,3 +116,40 @@ class TestMetricManager:
 
         # Then
         assert get_name_by_id == "COVID-19_headline_ONSdeaths_7DayChange"
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "lookup_name, expected_index",
+        [
+            ("COVID-19_deaths_ONSByDay", 0),
+            ("COVID-19_deaths_ONSByWeek", 1),
+            ("NON-EXISTENT", None),
+        ],
+    )
+    def test_get_id_by_name(self, lookup_name: str, expected_index: int | None):
+        """
+        Given some Metric records
+        When get_id_by_name() is called
+        Then the matching metric id is returned, or None if no match
+        """
+
+        # Given
+        given_metrics = [
+            Metric.objects.create(
+                name="COVID-19_deaths_ONSByDay",
+                metric_group=MetricGroup.objects.create(name="DUMMY"),
+            ),
+            Metric.objects.create(
+                name="COVID-19_deaths_ONSByWeek",
+                metric_group=MetricGroup.objects.create(name="DUMMY"),
+            ),
+        ]
+
+        # When
+        metric_id = Metric.objects.get_id_by_name(lookup_name)
+
+        # Then
+        expected_id = (
+            given_metrics[expected_index].id if expected_index is not None else None
+        )
+        assert metric_id == expected_id

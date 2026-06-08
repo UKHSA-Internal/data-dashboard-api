@@ -119,3 +119,42 @@ class TestGeographyManager:
         # Access the dictionary returned by .first()
         result = get_name_by_code
         assert result == geography_two.name
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "lookup_name, expected_index",
+        [
+            ("England", 0),
+            ("London", 1),
+            ("NON-EXISTENT", None),
+        ],
+    )
+    def test_get_id_by_name(self, lookup_name: str, expected_index: int | None):
+        """
+        Given some Geography records
+        When get_id_by_name() is called
+        Then the matching geography_id is returned, or None if no match
+        """
+
+        # Given
+        given_geographies = [
+            GeographyFactory.create_with_geography_type(
+                name="England",
+                geography_code="DUMMY",
+                geography_type="DUMMY",
+            ),
+            GeographyFactory.create_with_geography_type(
+                name="London",
+                geography_code="DUMMY",
+                geography_type="DUMMY",
+            ),
+        ]
+
+        # When
+        geography_id = Geography.objects.get_id_by_name(lookup_name)
+
+        # Then
+        expected_id = (
+            given_geographies[expected_index].id if expected_index is not None else None
+        )
+        assert geography_id == expected_id

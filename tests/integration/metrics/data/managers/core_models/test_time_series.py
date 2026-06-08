@@ -272,6 +272,70 @@ class TestCoreTimeSeriesQuerySet:
         assert public_record in retrieved_records
         assert non_public_record in retrieved_records
 
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("does_permission_match", [True, False])
+    def test_query_for_data_method_handles_specific_permission_sets(
+        self,
+        does_permission_match: bool,
+    ):
+        """
+        Given a public and a non-public CoreTimeSeries record
+        When query_for_data() is called with a specific permission set
+        Then the non-public record is only returned when the permission row matches
+        """
+
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1,
+            date="2020-01-01",
+            is_public=True,
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2,
+            date="2020-01-01",
+            is_public=False,
+        )
+        permission_sets = {
+            "permission_sets": [
+                {
+                    "theme": {"id": str(public_record.metric.topic.sub_theme.theme.id)},
+                    "sub_theme": {"id": str(public_record.metric.topic.sub_theme.id)},
+                    "topic": {"id": str(public_record.metric.topic.id)},
+                    "metric": {
+                        "id": str(
+                            # Tweak id to be wrong for the negative test
+                            public_record.metric.id
+                            if does_permission_match
+                            else 999999
+                        )
+                    },
+                    "geography_type": {
+                        "id": str(public_record.geography.geography_type.id)
+                    },
+                    "geography": {"id": str(public_record.geography.id)},
+                }
+            ],
+            "summary": {"has_global_access": False},
+        }
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
+            date_from="2010-01-01",
+            date_to="2030-01-01",
+            fields_to_export=[],
+            permission_sets=permission_sets,
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert (non_public_record in retrieved_records) is does_permission_match
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
