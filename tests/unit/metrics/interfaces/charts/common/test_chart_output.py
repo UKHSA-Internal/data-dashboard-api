@@ -113,7 +113,9 @@ class TestApplyWatermark:
         figure = mock.Mock(spec=go.Figure)
 
         # mock layout.width for scaling logic
-        font_size = (DEFAULT_CHART_WIDTH * 0.75) / (max(len("Highly Confidential"), 1) * 0.6)
+        font_size = (DEFAULT_CHART_WIDTH * 0.75) / (
+            max(len("Highly Confidential"), 1) * 0.6
+        )
         expected_font_size = round(max(8, min(font_size, 300)))
 
         mock_data_classification.__getitem__.return_value.value = "Highly Confidential"

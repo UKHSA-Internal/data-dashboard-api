@@ -193,7 +193,7 @@ class TestChartsInterface:
             figure=spy_generate_line_single_simplified.return_value,
             description=charts_interface.build_chart_description(plots_data=[]),
             is_headline=False,
-            chart_width=fake_chart_request_params.chart_width
+            chart_width=fake_chart_request_params.chart_width,
         )
         assert generated_chart_output == charts_output
 
