@@ -1084,3 +1084,162 @@ class TestCheckPermissions:
             )
             == False
         )
+
+
+class TestCheckPagePermissions:
+    @pytest.mark.parametrize(
+        "user_permissions, theme_id, sub_theme_id, topic_id",
+        [
+            ([{"theme": {"id": "-1"}}], "10", "20", "30"),
+            ([{"theme": {"id": "10"}, "sub_theme": {"id": "-1"}}], "10", "20", "30"),
+            (
+                [
+                    {
+                        "theme": {"id": "10"},
+                        "sub_theme": {"id": "20"},
+                        "topic": {"id": "-1"},
+                    }
+                ],
+                "10",
+                "20",
+                "30",
+            ),
+            (
+                [
+                    {
+                        "theme": {"id": "10"},
+                        "sub_theme": {"id": "20"},
+                        "topic": {"id": "30"},
+                    }
+                ],
+                "10",
+                "20",
+                "30",
+            ),
+            (
+                [
+                    {"theme": {"id": "5"}, "sub_theme": {"id": "-1"}},
+                    {
+                        "theme": {"id": "10"},
+                        "sub_theme": {"id": "20"},
+                        "topic": {"id": "30"},
+                    },
+                ],
+                "10",
+                "20",
+                "30",
+            ),
+        ],
+    )
+    def test_check_page_permissions_valid_access(
+        self, user_permissions, theme_id, sub_theme_id, topic_id
+    ):
+        """
+        Given a permission set that does grant access to the provided ids
+        When the `check_page_permissions` function is called
+        Then the function returns true
+        """
+        assert (
+            check_page_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
+            == True
+        )
+
+    @pytest.mark.parametrize(
+        "user_permissions, theme_id, sub_theme_id, topic_id",
+        [
+            ([{"theme": {"id": "99"}, "sub_theme": {"id": "-1"}}], "10", "20", "30"),
+            (
+                [
+                    {
+                        "theme": {"id": "10"},
+                        "sub_theme": {"id": "99"},
+                        "topic": {"id": "-1"},
+                    }
+                ],
+                "10",
+                "20",
+                "30",
+            ),
+            (
+                [
+                    {
+                        "theme": {"id": "10"},
+                        "sub_theme": {"id": "20"},
+                        "topic": {"id": "99"},
+                    }
+                ],
+                "10",
+                "20",
+                "30",
+            ),
+            ([], "10", "20", "30"),
+        ],
+    )
+    def test_check_page_permissions_invalid_access(
+        self, user_permissions, theme_id, sub_theme_id, topic_id
+    ):
+        """
+        Given a permission set that does not grant access to the provided ids
+        When the `check_page_permissions` function is called
+        Then the function returns false
+        """
+        assert (
+            check_page_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
+            == False
+        )
+
+    @pytest.mark.parametrize(
+        "user_permissions, theme_id, sub_theme_id, topic_id",
+        [
+            ([{}], "10", "20", "30"),
+            (None, "10", "20", "30"),
+            ([{"sub_theme": {"id": "-1"}, "topic": {"id": "-1"}}], "10", "20", "30"),
+            (
+                [{"theme": {}, "sub_theme": {"id": "-1"}, "topic": {"id": "-1"}}],
+                "10",
+                "20",
+                "30",
+            ),
+            ([{"theme": {"id": "10"}, "topic": {"id": "-1"}}], "10", "20", "30"),
+            (
+                [{"theme": {"id": "10"}, "sub_theme": {}, "topic": {"id": "-1"}}],
+                "10",
+                "20",
+                "30",
+            ),
+            ([{"theme": {"id": "10"}, "sub_theme": {"id": "20"}}], "10", "20", "30"),
+            (
+                [{"theme": {"id": "10"}, "sub_theme": {"id": "20"}, "topic": {}}],
+                "10",
+                "20",
+                "30",
+            ),
+        ],
+    )
+    def test_check_page_permissions_with_missing_values(
+        self, user_permissions, theme_id, sub_theme_id, topic_id
+    ):
+        """
+        Given a permission set that is missing values
+        When the `check_page_permissions` function is called
+        Then the function returns false
+        """
+        assert (
+            check_page_permissions(
+                permission_sets=user_permissions,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
+            == False
+        )
