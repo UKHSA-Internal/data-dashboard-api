@@ -1,7 +1,6 @@
 import logging
 from itertools import chain
 
-from django.db.models import Exists, OuterRef, Q
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
@@ -85,29 +84,30 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             req = self.request
 
             if req.auth is None:
-                filtered_queryset = queryset.annotate(
-                    is_public_topic_page=Exists(
-                        TopicPage.objects.filter(
-                            page_ptr_id=OuterRef("pk"),
-                            is_public=True,
-                        )
-                    ),
-                    is_public_metrics_doc_child_page=Exists(
-                        MetricsDocumentationChildEntry.objects.filter(
-                            page_ptr_id=OuterRef("pk"),
-                            is_public=True,
-                        )
-                    ),
-                ).filter(
-                    Q(is_public_topic_page=True)
-                    | Q(is_public_metrics_doc_child_page=True)
-                    | ~Q(
-                        content_type__model__in=[
-                            "topicpage",
-                            "metricsdocumentationchildentry",
-                        ]
-                    )
+
+                # Get all page ids for pages with is_public
+                public_topic_page_ids = TopicPage.objects.filter(
+                    is_public=True, page_ptr__in=queryset
+                ).values_list("page_ptr_id", flat=True)
+                public_metric_doc_child_page_ids = (
+                    MetricsDocumentationChildEntry.objects.filter(
+                        is_public=True, page_ptr__in=queryset
+                    ).values_list("page_ptr_id", flat=True)
                 )
+
+                # Combine all public pages into one queryset
+                all_public_page_ids = list(public_topic_page_ids) + list(
+                    public_metric_doc_child_page_ids
+                )
+                is_public_pages = queryset.filter(id__in=all_public_page_ids)
+
+                # Get always public pages
+                pages_without_is_public = queryset.not_type(
+                    TopicPage, MetricsDocumentationChildEntry
+                )
+
+                # Combine into single unified queryset
+                filtered_queryset = is_public_pages | pages_without_is_public
 
             else:
                 logger.info(
