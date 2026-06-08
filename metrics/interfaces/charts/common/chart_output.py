@@ -3,6 +3,9 @@ from dataclasses import dataclass
 import plotly.graph_objects as go
 
 from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.domain.common.utils import (
+    DEFAULT_CHART_WIDTH,
+)
 from metrics.interfaces.data_classification.access import DataClassification
 
 HEX_COLOUR_BLACK = "#0b0c0c"
@@ -15,7 +18,7 @@ class ChartOutput:
     figure: go.Figure
     description: str
     is_headline: bool
-    chart_width: int
+    chart_width: int = DEFAULT_CHART_WIDTH
     is_subplot: bool = False
     is_public: bool = True
     data_classification: str | None = None
