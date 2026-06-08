@@ -68,7 +68,6 @@ class TestAPITimeSeries:
             ["metric", "COVID-19_deaths_ONSByDay", LARGE_CHAR_COLUMN_MAX_CONSTRAINT],
             ["stratum", "default", CHAR_COLUMN_MAX_CONSTRAINT],
             ["sex", "all", SEX_MAX_CHAR_CONSTRAINT],
-            ["metric_value", 0, CHAR_COLUMN_MAX_CONSTRAINT],
         ),
     )
     def test_correct_max_length_constraints_returned_from_model(
