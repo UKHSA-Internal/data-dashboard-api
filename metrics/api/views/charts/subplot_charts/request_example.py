@@ -9,6 +9,7 @@ REQUEST_PAYLOAD_EXAMPLE = {
     "target_threshold": 95,
     "target_threshold_label": "95% target",
     "chart_parameters": {
+        "chart_width": 600,
         "x_axis": "geography",
         "y_axis": "metric",
         "theme": "immunisation",
