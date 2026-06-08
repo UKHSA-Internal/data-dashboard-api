@@ -348,8 +348,10 @@ PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "false").lower()
     "on",
 }
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+# Default is 5 minutes because rendering many charts can take a long time
 PAGE_PREVIEWS_TOKEN_TTL_SECONDS = int(
-    os.environ.get("PAGE_PREVIEWS_TOKEN_TTL_SECONDS", "30")
+    os.environ.get("PAGE_PREVIEWS_TOKEN_TTL_SECONDS", "300")
 )
 
 
