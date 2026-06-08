@@ -4,6 +4,7 @@ import pytest
 import plotly.graph_objects as go
 
 
+from metrics.domain.common.utils import DEFAULT_CHART_WIDTH
 from metrics.interfaces.charts.common.chart_output import ChartOutput
 
 MODULE_PATH = "metrics.interfaces.charts.common.chart_output"
@@ -112,10 +113,8 @@ class TestApplyWatermark:
         figure = mock.Mock(spec=go.Figure)
 
         # mock layout.width for scaling logic
-        figure.layout.width = 800
-        expected_font_size = max(
-            12, min(int((800 * 0.85) / (len("Highly Confidential") * 0.65)), 100)
-        )
+        font_size = (DEFAULT_CHART_WIDTH * 0.75) / (max(len("Highly Confidential"), 1) * 0.6)
+        expected_font_size = round(max(8, min(font_size, 300)))
 
         mock_data_classification.__getitem__.return_value.value = "Highly Confidential"
 
