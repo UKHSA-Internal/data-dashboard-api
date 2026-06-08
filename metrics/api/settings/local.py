@@ -37,10 +37,6 @@ MIDDLEWARE += [
 
 INTERNAL_IPS = ["127.0.0.1"]
 
-# Local-only override to ease frontend preview testing
-PAGE_PREVIEWS_TOKEN_TTL_SECONDS = int(
-    os.environ.get("PAGE_PREVIEWS_TOKEN_TTL_SECONDS", "86400")
-)
 PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "true").lower() in {
     "1",
     "true",
