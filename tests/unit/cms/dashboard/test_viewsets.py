@@ -4,11 +4,11 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSeria
 from cms.dashboard.viewsets import (
     CMSDraftPagesViewSet,
     CMSPagesAPIViewSet,
-    check_permissions,
+    check_page_permissions,
 )
 
 
-class TestCheckPermissions:
+class TestCheckPagePermissions:
     @pytest.mark.parametrize(
         "user_permissions, theme_id, sub_theme_id, topic_id",
         [
@@ -53,16 +53,16 @@ class TestCheckPermissions:
             ),
         ],
     )
-    def test_check_permissions_valid_access(
+    def test_check_page_permissions_valid_access(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
         """
         Given a permission set that does grant access to the provided ids
-        When the `check_permissions` function is called
+        When the `check_page_permissions` function is called
         Then the function returns true
         """
         assert (
-            check_permissions(
+            check_page_permissions(
                 permission_sets=user_permissions,
                 theme_id=theme_id,
                 sub_theme_id=sub_theme_id,
@@ -102,16 +102,16 @@ class TestCheckPermissions:
             ([], "10", "20", "30"),
         ],
     )
-    def test_check_permissions_invalid_access(
+    def test_check_page_permissions_invalid_access(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
         """
         Given a permission set that does not grant access to the provided ids
-        When the `check_permissions` function is called
+        When the `check_page_permissions` function is called
         Then the function returns false
         """
         assert (
-            check_permissions(
+            check_page_permissions(
                 permission_sets=user_permissions,
                 theme_id=theme_id,
                 sub_theme_id=sub_theme_id,
@@ -148,16 +148,16 @@ class TestCheckPermissions:
             ),
         ],
     )
-    def test_check_permissions_with_missing_values(
+    def test_check_page_permissions_with_missing_values(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
         """
         Given a permission set that is missing values
-        When the `check_permissions` function is called
+        When the `check_page_permissions` function is called
         Then the function returns false
         """
         assert (
-            check_permissions(
+            check_page_permissions(
                 permission_sets=user_permissions,
                 theme_id=theme_id,
                 sub_theme_id=sub_theme_id,

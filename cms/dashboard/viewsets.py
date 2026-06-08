@@ -13,7 +13,7 @@ from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
-from common.auth.permissions import check_permissions
+from common.auth.permissions import check_page_permissions
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                     page_id
                     for page_id, page in pages_to_check
                     if page.is_public
-                    or check_permissions(
+                    or check_page_permissions(
                         permission_sets=user_permissions,
                         theme_id=page.theme,
                         sub_theme_id=page.sub_theme,
