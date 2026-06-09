@@ -42,11 +42,9 @@ class TestParseEmbargoTimeValue:
         When parse_embargo_time_value is called
         Then the corresponding UTC datetime is returned
         """
-        actual = virtual_clock.parse_embargo_time_value(embargo_time_value)
+        actual = virtual_clock.parse_embargo_time_value(embargo_time_value).timestamp()
 
-        assert actual == datetime.datetime.fromtimestamp(
-            expected_epoch, tz=datetime.UTC
-        )
+        assert actual == expected_epoch
 
     @pytest.mark.parametrize("embargo_time_value", [True, False, object()])
     def test_returns_none_for_unsupported_value_types(self, embargo_time_value):
@@ -79,7 +77,9 @@ class TestParseEmbargoTimeValue:
         spy_datetime_class.fromtimestamp.side_effect = OverflowError
 
         assert virtual_clock.parse_embargo_time_value("1711456200") is None
-        spy_datetime_class.fromtimestamp.assert_called_once_with(1711456200)
+        spy_datetime_class.fromtimestamp.assert_called_once_with(
+            1711456200, tz=datetime.UTC
+        )
 
 
 class TestSetEmbargoTime:
