@@ -96,8 +96,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "metrics.api.middleware.current_user.CurrentUserMiddleware",
-    "metrics.api.middleware.EmbargoMiddleware",
-    "metrics.api.middleware.RequestScopedCachingConfigMiddleware",
+    "metrics.api.middleware.preview.EmbargoMiddleware",
+    "metrics.api.middleware.preview.RequestScopedCachingConfigMiddleware",
 ]
 
 APPEND_SLASH = True

@@ -1,10 +1,10 @@
 import json
 from unittest import mock
 
-from metrics.api.middleware import RequestScopedCachingConfigMiddleware
+from metrics.api.middleware.preview import RequestScopedCachingConfigMiddleware
 from django.http import JsonResponse
 
-MODULE_PATH = "metrics.api.middleware"
+MODULE_PATH = "metrics.api.middleware.preview"
 
 
 class TestRequestScopedCachingConfigMiddleware:

@@ -1,9 +1,9 @@
 import json
 from unittest import mock
 
-from metrics.api.middleware import EmbargoMiddleware
+from metrics.api.middleware.preview import EmbargoMiddleware
 
-MODULE_PATH = "metrics.api.middleware"
+MODULE_PATH = "metrics.api.middleware.preview"
 
 
 class TestEmbargoMiddleware:
