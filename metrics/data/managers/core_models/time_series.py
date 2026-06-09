@@ -254,8 +254,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
         if permission_sets:
-            # Else with permissions we'll keep both the public and non-public data
-            if not check_chart_permissions_by_name(
+            if check_chart_permissions_by_name(
                 permission_sets=permission_sets,
                 theme_name=theme,
                 sub_theme_name=sub_theme,
@@ -264,6 +263,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 geography_type=geography_type,
                 geography_name=geography,
             ):
+                # Keep both the public and non-public data
+                pass
+            else:
                 queryset = queryset.filter(is_public=True)
         else:
             queryset = queryset.filter(is_public=True)
