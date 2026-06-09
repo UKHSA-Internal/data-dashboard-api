@@ -2,16 +2,14 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts, plots
+from metrics.api.serializers.downloads.common import BaseDownloadsSerializer
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
-    ChartAxisFields,
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models import ChartRequestParams
-
-FILE_FORMAT_CHOICES: list[str] = ["json", "csv"]
 
 
 class DownloadPlotSerializer(plots.PlotSerializer):
@@ -34,33 +32,7 @@ class DownloadListSerializer(serializers.ListSerializer):
     child = DownloadPlotSerializer()
 
 
-class DownloadsSerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=FILE_FORMAT_CHOICES,
-        required=True,
-        help_text=help_texts.FILE_DOWNLOAD_FORMAT,
-    )
-    x_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_X_AXIS,
-    )
-    y_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_Y_AXIS,
-    )
-    confidence_intervals = serializers.BooleanField(
-        required=False,
-        default=False,
-        allow_null=True,
-        help_text=help_texts.CONFIDENCE_INTERVALS,
-    )
-
+class SingleCategoryDownloadsSerializer(BaseDownloadsSerializer):
     plots = DownloadListSerializer()
 
     def to_models(self, request: Request) -> ChartRequestParams:
@@ -103,11 +75,3 @@ class DownloadsSerializer(serializers.Serializer):
                 plot.override_y_axis_choice_to_none = True
 
         return plots_collection
-
-
-class BulkDownloadsSerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=FILE_FORMAT_CHOICES,
-        required=True,
-        help_text=help_texts.FILE_DOWNLOAD_FORMAT,
-    )

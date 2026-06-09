@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers import DownloadsSerializer
+from metrics.api.serializers import SingleCategoryDownloadsSerializer
 
 
 class TestDownloadsSerializer:
@@ -23,12 +23,12 @@ class TestDownloadsSerializer:
         """
         Given a valid payload which has been serialized
         When `to_models()` is called
-            from an instance of the `DownloadsSerializer`
+            from an instance of the `SingleCategoryDownloadsSerializer`
         Then the returned model sets the default chart type
         """
         # Given
         valid_payload = self._build_valid_payload()
-        serializer = DownloadsSerializer(data=valid_payload)
+        serializer = SingleCategoryDownloadsSerializer(data=valid_payload)
         serializer.is_valid(raise_exception=True)
 
         # When
@@ -42,13 +42,13 @@ class TestDownloadsSerializer:
         """
         Given a valid payload which has been serialized
         When `to_models()` is called
-            from an instance of the `DownloadsSerializer`
+            from an instance of the `SingleCategoryDownloadsSerializer`
         Then the returned model sets
             `override_y_axis_choice_to_none` to True
         """
         # Given
         valid_payload = self._build_valid_payload()
-        serializer = DownloadsSerializer(data=valid_payload)
+        serializer = SingleCategoryDownloadsSerializer(data=valid_payload)
         serializer.is_valid(raise_exception=True)
 
         # When
@@ -61,14 +61,14 @@ class TestDownloadsSerializer:
     @pytest.mark.parametrize("valid_download_format", ["csv", "json"])
     def test_valid_download_format(self, valid_download_format: str):
         """
-        Given a valid format passed to a `DownloadsSerializer` object
+        Given a valid format passed to a `SingleCategoryDownloadsSerializer` object
         When `is_valid()` is called from the serializer
         Then True is returned
         """
         # Given
         data = self._build_valid_payload()
         data["file_format"] = valid_download_format
-        serializer = DownloadsSerializer(data=data)
+        serializer = SingleCategoryDownloadsSerializer(data=data)
 
         # When
         is_serializer_valid: bool = serializer.is_valid()
@@ -78,14 +78,14 @@ class TestDownloadsSerializer:
 
     def test_invalid_file_format(self):
         """
-        Given an invalid download format passed to a `DownloadsSerializer` object
+        Given an invalid download format passed to a `SingleCategoryDownloadsSerializer` object
         When `is_valid(raise_exception=True)` is called from the serializer
         Then a `ValidationError` is raised
         """
         # Given
         data = self._build_valid_payload()
         data["file_format"] = "invalid.download.format"
-        serializer = DownloadsSerializer(data=data)
+        serializer = SingleCategoryDownloadsSerializer(data=data)
 
         # When / Then
         with pytest.raises(ValidationError):
