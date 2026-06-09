@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 from rest_framework.request import Request
 from django.core.signing import BadSignature as DjangoBadSignature
 
-from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
+from cms.dashboard.serializers import ListablePageSerializer
 from cms.dashboard.viewsets import (
     CMSDraftPagesViewSet,
     CMSPagesAPIViewSet,
