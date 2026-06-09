@@ -93,30 +93,42 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py312"
 
 [tool.ruff.lint.per-file-ignores]
-"**/{tests}/*"                                                = [
-                                                                 "E501",           # Ignore line length in test files
-                                                                 "S101",           # Ignore use of `assert` statement in tests
-                                                                 "SLF001"          # Ignore access of private methods/attributes in tests
-                                                                ]
-"cms/metrics_interface/interface.py"                          = ["PLR0904"]        # Ignore maximum number of public methods
-"cms/dynamic_content/cards.py"                                = ["SLF001"]         # Ignore access to protected member
-"cms/dynamic_content/global_filter_deconstruction.py"         = ["PERF401"]        # Ignore list comprehension which would reduce readibility
-"metrics/api/views/*"                                         = ["E501"]           # Ignore line length in API views.
-                                                                                        # This infringement is due to
-                                                                                        # swagger-facing docstrings/documentation
-"metrics/api/views/charts.py"                                 = ["SIM115"]         # Ignore context handler for opening file
-"metrics/domain/charts/chart_settings/single_category.py"     = ["SIM108"]         # Ignore requirement of ternary operator
-"**/help_texts.py"                                            = ["W291"]           # Ignore trailing whitespace for help texts
-"**/build_cms_site.py"                                        = ["W605"]           # Ignore escape sequences used in regex calls
-"ingestion/file_ingestion.py"                                 = ["BLE001"]         # Ignore blind exception catch for file ingestion function
-"validation/geography_code.py"                                = ["C901"]           # Ignore complexity assessment - due to switch case
-"public_api/views/root_view.py"                               = ["A002"]           # Ignore built-in `format` used in arg to extended
-"public_api/version_02/views/root_view.py"                    = ["A002"]           # Ignore built-in `format` used in arg to extended
-                                                                                        # rest framework API view method
-"caching/public_api/crawler.py"                               = ["PERF401"]        # Ignore list comprehension which would reduce readibility
-"caching/common/geographies_crawler.py"                       = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
-"metrics/domain/weather_health_alerts/text_lookups/*"         = ["W291"]           # Ignore trailing whitespace for weather alert text lookups
-"config.py"                                                   = ["PLW1508"]        # Ignore enforcing strings for environment variables
+# Ignore line length in test files, use of assert statement in tests, and access of private methods/attributes in tests
+"**/{tests}/*" = ["E501", "S101", "SLF001"]
+# Ignore maximum number of public methods
+"cms/metrics_interface/interface.py" = ["PLR0904"]
+# Ignore access to protected member
+"cms/dynamic_content/cards.py" = ["SLF001"]
+# Ignore list comprehension which would reduce readibility
+"cms/dynamic_content/global_filter_deconstruction.py" = ["PERF401"]
+# Ignore line length in API views. This infringement is due to swagger-facing docstrings/documentation
+"metrics/api/views/*" = ["E501"]
+# Ignore context handler for opening file
+"metrics/api/views/charts.py" = ["SIM115"]
+# Ignore requirement of ternary operator
+"metrics/domain/charts/chart_settings/single_category.py" = ["SIM108"]
+# Ignore trailing whitespace for help texts
+"**/help_texts.py" = ["W291"]
+# Ignore escape sequences used in regex calls
+"**/build_cms_site.py" = ["W605"]
+# Ignore blind exception catch for file ingestion function
+"ingestion/file_ingestion.py" = ["BLE001"]
+# Ignore complexity assessment - due to switch case
+"validation/geography_code.py" = ["C901"]
+# Ignore built-in `format` used in arg to extended rest framework API view method
+"public_api/views/root_view.py" = ["A002"]
+# Ignore built-in `format` used in arg to extended rest framework API view method
+"public_api/version_02/views/root_view.py" = ["A002"]
+# Ignore list comprehension which would reduce readibility
+"caching/public_api/crawler.py" = ["PERF401"]
+# Ignore requirement of `__hash__` implementation
+"caching/common/geographies_crawler.py" = ["PLW1641"]
+# Ignore trailing whitespace for weather alert text lookups
+"metrics/domain/weather_health_alerts/text_lookups/*" = ["W291"]
+# Ignore enforcing strings for environment variables
+"config.py" = ["PLW1508"]
+# Ignore length of try clause
+"metrics/data/in_memory_models/geography_relationships/handlers.py" = ["PLW0717"]
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
