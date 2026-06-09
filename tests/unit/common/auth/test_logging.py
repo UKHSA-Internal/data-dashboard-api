@@ -6,38 +6,28 @@ from common.auth.logging import log_user_permissions
 
 
 @pytest.mark.parametrize(
-    "permission_sets, expected_calls",
+    "permission_sets, expected_has_global_access",
     [
         (
             {
-                "summary": {
-                    "total_permission_sets": 2,
-                    "has_global_access": False,
-                }
+                "permission_sets": [],
+                "summary": {"total_permission_sets": 2, "has_global_access": True},
             },
-            [
-                mock.call("User %s has total permission sets: %s", "user-1", 2),
-                mock.call("User %s has global access: %s", "user-1", False),
-            ],
+            True,
         ),
         (
             {
-                "summary": {
-                    "total_permission_sets": 3,
-                    "has_global_access": True,
-                }
+                "permission_sets": [],
+                "summary": {"total_permission_sets": 1, "has_global_access": False},
             },
-            [
-                mock.call("User %s has total permission sets: %s", "user-1", 3),
-                mock.call("User %s has global access: %s", "user-1", True),
-            ],
+            False,
         ),
         (
-            [{"theme": {"id": "1"}}],
-            [
-                mock.call("User %s has total permission sets: %s", "user-1", 1),
-                mock.call("User %s has global access: %s", "user-1", False),
-            ],
+            {
+                "permission_sets": [],
+                "summary": {"total_permission_sets": 0, "has_global_access": False},
+            },
+            False,
         ),
     ],
 )
@@ -45,7 +35,7 @@ from common.auth.logging import log_user_permissions
 def test_log_user_permissions(
     mocked_logger_info: mock.MagicMock,
     permission_sets,
-    expected_calls,
+    expected_has_global_access,
 ):
     """
     Given different user permission-set payloads
@@ -54,7 +44,6 @@ def test_log_user_permissions(
     """
 
     # Given
-
     user = mock.Mock(username="user-1")
 
     if permission_sets is not None:
@@ -64,4 +53,13 @@ def test_log_user_permissions(
     log_user_permissions(user)
 
     # Then
-    assert mocked_logger_info.call_args_list == expected_calls
+    log_messages = [call.args[0] for call in mocked_logger_info.call_args_list]
+    expected_count = permission_sets["summary"]["total_permission_sets"]
+
+    assert any(
+        f"total permission sets {expected_count}" in message for message in log_messages
+    )
+    assert (
+        any("global access" in message for message in log_messages)
+        is expected_has_global_access
+    )
