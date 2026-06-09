@@ -8,7 +8,7 @@ that is presently restricted.
 
 import contextvars
 import logging
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any
 
 from django.conf import settings
@@ -52,8 +52,7 @@ def parse_embargo_time_value(embargo_time_value: Any) -> datetime | None:
         return None
 
     try:
-        dt = datetime.fromtimestamp(epoch_seconds)
-        return timezone.make_aware(dt, timezone.get_current_timezone())
+        return datetime.fromtimestamp(epoch_seconds, tz=UTC)
     except (OverflowError, OSError, ValueError):
         return None
 
