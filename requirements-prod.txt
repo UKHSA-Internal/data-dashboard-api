@@ -65,7 +65,7 @@ python-dateutil==2.9.0.post0
 pytz==2026.2
 Pygments==2.20.0
 PyYAML==6.0.3
-redis==7.4.0
+redis==8.0.0
 requests==2.34.2
 rich==15.0.0
 ruamel.yaml==0.19.1
