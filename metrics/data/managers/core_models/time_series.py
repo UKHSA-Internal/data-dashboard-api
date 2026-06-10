@@ -157,7 +157,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._ascending_order(queryset=queryset, field_name="date")
 
-    def query_for_data(
+    def query_for_data(  # noqa: PLR0914
         self,
         *,
         topic: str,

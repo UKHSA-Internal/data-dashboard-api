@@ -628,6 +628,8 @@ class TestCheckPermissions:
         geography_type,
         geography_id,
     ):
+        """Test chart permissions succeed when match or wildcard."""
+
         assert (
             check_chart_permissions(
                 permission_sets=permission_sets,
@@ -783,6 +785,8 @@ class TestCheckPermissions:
         geography_type,
         geography_id,
     ):
+        """Test chart permissions fail when mismatch and no wildcard."""
+
         assert (
             check_chart_permissions(
                 permission_sets=permission_sets,
@@ -1034,6 +1038,8 @@ class TestCheckPermissions:
         geography_type,
         geography_id,
     ):
+        """Test chart permissions fail when being passed missing values"""
+
         assert (
             check_chart_permissions(
                 permission_sets=permission_sets,
@@ -1096,11 +1102,8 @@ class TestCheckPagePermissions:
     def test_check_page_permissions_valid_access(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
-        """
-        Given a permission set that does grant access to the provided ids
-        When the `check_page_permissions` function is called
-        Then the function returns true
-        """
+        """Test page permissions succeed when match or wildcard."""
+
         assert (
             check_page_permissions(
                 permission_sets=user_permissions,
@@ -1145,11 +1148,8 @@ class TestCheckPagePermissions:
     def test_check_page_permissions_invalid_access(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
-        """
-        Given a permission set that does not grant access to the provided ids
-        When the `check_page_permissions` function is called
-        Then the function returns false
-        """
+        """Test page permissions fail when mismatch and no wildcard."""
+
         assert (
             check_page_permissions(
                 permission_sets=user_permissions,
@@ -1191,11 +1191,8 @@ class TestCheckPagePermissions:
     def test_check_page_permissions_with_missing_values(
         self, user_permissions, theme_id, sub_theme_id, topic_id
     ):
-        """
-        Given a permission set that is missing values
-        When the `check_page_permissions` function is called
-        Then the function returns false
-        """
+        """Test page permissions fail when being passed missing values"""
+
         assert (
             check_page_permissions(
                 permission_sets=user_permissions,
