@@ -22,9 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
-    "file_format": "svg",
-    "chart_height": 200,
-    "chart_width": 320,
     "x_axis": "metric",
     "primary_field_values": ["m", "f"],
     "y_axis": "sex",
