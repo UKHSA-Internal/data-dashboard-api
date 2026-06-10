@@ -3,7 +3,7 @@ from .charts import ChartsView, EncodedChartsView, DualCategoryChartsView
 from .headlines import HeadlinesView
 from .downloads import DownloadsView, BulkDownloadsView, SubplotDownloadsView
 from .health import HealthView
-from .tables import TablesView, TablesSubplotView
+from .tables import DualCategoryTablesView, TablesView, TablesSubplotView
 from .trends import TrendsView
 from .audit import (
     AuditAPITimeSeriesViewSet,
