@@ -298,21 +298,25 @@ class TestCoreTimeSeriesQuerySet:
         permission_sets = {
             "permission_sets": [
                 {
-                    "theme": {"id": str(public_record.metric.topic.sub_theme.theme.id)},
-                    "sub_theme": {"id": str(public_record.metric.topic.sub_theme.id)},
-                    "topic": {"id": str(public_record.metric.topic.id)},
+                    "theme": {
+                        "id": str(non_public_record.metric.topic.sub_theme.theme.id)
+                    },
+                    "sub_theme": {
+                        "id": str(non_public_record.metric.topic.sub_theme.id)
+                    },
+                    "topic": {"id": str(non_public_record.metric.topic.id)},
                     "metric": {
                         "id": str(
                             # Tweak id to be wrong for the negative test
-                            public_record.metric.id
+                            non_public_record.metric.id
                             if does_permission_match
                             else 999999
                         )
                     },
                     "geography_type": {
-                        "id": str(public_record.geography.geography_type.id)
+                        "id": str(non_public_record.geography.geography_type.id)
                     },
-                    "geography": {"id": str(public_record.geography.id)},
+                    "geography": {"id": str(non_public_record.geography.id)},
                 }
             ],
             "summary": {"has_global_access": False},
