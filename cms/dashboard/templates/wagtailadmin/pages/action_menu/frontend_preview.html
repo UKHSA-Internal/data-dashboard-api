@@ -2,7 +2,7 @@
 {% if url %}
     <a id="preview-btn" class="button{% if classname %} {{ classname }}{% endif %}" data-url="{{ url }}" href="{{ url }}" target="_blank" rel="noopener noreferrer">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</a>
     {% if label != "View Live" %}
-    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Date (<span id="embargo-time-btn-label">now</span>)</button>
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Time (<span id="embargo-time-btn-label">now</span>)</button>
     {% endif %}
 {% else %}
     <button id="preview-btn" type="submit" name="{{ name }}" value="{{ label }}" class="button{% if classname %} {{ classname }}{% endif %}">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
@@ -14,7 +14,7 @@
 <dialog id="embargo-time-modal" aria-labelledby="embargo-modal-title">
     <div class="embargo-modal-content">
         <h2 id="embargo-modal-title" class="embargo-modal-title">Select embargo time</h2>
-        <section id="embargo-calendar-container" aria-label="Date picker"></section>
+        <section id="embargo-calendar-container" aria-label="Embargo time picker"></section>
         <div class="embargo-modal-buttons">
             <button id="embargo-ok-btn" type="button" class="button embargo-modal-btn" disabled>OK</button>
             <button id="embargo-now-btn" type="button" class="button embargo-modal-btn">Now</button>
