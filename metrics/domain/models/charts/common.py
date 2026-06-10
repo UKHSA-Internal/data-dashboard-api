@@ -4,7 +4,7 @@ from typing import Literal
 from metrics.domain.models.common import BaseRequestParams
 
 
-class ChartRequestParams(BaseRequestParams):
+class ChartBaseRequestParams(BaseRequestParams):
     file_format: Literal["png", "svg", "jpg", "jpeg", "json", "csv"]
     chart_width: int
     chart_height: int
