@@ -53,12 +53,6 @@ def check_chart_permissions_by_name(
     if permission_sets.get("summary").get("has_global_access"):
         return True
 
-    # Sanity check, because front-end will never send empty "" requests
-    if not theme_name or not sub_theme_name or not topic_name or not metric_name:
-        return False
-    if not geography_type or not geography_name:
-        return False
-
     topic_manager = MetricsAPIInterface.get_topic_manager()
     metric_manager = MetricsAPIInterface.get_metric_manager()
     geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
@@ -71,6 +65,8 @@ def check_chart_permissions_by_name(
     geography_type_id = geography_type_manager.get_id_by_name(geography_type)
     geography_id = geography_manager.get_id_by_name(geography_name)
 
+    # Sanity check, because front-end must always
+    # send content for any of these 6 requests
     if any(
         value is None
         for value in (

@@ -96,67 +96,6 @@ class TestCheckPermissionsByName:
 
         return stack
 
-    @pytest.mark.parametrize(
-        "request_kwargs",
-        [
-            {
-                "theme_name": "",
-                "sub_theme_name": SUB_THEME,
-                "topic_name": TOPIC,
-                "metric_name": METRIC,
-                "geography_type": GEOGRAPHY_TYPE,
-                "geography_name": GEOGRAPHY,
-            },
-            {
-                "theme_name": THEME,
-                "sub_theme_name": "",
-                "topic_name": TOPIC,
-                "metric_name": METRIC,
-                "geography_type": GEOGRAPHY_TYPE,
-                "geography_name": GEOGRAPHY,
-            },
-            {
-                "theme_name": THEME,
-                "sub_theme_name": SUB_THEME,
-                "topic_name": "",
-                "metric_name": METRIC,
-                "geography_type": GEOGRAPHY_TYPE,
-                "geography_name": GEOGRAPHY,
-            },
-            {
-                "theme_name": THEME,
-                "sub_theme_name": SUB_THEME,
-                "topic_name": TOPIC,
-                "metric_name": "",
-                "geography_type": GEOGRAPHY_TYPE,
-                "geography_name": GEOGRAPHY,
-            },
-            {
-                "theme_name": THEME,
-                "sub_theme_name": SUB_THEME,
-                "topic_name": TOPIC,
-                "metric_name": METRIC,
-                "geography_type": "",
-                "geography_name": GEOGRAPHY,
-            },
-            {
-                "theme_name": THEME,
-                "sub_theme_name": SUB_THEME,
-                "topic_name": TOPIC,
-                "metric_name": METRIC,
-                "geography_type": GEOGRAPHY_TYPE,
-                "geography_name": "",
-            },
-        ],
-    )
-    def test_returns_false_for_empty_required_name_fields_without_mocks(
-        self, request_kwargs
-    ):
-        assert not check_chart_permissions_by_name(
-            permission_sets=self._build_permission_sets([self._permissions_by_id()]),
-            **request_kwargs,
-        )
-
     def test_returns_false_when_topic_lookup_fails(self):
         with (
             patch(
