@@ -253,20 +253,17 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age=age,
         )
 
-        if permission_sets:
-            if check_chart_permissions_by_name(
-                permission_sets=permission_sets,
-                theme_name=theme,
-                sub_theme_name=sub_theme,
-                topic_name=topic,
-                metric_name=metric,
-                geography_type=geography_type,
-                geography_name=geography,
-            ):
-                # Keep both the public and non-public data
-                pass
-            else:
-                queryset = queryset.filter(is_public=True)
+        if permission_sets and check_chart_permissions_by_name(
+            permission_sets=permission_sets,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
+            topic_name=topic,
+            metric_name=metric,
+            geography_type=geography_type,
+            geography_name=geography,
+        ):
+            # Keep both the public and non-public data
+            pass
         else:
             queryset = queryset.filter(is_public=True)
 
