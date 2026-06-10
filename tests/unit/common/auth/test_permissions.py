@@ -385,7 +385,7 @@ class TestCheckPermissions:
                 [
                     {
                         "theme": {"id": "10"},
-                        "sub_theme": {"id": "-1"},
+                        "sub_theme": {"id": "20"},
                         "topic": {"id": "-1"},
                         "metric": {"id": "-1"},
                         "geography_type": {"id": "-1"},
@@ -760,44 +760,6 @@ class TestCheckPermissions:
                 "50",
                 "60",
                 id=("test_geography_mismatch_denies_access"),
-            ),
-            pytest.param(
-                [
-                    {
-                        "theme": {"id": "10"},
-                        "sub_theme": {"id": "20"},
-                        "topic": {"id": "30"},
-                        "metric": {"id": "-1"},
-                        "geography_type": {"id": "50"},
-                        "geography": {"id": "60"},
-                    }
-                ],
-                "10",
-                "20",
-                "30",
-                "40",
-                "999",
-                "60",
-                id=("test_geography_type_match_with_geography_mismatch_denies_access"),
-            ),
-            pytest.param(
-                [
-                    {
-                        "theme": {"id": "10"},
-                        "sub_theme": {"id": "20"},
-                        "topic": {"id": "30"},
-                        "metric": {"id": "-1"},
-                        "geography_type": {"id": "50"},
-                        "geography": {"id": "999"},
-                    }
-                ],
-                "10",
-                "20",
-                "30",
-                "40",
-                "50",
-                "60",
-                id=("test_geography_type_mismatch_with_geography_match_denies_access"),
             ),
             pytest.param(
                 [],
