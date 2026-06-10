@@ -1,4 +1,3 @@
-from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
 
@@ -6,24 +5,17 @@ from pydantic.main import BaseModel
 from rest_framework.request import Request
 
 from metrics.domain.models import ChartRequestParams
+from metrics.domain.models.common import BaseRequestParams
 from metrics.domain.models.plots import PlotParameters
 
 OPTIONAL_STRING = str | None
 
 
-class Subplots(BaseModel):
+class Subplots(BaseRequestParams):
     subplot_title: str
     x_axis: str
     y_axis: str
     plots: list[PlotParameters]
-    request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
-
-    @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
-        return getattr(self.request, "rbac_permissions", [])
 
 
 """

@@ -546,6 +546,7 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            permission_sets=mocked_chart_request_params.permission_sets,
         )
 
     def test_get_headline_data_calls_core_headline_manager_with_confidence_intervals(
@@ -613,6 +614,7 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            permission_sets=mocked_chart_request_params.permission_sets,
         )
 
     @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
@@ -676,6 +678,7 @@ class TestPlotsInterface:
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
             theme=fake_metric.topic.sub_theme.theme.name,
             sub_theme=fake_metric.topic.sub_theme.name,
+            permission_sets=mocked_chart_request_params.permission_sets,
         )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
@@ -746,6 +749,7 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            permission_sets=mocked_chart_request_params.permission_sets,
         )
 
     @mock.patch.object(PlotsInterface, "get_queryset_from_core_model_manager")
