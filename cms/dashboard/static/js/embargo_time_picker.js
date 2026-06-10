@@ -143,10 +143,6 @@ const createDateTimePickerLauncher = ({
         input.className = 'embargo-picker-input';
         calendarContainer.appendChild(input);
 
-        const parsedDefaultDate = defaultValue === 'now'
-            ? new Date()
-            : new Date(Number(defaultValue) * 1000);
-
         let picker = null;
         let isResolved = false;
 
@@ -174,9 +170,7 @@ const createDateTimePickerLauncher = ({
             e.preventDefault();
             const selected = picker?.selectedDates?.[0];
             if (!selected) return;
-
-            const midnight = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate());
-            finish(Math.floor(midnight.getTime() / 1000).toString());
+            finish(selected);
         };
 
         const onNow = (e) => {
@@ -209,7 +203,8 @@ const createDateTimePickerLauncher = ({
 
         picker = flatpickr(input, {
             dateFormat: 'Y-m-d',
-            defaultDate: parsedDefaultDate,
+            time_24hr: true,
+            enableTime: true,
             inline: true,
             monthSelectorType: 'static',
             onReady: (_selectedDates, _dateStr, instance) => {

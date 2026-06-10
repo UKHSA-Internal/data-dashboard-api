@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	const syncButton = () => {
 		let display = 'now';
 		if (embargoTime && embargoTime !== 'now') {
-			const dt = new Date(Number(embargoTime) * 1000);
+			const dt = new Date(embargoTime);
 			display = new Intl.DateTimeFormat('en-GB', {
-				weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+				weekday: 'short', day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric'
 			}).format(dt);
 		}
 		if (embargoBtn) embargoBtn.title = `Set value: ${display}`;
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			let url = baseUrl;
 			const sep = url.includes('?') ? '&' : '?';
-			url += sep + 'embargo_time=' + encodeURIComponent(embargoTime || 'now');
+			url += sep + 'embargo_time=' + encodeURIComponent(embargoTime.getTime()/1000 || 'now');
 			url += sep + 'route=preview' // preview route
 			window.open(url, '_blank', 'noopener');
 		});
