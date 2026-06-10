@@ -1,4 +1,8 @@
 from .charts import ChartsSerializer
+from .dual_category_tables import (
+    DualCategoryTablesSerializer,
+    DualCategoryTablesResponseSerializer,
+)
 from .headlines import HeadlinesQuerySerializer, CoreHeadlineSerializer
 from .trends import TrendsQuerySerializer, TrendsResponseSerializer
 from .downloads.single_category import SingleCategoryDownloadsSerializer

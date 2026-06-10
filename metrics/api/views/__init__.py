@@ -7,7 +7,7 @@ from .downloads import (
     SubplotDownloadsView,
 )
 from .health import HealthView
-from .tables import TablesView, TablesSubplotView
+from .tables import DualCategoryTablesView, TablesView, TablesSubplotView
 from .trends import TrendsView
 from .audit import (
     AuditAPITimeSeriesViewSet,
