@@ -83,6 +83,10 @@ class ChartsSerializer(BaseChartsSerializer):
             plot["x_axis"] = x_axis
             plot["y_axis"] = y_axis
 
+        # If not provided, default to public data
+        is_public: bool = self.data.get("is_public", True)
+        data_classification: str | None = self.data.get("data_classification")
+
         return ChartRequestParams(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
@@ -98,6 +102,8 @@ class ChartsSerializer(BaseChartsSerializer):
             legend_title=self.data.get("legend_title", ""),
             confidence_intervals=self.data.get("confidence_intervals", False),
             confidence_colour=self.data.get("confidence_colour", ""),
+            is_public=is_public,
+            data_classification=data_classification,
             request=request,
         )
 

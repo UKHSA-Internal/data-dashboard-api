@@ -13,7 +13,7 @@ from metrics.domain.models import (
     ChartRequestParams,
     ChartGenerationPayload,
 )
-from metrics.domain.common.utils import ChartTypes
+from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, ChartTypes
 from metrics.interfaces.charts.single_category_charts.access import (
     ChartsInterface,
     InvalidFileFormatError,
@@ -193,6 +193,7 @@ class TestChartsInterface:
             figure=spy_generate_line_single_simplified.return_value,
             description=charts_interface.build_chart_description(plots_data=[]),
             is_headline=False,
+            chart_width=fake_chart_request_params.chart_width,
         )
         assert generated_chart_output == charts_output
 
