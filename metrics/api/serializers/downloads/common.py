@@ -28,12 +28,6 @@ class BaseDownloadsSerializer(serializers.Serializer):
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS,
     )
-    confidence_intervals = serializers.BooleanField(
-        required=False,
-        default=False,
-        allow_null=True,
-        help_text=help_texts.CONFIDENCE_INTERVALS,
-    )
 
 
 class BulkDownloadsSerializer(serializers.Serializer):

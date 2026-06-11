@@ -36,9 +36,9 @@ from metrics.api.views import (
 )
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.charts.subplot_charts import SubplotChartsView
-# from metrics.api.views.downloads.dual_category_downloads import (
-#     DualCategoryDownloadsView,
-# )
+from metrics.api.views.downloads.dual_category_downloads import (
+    DualCategoryDownloadsView,
+)
 from metrics.api.views.geographies import (
     GeographiesByGeographyTypeView,
     GeographiesView,
@@ -200,9 +200,9 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}downloads/v2", SingleCategoryDownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/subplot/v1", SubplotDownloadsView.as_view()),
-    # re_path(
-    #     f"^{API_PREFIX}downloads/dual-category/v1", DualCategoryDownloadsView.as_view()
-    # ),
+    re_path(
+        f"^{API_PREFIX}downloads/dual-category/v1", DualCategoryDownloadsView.as_view()
+    ),
     re_path(
         f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)",
         GeographiesViewDeprecated.as_view(),

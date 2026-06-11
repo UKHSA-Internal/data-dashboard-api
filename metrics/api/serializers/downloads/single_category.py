@@ -34,6 +34,12 @@ class DownloadListSerializer(serializers.ListSerializer):
 
 class SingleCategoryDownloadsSerializer(BaseDownloadsSerializer):
     plots = DownloadListSerializer()
+    confidence_intervals = serializers.BooleanField(
+        required=False,
+        default=False,
+        allow_null=True,
+        help_text=help_texts.CONFIDENCE_INTERVALS,
+    )
 
     def to_models(self, request: Request) -> ChartRequestParams:
         """Creates a `PlotsCollection` from the download

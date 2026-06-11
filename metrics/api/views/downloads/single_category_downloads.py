@@ -86,7 +86,7 @@ class SingleCategoryDownloadsView(APIView):
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
+        response["Content-Disposition"] = 'attachment; filename="chart_download.csv"'
 
         serializer = self._get_serializer_class(
             queryset=queryset, metric_group=metric_group
