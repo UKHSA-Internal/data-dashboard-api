@@ -128,15 +128,6 @@ class EntraTokenValidator:
         return None
 
     def validate(self, token):
-        try:
-            unverified_payload = jwt.decode(token, options={"verify_signature": False})
-        except jwt.DecodeError as exc:
-            raise TokenError(str(exc)) from exc
-
-        if "permission_sets" in unverified_payload:
-            logger.debug("permission_sets found in token, skipping validation.")
-            return unverified_payload
-
         public_key = self._get_public_key(token)
         if not public_key:
             msg = "No key found for this token"

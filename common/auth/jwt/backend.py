@@ -128,7 +128,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         try:
             # Decode without verifying signature just to read the header/payload
             unverified_payload = jwt.decode(
-                jwt_token, options={"verify_signature": False}
+                jwt_token, options={"verify_signature": False}  # noqa: S5659
             )
             issuer = unverified_payload.get("iss", "")
         except jwt.PyJWTError as e:
