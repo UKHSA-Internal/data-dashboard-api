@@ -132,7 +132,9 @@ def test_validate_entra_token(entra_well_known_keys, jwk_private_key_one):
             "roles": ["Application.Read"],
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     auth.validate(token)
 
 
@@ -147,7 +149,9 @@ def test_validate_token_error_key_entra(entra_well_known_keys, jwk_private_key_t
             "roles": ["Application.Read"],
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
 
@@ -164,7 +168,9 @@ def test_validate_token_valid_expiry_entra(entra_well_known_keys, jwk_private_ke
             "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=15),
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     auth.validate(token)
 
 
@@ -180,7 +186,9 @@ def test_validate_token_error_expired_entra(entra_well_known_keys, jwk_private_k
             "exp": datetime.now(tz=timezone.utc) - timedelta(minutes=15),
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
 
@@ -196,7 +204,9 @@ def test_validate_token_error_aud_entra(entra_well_known_keys, jwk_private_key_o
             "roles": ["Application.Read"],
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
 
     with pytest.raises(validator.TokenError):
         auth.validate(token)
@@ -212,7 +222,9 @@ def test_validate_token_missing_aud_entra(entra_well_known_keys, jwk_private_key
             "roles": ["Application.Read"],
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
 
@@ -241,10 +253,14 @@ def test_validate_token_caching_entra(
             "roles": ["Application.Read"],
         },
     )
-    auth = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     auth.validate(token)
     assert len(responses.calls) == 1
 
-    auth_again = validator.EntraTokenValidator(settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID)
+    auth_again = validator.EntraTokenValidator(
+        settings.ENTRA_TENANT_ID, settings.ENTRA_AUDIENCE, settings.ENTRA_APP_ID
+    )
     auth_again.validate(token)
     assert len(responses.calls) == responses_calls

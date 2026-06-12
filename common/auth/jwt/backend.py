@@ -54,7 +54,9 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             token_validator, provider_name = self.get_token_validator(jwt_token)
         except TokenError:
             logger.debug(f"Failed to identify token provider: {e}")
-            raise exceptions.AuthenticationFailed(_("Unknown or malformed token issuer."))
+            raise exceptions.AuthenticationFailed(
+                _("Unknown or malformed token issuer.")
+            )
 
         try:
             jwt_payload = token_validator.validate(jwt_token)
@@ -83,14 +85,22 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         via get_or_create_for_cognito (or get_or_create_for_entra) on the user manager, this allows use
         of the default unmodified Django User model"""
         result = None
-        custom_user_manager_path = getattr(settings, "ENTRA_USER_MANAGER", False) if provider == "entra" else getattr(settings, "COGNITO_USER_MANAGER", False)
+        custom_user_manager_path = (
+            getattr(settings, "ENTRA_USER_MANAGER", False)
+            if provider == "entra"
+            else getattr(settings, "COGNITO_USER_MANAGER", False)
+        )
         if custom_user_manager_path:
             result = import_string(custom_user_manager_path)()
         return result
 
     @staticmethod
     def get_user_model(provider="cognito"):
-        user_model = getattr(settings, "ENTRA_USER_MODEL", settings.AUTH_USER_MODEL) if provider == "entra" else getattr(settings, "COGNITO_USER_MODEL", settings.AUTH_USER_MODEL)
+        user_model = (
+            getattr(settings, "ENTRA_USER_MODEL", settings.AUTH_USER_MODEL)
+            if provider == "entra"
+            else getattr(settings, "COGNITO_USER_MODEL", settings.AUTH_USER_MODEL)
+        )
         return django_apps.get_model(user_model, require_ready=False)
 
     @staticmethod
@@ -115,7 +125,9 @@ class JSONWebTokenAuthentication(BaseAuthentication):
     def get_token_validator(jwt_token):
         try:
             # Decode without verifying signature just to read the header/payload
-            unverified_payload = jwt.decode(jwt_token, options={"verify_signature": False})
+            unverified_payload = jwt.decode(
+                jwt_token, options={"verify_signature": False}
+            )
             issuer = unverified_payload.get("iss", "")
         except jwt.PyJWTError:
             raise exceptions.AuthenticationFailed(_("Malformed JWT."))
@@ -127,7 +139,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
                 settings.COGNITO_AUDIENCE,
             )
             return validator, "cognito"
-            
+
         elif "sts.windows.net" in issuer:
             validator = EntraTokenValidator(
                 settings.ENTRA_TENANT_ID,
@@ -135,9 +147,11 @@ class JSONWebTokenAuthentication(BaseAuthentication):
                 settings.ENTRA_APP_ID,
             )
             return validator, "entra"
-        
+
         else:
-            raise exceptions.AuthenticationFailed(_("Invalid or unsupported token issuer."))
+            raise exceptions.AuthenticationFailed(
+                _("Invalid or unsupported token issuer.")
+            )
 
     @staticmethod
     def authenticate_header(request):

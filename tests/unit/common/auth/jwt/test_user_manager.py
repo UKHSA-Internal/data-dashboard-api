@@ -63,7 +63,9 @@ def test_get_or_create_for_cognito_returns_with_empty_permission_sets():
 
 @patch("cms.auth_content.models.users.User.objects.filter")
 @patch("common.auth.jwt.user_manager.get_user_permission_set")
-def test_get_or_create_for_entra_returns_with_permission_sets_lookup(mock_get_perms, mock_user_filter):
+def test_get_or_create_for_entra_returns_with_permission_sets_lookup(
+    mock_get_perms, mock_user_filter
+):
     fake_permissions = ["Permission_1", "Permission_2"]
     mock_get_perms.return_value = fake_permissions
     mock_user_filter.return_value.exists.return_value = True
@@ -97,4 +99,3 @@ def test_get_or_create_for_entra_returns_none_without_username():
 
     user = EntraManager.get_or_create(jwt_payload)
     assert user is None
-

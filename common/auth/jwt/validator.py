@@ -132,9 +132,7 @@ class EntraTokenValidator:
 
     def validate(self, token):
         try:
-            unverified_payload = jwt.decode(
-                token, options={"verify_signature": False}
-            )
+            unverified_payload = jwt.decode(token, options={"verify_signature": False})
         except jwt.DecodeError as exc:
             raise TokenError(str(exc)) from exc
 

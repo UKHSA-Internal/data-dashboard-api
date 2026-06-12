@@ -10,6 +10,7 @@ from rest_framework import exceptions
 
 logger = logging.getLogger(__name__)
 
+
 def get_user_permission_set(id: str):
     permissions = UserManager.get_permission_sets_for_user(id)
     return build_permission_hierarchy(permissions)

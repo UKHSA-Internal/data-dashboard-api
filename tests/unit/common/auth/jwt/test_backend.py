@@ -68,9 +68,7 @@ def test_custom_user_manager_cognito(
             f"{cognito_user_manager}.get_or_create", func, raising=False
         )
     else:
-        monkeypatch.setattr(
-            USER_MODEL.objects, "get_or_create", func, raising=False
-        )
+        monkeypatch.setattr(USER_MODEL.objects, "get_or_create", func, raising=False)
 
     headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
@@ -84,9 +82,7 @@ def test_custom_user_manager_cognito(
 def test_authenticate_valid_token_with_permission_set(
     rf, cognito_well_known_keys, jwk_private_key_one
 ):
-    settings.COGNITO_USER_MANAGER = (
-        "common.auth.jwt.user_manager.CognitoManager"
-    )
+    settings.COGNITO_USER_MANAGER = "common.auth.jwt.user_manager.CognitoManager"
     token = create_jwt_token(
         jwk_private_key_one,
         {
@@ -114,9 +110,7 @@ def test_authenticate_valid_token_without_permission_set(
     fake_permissions = ["Permission_1", "Permission_2"]
     mock_get_perms.return_value = fake_permissions
 
-    settings.COGNITO_USER_MANAGER = (
-        "common.auth.jwt.user_manager.CognitoManager"
-    )
+    settings.COGNITO_USER_MANAGER = "common.auth.jwt.user_manager.CognitoManager"
     entra_id = str(uuid.uuid4())
     token = create_jwt_token(
         jwk_private_key_one,
@@ -141,9 +135,7 @@ def test_authenticate_valid_token_without_permission_set(
 def test_authenticate_valid_token_with_empty_permission_set(
     rf, cognito_well_known_keys, jwk_private_key_one
 ):
-    settings.COGNITO_USER_MANAGER = (
-        "common.auth.jwt.user_manager.CognitoManager"
-    )
+    settings.COGNITO_USER_MANAGER = "common.auth.jwt.user_manager.CognitoManager"
     token = create_jwt_token(
         jwk_private_key_one,
         {
@@ -260,13 +252,9 @@ def test_custom_user_manager_entra(
         return USER_MODEL(username=payload["appid"])
 
     if entra_user_manager:
-        monkeypatch.setattr(
-            f"{entra_user_manager}.get_or_create", func, raising=False
-        )
+        monkeypatch.setattr(f"{entra_user_manager}.get_or_create", func, raising=False)
     else:
-        monkeypatch.setattr(
-            USER_MODEL.objects, "get_or_create", func, raising=False
-        )
+        monkeypatch.setattr(USER_MODEL.objects, "get_or_create", func, raising=False)
 
     headers = {settings.ENTRA_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)

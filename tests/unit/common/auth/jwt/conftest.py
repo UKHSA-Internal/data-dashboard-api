@@ -19,6 +19,7 @@ def cognito_settings(settings):
     }
     settings.ROOT_URLCONF = "urls"
 
+
 @pytest.fixture(autouse=True)
 def entra_settings(settings):
     settings.ENTRA_TENANT_ID = "entra_tenant"
