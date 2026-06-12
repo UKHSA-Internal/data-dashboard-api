@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
-from common.auth.cognito_jwt import JSONWebTokenAuthentication
+from common.auth.jwt import JSONWebTokenAuthentication
 
 
 @api_view(http_method_names=["GET"])
