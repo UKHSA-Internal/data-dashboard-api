@@ -116,7 +116,14 @@ TEMPLATES = [
     },
 ]
 
-COGNITO_USER_MANAGER = "common.auth.cognito_jwt.user_manager.CognitoManager"
+ENTRA_USER_MANAGER = "common.auth.jwt.user_manager.EntraManager"
+ENTRA_AUDIENCE = config.ENTRA_AUDIENCE
+ENTRA_APP_ID = config.ENTRA_APP_ID
+ENTRA_TENANT_ID = config.ENTRA_TENANT_ID
+ENTRA_PUBLIC_KEYS_CACHING_ENABLED = True
+ENTRA_PUBLIC_KEYS_CACHING_TIMEOUT = 60 * 60 * 24  # 24h caching, default is 300s
+
+COGNITO_USER_MANAGER = "common.auth.jwt.user_manager.CognitoManager"
 COGNITO_AWS_REGION = config.COGNITO_AWS_REGION
 COGNITO_JWT_AUTH_HEADER = config.COGNITO_JWT_AUTH_HEADER
 COGNITO_USER_POOL = config.COGNITO_USER_POOL
@@ -128,7 +135,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "common.auth.cognito_jwt.JSONWebTokenAuthentication",
+        "common.auth.jwt.JSONWebTokenAuthentication",
     ],
 }
 

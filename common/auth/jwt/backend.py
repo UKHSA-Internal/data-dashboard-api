@@ -1,5 +1,6 @@
 import logging
 
+import jwt
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
@@ -8,7 +9,7 @@ from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
-from .validator import TokenError, TokenValidator
+from .validator import CognitoTokenValidator, EntraTokenValidator, TokenError
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,12 @@ def get_authorization_header(request):
     """
     auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "Authorization")
     auth = request.META.get(auth_header, b"")
+
+    # If the Cognito header isn't present, look for the Entra auth header
+    if not auth:
+        auth_header = getattr(settings, "ENTRA_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
+        auth = request.META.get(auth_header, b"")
+
     if isinstance(auth, str):
         # Work around django test client oddness
         auth = auth.encode(HTTP_HEADER_ENCODING)
@@ -44,38 +51,58 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
         # Authenticate token
         try:
-            token_validator = self.get_token_validator(request)
+            token_validator, provider_name = self.get_token_validator(jwt_token)
+        except TokenError as e:
+            logger.debug("Failed to identify token provider: %s", e)
+            raise exceptions.AuthenticationFailed(
+                _("Unknown or malformed token issuer.")
+            ) from e
+
+        try:
             jwt_payload = token_validator.validate(jwt_token)
-        except TokenError:
+        except TokenError as e:
+            logger.debug(
+                "%s token validation failed: %s", provider_name.capitalize(), e
+            )
             raise exceptions.AuthenticationFailed from None
 
-        custom_user_manager = self.get_custom_user_manager()
+        custom_user_manager = self.get_custom_user_manager(provider_name)
+
         if custom_user_manager:
-            user = custom_user_manager.get_or_create_for_cognito(jwt_payload)
+            user = custom_user_manager.get_or_create(jwt_payload)
         else:
             user_model = self.get_user_model()
-            user = user_model.objects.get_or_create_for_cognito(jwt_payload)
+            user = user_model.objects.get_or_create(jwt_payload)
         if not user:
             logger.debug(
                 "Unable to create user from JWT, defaulting to unauthenticated"
             )
             return None
+
         return (user, jwt_token)
 
     @staticmethod
-    def get_custom_user_manager():
-        """If COGNITO_USER_MANAGER is set, then the user object is obtained
-        via get_or_create_for_cognito on the user manager, this allows use
+    def get_custom_user_manager(provider="cognito"):
+        """If COGNITO_USER_MANAGER or ENTRA_USER_MANAGER is set, then the user object is obtained
+        via get_or_create_for_cognito (or get_or_create_for_entra) on the user manager, this allows use
         of the default unmodified Django User model"""
         result = None
-        custom_user_manager_path = getattr(settings, "COGNITO_USER_MANAGER", False)
+        custom_user_manager_path = (
+            getattr(settings, "ENTRA_USER_MANAGER", False)
+            if provider == "entra"
+            else getattr(settings, "COGNITO_USER_MANAGER", False)
+        )
         if custom_user_manager_path:
             result = import_string(custom_user_manager_path)()
         return result
 
     @staticmethod
-    def get_user_model():
-        user_model = getattr(settings, "COGNITO_USER_MODEL", settings.AUTH_USER_MODEL)
+    def get_user_model(provider="cognito"):
+        user_model = (
+            getattr(settings, "ENTRA_USER_MODEL", settings.AUTH_USER_MODEL)
+            if provider == "entra"
+            else getattr(settings, "COGNITO_USER_MODEL", settings.AUTH_USER_MODEL)
+        )
         return django_apps.get_model(user_model, require_ready=False)
 
     @staticmethod
@@ -97,12 +124,33 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         return auth[1]
 
     @staticmethod
-    def get_token_validator(request):
-        return TokenValidator(
-            settings.COGNITO_AWS_REGION,
-            settings.COGNITO_USER_POOL,
-            settings.COGNITO_AUDIENCE,
-        )
+    def get_token_validator(jwt_token):
+        try:
+            # Decode without verifying signature just to read the header/payload
+            unverified_payload = jwt.decode(
+                jwt_token, options={"verify_signature": False}  # noqa: S5659
+            )
+            issuer = unverified_payload.get("iss", "")
+        except jwt.PyJWTError as e:
+            raise exceptions.AuthenticationFailed(_("Malformed JWT.")) from e
+
+        if "cognito-idp" in issuer:
+            validator = CognitoTokenValidator(
+                settings.COGNITO_AWS_REGION,
+                settings.COGNITO_USER_POOL,
+                settings.COGNITO_AUDIENCE,
+            )
+            return validator, "cognito"
+
+        if "sts.windows.net" in issuer:
+            validator = EntraTokenValidator(
+                settings.ENTRA_TENANT_ID,
+                settings.ENTRA_AUDIENCE,
+                settings.ENTRA_APP_ID,
+            )
+            return validator, "entra"
+
+        raise exceptions.AuthenticationFailed(_("Invalid or unsupported token issuer."))
 
     @staticmethod
     def authenticate_header(request):

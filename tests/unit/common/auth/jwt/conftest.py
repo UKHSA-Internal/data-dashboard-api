@@ -20,6 +20,22 @@ def cognito_settings(settings):
     settings.ROOT_URLCONF = "urls"
 
 
+@pytest.fixture(autouse=True)
+def entra_settings(settings):
+    settings.ENTRA_TENANT_ID = "entra_tenant"
+    settings.ENTRA_AUDIENCE = "entra_audience"
+    settings.ENTRA_APP_ID = "entraOID"
+    settings.ENTRA_PUBLIC_KEYS_CACHING_ENABLED = False
+    settings.ENTRA_JWT_AUTH_HEADER = "HTTP_AUTHORIZATION"
+    settings.CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
+    settings.ROOT_URLCONF = "urls"
+
+
 def _private_to_public_key(private_key):
     data = copy.deepcopy(private_key)
     del data["d"]
@@ -96,6 +112,17 @@ def cognito_well_known_keys(responses, jwk_public_key_one, jwk_public_key_two):
     responses.add(
         responses.GET,
         "https://cognito-idp.eu-central-1.amazonaws.com/bla/.well-known/jwks.json",
+        json=jwk_keys,
+        status=200,
+    )
+
+
+@pytest.fixture()
+def entra_well_known_keys(responses, jwk_public_key_one, jwk_public_key_two):
+    jwk_keys = {"keys": [jwk_public_key_one]}
+    responses.add(
+        responses.GET,
+        "https://login.microsoftonline.com/common/discovery/keys",
         json=jwk_keys,
         status=200,
     )
