@@ -1,6 +1,6 @@
-import jwt
 import logging
 
+import jwt
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.utils.encoding import force_str
@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
-from .validator import TokenError, CognitoTokenValidator, EntraTokenValidator
+from .validator import CognitoTokenValidator, EntraTokenValidator, TokenError
 
 logger = logging.getLogger(__name__)
 
@@ -52,16 +52,18 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         # Authenticate token
         try:
             token_validator, provider_name = self.get_token_validator(jwt_token)
-        except TokenError:
-            logger.debug(f"Failed to identify token provider: {e}")
+        except TokenError as e:
+            logger.debug("Failed to identify token provider: %s", e)
             raise exceptions.AuthenticationFailed(
                 _("Unknown or malformed token issuer.")
-            )
+            ) from e
 
         try:
             jwt_payload = token_validator.validate(jwt_token)
         except TokenError as e:
-            logger.debug(f"{provider_name.capitalize()} token validation failed: {e}")
+            logger.debug(
+                "%s token validation failed: %s", provider_name.capitalize(), e
+            )
             raise exceptions.AuthenticationFailed from None
 
         custom_user_manager = self.get_custom_user_manager(provider_name)
@@ -129,8 +131,8 @@ class JSONWebTokenAuthentication(BaseAuthentication):
                 jwt_token, options={"verify_signature": False}
             )
             issuer = unverified_payload.get("iss", "")
-        except jwt.PyJWTError:
-            raise exceptions.AuthenticationFailed(_("Malformed JWT."))
+        except jwt.PyJWTError as e:
+            raise exceptions.AuthenticationFailed(_("Malformed JWT.")) from e
 
         if "cognito-idp" in issuer:
             validator = CognitoTokenValidator(
@@ -140,7 +142,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             )
             return validator, "cognito"
 
-        elif "sts.windows.net" in issuer:
+        if "sts.windows.net" in issuer:
             validator = EntraTokenValidator(
                 settings.ENTRA_TENANT_ID,
                 settings.ENTRA_AUDIENCE,
@@ -148,10 +150,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             )
             return validator, "entra"
 
-        else:
-            raise exceptions.AuthenticationFailed(
-                _("Invalid or unsupported token issuer.")
-            )
+        raise exceptions.AuthenticationFailed(_("Invalid or unsupported token issuer."))
 
     @staticmethod
     def authenticate_header(request):

@@ -2,17 +2,17 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
-
-from metrics.data.managers.rbac_models.user import UserManager
-from cms.auth_content.models.users import User
-from metrics.utils.permission_hierarchy import build_permission_hierarchy
 from rest_framework import exceptions
+
+from cms.auth_content.models.users import User
+from metrics.data.managers.rbac_models.user import UserManager
+from metrics.utils.permission_hierarchy import build_permission_hierarchy
 
 logger = logging.getLogger(__name__)
 
 
-def get_user_permission_set(id: str):
-    permissions = UserManager.get_permission_sets_for_user(id)
+def get_user_permission_set(user_id: str):
+    permissions = UserManager.get_permission_sets_for_user(user_id)
     return build_permission_hierarchy(permissions)
 
 
@@ -57,7 +57,8 @@ class EntraManager(BaseUserManager):
         try:
             username = jwt_payload["appid"]
             if not User.objects.filter(user_id=username).exists():
-                raise exceptions.AuthenticationFailed(("Application not found."))
+                msg = "Application not found."
+                raise exceptions.AuthenticationFailed(msg)
             permission_sets = get_user_permission_set(username)
         except KeyError:
             logger.info(

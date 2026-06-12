@@ -93,14 +93,11 @@ class EntraTokenValidator:
         self.tenant_id = tenant_id
         self.audience = audience
         self.app_id = app_id
+        self.jwks_url = "https://login.microsoftonline.com/common/discovery/keys"
 
     @cached_property
     def expected_issuer(self):
         return f"https://sts.windows.net/{self.tenant_id}/"
-
-    @cached_property
-    def jwks_url(self):
-        return "https://login.microsoftonline.com/common/discovery/keys"
 
     @cached_property
     def _json_web_keys(self):
@@ -164,10 +161,12 @@ class EntraTokenValidator:
 
         roles = payload.get("roles", [])
         if "Application.Read" not in roles:
-            raise TokenError("Missing required role: Application.Read")
+            msg = "Missing required role: Application.Read"
+            raise TokenError(msg)
 
         app_id_claim = payload.get("appid") or payload.get("azp")
         if app_id_claim != self.app_id:
-            raise TokenError("Invalid app_id claim")
+            msg = "Invalid app_id claim"
+            raise TokenError(msg)
 
         return payload
