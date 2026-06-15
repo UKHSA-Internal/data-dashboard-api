@@ -12,8 +12,8 @@ from cms.auth_content.auth_utils import is_auth_enabled
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
-from common.auth.permissions import check_page_permissions
 from common.auth.logging import log_user_permission_summary
+from common.auth.permissions import check_page_permissions
 
 AUTH_ENABLED = is_auth_enabled()
 
