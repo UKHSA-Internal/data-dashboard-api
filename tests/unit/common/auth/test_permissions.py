@@ -7,6 +7,8 @@ from common.auth.permissions import (
     check_chart_permissions,
     check_chart_permissions_by_name,
     check_page_permissions,
+    PermissionSetsType,
+    PermissionRowType,
 )
 
 
@@ -36,14 +38,14 @@ class TestCheckPermissionsByName:
         }
 
     def _build_permission_sets(
-        self, permission_rows: list[dict], has_global_access: bool = False
+        self, permission_rows: list[PermissionRowType], has_global_access: bool = False
     ) -> dict:
         return {
             "permission_sets": permission_rows,
             "summary": {"has_global_access": has_global_access},
         }
 
-    def _check_permissions_by_name(self, permission_sets: dict) -> bool:
+    def _check_permissions_by_name(self, permission_sets: PermissionSetsType) -> bool:
         return check_chart_permissions_by_name(
             permission_sets=permission_sets,
             theme_name=self.THEME,
@@ -569,17 +571,14 @@ class TestCheckPermissions:
     ):
         """Test chart permissions succeed when match or wildcard."""
 
-        assert (
-            check_chart_permissions(
-                permission_sets=permission_sets,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-                metric_id=metric_id,
-                geography_type=geography_type,
-                geography_id=geography_id,
-            )
-            == True
+        assert check_chart_permissions(
+            permission_sets=permission_sets,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+            metric_id=metric_id,
+            geography_type=geography_type,
+            geography_id=geography_id,
         )
 
     @pytest.mark.parametrize(
@@ -726,17 +725,14 @@ class TestCheckPermissions:
     ):
         """Test chart permissions fail when mismatch and no wildcard."""
 
-        assert (
-            check_chart_permissions(
-                permission_sets=permission_sets,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-                metric_id=metric_id,
-                geography_type=geography_type,
-                geography_id=geography_id,
-            )
-            == False
+        assert not check_chart_permissions(
+            permission_sets=permission_sets,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+            metric_id=metric_id,
+            geography_type=geography_type,
+            geography_id=geography_id,
         )
 
     @pytest.mark.parametrize(
@@ -979,17 +975,14 @@ class TestCheckPermissions:
     ):
         """Test chart permissions fail when being passed missing values"""
 
-        assert (
-            check_chart_permissions(
-                permission_sets=permission_sets,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-                metric_id=metric_id,
-                geography_type=geography_type,
-                geography_id=geography_id,
-            )
-            == False
+        assert not check_chart_permissions(
+            permission_sets=permission_sets,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+            metric_id=metric_id,
+            geography_type=geography_type,
+            geography_id=geography_id,
         )
 
 
@@ -1043,14 +1036,11 @@ class TestCheckPagePermissions:
     ):
         """Test page permissions succeed when match or wildcard."""
 
-        assert (
-            check_page_permissions(
-                permission_sets=user_permissions,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-            )
-            == True
+        assert check_page_permissions(
+            permission_sets=user_permissions,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
         )
 
     @pytest.mark.parametrize(
@@ -1089,14 +1079,11 @@ class TestCheckPagePermissions:
     ):
         """Test page permissions fail when mismatch and no wildcard."""
 
-        assert (
-            check_page_permissions(
-                permission_sets=user_permissions,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-            )
-            == False
+        assert not check_page_permissions(
+            permission_sets=user_permissions,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
         )
 
     @pytest.mark.parametrize(
@@ -1132,12 +1119,9 @@ class TestCheckPagePermissions:
     ):
         """Test page permissions fail when being passed missing values"""
 
-        assert (
-            check_page_permissions(
-                permission_sets=user_permissions,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-            )
-            == False
+        assert not check_page_permissions(
+            permission_sets=user_permissions,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
         )

@@ -94,14 +94,14 @@ def check_chart_permissions_by_name(
 def check_chart_permissions(  # noqa: PLR0914
     *,
     permission_sets: list[PermissionRowType],
-    theme_id: int,
-    sub_theme_id: int,
-    topic_id: int,
-    metric_id: int,
-    geography_type: int,
-    geography_id: int,
+    theme_id: str,
+    sub_theme_id: str,
+    topic_id: str,
+    metric_id: str,
+    geography_type: str,
+    geography_id: str,
 ) -> bool:
-    """Check CHART permissions."""
+    """Check permissions whether the end-user can access a specific CHART through the API."""
 
     if not isinstance(permission_sets, list):
         return False
@@ -187,11 +187,11 @@ def check_chart_permissions(  # noqa: PLR0914
 def check_page_permissions(
     *,
     permission_sets: list[PermissionRowType],
-    theme_id: int,
-    sub_theme_id: int,
-    topic_id: int,
+    theme_id: str,
+    sub_theme_id: str,
+    topic_id: str,
 ) -> bool:
-    """Check PAGE permissions."""
+    """Check permissions whether the end-user can access a specific CMS PAGE through the API."""
 
     if not isinstance(permission_sets, list):
         return False
