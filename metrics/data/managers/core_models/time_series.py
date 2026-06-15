@@ -6,6 +6,7 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+import logging
 from collections.abc import Iterable
 from typing import Self
 
@@ -18,6 +19,8 @@ from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
 from metrics.data.models import RBACPermission
+
+logger = logging.getLogger(__name__)
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
@@ -253,6 +256,18 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age=age,
         )
 
+        logger.info(
+            "Querying: topic=%s metric=%s geography_type=%s geography=%s",
+            topic,
+            metric,
+            geography_type,
+            geography,
+        )
+        logger.info(
+            "Permission_sets present=%s",
+            bool(permission_sets),
+        )
+
         if permission_sets and check_chart_permissions_by_name(
             permission_sets=permission_sets,
             theme_name=theme,
@@ -262,10 +277,20 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             geography_type=geography_type,
             geography_name=geography,
         ):
+            logger.info("Permission check passed — including non-public data")
+
             # Keep both the public and non-public data
             pass
         else:
+            logger.info(
+                "Permission check failed or no permission_sets — restricting to is_public=True"
+            )
+
             queryset = queryset.filter(is_public=True)
+
+        logger.info(
+            "------------------------------------------------------------------"
+        )
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self._filter_for_metric_value_ranges(

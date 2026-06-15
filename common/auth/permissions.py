@@ -1,6 +1,9 @@
+import logging
 from typing import TypedDict
 
 from ingestion.metrics_interface.interface import MetricsAPIInterface
+
+logger = logging.getLogger(__name__)
 
 WILDCARD_ID_VALUE = "-1"
 
@@ -42,15 +45,22 @@ def check_chart_permissions_by_name(
     """Convert permission resource names into ids (before checking CHART permissions)."""
 
     if not isinstance(permission_sets, dict):
+        logger.info("check_chart_permissions_by_name: permission_sets is not a dict")
         return False
     if not isinstance(permission_sets.get("permission_sets"), list):
+        logger.info("check_chart_permissions_by_name: permission_sets not a list")
         return False
     if not isinstance(permission_sets.get("summary"), dict):
+        logger.info("check_chart_permissions_by_name: summary a dict")
         return False
     if not isinstance(permission_sets.get("summary").get("has_global_access"), bool):
+        logger.info("check_chart_permissions_by_name: has_global_access not a bool")
         return False
 
     if permission_sets.get("summary").get("has_global_access"):
+        logger.info(
+            "check_chart_permissions_by_name: has_global_access=True, therefore granting access"
+        )
         return True
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
@@ -65,6 +75,16 @@ def check_chart_permissions_by_name(
     geography_type_id = geography_type_manager.get_id_by_name(geography_type)
     geography_id = geography_manager.get_id_by_name(geography_name)
 
+    logger.info(
+        "check_chart_permissions_by_name: The resolved IDs are: theme=%s sub_theme=%s topic=%s metric=%s geography_type=%s geography=%s",
+        theme_id,
+        sub_theme_id,
+        topic_id,
+        metric_id,
+        geography_type_id,
+        geography_id,
+    )
+
     # Sanity check, because front-end must always
     # send content for any of these 6 requests
     if any(
@@ -78,9 +98,12 @@ def check_chart_permissions_by_name(
             geography_id,
         )
     ):
+        logger.info(
+            "check_chart_permissions_by_name: Some resource IDs could not be resolved, therefore denying access"
+        )
         return False
 
-    return check_chart_permissions(
+    result = check_chart_permissions(
         permission_sets=permission_sets.get("permission_sets"),
         theme_id=theme_id,
         sub_theme_id=sub_theme_id,
@@ -89,6 +112,10 @@ def check_chart_permissions_by_name(
         geography_type=geography_type_id,
         geography_id=geography_id,
     )
+
+    logger.info("check_chart_permissions_by_name: final result=%s", result)
+
+    return result
 
 
 def check_chart_permissions(  # noqa: PLR0914
@@ -141,6 +168,9 @@ def check_chart_permissions(  # noqa: PLR0914
 
         # All permission fields must be present
         if permission_ids is None:
+            logger.info(
+                "check_chart_permissions: The permission_set has missing fields, therefore denying access"
+            )
             return False
         (
             permission_theme_id,
@@ -172,6 +202,27 @@ def check_chart_permissions(  # noqa: PLR0914
             permission_geography_id=permission_geography_id,
             geography_type=geography_type,
             geography_id=geography_id,
+        )
+
+        logger.info(
+            "check_chart_permissions: The permission_set(theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) with "
+            "request(theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) resulted in: "
+            "→ has_theme_sub_theme_topic_permissions=%s has_metric_permissions=%s has_geography_permissions=%s",
+            permission_theme_id,
+            permission_sub_theme_id,
+            permission_topic_id,
+            permission_metric_id,
+            permission_geography_type,
+            permission_geography_id,
+            theme_id,
+            sub_theme_id,
+            topic_id,
+            metric_id,
+            geography_type,
+            geography_id,
+            has_theme_sub_theme_topic_permissions,
+            has_metric_permissions,
+            has_geography_permissions,
         )
 
         if (

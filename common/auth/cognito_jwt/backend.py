@@ -38,15 +38,25 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
     def authenticate(self, request):
         """Entrypoint for Django Rest Framework"""
+        logger.info(
+            "------------------------------------------------------------------"
+        )
+
         jwt_token = self.get_jwt_token(request)
         if jwt_token is None:
+            logger.info(
+                "No JWT bearer token found in request headers, therefore skipping JWT authentication"
+            )
             return None
 
         # Authenticate token
         try:
             token_validator = self.get_token_validator(request)
             jwt_payload = token_validator.validate(jwt_token)
-        except TokenError:
+            logger.info("JWT token signature validated successfully")
+        except TokenError as exc:
+            logger.info("JWT token validation failed: %s", exc)
+
             raise exceptions.AuthenticationFailed from None
 
         custom_user_manager = self.get_custom_user_manager()
@@ -58,10 +68,13 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             user = user_model.objects.get_or_create_for_cognito(jwt_payload)
 
         if not user:
-            logger.debug(
-                "Unable to create user from JWT, defaulting to unauthenticated"
+            logger.info(
+                "get_or_create_for_cognito returned no user (missing JWT fields?). Payload: %s",
+                jwt_payload,
             )
             return None
+
+        logger.info("JWT authentication succeeded, user resolved: %s", user.username)
 
         return (user, jwt_token)
 
