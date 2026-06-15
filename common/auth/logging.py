@@ -6,7 +6,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
-def log_user_permissions(user: Any) -> None:
+def log_user_permission_summary(user: Any) -> None:
     """Log permission information for an authenticated user.
 
     This function logs the permission set summary and global access status.

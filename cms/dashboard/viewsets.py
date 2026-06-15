@@ -13,6 +13,7 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSeria
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
 from common.auth.permissions import check_page_permissions
+from common.auth.logging import log_user_permission_summary
 
 AUTH_ENABLED = is_auth_enabled()
 
@@ -80,6 +81,8 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 filtered_queryset = is_public_pages | pages_without_is_public
 
             else:
+                log_user_permission_summary(req.user)
+
                 has_global_access = req.user.permission_sets["summary"][
                     "has_global_access"
                 ]

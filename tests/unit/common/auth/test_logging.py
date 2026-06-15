@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from common.auth.logging import log_user_permissions
+from common.auth.logging import log_user_permission_summary
 
 
 @pytest.mark.parametrize(
@@ -32,14 +32,14 @@ from common.auth.logging import log_user_permissions
     ],
 )
 @mock.patch("common.auth.logging.logger.info")
-def test_log_user_permissions(
+def test_log_user_permission_summary(
     mocked_logger_info: mock.MagicMock,
     permission_sets,
     expected_has_global_access,
 ):
     """
     Given different user permission-set payloads
-    When log_user_permissions() is called
+    When log_user_permission_summary() is called
     Then the expected log calls are made
     """
 
@@ -50,7 +50,7 @@ def test_log_user_permissions(
         user.permission_sets = permission_sets
 
     # When
-    log_user_permissions(user)
+    log_user_permission_summary(user)
 
     # Then
     log_messages = [call.args[0] for call in mocked_logger_info.call_args_list]

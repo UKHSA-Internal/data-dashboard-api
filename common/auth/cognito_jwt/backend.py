@@ -8,8 +8,6 @@ from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
-from common.auth.logging import log_user_permissions
-
 from .validator import TokenError, TokenValidator
 
 logger = logging.getLogger(__name__)
@@ -64,9 +62,6 @@ class JSONWebTokenAuthentication(BaseAuthentication):
                 "Unable to create user from JWT, defaulting to unauthenticated"
             )
             return None
-
-        # Log user permissions for every JWT API call
-        log_user_permissions(user)
 
         return (user, jwt_token)
 
