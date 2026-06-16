@@ -151,8 +151,8 @@ class EntraTokenValidator:
             raise TokenError(str(exc)) from exc
 
         roles = payload.get("roles", [])
-        if "Application.Read" not in roles:
-            msg = "Missing required role: Application.Read"
+        if "application.read" not in roles:
+            msg = "Missing required role: application.read"
             raise TokenError(msg)
 
         app_id_claim = payload.get("appid") or payload.get("azp")
