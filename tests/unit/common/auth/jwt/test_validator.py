@@ -129,7 +129,7 @@ def test_validate_entra_token(entra_well_known_keys, jwk_private_key_one):
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
@@ -146,7 +146,7 @@ def test_validate_token_error_key_entra(entra_well_known_keys, jwk_private_key_t
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
@@ -164,7 +164,7 @@ def test_validate_token_valid_expiry_entra(entra_well_known_keys, jwk_private_ke
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
             "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=15),
         },
     )
@@ -182,7 +182,7 @@ def test_validate_token_error_expired_entra(entra_well_known_keys, jwk_private_k
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
             "exp": datetime.now(tz=timezone.utc) - timedelta(minutes=15),
         },
     )
@@ -201,7 +201,7 @@ def test_validate_token_error_aud_entra(entra_well_known_keys, jwk_private_key_o
             "aud": "other-aud",
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
@@ -219,7 +219,7 @@ def test_validate_token_missing_aud_entra(entra_well_known_keys, jwk_private_key
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
@@ -250,7 +250,7 @@ def test_validate_token_caching_entra(
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
             "appid": settings.ENTRA_APP_ID,
-            "roles": ["Application.Read"],
+            "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
