@@ -63,7 +63,7 @@ def check_chart_permissions_by_name(
     )
     metric_id = metric_manager.get_id_by_name(metric_name)
     geography_type_id = geography_type_manager.get_id_by_name(geography_type)
-    geography_id = geography_manager.get_id_by_name(geography_name)
+    geography_id = geography_manager.get_id_by_name(geography_name, geography_type)
 
     # Sanity check, because front-end must always
     # send content for any of these 6 requests
