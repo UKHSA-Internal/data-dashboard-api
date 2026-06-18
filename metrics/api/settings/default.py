@@ -197,6 +197,7 @@ LOGGING = {
             "format": f"%(asctime)s [%(levelname)s] [ENVIRONMENT:{config.APIENV}] [%(name)s - %(funcName)s] %(message)s"
         },
         "audit": {
+            "()": "common.logging.AuditFormatter",
             "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]"
         },
     },
