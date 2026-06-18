@@ -151,7 +151,7 @@ class TestGeographyManager:
         ]
 
         # When
-        geography_id = Geography.objects.get_id_by_name(lookup_name)
+        geography_id = Geography.objects.get_id_by_name(lookup_name, "DUMMY")
 
         # Then
         expected_id = (

@@ -73,7 +73,7 @@ def check_chart_permissions_by_name(
     )
     metric_id = metric_manager.get_id_by_name(metric_name)
     geography_type_id = geography_type_manager.get_id_by_name(geography_type)
-    geography_id = geography_manager.get_id_by_name(geography_name)
+    geography_id = geography_manager.get_id_by_name(geography_name, geography_type)
 
     logger.info(
         "check_chart_permissions_by_name: The resolved IDs are: theme=%s sub_theme=%s topic=%s metric=%s geography_type=%s geography=%s",
