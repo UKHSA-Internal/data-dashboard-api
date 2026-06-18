@@ -24,11 +24,25 @@ def test_get_authorization_header(rf):
 
 
 @override_settings()
+def test_get_auth_header_no_value(rf):
+    """test get_authorization_header finds no token header if
+    COGNITO_JWT_AUTH_HEADER and ENTRA_JWT_AUTH_HEADER is set to None"""
+    settings.COGNITO_JWT_AUTH_HEADER = None
+    settings.ENTRA_JWT_AUTH_HEADER = None
+    headers = {"HTTP_AUTHORIZATION": b"bearer string token"}
+    request = rf.get("/", **headers)
+    auth = backend.JSONWebTokenAuthentication()
+    assert auth.authenticate(request) is None
+
+
+@override_settings()
 def test_get_default_auth_header(rf):
     """test get_authorization_header uses 'Authorization' header if
     COGNITO_JWT_AUTH_HEADER is not specified in settings"""
     del settings.COGNITO_JWT_AUTH_HEADER
-    headers = {"Authorization": b"bearer string token"}
+    del settings.ENTRA_JWT_AUTH_HEADER
+    # Prepend `HTTP_` as it's normally done by Django
+    headers = {"HTTP_AUTHORIZATION": b"bearer string token"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     with pytest.raises(AuthenticationFailed):

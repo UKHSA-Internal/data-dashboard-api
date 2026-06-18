@@ -23,7 +23,7 @@ def get_authorization_header(request):
 
     Hide some test client ickyness where the header can be unicode.
     """
-    auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "Authorization")
+    auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
     auth = request.META.get(auth_header, b"")
 
     # If the Cognito header isn't present, look for the Entra auth header
