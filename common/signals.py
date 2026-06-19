@@ -8,7 +8,7 @@ from metrics.api.middleware.current_user import get_current_user
 audit_logger = logging.getLogger("audit")
 
 AUDIT_EXCLUDED_FIELDS: dict[str, set[str]] = {
-    "User": {"last_login", "password"},
+    "User": {"last_login"},
     "PermissionSet": set(),
 }
 AUDITABLE_MODELS = ["PermissionSet", "User"]
