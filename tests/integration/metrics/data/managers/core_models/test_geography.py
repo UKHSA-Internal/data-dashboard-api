@@ -158,3 +158,31 @@ class TestGeographyManager:
             given_geographies[expected_index].id if expected_index is not None else None
         )
         assert geography_id == expected_id
+
+    @pytest.mark.django_db
+    def test_get_code_by_name(self):
+        """
+        Given some Geography records that share a name across geography types
+        When get_code_by_name() is called with a specific geography_type
+        Then the matching geography_code is returned
+        """
+
+        # Given
+        GeographyFactory.create_with_geography_type(
+            name="Liverpool",
+            geography_code="E08000012",
+            geography_type="Lower Tier Local Authority",
+        )
+        liverpool_combined_authority = GeographyFactory.create_with_geography_type(
+            name="Liverpool",
+            geography_code="E47000004",
+            geography_type="Combined Authority",
+        )
+
+        # When
+        geography_code = Geography.objects.get_code_by_name(
+            "Liverpool", "Combined Authority"
+        )
+
+        # Then
+        assert geography_code == liverpool_combined_authority.geography_code
