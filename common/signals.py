@@ -66,6 +66,11 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
 
     user = get_current_user()
     user_id = user.id if user and user.is_authenticated else "anonymous"
+    target_string = (
+        f"pk={instance.pk}, id={instance.user_id}"
+        if hasattr(instance, "user_id")
+        else f"pk={instance.pk}"
+    )
 
     if action == "post_add":
         audit_logger.info(
@@ -73,7 +78,7 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
             extra={
                 "user": user_id,
                 "action": f"ADD {sender.__name__} {pk_set}",
-                "target": f"pk={instance.pk}, id={instance.user_id}",
+                "target": target_string,
             },
         )
     elif action == "post_remove":
@@ -82,7 +87,7 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
             extra={
                 "user": user_id,
                 "action": f"REMOVE {sender.__name__} {pk_set}",
-                "target": f"pk={instance.pk}, id={instance.user_id}",
+                "target": target_string,
             },
         )
     elif action == "post_clear":
@@ -91,7 +96,7 @@ def audit_m2m_relationships_log(sender, instance, action, pk_set, **kwargs):
             extra={
                 "user": user_id,
                 "action": f"CLEAR {sender.__name__}",
-                "target": f"pk={instance.pk}, user_id={instance.user_id}",
+                "target": target_string,
             },
         )
 
@@ -107,13 +112,18 @@ def audit_save_log(sender, instance, created, **kwargs):
     user = get_current_user()
     user_id = user.id if user else "anonymous"
     action = "CREATED" if created else "UPDATED"
+    target_string = (
+        f"pk={instance.pk}, id={instance.user_id}"
+        if hasattr(instance, "user_id")
+        else f"pk={instance.pk}"
+    )
 
     audit_logger.info(
         "Model saved",
         extra={
             "user": user_id,
             "action": f"{action} {sender.__name__}",
-            "target": f"pk={instance.pk}, id={instance.user_id}",
+            "target": target_string,
         },
     )
 
@@ -125,12 +135,17 @@ def audit_delete_log(sender, instance, **kwargs):
 
     user = get_current_user()
     user_id = user.id if user else "anonymous"
+    target_string = (
+        f"pk={instance.pk}, id={instance.user_id}"
+        if hasattr(instance, "user_id")
+        else f"pk={instance.pk}"
+    )
 
     audit_logger.info(
         "Model deleted",
         extra={
             "user": user_id,
             "action": f"pk={instance.pk}, DELETE {sender.__name__}",
-            "target": f"pk={instance.pk}, id={instance.user_id}",
+            "target": target_string,
         },
     )
