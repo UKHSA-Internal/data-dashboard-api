@@ -8,7 +8,7 @@ from django.conf import settings
 def cognito_settings(settings):
     settings.COGNITO_AWS_REGION = "eu-central-1"
     settings.COGNITO_USER_POOL = "bla"
-    settings.COGNITO_JWT_AUTH_HEADER = "HTTP_X_UHD_AUTH"
+    settings.JWT_AUTH_HEADER = "HTTP_X_UHD_AUTH"
     settings.COGNITO_AUDIENCE = "my-client-id"
     settings.COGNITO_PUBLIC_KEYS_CACHING_ENABLED = False
     settings.CACHES = {
@@ -26,7 +26,7 @@ def entra_settings(settings):
     settings.ENTRA_AUDIENCE = "entra_audience"
     settings.ENTRA_APP_ID = "entraOID"
     settings.ENTRA_PUBLIC_KEYS_CACHING_ENABLED = False
-    settings.ENTRA_JWT_AUTH_HEADER = "HTTP_AUTHORIZATION"
+    settings.JWT_AUTH_HEADER = "HTTP_AUTHORIZATION"
     settings.CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",

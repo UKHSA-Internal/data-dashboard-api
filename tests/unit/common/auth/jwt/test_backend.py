@@ -16,7 +16,7 @@ USER_MODEL = get_user_model()
 def test_get_authorization_header(rf):
     """test get_authorization_header correctly handles
     a header that is a string not a bytestring as expected"""
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: "bearer string_token"}
+    headers = {settings.JWT_AUTH_HEADER: "bearer string_token"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     with pytest.raises(AuthenticationFailed):
@@ -26,9 +26,8 @@ def test_get_authorization_header(rf):
 @override_settings()
 def test_get_auth_header_no_value(rf):
     """test get_authorization_header finds no token header if
-    COGNITO_JWT_AUTH_HEADER and ENTRA_JWT_AUTH_HEADER is set to None"""
-    settings.COGNITO_JWT_AUTH_HEADER = None
-    settings.ENTRA_JWT_AUTH_HEADER = None
+    JWT_AUTH_HEADER is set to None"""
+    settings.JWT_AUTH_HEADER = None
     headers = {"HTTP_AUTHORIZATION": b"bearer string token"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
@@ -38,9 +37,8 @@ def test_get_auth_header_no_value(rf):
 @override_settings()
 def test_get_default_auth_header(rf):
     """test get_authorization_header uses 'Authorization' header if
-    COGNITO_JWT_AUTH_HEADER is not specified in settings"""
-    del settings.COGNITO_JWT_AUTH_HEADER
-    del settings.ENTRA_JWT_AUTH_HEADER
+    JWT_AUTH_HEADER is not specified in settings"""
+    del settings.JWT_AUTH_HEADER
     # Prepend `HTTP_` as it's normally done by Django
     headers = {"HTTP_AUTHORIZATION": b"bearer string token"}
     request = rf.get("/", **headers)
@@ -84,7 +82,7 @@ def test_custom_user_manager_cognito(
     else:
         monkeypatch.setattr(USER_MODEL.objects, "get_or_create", func, raising=False)
 
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
@@ -108,7 +106,7 @@ def test_authenticate_valid_token_with_permission_set(
         },
     )
 
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
@@ -136,7 +134,7 @@ def test_authenticate_valid_token_without_permission_set(
         },
     )
 
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
@@ -161,7 +159,7 @@ def test_authenticate_valid_token_with_empty_permission_set(
         },
     )
 
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
@@ -180,7 +178,7 @@ def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):
         },
     )
 
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
 
@@ -189,7 +187,7 @@ def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):
 
 
 def test_authenticate_error_segments(rf):
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer randomiets"}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer randomiets"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
 
@@ -198,7 +196,7 @@ def test_authenticate_error_segments(rf):
 
 
 def test_authenticate_error_invalid_header(rf):
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer"}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
 
@@ -207,7 +205,7 @@ def test_authenticate_error_invalid_header(rf):
 
 
 def test_authenticate_error_spaces(rf):
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer random iets"}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer random iets"}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
 
@@ -217,7 +215,7 @@ def test_authenticate_error_spaces(rf):
 
 def test_authenticate_error_response_code():
     client = Client()
-    headers = {settings.COGNITO_JWT_AUTH_HEADER: b"bearer random iets"}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer random iets"}
     resp = client.get("/", **headers)
 
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
@@ -234,7 +232,7 @@ def test_authenticate_invalid_entra(rf, entra_well_known_keys, jwk_private_key_t
         },
     )
 
-    headers = {settings.ENTRA_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
 
@@ -270,7 +268,7 @@ def test_custom_user_manager_entra(
     else:
         monkeypatch.setattr(USER_MODEL.objects, "get_or_create", func, raising=False)
 
-    headers = {settings.ENTRA_JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
+    headers = {settings.JWT_AUTH_HEADER: b"bearer %s" % token.encode("utf8")}
     request = rf.get("/", **headers)
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)

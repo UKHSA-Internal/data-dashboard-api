@@ -61,18 +61,16 @@ INGESTION_ARCHIVE_BUCKET_NAME = os.environ.get("INGESTION_ARCHIVE_BUCKET_NAME")
 # The name of the AWS profile to use for the AWS client used for ingestion
 AWS_PROFILE_NAME = os.environ.get("AWS_PROFILE_NAME")
 
+JWT_AUTH_HEADER = os.environ.get("JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
+
 # Cognito configuration
 COGNITO_AWS_REGION = os.environ.get("COGNITO_AWS_REGION")
-COGNITO_JWT_AUTH_HEADER = os.environ.get(
-    "COGNITO_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION"
-)
 COGNITO_USER_POOL = os.environ.get("COGNITO_USER_POOL")
 
 # Entra configuration
 ENTRA_AUDIENCE = os.environ.get("ENTRA_AUDIENCE")
 ENTRA_APP_ID = os.environ.get("ENTRA_APP_ID")
 ENTRA_TENANT_ID = os.environ.get("ENTRA_TENANT_ID")
-ENTRA_JWT_AUTH_HEADER = os.environ.get("ENTRA_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
 
 # Database configuration
 POSTGRES_DB = os.environ.get("POSTGRES_DB")

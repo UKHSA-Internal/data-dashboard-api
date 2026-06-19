@@ -23,13 +23,8 @@ def get_authorization_header(request):
 
     Hide some test client ickyness where the header can be unicode.
     """
-    auth_header = getattr(settings, "COGNITO_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
+    auth_header = getattr(settings, "JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
     auth = request.META.get(auth_header, b"")
-
-    # If the Cognito header isn't present, look for the Entra auth header
-    if not auth:
-        auth_header = getattr(settings, "ENTRA_JWT_AUTH_HEADER", "HTTP_AUTHORIZATION")
-        auth = request.META.get(auth_header, b"")
 
     if isinstance(auth, str):
         # Work around django test client oddness
