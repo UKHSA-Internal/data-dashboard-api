@@ -257,16 +257,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
         logger.info(
-            "Querying: topic=%s metric=%s geography_type=%s geography=%s",
+            "Queried both public/non-public data for: topic=%s metric=%s geography_type=%s geography=%s",
             topic,
             metric,
             geography_type,
             geography,
         )
-        logger.info(
-            "Permission_sets present=%s",
-            bool(permission_sets),
-        )
+        logger.info("Are permission_sets present=%s", bool(permission_sets))
 
         if permission_sets and check_chart_permissions_by_name(
             permission_sets=permission_sets,
@@ -277,19 +274,21 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             geography_type=geography_type,
             geography_name=geography,
         ):
-            logger.info("Permission check passed — including non-public data")
+            logger.info(
+                "Permission check passed: We serve both is_public=True and is_public=False data!"
+            )
 
             # Keep both the public and non-public data
             pass
         else:
             logger.info(
-                "Permission check failed or no permission_sets — restricting to is_public=True"
+                "Permission check failed or no permission_sets present: We only serve is_public=True data!"
             )
 
             queryset = queryset.filter(is_public=True)
 
         logger.info(
-            "------------------------------------------------------------------"
+            "\n------------------------------------------------------------------------------------------------------------------------------------"
         )
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)

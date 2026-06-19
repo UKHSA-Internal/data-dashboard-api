@@ -39,7 +39,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
         """Entrypoint for Django Rest Framework"""
         logger.info(
-            "------------------------------------------------------------------"
+            "\n------------------------------------------------------------------------------------------------------------------------------------"
         )
 
         jwt_token = self.get_jwt_token(request)
@@ -74,7 +74,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             )
             return None
 
-        logger.info("JWT authentication succeeded, user resolved: %s", user.username)
+        logger.info("JWT authentication succeeded for entraObjectId=%s", user.username)
 
         return (user, jwt_token)
 

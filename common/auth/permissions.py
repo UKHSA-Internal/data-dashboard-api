@@ -45,22 +45,20 @@ def check_chart_permissions_by_name(
     """Convert permission resource names into ids (before checking CHART permissions)."""
 
     if not isinstance(permission_sets, dict):
-        logger.info("check_chart_permissions_by_name: permission_sets is not a dict")
+        logger.info("The permission_sets is not a dict")
         return False
     if not isinstance(permission_sets.get("permission_sets"), list):
-        logger.info("check_chart_permissions_by_name: permission_sets not a list")
+        logger.info("The permission_sets not a list")
         return False
     if not isinstance(permission_sets.get("summary"), dict):
-        logger.info("check_chart_permissions_by_name: summary a dict")
+        logger.info("The summary is not a dict")
         return False
     if not isinstance(permission_sets.get("summary").get("has_global_access"), bool):
-        logger.info("check_chart_permissions_by_name: has_global_access not a bool")
+        logger.info("The has_global_access not a bool")
         return False
 
     if permission_sets.get("summary").get("has_global_access"):
-        logger.info(
-            "check_chart_permissions_by_name: has_global_access=True, therefore granting access"
-        )
+        logger.info("The has_global_access=True, therefore granting access")
         return True
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
@@ -76,7 +74,7 @@ def check_chart_permissions_by_name(
     geography_id = geography_manager.get_code_by_name(geography_name, geography_type)
 
     logger.info(
-        "check_chart_permissions_by_name: The resolved IDs are: theme=%s sub_theme=%s topic=%s metric=%s geography_type=%s geography=%s",
+        "We have mapped request names to request IDs: (theme=%s sub_theme=%s topic=%s metric=%s geography_type=%s geography=%s)",
         theme_id,
         sub_theme_id,
         topic_id,
@@ -99,8 +97,9 @@ def check_chart_permissions_by_name(
         )
     ):
         logger.info(
-            "check_chart_permissions_by_name: Some resource IDs could not be resolved, therefore denying access"
+            "Some request names could not be mapped to request IDs, therefore we deny access"
         )
+
         return False
 
     result = check_chart_permissions(
@@ -113,7 +112,7 @@ def check_chart_permissions_by_name(
         geography_id=geography_id,
     )
 
-    logger.info("check_chart_permissions_by_name: final result=%s", result)
+    logger.info("Function return value is=%s", result)
 
     return result
 
@@ -169,7 +168,7 @@ def check_chart_permissions(  # noqa: PLR0914
         # All permission fields must be present
         if permission_ids is None:
             logger.info(
-                "check_chart_permissions: The permission_set has missing fields, therefore denying access"
+                "The permission_set has missing fields, therefore denying access"
             )
             return False
         (
@@ -205,9 +204,9 @@ def check_chart_permissions(  # noqa: PLR0914
         )
 
         logger.info(
-            "check_chart_permissions: The permission_set(theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) with "
-            "request(theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) resulted in: "
-            "→ has_theme_sub_theme_topic_permissions=%s has_metric_permissions=%s has_geography_permissions=%s",
+            "The permission_set (theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) with "
+            "request (theme=%s sub=%s topic=%s metric=%s geo_type=%s geo=%s) resulted in: "
+            "has_theme_sub_theme_topic_permissions=%s and has_metric_permissions=%s and has_geography_permissions=%s",
             permission_theme_id,
             permission_sub_theme_id,
             permission_topic_id,

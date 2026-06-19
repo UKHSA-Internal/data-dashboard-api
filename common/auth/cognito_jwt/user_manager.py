@@ -15,34 +15,33 @@ class CognitoManager(BaseUserManager):
         so this speeds up the request by removing the need for any DB access
         """
 
-        logger.info(
-            "Building user from JWT payload: %s",
-            jwt_payload,
-        )
+        logger.info("Received JWT payload: %s", jwt_payload)
 
         try:
             username = jwt_payload["entraObjectId"]
             permission_sets = jwt_payload["permissionSets"]
 
-            logger.info("JWT payload has entraObjectId=%s", username)
+            logger.info(
+                "Trying to attach permission_sets to user object for entraObjectId=%s",
+                username,
+            )
 
             if not permission_sets:
                 logger.info(
-                    "Empty permissionSets in token for user: '%s'", username,
+                    "Empty permissionSets in token for user: '%s'",
+                    username,
                 )
                 return None
         except KeyError as exc:
             logger.info(
-                "Error: %s. Payload: %s", exc, jwt_payload,
+                "Error: %s. Payload: %s",
+                exc,
+                jwt_payload,
             )
             return None
 
         user_class = get_user_model()
         user = user_class(username=username)
         user.permission_sets = permission_sets
-
-        logger.info(
-            "Permission set attached to user object"
-        )
 
         return user
