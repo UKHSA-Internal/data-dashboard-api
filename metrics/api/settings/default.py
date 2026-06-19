@@ -198,7 +198,7 @@ LOGGING = {
         },
         "audit": {
             "()": "common.logging.AuditFormatter",
-            "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]"
+            "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]",
         },
     },
     "handlers": {
