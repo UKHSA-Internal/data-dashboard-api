@@ -91,7 +91,7 @@ class TestCheckPermissionsByName:
         )
         stack.enter_context(
             patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
                 return_value=geography_result,
             )
         )
@@ -113,7 +113,7 @@ class TestCheckPermissionsByName:
                 return_value=self.GEOGRAPHY_TYPE_ID,
             ),
             patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
                 return_value=self.GEOGRAPHY_ID,
             ),
         ):
@@ -136,7 +136,7 @@ class TestCheckPermissionsByName:
                 return_value=self.GEOGRAPHY_TYPE_ID,
             ),
             patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
                 return_value=self.GEOGRAPHY_ID,
             ),
         ):
@@ -159,7 +159,7 @@ class TestCheckPermissionsByName:
                 return_value=None,
             ),
             patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
                 return_value=self.GEOGRAPHY_ID,
             ),
         ):
@@ -182,7 +182,7 @@ class TestCheckPermissionsByName:
                 return_value=self.GEOGRAPHY_TYPE_ID,
             ),
             patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
                 return_value=None,
             ),
         ):

@@ -316,7 +316,9 @@ class TestCoreTimeSeriesQuerySet:
                     "geography_type": {
                         "id": str(non_public_record.geography.geography_type.id)
                     },
-                    "geography": {"id": str(non_public_record.geography.id)},
+                    "geography": {
+                        "id": str(non_public_record.geography.geography_code)
+                    },
                 }
             ],
             "summary": {"has_global_access": False},
