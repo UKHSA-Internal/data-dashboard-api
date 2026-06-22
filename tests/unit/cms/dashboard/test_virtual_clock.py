@@ -94,7 +94,7 @@ class TestSetEmbargoTime:
         """
         Given page previews are disabled
         When set_embargo_time is called
-        Then an Embargo Date not supported error is raised and the current time is stored
+        Then an Embargo Time not supported error is raised and the current time is stored
         """
         expected = datetime.datetime(2026, 3, 31, 12, 0, tzinfo=datetime.UTC)
         spy_now.return_value = expected
@@ -105,7 +105,7 @@ class TestSetEmbargoTime:
 
         assert virtual_clock.get_embargo_time() == expected
         spy_logger_error.assert_called_once_with(
-            virtual_clock.EMBARGO_DATE_NOT_SUPPORTED_MESSAGE
+            virtual_clock.EMBARGO_TIME_NOT_SUPPORTED_MESSAGE
         )
 
     @mock.patch("common.virtual_clock.validate_preview_hmac_token", return_value=False)

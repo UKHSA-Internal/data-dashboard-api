@@ -64,7 +64,7 @@
     display: none;
 }
 
-/* Prevent accidental text highlighting on Embargo Date controls. */
+/* Prevent accidental text highlighting on Embargo Time controls. */
 #embargo-time-btn-preview,
 #embargo-time-btn-preview *,
 .embargo-modal-btn,

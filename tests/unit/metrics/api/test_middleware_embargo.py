@@ -225,7 +225,7 @@ class TestEmbargoMiddleware:
         """
         Given a valid token containing embargo_time while previews are disabled
         When EmbargoMiddleware processes the request
-        Then it returns a 501 response indicating Embargo Date is unsupported
+        Then it returns a 501 response indicating Embargo Time is unsupported
         """
         request = self._build_request(
             path="/api/pages/1/",
@@ -241,7 +241,7 @@ class TestEmbargoMiddleware:
 
         assert response.status_code == 501
         assert json.loads(response.content) == {
-            "detail": '"Embargo Date" is not supported on this server.'
+            "detail": '"Embargo Time" is not supported on this server.'
         }
         spy_set_embargo_time.assert_not_called()
 
