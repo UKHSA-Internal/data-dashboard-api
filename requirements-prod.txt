@@ -45,7 +45,7 @@ Markdown==3.10.2
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
-msgpack==1.1.2
+msgpack==1.2.1
 mypy-extensions==1.1.0
 nodeenv==1.10.0
 openpyxl==3.1.5
@@ -83,7 +83,7 @@ tomli==2.4.1
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.7.0
-virtualenv==21.4.2
+virtualenv==21.5.0
 wagtail==7.3.2
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.3.0
