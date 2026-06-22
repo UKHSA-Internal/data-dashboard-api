@@ -7,7 +7,7 @@
 {% else %}
     <button id="preview-btn" type="submit" name="{{ name }}" value="{{ label }}" class="button{% if classname %} {{ classname }}{% endif %}">{% if icon_name %}{% icon name=icon_name %}{% endif %}{{ label }}</button>
     {% if label != "View Live" %}
-    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Date (<span id="embargo-time-btn-label">now</span>)</button>
+    <button id="embargo-time-btn-preview" type="button" class="button button-secondary" style="margin-left: 0.5em;" title="No embargo time set">{% icon name="rocket" %}Embargo Time (<span id="embargo-time-btn-label">now</span>)</button>
     {% endif %}
 {% endif %}
 

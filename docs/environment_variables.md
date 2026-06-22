@@ -138,7 +138,7 @@ Wagtail CMS supports page previews in a configured frontend. We use a headless C
 
 Required for preview redirects to work. The backend builds preview redirects from this absolute frontend base URL and appends the fixed `/preview` path plus query parameters. Sonar code scanner prefers that we keep 'http' out of the codebase. Ensure that you have `export FRONTEND_URL='http://localhost:3000'` configured in your `.env` file when testing previews locally.
 
-The backend always appends (or overrides) the query params `slug`, `t`, and `page_id` in the final redirect URL. When Embargo Date is set, it also appends `et` (Unix epoch integer or `now`).
+The backend always appends (or overrides) the query params `slug`, `t`, and `page_id` in the final redirect URL. When Embargo Time is set, it also appends `et` (Unix epoch integer or `now`).
 
 Example generated redirect URL:
 - `http://localhost:3000/preview?slug=weather-health-alerts&t=<signed-token>&page_id=17&et=now`
