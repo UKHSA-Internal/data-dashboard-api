@@ -41,8 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			let url = baseUrl;
 			const sep = url.includes('?') ? '&' : '?';
-			url += sep + 'embargo_time=' + encodeURIComponent(embargoTime.getTime()/1000 || 'now');
-			url += sep + 'route=preview' // preview route
+      if (embargoTime !== 'now')
+			  url += sep + 'embargo_time=' + encodeURIComponent(embargoTime.getTime()/1000);
+
 			window.open(url, '_blank', 'noopener');
 		});
 	}

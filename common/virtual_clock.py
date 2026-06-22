@@ -8,7 +8,7 @@ that is presently restricted.
 
 import contextvars
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 from django.conf import settings
