@@ -259,6 +259,37 @@ def register_link_props(features):
     features.register_converter_rule("contentstate", "link", rule)
 
 
+def validate_preview_parameters(page: Page) -> None:
+    if not page or not getattr(page, "pk", None):
+        logger.debug("Skipping frontend preview action: page missing or unsaved")
+        return False
+
+    if not settings.PAGE_PREVIEWS_ENABLED:
+        logger.debug(
+            "Skipping frontend preview action: PAGE_PREVIEWS_ENABLED is False."
+        )
+        return False
+
+    return True
+
+
+def add_menu_item(menu_items: list[Any], page: Page):
+    button_label = _get_preview_button_label(page=page)
+    if button_label is None:
+        logger.debug(
+            "Skipping frontend preview action: no preview/view-live label for page %s",
+            page.pk,
+        )
+        return
+
+    action_url = _build_frontend_redirect_url(page=page, route=ROUTES[button_label])
+    if action_url:
+        redirect_item = FrontendRedirectAction(
+            url=action_url, label=button_label, order=0
+        )
+        menu_items.insert(0, redirect_item)
+
+
 @hooks.register("construct_page_action_menu")
 def add_frontend_preview_action(
     menu_items: list[Any],
@@ -283,31 +314,8 @@ def add_frontend_preview_action(
     """
     try:
         page = context.get("page")
-        if not page or not getattr(page, "pk", None):
-            logger.debug("Skipping frontend preview action: page missing or unsaved")
-            return
-
-        if not settings.PAGE_PREVIEWS_ENABLED:
-            logger.debug(
-                "Skipping frontend preview action: PAGE_PREVIEWS_ENABLED is False."
-            )
-            return
-
-        button_label = _get_preview_button_label(page=page)
-        if button_label is None:
-            logger.debug(
-                "Skipping frontend preview action: no preview/view-live label for page %s",
-                page.pk,
-            )
-            return
-
-        action_url = _build_frontend_redirect_url(page=page, route=ROUTES[button_label])
-
-        if action_url:
-            redirect_item = FrontendRedirectAction(
-                url=action_url, label=button_label, order=0
-            )
-            menu_items.insert(0, redirect_item)
+        if validate_preview_parameters(page=page):
+            add_menu_item(menu_items=menu_items, page=page)
     except (AttributeError, TypeError, ValueError, LookupError, RuntimeError):
         logger.debug(
             "Failed to construct frontend preview action; editor UI will continue"
