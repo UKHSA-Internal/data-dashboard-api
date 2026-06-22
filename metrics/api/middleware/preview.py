@@ -29,8 +29,16 @@ from common.page_previews import (
     get_cms_auth_payload,
     validate_preview_hmac_token,
 )
-from common.request_caching import disable_request_caching, get_cache_control_header
-from common.virtual_clock import EMBARGO_TIME_NOT_SUPPORTED_MESSAGE, set_embargo_time
+from common.request_caching import (
+    clear_request_caching,
+    disable_request_caching,
+    get_cache_control_header,
+)
+from common.virtual_clock import (
+    EMBARGO_TIME_NOT_SUPPORTED_MESSAGE,
+    clear_embargo_time,
+    set_embargo_time,
+)
 
 INVALID_TOKEN_DETAIL = {"detail": "The token was invalid"}
 
@@ -50,14 +58,17 @@ class EmbargoMiddleware:
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Apply embargo-time context for eligible API requests before dispatch."""
-        if self._is_custom_api_request(request=request):
-            rejection_response = self._set_embargo_time_if_header_is_valid(
-                request=request
-            )
-            if rejection_response is not None:
-                return rejection_response
+        try:
+            if self._is_custom_api_request(request=request):
+                rejection_response = self._set_embargo_time_if_header_is_valid(
+                    request=request
+                )
+                if rejection_response is not None:
+                    return rejection_response
 
-        return self.get_response(request)
+            return self.get_response(request)
+        finally:
+            clear_embargo_time()
 
     @staticmethod
     def _is_custom_api_request(*, request: HttpRequest) -> bool:
@@ -116,14 +127,7 @@ class RequestScopedCachingConfigMiddleware:
         """Store the downstream callable for middleware execution."""
         self.get_response = get_response
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Apply request_no_cache context for eligible API requests before dispatch."""
-        token = get_cms_auth_bearer_token(request.headers)
-
-        # exit if we don't have a token
-        if token is None:
-            return self.get_response(request)
-
+    def _handle_preview_request(self, request: HttpRequest, token) -> HttpResponse:
         # response 401 (Unauthorized i.e. not authenticated) if token is invalid
         is_valid = validate_preview_hmac_token(token)
         if not is_valid:
@@ -132,6 +136,17 @@ class RequestScopedCachingConfigMiddleware:
         if self._is_custom_api_request(request=request):
             self._set_no_cache_if_header_is_valid(request=request)
         return self.get_response(request)
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Apply request_no_cache context for eligible API requests before dispatch."""
+        try:
+            token = get_cms_auth_bearer_token(request.headers)
+            # exit if we don't have a token
+            if token is None:
+                return self.get_response(request)
+            return self._handle_preview_request(request, token)
+        finally:
+            clear_request_caching()
 
     @staticmethod
     def _is_custom_api_request(*, request: HttpRequest) -> bool:

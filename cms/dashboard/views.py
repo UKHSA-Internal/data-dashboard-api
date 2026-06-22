@@ -312,10 +312,7 @@ class FrontendRedirectView(View):
             page_id=page.pk,
             embargo_time_value=embargo_time_value,
         )
-
-        # We do want to use the user supplied embargo time here
-        # noqa: S5146
-        return redirect(frontend_url)
+        return redirect(frontend_url)  # noqa: S5146
 
 
 class LinkBrowseView(BrowseView):
