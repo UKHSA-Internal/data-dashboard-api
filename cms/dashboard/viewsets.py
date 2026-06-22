@@ -10,13 +10,11 @@ from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
-
 from cms.auth_content.auth_utils import is_auth_enabled
 from cms.auth_content.constants import WILDCARD_ID_VALUE
 from cms.dashboard.serializers import ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
-
 from common.page_previews import (
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
@@ -233,7 +231,7 @@ class CMSDraftPagesViewSet(BaseCMSPagesAPIViewSet):
                 - 401: Invalid or missing token.
                 - 403: PAGE_PREVIEWS_ENABLED is False.
                 - 404: Page not found.
-                - 501: Embargo Date (embargo_time) not supported.
+                - 501: Embargo Time (embargo_time) not supported.
         """
         # Check if previews are enabled
         page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)

@@ -1,4 +1,4 @@
-"""Support request-scoped "Embargo Date" for embargoed data views.
+"""Support request-scoped "Embargo Time" for embargoed data views.
 
 This module provides a virtual clock that allows authorised preview users to
 view data as if the current time were set to the future (or past).
@@ -23,10 +23,10 @@ _logger = logging.getLogger(__name__)
 
 
 class EmbargoDateNotSupportedError(Exception):
-    """Raised when preview Embargo Date is requested on a server that disables it."""
+    """Raised when preview Embargo Time is requested on a server that disables it."""
 
 
-EMBARGO_DATE_NOT_SUPPORTED_MESSAGE = '"Embargo Date" is not supported on this server.'
+EMBARGO_TIME_NOT_SUPPORTED_MESSAGE = '"Embargo Time" is not supported on this server.'
 
 
 def parse_embargo_time_value(embargo_time_value: Any) -> datetime | None:
@@ -65,8 +65,8 @@ def set_embargo_time(*, embargo_time_value: object, token: str) -> bool:
     page_previews_enabled = getattr(settings, "PAGE_PREVIEWS_ENABLED", False)
     if not page_previews_enabled:
         _embargo_time_ctx.set(None)
-        _logger.error(EMBARGO_DATE_NOT_SUPPORTED_MESSAGE)
-        raise EmbargoDateNotSupportedError(EMBARGO_DATE_NOT_SUPPORTED_MESSAGE)
+        _logger.error(EMBARGO_TIME_NOT_SUPPORTED_MESSAGE)
+        raise EmbargoDateNotSupportedError(EMBARGO_TIME_NOT_SUPPORTED_MESSAGE)
 
     if not validate_preview_hmac_token(token):
         return False

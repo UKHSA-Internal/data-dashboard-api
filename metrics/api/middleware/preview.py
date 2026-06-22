@@ -16,7 +16,7 @@ response is generated against the server's current time.
 
 If an auth header is present but invalid, or if the embargo time cannot be
 validated and applied, the request is rejected with `401`. If the request asks
-for Embargo Date with an `embargo_time` value but the server has page previews
+for Embargo Time with an `embargo_time` value but the server has page previews
 disabled, the request is rejected with `HTTP 501 (Not Implemented)`.
 """
 
@@ -30,7 +30,7 @@ from common.page_previews import (
     validate_preview_hmac_token,
 )
 from common.request_caching import disable_request_caching, get_cache_control_header
-from common.virtual_clock import EMBARGO_DATE_NOT_SUPPORTED_MESSAGE, set_embargo_time
+from common.virtual_clock import EMBARGO_TIME_NOT_SUPPORTED_MESSAGE, set_embargo_time
 
 INVALID_TOKEN_DETAIL = {"detail": "The token was invalid"}
 
@@ -92,7 +92,7 @@ class EmbargoMiddleware:
 
         if not getattr(settings, "PAGE_PREVIEWS_ENABLED", False):
             return JsonResponse(
-                {"detail": EMBARGO_DATE_NOT_SUPPORTED_MESSAGE},
+                {"detail": EMBARGO_TIME_NOT_SUPPORTED_MESSAGE},
                 status=501,
             )
 
