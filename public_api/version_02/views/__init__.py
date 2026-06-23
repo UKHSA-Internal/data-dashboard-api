@@ -13,3 +13,5 @@ from .linked_views import (
 )
 
 from .root_view import PublicAPIRootViewV2
+
+from .search import SearchView
