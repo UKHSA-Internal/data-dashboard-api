@@ -141,7 +141,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             validator = EntraTokenValidator(
                 settings.ENTRA_TENANT_ID,
                 settings.ENTRA_AUDIENCE,
-                settings.ENTRA_APP_ID,
+                settings.ENTRA_ALLOWED_APP_IDS,
             )
             return validator, "entra"
 

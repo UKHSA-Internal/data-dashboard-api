@@ -89,10 +89,10 @@ class CognitoTokenValidator:
 
 
 class EntraTokenValidator:
-    def __init__(self, tenant_id, audience, app_id):
+    def __init__(self, tenant_id, audience, allowed_app_ids):
         self.tenant_id = tenant_id
         self.audience = audience
-        self.app_id = app_id
+        self.allowed_app_ids = allowed_app_ids
         self.jwks_url = "https://login.microsoftonline.com/common/discovery/keys"
 
     @cached_property
@@ -156,7 +156,7 @@ class EntraTokenValidator:
             raise TokenError(msg)
 
         app_id_claim = payload.get("appid") or payload.get("azp")
-        if app_id_claim != self.app_id:
+        if app_id_claim not in self.allowed_app_ids:
             msg = "Invalid app_id claim"
             raise TokenError(msg)
 

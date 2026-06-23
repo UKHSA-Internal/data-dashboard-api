@@ -227,7 +227,7 @@ def test_authenticate_invalid_entra(rf, entra_well_known_keys, jwk_private_key_t
         {
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "sub": "username",
-            "appid": settings.ENTRA_APP_ID,
+            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
             "roles": ["application.read"],
         },
     )
@@ -254,7 +254,7 @@ def test_custom_user_manager_entra(
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_APP_ID,
+            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
             "roles": ["application.read"],
         },
     )

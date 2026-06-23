@@ -24,7 +24,7 @@ def cognito_settings(settings):
 def entra_settings(settings):
     settings.ENTRA_TENANT_ID = "entra_tenant"
     settings.ENTRA_AUDIENCE = "entra_audience"
-    settings.ENTRA_APP_ID = "entraOID"
+    settings.ENTRA_ALLOWED_APP_IDS = ["entraOID","otherEntraID"]
     settings.ENTRA_PUBLIC_KEYS_CACHING_ENABLED = False
     settings.JWT_AUTH_HEADER = "HTTP_AUTHORIZATION"
     settings.CACHES = {
