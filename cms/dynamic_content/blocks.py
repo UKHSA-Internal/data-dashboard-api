@@ -231,47 +231,38 @@ class PageLink(StructBlock):
     )
     page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
 
-    
     def get_api_representation(self, value, context=None):
-            data = super().get_api_representation(value, context)
-            print(f"🦄 data: {data}")
-            page = value.get("page")
-            print(f"🦄 page: {page}")
+        data = super().get_api_representation(value, context)
+        page = value.get("page")
 
-            if not page:
-                data["title"] = ""
-                data["sub_title"] = ""
-                return data
+        if not page:
+            data["is_authorised"] = False
+            return data
 
-            print(f"🦄 page.specific: {page.specific}")
-            page = page.specific
-            print(f"🦄 page.is_public: {page.is_public}")
+        page = page.specific
+        request = context.get("request") if context else None
+        user = getattr(request, "user", None)
 
-            request = context.get("request") if context else None
-            user = getattr(request, "user", None)
-            print(f"🦄 request: {request}")
-            print(f"🦄 user: {user}")
 
+        if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
-            print(f"🦄 user_permissions: {user_permissions}")
             full_user_permissions = (
                 user_permissions.permission_sets.get("permission_sets")
                 if user_permissions and hasattr(user_permissions, "permission_sets")
                 else None
             )
-
-            if not page.is_public:
-                if not check_permissions(
+            if not check_permissions(
                     full_user_permissions,
                     getattr(page, "theme", None),
                     getattr(page, "sub_theme", None),
                     getattr(page, "topic", None),
                 ):
-                    data["title"] = ""
-                    data["sub_title"] = ""
-                    return data
+                data["is_authorised"] = False
+                return data
 
-            return data
+        data["is_authorised"] = True
+        return data
+
 
 class InternalPageLinks(StreamBlock):
     page_link = PageLink()
