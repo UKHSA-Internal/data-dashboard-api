@@ -57,6 +57,13 @@ INVALID_PARAMETERS = [
     ),  # Invalid child Topic
     (
         "infectious_disease",
+        "bloodborne",
+        "transfusion-safety",
+        "testing",
+        "infectious_disease",
+    ),  # Invalid child Topic
+    (
+        "infectious_disease",
         "chemical_exposure",
         "Lead",
         "lead_headline_percentByDeprivationLatest",
