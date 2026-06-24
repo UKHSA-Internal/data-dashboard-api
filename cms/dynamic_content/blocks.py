@@ -31,7 +31,6 @@ POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
-
 def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
     if not isinstance(user_permissions, list):
         return False
@@ -44,10 +43,7 @@ def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> boo
         if permission_theme_id == "-1":
             return True
 
-        if (
-            permission_theme_id == theme_id
-            and permission_sub_theme_id == "-1"
-        ):
+        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
             return True
 
         if (
@@ -58,7 +54,6 @@ def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> boo
             return True
 
     return False
-
 
 
 class HeadlineNumberBlockTypes(StreamBlock):
@@ -235,53 +230,52 @@ class PageLink(StructBlock):
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
     page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
-    
+
     
     def get_api_representation(self, value, context=None):
-        page = value.get("page")
-        if not page:
-            return None
+            data = super().get_api_representation(value, context)
+            print(f"🦄 data: {data}")
+            page = value.get("page")
+            print(f"🦄 page: {page}")
 
-        request = context.get("request") if context else None
-        user = getattr(request, "user", None)
-        user_permissions = getattr(user, "permission_sets", None)
-        full_user_permissions = user_permissions.permission_sets["permission_sets"]
+            if not page:
+                data["title"] = ""
+                data["sub_title"] = ""
+                return data
 
-        topic_page_details = value.specific
-        
-        if getattr(topic_page_details, "is_public", False):
-            page_theme = getattr(topic_page_details, "theme", None)
-            page_sub_theme = getattr(topic_page_details, "sub_theme", None)
-            page_topic = getattr(topic_page_details, "topic", None)
-            print(f"🦄 theme: {page_theme}")
-            print(f"🦄🦄 full_user_permissions: {full_user_permissions}")
-            
-            if not check_permissions(
-                full_user_permissions,
-                page_theme,
-                page_sub_theme, 
-                page_topic
-            ):
-                return None
+            print(f"🦄 page.specific: {page.specific}")
+            page = page.specific
+            print(f"🦄 page.is_public: {page.is_public}")
 
-        return {
-            "title": value.get("title"),
-            "url": topic_page_details.full_url,
-        }
+            request = context.get("request") if context else None
+            user = getattr(request, "user", None)
+            print(f"🦄 request: {request}")
+            print(f"🦄 user: {user}")
 
+            user_permissions = getattr(user, "permission_sets", None)
+            print(f"🦄 user_permissions: {user_permissions}")
+            full_user_permissions = (
+                user_permissions.permission_sets.get("permission_sets")
+                if user_permissions and hasattr(user_permissions, "permission_sets")
+                else None
+            )
 
+            if not page.is_public:
+                if not check_permissions(
+                    full_user_permissions,
+                    getattr(page, "theme", None),
+                    getattr(page, "sub_theme", None),
+                    getattr(page, "topic", None),
+                ):
+                    data["title"] = ""
+                    data["sub_title"] = ""
+                    return data
+
+            return data
 
 class InternalPageLinks(StreamBlock):
     page_link = PageLink()
-    
-    
-    def get_api_representation(self, value, context=None):
-        data = super().get_api_representation(value, context=context)
 
-        # Remove filtered-out items (None)
-        return [item for item in data if item is not None]
-
-    
     class Meta:
         icon = "link"
 
