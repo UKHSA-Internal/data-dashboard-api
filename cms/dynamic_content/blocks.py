@@ -237,6 +237,9 @@ class PageLink(StructBlock):
 
         if not page:
             data["is_authorised"] = False
+            data["title"] = ""
+            data["subtitle"] = ""
+            data["page"] = ""
             return data
 
         page = page.specific
@@ -258,6 +261,9 @@ class PageLink(StructBlock):
                     getattr(page, "topic", None),
                 ):
                 data["is_authorised"] = False
+                data["title"] = ""
+                data["subtitle"] = ""
+                data["page"] = ""
                 return data
 
         data["is_authorised"] = True
