@@ -27,6 +27,7 @@ DEFAULT_STRATUM_MANAGER = MetricsAPIInterface.get_stratum_manager()
 API_TIME_SERIES_MODEL = MetricsAPIInterface.get_api_timeseries()
 CORE_TIME_SERIES_MODEL = MetricsAPIInterface.get_core_timeseries()
 CORE_HEADLINE_MODEL = MetricsAPIInterface.get_core_headline()
+API_HEADLINE_MODEL = MetricsAPIInterface.get_api_headline()
 
 
 class SupportingModelsLookup(NamedTuple):
@@ -115,6 +116,7 @@ class Consumer:
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         core_headline_manager: Manager = CORE_HEADLINE_MODEL.objects,
+        api_headline_manager: Manager = API_HEADLINE_MODEL.objects,
         core_timeseries_manager: Manager = CORE_TIME_SERIES_MODEL.objects,
         api_timeseries_manager: Manager = API_TIME_SERIES_MODEL.objects,
     ):
@@ -133,6 +135,7 @@ class Consumer:
         self.age_manager = age_manager
         self.stratum_manager = stratum_manager
         self.core_headline_manager = core_headline_manager
+        self.api_headline_manager = api_headline_manager
         self.core_timeseries_manager = core_timeseries_manager
         self.api_timeseries_manager = api_timeseries_manager
 
@@ -345,7 +348,7 @@ class Consumer:
             age_id=age.id,
         )
 
-    def process_core_headlines(self) -> None:
+    def process_core_and_api_headlines(self) -> None:
         """Creates `CoreHeadline` database records from the ingested data after stale records are deleted ahead of time.
 
         Notes:
@@ -361,7 +364,7 @@ class Consumer:
 
         """
         self.clear_stale_headlines()
-        self.create_core_headlines()
+        self.create_core_and_api_headlines()
 
     def process_core_and_api_timeseries(self) -> None:
         """Creates `APITimeSeries` and `CoreTimeSeries` records from the ingested data after stale records are deleted.
@@ -440,6 +443,60 @@ class Consumer:
             model_manager=self.core_headline_manager, model_instances=core_headlines
         )
 
+    def build_api_headlines(self):
+        """Builds `APIHeadline` model instances from the ingested data
+
+        Returns:
+            List of `APIHeadline` model instances
+
+        """
+        return [
+            API_HEADLINE_MODEL(
+                theme=self.dto.parent_theme,
+                sub_theme=self.dto.child_theme,
+                topic=self.dto.topic,
+                metric=self.dto.metric,
+                metric_group=self.dto.metric_group,
+                metric_value=headline_data.metric_value,
+                geography=self.dto.geography,
+                geography_type=self.dto.geography_type,
+                geography_code=self.dto.geography_code,
+                stratum=self.dto.stratum,
+                sex=self.dto.sex,
+                age=self.dto.age,
+                period_start=headline_data.period_start,
+                period_end=headline_data.period_end,
+                refresh_date=self.dto.refresh_date,
+                embargo=headline_data.embargo,
+                upper_confidence=headline_data.upper_confidence,
+                lower_confidence=headline_data.lower_confidence,
+                force_write=headline_data.force_write,
+                is_public=headline_data.is_public,
+            )
+            for headline_data in self.dto.data
+        ]
+
+    def create_api_headlines(self):
+        """Builds `APIHeadline` model instances from the ingested data
+
+        Returns:
+            List of `APIHeadline` model instances
+
+        """
+        api_headlines = self.build_api_headlines()
+        return create_records(
+            model_manager=self.api_headline_manager, model_instances=api_headlines
+        )
+
+    def create_core_and_api_headlines(self) -> None:
+        """Creates `APIHeadline` and `CoreHeadline` records from the ingested data after stale records are deleted.
+
+        Returns:
+            None
+        """
+        self.create_core_headlines()
+        self.create_api_headlines()
+
     def build_core_time_series(self) -> list[CORE_TIME_SERIES_MODEL]:
         """Builds `CoreTimeSeries` model instances from the ingested data
 
@@ -505,11 +562,41 @@ class Consumer:
         )
 
     def clear_stale_headlines(self):
-        """Deletes all stale records for the `CoreHeadline` records relevant to the ingested dataset
+        """Deletes all stale records for both `CoreHeadline` and `APIHeadline` relevant to the ingested dataset
 
         Returns:
             None
 
+        """
+        self._clear_stale_api_headlines()
+        self._clear_stale_core_headlines()
+
+    def _clear_stale_api_headlines(self):
+        """Deletes all stale records for the `APIHeadline` records relevant to the ingested dataset
+
+        Returns:
+            None
+        """
+        params = {
+            "theme": self.dto.parent_theme,
+            "sub_theme": self.dto.child_theme,
+            "topic": self.dto.topic,
+            "metric": self.dto.metric,
+            "geography": self.dto.geography,
+            "geography_type": self.dto.geography_type,
+            "geography_code": self.dto.geography_code,
+            "stratum": self.dto.stratum,
+            "sex": self.dto.sex,
+            "age": self.dto.age,
+        }
+        self.api_headline_manager.delete_superseded_data(**params, is_public=True)
+        self.api_headline_manager.delete_superseded_data(**params, is_public=False)
+
+    def _clear_stale_core_headlines(self):
+        """Deletes all stale records for the `CoreHeadline` records relevant to the ingested dataset
+
+        Returns:
+            None
         """
         params = {
             "topic": self.dto.topic,
