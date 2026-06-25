@@ -118,7 +118,7 @@ target-version = "py312"
 # Ignore built-in `format` used in arg to extended rest framework API view method
 "public_api/views/root_view.py" = ["A002"]
 # Ignore built-in `format` used in arg to extended rest framework API view method
-"public_api/version_02/views/root_view.py" = ["A002"]
+"public_api/version/v2/views/root_view.py" = ["A002"]
 # Ignore list comprehension which would reduce readibility
 "caching/public_api/crawler.py" = ["PERF401"]
 # Ignore requirement of `__hash__` implementation
