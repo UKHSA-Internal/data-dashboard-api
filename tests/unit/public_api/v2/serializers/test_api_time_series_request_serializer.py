@@ -3,12 +3,12 @@ from unittest import mock
 import pytest
 
 from metrics.data.models.api_models import APITimeSeries
-from public_api.version_02.serializers.api_time_series_request_serializer import (
+from public_api.version.v2.serializers.api_time_series_request_serializer import (
     NO_LOOKUP_FIELD_ERROR_MESSAGE,
     APITimeSeriesDTO,
 )
 
-from public_api.version_02.serializers.api_time_series_request_serializer import (
+from public_api.version.v2.serializers.api_time_series_request_serializer import (
     APITimeSeriesRequestSerializerv2,
 )
 

@@ -1,7 +1,7 @@
 import pytest
 from unittest import mock
 
-from public_api.version_02.views.base import BaseNestedAPITimeSeriesViewV2
+from public_api.version.v2.views.base import BaseNestedAPITimeSeriesViewV2
 
 
 class TestNestedTimeSeriesView(BaseNestedAPITimeSeriesViewV2):
@@ -50,8 +50,8 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
     """
 
-    @mock.patch("public_api.version_02.views.base.Response")
-    @mock.patch("public_api.version_02.views.base.APITimeSeriesRequestSerializerv2")
+    @mock.patch("public_api.version.v2.views.base.Response")
+    @mock.patch("public_api.version.v2.views.base.APITimeSeriesRequestSerializerv2")
     def test_private_header_added_when_valid_jwt(
         self,
         mock_request_serializer_class: mock.MagicMock,
@@ -88,8 +88,8 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         )
         assert response == mocked_response
 
-    @mock.patch("public_api.version_02.views.base.Response")
-    @mock.patch("public_api.version_02.views.base.APITimeSeriesRequestSerializerv2")
+    @mock.patch("public_api.version.v2.views.base.Response")
+    @mock.patch("public_api.version.v2.views.base.APITimeSeriesRequestSerializerv2")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
         self,
         mock_request_serializer_class: mock.MagicMock,

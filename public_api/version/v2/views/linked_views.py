@@ -1,4 +1,4 @@
-from public_api.version_02.serializers.linked_serializers import (
+from public_api.version.v2.serializers.linked_serializers import (
     GeographyDetailSerializerv2,
     GeographyListSerializerv2,
     GeographyTypeDetailSerializerv2,
@@ -11,7 +11,7 @@ from public_api.version_02.serializers.linked_serializers import (
     TopicDetailSerializerv2,
     TopicListSerializerv2,
 )
-from public_api.version_02.views.base import BaseNestedAPITimeSeriesViewV2
+from public_api.version.v2.views.base import BaseNestedAPITimeSeriesViewV2
 
 
 class ThemeListViewV2(BaseNestedAPITimeSeriesViewV2):
