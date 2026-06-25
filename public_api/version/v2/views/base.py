@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from public_api.auth import is_authenticated_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.version_02.serializers.api_time_series_request_serializer import (
+from public_api.version.v2.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializerv2,
 )

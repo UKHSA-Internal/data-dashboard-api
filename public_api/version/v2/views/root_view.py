@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from public_api.version_02.views.base import PUBLIC_API_TAG
+from public_api.version.v2.views.base import PUBLIC_API_TAG
 
 
 class PublicAPIRootViewV2(APIView):
