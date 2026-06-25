@@ -4,10 +4,10 @@ from rest_framework import pagination, viewsets
 
 from public_api.auth import get_permission_sets_for_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.version_02.serializers.timeseries_serializers import (
+from public_api.version.v2.serializers.timeseries_serializers import (
     APITimeSeriesListSerializerv2,
 )
-from public_api.version_02.views.base import (
+from public_api.version.v2.views.base import (
     PUBLIC_API_TAG,
     add_private_cache_control_header,
 )
