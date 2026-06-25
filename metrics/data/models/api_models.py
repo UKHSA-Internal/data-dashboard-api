@@ -1,12 +1,15 @@
 from django.db import models
 from django.db.models import Q
 
+from metrics.data.managers.api_models.headline import APIHeadlineManager
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
     LARGE_CHAR_COLUMN_MAX_CONSTRAINT,
     METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
+    METRIC_VALUE_DECIMAL_PLACES,
+    METRIC_VALUE_MAX_DIGITS,
     SEX_MAX_CHAR_CONSTRAINT,
 )
 from metrics.data.models.core_models import help_texts
@@ -88,6 +91,91 @@ class APITimeSeries(models.Model):
     def __str__(self):
         return (
             f"{self.__class__.__name__} for {self.date}, "
+            f"metric '{self.metric}', "
+            f"stratum '{self.stratum}', "
+            f"value: {self.metric_value}"
+        )
+
+
+class APIHeadline(models.Model):
+
+    theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    metric = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
+    metric_group = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+
+    geography = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
+    geography_type = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    geography_code = models.CharField(
+        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
+    )
+    stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
+    age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+
+    period_start = models.DateTimeField(null=True)
+    period_end = models.DateTimeField(null=True)
+    refresh_date = models.DateTimeField(null=True)
+    embargo = models.DateTimeField(null=True)
+    metric_value = models.FloatField()
+    upper_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        blank=True,
+        null=True,
+    )
+    lower_confidence = models.DecimalField(
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+        null=True,
+        blank=True,
+    )
+
+    force_write = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=True, null=False)
+
+    objects = APIHeadlineManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "age",
+                    "geography",
+                    "geography_code",
+                    "geography_type",
+                    "metric",
+                    "metric_value",
+                    "period_end",
+                    "period_start",
+                    "sex",
+                    "stratum",
+                    "sub_theme",
+                    "theme",
+                    "topic",
+                ),
+                name="The `APIHeadline` record should be unique if `force_write` is False",
+                condition=Q(force_write=False),
+            )
+        ]
+        indexes = [
+            models.Index(
+                fields=[
+                    "theme",
+                    "sub_theme",
+                    "topic",
+                    "metric",
+                    "metric_value",
+                    "geography",
+                    "geography_type",
+                ]
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__} for {self.period_end} refreshed {self.refresh_date}, "
             f"metric '{self.metric}', "
             f"stratum '{self.stratum}', "
             f"value: {self.metric_value}"
