@@ -8,6 +8,7 @@ from metrics.data.models.constants import (
     SEX_MAX_CHAR_CONSTRAINT,
 )
 from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
+from tests.fakes.models.metrics.api_headline import FakeAPIHeadline
 
 
 class TestAPITimeSeries:
@@ -88,6 +89,88 @@ class TestAPITimeSeries:
         field_concreate_field = next(
             field
             for field in api_timeseries_model._meta.concrete_fields
+            if field.attname == field_name
+        )
+
+        # Then
+        assert field_concreate_field.max_length == max_length_constraint
+
+
+class TestAPIHeadline:
+    @pytest.mark.parametrize(
+        "field_name, field_value",
+        (
+                ["age", "all"],
+                ["refresh_date", "2023-07-11"],
+                ["metric_group", "headline"],
+                ["theme", "infectious_disease"],
+                ["sub_theme", "respiratory"],
+                ["topic", "Influenza"],
+                ["geography_type", "Nation"],
+                ["geography_code", "E92000001"],
+                ["geography", "England"],
+                ["metric", "influenza_headline_ICUHDUadmissionRateChange"],
+                ["stratum", "default"],
+                ["sex", "all"],
+                ["metric_value", 0],
+                ["period_start", "2023-07-11"],
+                ["period_end", "2023-07-18"],
+                ["isPublic", True],
+        )
+    )
+    def test_correct_fields_can_be_given_to_model(
+            self, field_name: str, field_value: int | str | bool
+    ):
+        """
+        Given I have a valid field for the APIHeadline model.
+        When I initialise a new instance of the api headline model passing a field.
+        Then the value will be assigned to the model.
+        """
+        # Given
+        field = field_value
+
+        # When
+        api_headline_model = FakeAPIHeadline()
+        setattr(api_headline_model, field_name, field_value)
+
+        # Then
+        field_value_from_model = getattr(api_headline_model, field_name)
+        assert field_value_from_model == field
+
+    @pytest.mark.parametrize(
+        "field_name, field_value, field_max_length",
+        (
+                ["age", "all", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["metric_group", "deaths", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["theme", "infectious_disease", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["sub_theme", "respiratory", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["topic", "COVID-19", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["geography_type", "Government Office Region", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["geography_code", "E45000001", GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT],
+                ["geography", "North West", LARGE_CHAR_COLUMN_MAX_CONSTRAINT],
+                ["metric", "COVID-19_deaths_ONSByDay", LARGE_CHAR_COLUMN_MAX_CONSTRAINT],
+                ["stratum", "default", CHAR_COLUMN_MAX_CONSTRAINT],
+                ["sex", "all", SEX_MAX_CHAR_CONSTRAINT],
+        ),
+    )
+    def test_correct_max_length_constraints_returned_from_model(
+            self, field_name: str, field_value: int | str, field_max_length: int
+    ):
+        """
+        Given I have a valid field for the API headline mdoel and a max_length constraint
+        When I initialise a new instance of the api headline model passing in the field
+        Then the instance should have meta data of a max_length matching the max_length_constraint
+        """
+        # Given
+        field = field_value
+        max_length_constraint = field_max_length
+
+        # When
+        api_headline_model = FakeAPIHeadline()
+        setattr(api_headline_model, field_name, field)
+        field_concreate_field = next(
+            field
+            for field in api_headline_model._meta.concrete_fields
             if field.attname == field_name
         )
 
