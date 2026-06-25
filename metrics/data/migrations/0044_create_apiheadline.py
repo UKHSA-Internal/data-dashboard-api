@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0042_alter_apitimeseries_metric_value"),
+        ("data", "0043_alter_apitimeseries_metric_value_rename_second_category"),
     ]
 
     operations = [
@@ -26,10 +26,10 @@ class Migration(migrations.Migration):
                 ("sub_theme", models.CharField(max_length=50)),
                 ("topic", models.CharField(max_length=50)),
                 ("metric", models.CharField(max_length=100)),
-                ("metric_group", models.CharField(blank=True, max_length=50)),
+                ("metric_group", models.CharField(max_length=50, null=True)),
                 ("geography", models.CharField(max_length=100)),
                 ("geography_type", models.CharField(max_length=50)),
-                ("geography_code", models.CharField(blank=True, max_length=9)),
+                ("geography_code", models.CharField(max_length=9, null=True)),
                 ("stratum", models.CharField(max_length=50)),
                 ("sex", models.CharField(max_length=3, null=True)),
                 ("age", models.CharField(max_length=50, null=True)),
@@ -40,11 +40,15 @@ class Migration(migrations.Migration):
                 ("metric_value", models.DecimalField(decimal_places=4, max_digits=11)),
                 (
                     "upper_confidence",
-                    models.DecimalField(blank=True, decimal_places=4, max_digits=11),
+                    models.DecimalField(
+                        blank=True, decimal_places=4, max_digits=11, null=True
+                    ),
                 ),
                 (
                     "lower_confidence",
-                    models.DecimalField(blank=True, decimal_places=4, max_digits=11),
+                    models.DecimalField(
+                        blank=True, decimal_places=4, max_digits=11, null=True
+                    ),
                 ),
                 ("force_write", models.BooleanField(default=False)),
                 ("is_public", models.BooleanField(default=True)),
