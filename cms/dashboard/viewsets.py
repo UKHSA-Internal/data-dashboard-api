@@ -84,7 +84,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             req = self.request
 
             if req.auth is None:
-
                 # Get all page ids for pages with is_public
                 public_topic_page_ids = TopicPage.objects.filter(
                     is_public=True, page_ptr__in=queryset
