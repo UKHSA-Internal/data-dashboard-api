@@ -40,6 +40,35 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
+    def get_id_by_name(
+        self, theme_name: str, sub_theme_name: str, topic_name: str
+    ) -> tuple[int | None, int | None, int | None]:
+        """
+        Gets the theme, sub-theme and topic IDs matching the given names.
+
+        Returns:
+            A tuple of (theme_id, sub_theme_id, topic_id) if found,
+            or (None, None, None) if not found.
+        """
+        record = self.filter(
+            sub_theme__theme__name=theme_name,
+            sub_theme__name=sub_theme_name,
+            name=topic_name,
+        ).first()
+
+        if record:
+            return (
+                int(record.sub_theme.theme_id),
+                int(record.sub_theme_id),
+                int(record.id),
+            )
+
+        return (
+            None,
+            None,
+            None,
+        )
+
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all available unique topic names as a flat list queryset.
 
@@ -112,6 +141,20 @@ class TopicManager(models.Manager):
             None
         """
         return self.get_queryset().get_name_by_id(topic_id)
+
+    def get_id_by_name(
+        self, theme_name: str, sub_theme_name: str, topic_name: str
+    ) -> tuple[int | None, int | None, int | None]:
+        """
+        Gets the theme, sub-theme and topic IDs matching the given names.
+
+        Returns:
+            A tuple of (theme_id, sub_theme_id, topic_id) if found,
+            or (None, None, None) if not found.
+        """
+        return self.get_queryset().get_id_by_name(
+            theme_name, sub_theme_name, topic_name
+        )
 
     def get_all_names(self) -> TopicQuerySet:
         """Gets all available topic names as a flat list queryset.

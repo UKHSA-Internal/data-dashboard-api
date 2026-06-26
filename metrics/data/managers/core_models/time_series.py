@@ -13,9 +13,9 @@ from django.db import models
 from django.db.models.query_utils import Q
 from django.utils import timezone
 
+from common.auth.permissions import PermissionSetsType, check_chart_permissions_by_name
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
-    validate_permissions_for_non_public,
 )
 from metrics.data.models import RBACPermission
 
@@ -157,7 +157,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._ascending_order(queryset=queryset, field_name="date")
 
-    def query_for_data(
+    def query_for_data(  # noqa: PLR0914
         self,
         *,
         topic: str,
@@ -171,8 +171,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        theme: str = "",
+        sub_theme: str = "",
         metric_value_ranges: list[tuple[str | float | int]] | None = None,
-        restrict_to_public: bool = True,
+        permission_sets: PermissionSetsType | None = None,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -212,14 +214,18 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            theme: The name of the theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            sub_theme: The name of the sub theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
             metric_value_ranges: List of tuples whereby each
                 tuple represents a permissible metric value range.
                 i.e. to filter for all record with values
                 between 0 -> 80 AND 90 -> 100,
                 this can be provided as `[(0, 80), (90, 100)]`.
-            restrict_to_public: Boolean switch to restrict the query
-                to only return public records.
-                If False, then non-public records will be included.
+            permission_sets: The JWT permissions extracted from the Cognito token.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -231,6 +237,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                     ]>`
 
         """
+
         queryset = self.filter(
             metric__topic__name=topic,
             metric__name=metric,
@@ -246,7 +253,18 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age=age,
         )
 
-        if restrict_to_public:
+        if permission_sets and check_chart_permissions_by_name(
+            permission_sets=permission_sets,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
+            topic_name=topic,
+            metric_name=metric,
+            geography_type=geography_type,
+            geography_name=geography,
+        ):
+            # Keep both the public and non-public data
+            pass
+        else:
             queryset = queryset.filter(is_public=True)
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
@@ -533,6 +551,7 @@ class CoreTimeSeriesManager(models.Manager):
         sub_theme: str = "",
         metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
+        permission_sets: PermissionSetsType | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -579,9 +598,7 @@ class CoreTimeSeriesManager(models.Manager):
                 i.e. to filter for all record with values
                 between 0 -> 80 AND 90 -> 100,
                 this can be provided as `[(0, 80), (90, 100)]`.
-            rbac_permissions: The RBAC permissions available
-                to the given request. This dictates whether the given
-                request is permitted access to non-public data or not.
+            permission_sets: The JWT permissions extracted from the Cognito token.
 
         Notes:
             If we have the following input `queryset`:
@@ -611,20 +628,12 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            rbac_permissions=rbac_permissions,
-        )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
+            theme=theme,
+            sub_theme=sub_theme,
             topic=topic,
             metric=metric,
             date_from=date_from,
@@ -635,7 +644,7 @@ class CoreTimeSeriesManager(models.Manager):
             sex=sex,
             age=age,
             metric_value_ranges=metric_value_ranges,
-            restrict_to_public=not has_access_to_non_public_data,
+            permission_sets=permission_sets,
         )
 
     def query_for_superseded_data(

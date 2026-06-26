@@ -1,10 +1,7 @@
-from collections.abc import Iterable
-
-from pydantic.main import BaseModel
-from rest_framework.request import Request
+from metrics.domain.models.common import BaseRequestParams
 
 
-class HeadlineParameters(BaseModel):
+class HeadlineParameters(BaseRequestParams):
     topic: str
     metric: str
     stratum: str
@@ -14,10 +11,6 @@ class HeadlineParameters(BaseModel):
     age: str
     is_public: bool | None = True
     data_classification: str | None = None
-    request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @property
     def topic_name(self) -> str:
@@ -68,7 +61,3 @@ class HeadlineParameters(BaseModel):
             "sex": self.sex_name,
             "rbac_permissions": self.rbac_permissions,
         }
-
-    @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
-        return getattr(self.request, "rbac_permissions", [])

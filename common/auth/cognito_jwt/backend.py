@@ -50,16 +50,19 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             raise exceptions.AuthenticationFailed from None
 
         custom_user_manager = self.get_custom_user_manager()
+
         if custom_user_manager:
             user = custom_user_manager.get_or_create_for_cognito(jwt_payload)
         else:
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create_for_cognito(jwt_payload)
+
         if not user:
             logger.debug(
                 "Unable to create user from JWT, defaulting to unauthenticated"
             )
             return None
+
         return (user, jwt_token)
 
     @staticmethod
