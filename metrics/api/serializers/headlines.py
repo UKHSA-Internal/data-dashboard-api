@@ -57,6 +57,18 @@ class HeadlinesQuerySerializer(serializers.Serializer):
         required=False,
         help_text=help_texts.SEX_FIELD,
     )
+    is_public = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text=help_texts.IS_PUBLIC_FIELD,
+    )
+    data_classification = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default=None,
+        help_text=help_texts.DATA_CLASSIFICATION_FIELD,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
