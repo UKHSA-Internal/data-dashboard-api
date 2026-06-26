@@ -157,7 +157,7 @@ class TestAPIHeadline:
         self, field_name: str, field_value: int | str, field_max_length: int
     ):
         """
-        Given I have a valid field for the API headline mdoel and a max_length constraint
+        Given I have a valid field for the API headline model and a max_length constraint
         When I initialise a new instance of the api headline model passing in the field
         Then the instance should have meta data of a max_length matching the max_length_constraint
         """
