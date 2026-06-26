@@ -18,7 +18,7 @@ from public_api.version.v2.views.timeseries_viewset import APITimeSeriesViewSetV
 from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
 
-def _construct_version_two_urls(
+def construct_version_two_urls(
     *,
     prefix: str,
 ) -> list[resolvers.URLResolver]:
