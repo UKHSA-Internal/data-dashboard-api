@@ -488,7 +488,6 @@ class Consumer:
             model_manager=self.api_headline_manager, model_instances=api_headlines
         )
 
-
     def create_core_and_api_headlines(self) -> None:
         """Creates `APIHeadline` and `CoreHeadline` records from the ingested data after stale records are deleted.
 
@@ -497,7 +496,6 @@ class Consumer:
         """
         self.create_core_headlines()
         self.create_api_headlines()
-
 
     def build_core_time_series(self) -> list[CORE_TIME_SERIES_MODEL]:
         """Builds `CoreTimeSeries` model instances from the ingested data

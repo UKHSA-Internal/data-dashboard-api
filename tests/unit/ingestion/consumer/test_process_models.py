@@ -23,7 +23,9 @@ class TestConsumerProcessModels:
         # Given
         spy_manager = mock.Mock()
         spy_manager.attach_mock(spy_clear_stale_headlines, "spy_clear_stale_headlines")
-        spy_manager.attach_mock(spy_create_core_and_api_headlines, "spy_create_core_and_api_headlines")
+        spy_manager.attach_mock(
+            spy_create_core_and_api_headlines, "spy_create_core_and_api_headlines"
+        )
         consumer = Consumer(source_data=example_headline_data, filename=test_filename)
 
         # When

@@ -70,8 +70,7 @@ class APIHeadlineFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def _make_datetime_timezone_aware(
-        cls,
-        datetime_obj: str | datetime.datetime | None
+        cls, datetime_obj: str | datetime.datetime | None
     ) -> datetime.datetime:
 
         if datetime_obj.tzinfo is None:

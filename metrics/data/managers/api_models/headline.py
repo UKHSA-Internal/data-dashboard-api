@@ -2,6 +2,7 @@
 This file contains the custom queryset and Manger classes associated with the `APIHeadline` model.
 
 """
+
 from typing import Self
 
 from django.db import models
@@ -11,6 +12,7 @@ from django.utils import timezone
 
 class APIHeadlineQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `APIHeadlineManger`"""
+
     @staticmethod
     def _newest_to_oldest(
         *, queryset: models.QuerySet, apply_refresh_date_only: bool
@@ -20,7 +22,7 @@ class APIHeadlineQuerySet(models.QuerySet):
         return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
-    def _exclude_data_under_embargo(self, *, queryset: models.QuerySet) -> models.QuerySet:
+    def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
         """Excludes any data which is currently embargoed from the given `queryset`.
 
         Notes:
@@ -92,9 +94,11 @@ class APIHeadlineQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        queryset = self._exclude_data_under_embargo(self, queryset=queryset)
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
         apply_refresh_date_only: bool = "alert" in topic
-        return self._newest_to_oldest(queryset=queryset, apply_refresh_date_only=apply_refresh_date_only)
+        return self._newest_to_oldest(
+            queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
+        )
 
     def get_public_only_headlines_released_from_embargo(
         self,
@@ -163,6 +167,7 @@ class APIHeadlineQuerySet(models.QuerySet):
 
 class APIHeadlineManager(models.Manager):
     """Custom model manager class for the `APIHeadline` model."""
+
     def get_queryset(self) -> APIHeadlineQuerySet:
         return APIHeadlineQuerySet(self.model, using=self._db)
 
@@ -212,30 +217,34 @@ class APIHeadlineManager(models.Manager):
            The stale records in their entirety as a queryset
         """
         if is_public:
-            queryset = self.get_queryset().get_public_only_headlines_released_from_embargo(
-                theme=theme,
-                sub_theme=sub_theme,
-                topic=topic,
-                metric=metric,
-                geography=geography,
-                geography_type=geography_type,
-                geography_code=geography_code,
-                stratum=stratum,
-                age=age,
-                sex=sex,
+            queryset = (
+                self.get_queryset().get_public_only_headlines_released_from_embargo(
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
+                    geography_code=geography_code,
+                    stratum=stratum,
+                    age=age,
+                    sex=sex,
+                )
             )
         else:
-            queryset = self.get_queryset().get_non_public_only_headlines_released_from_embargo(
-                theme=theme,
-                sub_theme=sub_theme,
-                topic=topic,
-                metric=metric,
-                geography=geography,
-                geography_type=geography_type,
-                geography_code=geography_code,
-                stratum=stratum,
-                age=age,
-                sex=sex,
+            queryset = (
+                self.get_queryset().get_non_public_only_headlines_released_from_embargo(
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
+                    geography_code=geography_code,
+                    stratum=stratum,
+                    age=age,
+                    sex=sex,
+                )
             )
 
         try:
@@ -307,4 +316,3 @@ class APIHeadlineManager(models.Manager):
             is_public=is_public,
         )
         superseded_records.delete()
-

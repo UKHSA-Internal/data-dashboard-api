@@ -7,6 +7,7 @@ class FakeAPIHeadline(APIHeadline):
     A fake version of the Django model `APIHeadline`
     which has had its dependencies altered so that it does not interact with the database
     """
+
     Meta = FakeMeta
 
     def __init__(self, **kwargs):

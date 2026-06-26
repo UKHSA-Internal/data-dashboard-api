@@ -103,32 +103,30 @@ class APIHeadline(models.Model):
     sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     metric = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
-    metric_group = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+    metric_group = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, blank=True)
 
     geography = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
     geography_type = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     geography_code = models.CharField(
-        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
+        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, blank=True
     )
     stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
-    sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
-    age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+    sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, blank=True)
+    age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, blank=True)
 
-    period_start = models.DateTimeField(null=True)
-    period_end = models.DateTimeField(null=True)
-    refresh_date = models.DateTimeField(null=True)
-    embargo = models.DateTimeField(null=True)
+    period_start = models.DateTimeField(blank=True)
+    period_end = models.DateTimeField(blank=True)
+    refresh_date = models.DateTimeField(blank=True)
+    embargo = models.DateTimeField(blank=True)
     metric_value = models.FloatField()
     upper_confidence = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
         blank=True,
-        null=True,
     )
     lower_confidence = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
-        null=True,
         blank=True,
     )
 
