@@ -1,4 +1,5 @@
 from django.urls import path, resolvers
+
 from public_api.version.v2.views import (
     GeographyDetailViewV2,
     GeographyListViewV2,
@@ -13,8 +14,8 @@ from public_api.version.v2.views import (
     TopicDetailViewV2,
     TopicListViewV2,
 )
-from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 from public_api.version.v2.views.timeseries_viewset import APITimeSeriesViewSetV2
+from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
 
 def _construct_version_two_urls(
