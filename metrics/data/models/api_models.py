@@ -118,10 +118,7 @@ class APIHeadline(models.Model):
     period_end = models.DateTimeField()
     refresh_date = models.DateTimeField()
     embargo = models.DateTimeField(null=True)
-    metric_value = models.DecimalField(
-        max_digits=METRIC_VALUE_MAX_DIGITS,
-        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
-    )
+    metric_value = models.FloatField()
     upper_confidence = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
