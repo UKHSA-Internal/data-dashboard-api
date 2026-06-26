@@ -208,7 +208,7 @@ LOGGING = {
             "formatter": "standard",
         },
         "audit_console": {
-            "level": config.LOG_LEVEL,
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "audit",
         },
@@ -226,7 +226,7 @@ LOGGING = {
         },
         "audit": {
             "handlers": ["audit_console"],
-            "level": config.LOG_LEVEL,
+            "level": "INFO",
             "propagate": False,
         },
     },
