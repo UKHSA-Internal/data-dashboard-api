@@ -40,7 +40,7 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
-    def get_id_by_name(
+    def get_theme_sub_theme_topic_and_metric_id_by_name(
         self,
         theme_name: str,
         sub_theme_name: str,
