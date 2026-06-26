@@ -2,7 +2,7 @@ from django.urls import path, resolvers
 from django.views.generic import TemplateView
 
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.version.v2.urls import _construct_version_two_urls
+from public_api.version.v2.urls import construct_version_two_urls
 from public_api.views import (
     GeographyDetailView,
     GeographyListView,
@@ -34,8 +34,8 @@ def construct_url_patterns_for_public_api(
         set of versioned URLS.
     """
     urls = []
-    urls.extend(_construct_version_one_urls(prefix=prefix))
-    urls.extend(_construct_version_two_urls(prefix=prefix))
+    urls.extend(_construct_version_one_urls(prefix=f"{prefix}/timeseries/"))
+    urls.extend(construct_version_two_urls(prefix=f"{prefix}/timeseries/"))
 
     if MetricsPublicAPIInterface.is_auth_enabled():
         urls.append(
