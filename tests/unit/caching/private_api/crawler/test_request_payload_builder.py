@@ -1,4 +1,7 @@
 import pytest
+from copy import deepcopy
+from datetime import datetime
+from unittest import mock
 
 from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
 
@@ -367,3 +370,133 @@ class TestRequestPayloadBuilder:
         assert plot_data["label"] == plot_value["label"]
         assert plot_data["line_colour"] == plot_value["line_colour"]
         assert plot_data["line_type"] == plot_value["line_type"]
+
+    @pytest.mark.parametrize(
+        "chart_is_double_width, expected_chart_width", ([(True, 1100), (False, 515)])
+    )
+    def test_build_dual_category_chart_request_data(
+        self,
+        chart_is_double_width: bool,
+        expected_chart_width: int,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a dual category chart block
+        When `build_dual_category_chart_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
+        Then the correct dict is returned
+        """
+        # Given
+        chart_block_data = example_dual_category_chart_block
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        chart_request_data = (
+            request_payload_builder.build_dual_category_chart_request_data(
+                chart_block=chart_block_data,
+                chart_is_double_width=chart_is_double_width,
+            )
+        )
+
+        # Then
+        base_request_data = request_payload_builder.base_dual_category_request_data(
+            chart_block_data
+        )
+        expected_chart_request_data = {
+            **base_request_data,
+            "file_format": "svg",
+            "chart_height": 260,
+            "chart_width": expected_chart_width,
+            "x_axis_title": chart_block_data.get("x_axis_title", ""),
+            "y_axis_title": chart_block_data.get("y_axis_title", ""),
+            "y_axis_minimum_value": chart_block_data.get("y_axis_minimum_value", None),
+            "y_axis_maximum_value": chart_block_data.get("y_axis_maximum_value", None),
+            "chart_type": chart_block_data["chart_type"],
+            "legend_title": chart_block_data["title"],
+        }
+        assert chart_request_data == expected_chart_request_data
+
+    def test_build_dual_category_tables_request_data(
+        self,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a dual category chart block
+        When `build_dual_category_tables_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
+        Then the correct dict is returned
+        """
+        # Given
+        chart_block_data = example_dual_category_chart_block
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        tables_request_data = (
+            request_payload_builder.build_dual_category_tables_request_data(
+                chart_block=chart_block_data
+            )
+        )
+
+        # Then
+        expected_tables_request_data = (
+            request_payload_builder.base_dual_category_request_data(chart_block_data)
+        )
+        assert tables_request_data == expected_tables_request_data
+
+    def test_build_dual_category_downloads_request_data(
+        self,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a dual category chart block
+        When `build_dual_category_downloads_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
+        Then the correct dict is returned
+        """
+        # Given
+        chart_block_data = example_dual_category_chart_block
+        file_format = "csv"
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        downloads_request_data = (
+            request_payload_builder.build_dual_category_downloads_request_data(
+                chart_block=chart_block_data, file_format=file_format
+            )
+        )
+
+        # Then
+        base_request_data = request_payload_builder.base_dual_category_request_data(
+            chart_block_data
+        )
+        expected_downloads_request_data = {
+            **base_request_data,
+            "file_format": file_format,
+        }
+        assert downloads_request_data == expected_downloads_request_data
+
+    def test_base_dual_category_request_data_defaults_date_to_when_none(
+        self,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a dual category chart block with no `date_to` in static fields
+        When `base_dual_category_request_data()` is called from `RequestPayloadBuilder`
+        Then today's date is applied to `date_to`
+        """
+        # Given
+        chart_block_data = deepcopy(example_dual_category_chart_block)
+        chart_block_data["static_fields"] = chart_block_data["static_fields"].copy()
+        chart_block_data["static_fields"]["date_to"] = None
+
+        # When
+        with mock.patch(
+            "caching.private_api.crawler.request_payload_builder.datetime"
+        ) as mock_datetime:
+            mock_datetime.now.return_value = datetime(2026, 6, 26)
+            request_data = RequestPayloadBuilder.base_dual_category_request_data(
+                chart_block_data
+            )
+
+        # Then
+        assert request_data["static_fields"]["date_to"] == "2026-06-26"
