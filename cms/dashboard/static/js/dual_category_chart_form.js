@@ -100,7 +100,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
     static FIELD_SUFFIXES = {
         X_AXIS: 'x_axis',
         GEOGRAPHY: 'static_fields-geography_type',
-        SECONDARY_CATEGORY: 'second_category',
+        SECONDARY_CATEGORY: 'secondary_category',
         PRIMARY_VALUES: 'primary_field_values',
         SECONDARY_VALUES: 'secondary_field_values',
         DATA_SCRIPT: 'subcategory-data',

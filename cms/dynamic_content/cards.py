@@ -45,7 +45,7 @@ MAXIMUM_COLUMNS_CHART_THREE_COLUMNS_COUNT: int = 3
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
 
-MINIMUM_SEGMENTS_COUNT: int = 1
+MINIMUM_SEGMENTS_COUNT: int = 2
 
 POPULAR_TOPICS_SEGMENT_COUNT: int = 1
 POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT: int = 2
@@ -521,7 +521,7 @@ class DualCategoryChartCard(blocks.StructBlock):
 
     static_fields = DualCategoryChartStaticFieldComponent()
 
-    second_category = blocks.ChoiceBlock(
+    secondary_category = blocks.ChoiceBlock(
         choices=get_dual_chart_secondary_category_choices,
         help_text=help_texts.SECONDARY_CATEGORY,
     )
