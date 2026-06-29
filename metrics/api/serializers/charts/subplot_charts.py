@@ -228,7 +228,3 @@ class SubplotChartRequestSerializer(serializers.Serializer):
             data_classification=data_classification,
             request=request,
         )
-
-
-class ChartPreviewQueryParamsSerializer(serializers.Serializer):
-    preview = serializers.BooleanField(required=False)
