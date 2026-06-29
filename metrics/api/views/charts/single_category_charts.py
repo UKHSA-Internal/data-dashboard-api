@@ -375,6 +375,9 @@ class EncodedChartsView(APIView):
         the highest value from the dataset will be used.
 
         """
+        print("=================================================")
+        print(request.data)
+
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 

@@ -629,7 +629,7 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
 
-        return self.get_queryset().query_for_data(
+        qs = self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
             theme=theme,
@@ -646,6 +646,8 @@ class CoreTimeSeriesManager(models.Manager):
             metric_value_ranges=metric_value_ranges,
             permission_sets=permission_sets,
         )
+        print(qs.query)
+        return qs
 
     def query_for_superseded_data(
         self,
