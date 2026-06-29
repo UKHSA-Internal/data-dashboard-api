@@ -29,6 +29,16 @@ class MetricQuerySet(models.QuerySet):
         """
         return self.filter(id=metric_id).values_list("name", flat=True).first()
 
+    def get_id_by_name(self, metric_name: str) -> int | None:
+        """
+        Gets the metric ID for a given metric name.
+
+        Returns:
+            The metric ID if found, or None otherwise
+        """
+        record = self.filter(name=metric_name).first()
+        return int(record.id) if record else None
+
     def get_all_names(self) -> models.QuerySet:
         """Gets all available metric names as a flat list queryset.
 
@@ -145,6 +155,15 @@ class MetricManager(models.Manager):
             None
         """
         return self.get_queryset().get_name_by_id(metric_id)
+
+    def get_id_by_name(self, metric_name: str) -> int | None:
+        """
+        Gets the metric ID for a given metric name.
+
+        Returns:
+            The metric ID if found, or None otherwise
+        """
+        return self.get_queryset().get_id_by_name(metric_name)
 
     def get_all_names(self) -> MetricQuerySet:
         """Gets all available metric names as a flat list queryset.

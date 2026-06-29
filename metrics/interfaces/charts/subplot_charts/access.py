@@ -156,6 +156,9 @@ class SubplotChartsInterface:
             description=self.build_chart_description(plots_data=plots_data),
             is_headline=False,
             is_subplot=True,
+            chart_width=self.chart_request_params.chart_width,
+            is_public=self.chart_request_params.is_public,
+            data_classification=self.chart_request_params.data_classification,
         )
 
     @classmethod

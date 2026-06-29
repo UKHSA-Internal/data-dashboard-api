@@ -6,6 +6,8 @@ from dataclasses import asdict, dataclass
 import plotly
 from scour import scour
 
+from metrics.interfaces.charts.common.chart_output import ChartOutput
+
 
 @dataclass
 class ChartResult:

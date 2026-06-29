@@ -1,4 +1,3 @@
-import logging
 from itertools import chain
 
 from django.urls import path
@@ -10,41 +9,13 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.auth_content.auth_utils import is_auth_enabled
-from cms.auth_content.constants import WILDCARD_ID_VALUE
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
+from common.auth.logging import log_user_permission_summary
+from common.auth.permissions import check_page_permissions
 
-logger = logging.getLogger(__name__)
 AUTH_ENABLED = is_auth_enabled()
-
-
-def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
-    if not isinstance(user_permissions, list):
-        return False
-
-    for permission in user_permissions:
-        permission_theme_id = permission.get("theme", {}).get("id")
-        permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
-        permission_topic_id = permission.get("topic", {}).get("id")
-
-        if permission_theme_id == WILDCARD_ID_VALUE:
-            return True
-
-        if (
-            permission_theme_id == theme_id
-            and permission_sub_theme_id == WILDCARD_ID_VALUE
-        ):
-            return True
-
-        if (
-            permission_theme_id == theme_id
-            and permission_sub_theme_id == sub_theme_id
-            and (permission_topic_id in {WILDCARD_ID_VALUE, topic_id})
-        ):
-            return True
-
-    return False
 
 
 @extend_schema(tags=["cms"])
@@ -84,7 +55,6 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             req = self.request
 
             if req.auth is None:
-
                 # Get all page ids for pages with is_public
                 public_topic_page_ids = TopicPage.objects.filter(
                     is_public=True, page_ptr__in=queryset
@@ -110,19 +80,14 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                 filtered_queryset = is_public_pages | pages_without_is_public
 
             else:
-                logger.info(
-                    "User %s has total permission sets: %s",
-                    req.user.username,
-                    req.user.permission_sets["summary"]["total_permission_sets"],
-                )
+                log_user_permission_summary(req.user)
+
                 has_global_access = req.user.permission_sets["summary"][
                     "has_global_access"
                 ]
 
                 if has_global_access:
-                    logger.info("User %s has global access", req.user.username)
                     filtered_queryset = queryset
-
                 else:
                     user_permissions = req.user.permission_sets["permission_sets"]
                     pages_to_check = chain(
@@ -139,11 +104,11 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                         page_id
                         for page_id, page in pages_to_check
                         if page.is_public
-                        or check_permissions(
-                            user_permissions,
-                            page.theme,
-                            page.sub_theme,
-                            page.topic,
+                        or check_page_permissions(
+                            permission_sets=user_permissions,
+                            theme_id=page.theme,
+                            sub_theme_id=page.sub_theme,
+                            topic_id=page.topic,
                         )
                     ]
 

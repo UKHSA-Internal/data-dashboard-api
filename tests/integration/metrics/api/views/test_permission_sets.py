@@ -4,7 +4,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from cms.auth_content.constants import WILDCARD_ID_VALUE
+from common.auth.permissions import WILDCARD_ID_VALUE
 from tests.factories.metrics.metric import MetricFactory
 from tests.factories.metrics.sub_theme import SubThemeFactory
 from tests.factories.metrics.topic import TopicFactory
