@@ -7,8 +7,6 @@ from django.utils import timezone
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models import get_date_n_months_ago_from_timestamp
-from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
@@ -205,14 +203,14 @@ class TestCoreTimeSeriesQuerySet:
         )
 
     @pytest.mark.django_db
-    def test_query_for_data_excludes_non_public_records_when_restrict_to_public_is_true(
+    def test_query_for_data_excludes_non_public_records_without_permission_sets(
         self,
     ):
         """
         Given public and non-public `CoreTimeSeries` records
         When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesQueryset`
-            with `restrict_to_public` given as True
+            with no permission sets provided
         Then only the public record is returned
         """
         # Given
@@ -229,7 +227,6 @@ class TestCoreTimeSeriesQuerySet:
             metric=public_record.metric.name,
             date_from="2020-01-01",
             date_to="2025-12-31",
-            restrict_to_public=True,
         )
 
         # Then
@@ -237,14 +234,14 @@ class TestCoreTimeSeriesQuerySet:
         assert non_public_record not in retrieved_records
 
     @pytest.mark.django_db
-    def test_query_for_data_includes_non_public_records_when_restrict_to_public_is_false(
+    def test_query_for_data_includes_non_public_records_with_global_permission_sets(
         self,
     ):
         """
         Given public and non-public `CoreTimeSeries` records
         When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesQueryset`
-            with `restrict_to_public` given as False
+            with global permission sets provided
         Then the non-public record is also returned
         """
         # Given
@@ -255,18 +252,95 @@ class TestCoreTimeSeriesQuerySet:
             metric_value=2, date="2023-01-02", is_public=False
         )
 
+        permission_sets = {
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
+        }
+
         # When
         retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
             topic=public_record.metric.topic.name,
             metric=public_record.metric.name,
             date_from="2020-01-01",
             date_to="2025-12-31",
-            restrict_to_public=False,
+            permission_sets=permission_sets,
         )
 
         # Then
         assert public_record in retrieved_records
         assert non_public_record in retrieved_records
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("does_permission_match", [True, False])
+    def test_query_for_data_method_handles_specific_permission_sets(
+        self,
+        does_permission_match: bool,
+    ):
+        """
+        Given a public and a non-public CoreTimeSeries record
+        When query_for_data() is called with a specific permission set
+        Then the non-public record is only returned when the permission row matches
+        """
+
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1,
+            date="2020-01-01",
+            is_public=True,
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2,
+            date="2020-01-01",
+            is_public=False,
+        )
+        permission_sets = {
+            "permission_sets": [
+                {
+                    "theme": {
+                        "id": str(non_public_record.metric.topic.sub_theme.theme.id)
+                    },
+                    "sub_theme": {
+                        "id": str(non_public_record.metric.topic.sub_theme.id)
+                    },
+                    "topic": {"id": str(non_public_record.metric.topic.id)},
+                    "metric": {
+                        "id": str(
+                            # Tweak id to be wrong for the negative test
+                            non_public_record.metric.id
+                            if does_permission_match
+                            else 999999
+                        )
+                    },
+                    "geography_type": {
+                        "id": str(non_public_record.geography.geography_type.id)
+                    },
+                    "geography": {
+                        "id": str(non_public_record.geography.geography_code)
+                    },
+                }
+            ],
+            "summary": {"has_global_access": False},
+        }
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
+            date_from="2010-01-01",
+            date_to="2030-01-01",
+            fields_to_export=[],
+            permission_sets=permission_sets,
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert (non_public_record in retrieved_records) is does_permission_match
 
 
 class TestCoreTimeSeriesManager:
@@ -496,10 +570,10 @@ class TestCoreTimeSeriesManager:
         "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
         False,
     )
-    def test_query_for_data_returns_non_public_record_with_acceptable_permissions(self):
+    def test_query_for_data_returns_non_public_record_with_global_permissions(self):
         """
         Given public and non-public `CoreTimeSeries` records
-        And an `RBACPermission` which gives access to the non-public portion of the data
+        And global JWT permission sets
         And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `query_for_data()` is called from the `CoreTimeSeriesManager`
         Then the non-public record is included
@@ -520,7 +594,10 @@ class TestCoreTimeSeriesManager:
             "geography": public_record.geography.name,
             "geography_type": public_record.geography.geography_type.name,
         }
-        rbac_permission = RBACPermissionFactory.create_record(**params)
+        permission_sets = {
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
+        }
 
         # When
         core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
@@ -528,7 +605,7 @@ class TestCoreTimeSeriesManager:
             date_from="2020-01-01",
             date_to="2025-12-31",
             fields_to_export=[],
-            rbac_permissions=[rbac_permission],
+            permission_sets=permission_sets,
         )
 
         # Then
@@ -536,10 +613,10 @@ class TestCoreTimeSeriesManager:
         assert non_public_record in core_time_series_queryset
 
     @pytest.mark.django_db
-    def test_query_for_data_excludes_non_public_record_without_permissions(self):
+    def test_query_for_data_excludes_non_public_record_without_permission_sets(self):
         """
         Given public and non-public `CoreTimeSeries` records
-        And no `RBACPermission` which allows access to the non-public portion of this dataset
+        And no permission sets are provided
         When `query_for_data()` is called from the `CoreTimeSeriesManager`
         Then the non-public record is excluded
         """
@@ -550,15 +627,6 @@ class TestCoreTimeSeriesManager:
         non_public_record = CoreTimeSeriesFactory.create_record(
             date="2023-01-02", metric_value=2, is_public=False
         )
-        rbac_permission = RBACPermissionFactory.create_record(
-            theme="some_other_theme",
-            sub_theme=None,
-            topic=None,
-            metric=None,
-            geography=None,
-            geography_type=None,
-        )
-
         # When
         core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
             theme=public_record.metric.topic.sub_theme.theme.name,
@@ -568,7 +636,6 @@ class TestCoreTimeSeriesManager:
             geography=public_record.geography.name,
             geography_type=public_record.geography.geography_type.name,
             fields_to_export=[],
-            rbac_permissions=[rbac_permission],
             date_from="2020-01-01",
             date_to="2025-12-31",
         )

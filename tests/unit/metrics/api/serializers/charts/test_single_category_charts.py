@@ -626,6 +626,7 @@ class TestChartsSerializer:
             "plots": chart_plots,
             "y_axis_minimum_value": 0,
             "y_axis_maximum_value": None,
+            "is_public": True,
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 
@@ -644,6 +645,7 @@ class TestChartsSerializer:
             chart_width=valid_data_payload["chart_width"],
             x_axis=DEFAULT_X_AXIS,
             y_axis=DEFAULT_Y_AXIS,
+            is_public=True,
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
 

@@ -4,7 +4,7 @@ import pytest
 
 from rest_framework.exceptions import ValidationError
 
-from cms.auth_content.constants import WILDCARD_ID_VALUE
+from common.auth.permissions import WILDCARD_ID_VALUE
 from metrics.data.models.core_models.supporting import Geography
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 from metrics.api.serializers.geographies import (

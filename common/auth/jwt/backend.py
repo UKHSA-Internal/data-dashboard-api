@@ -68,6 +68,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         else:
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create(jwt_payload)
+
         if not user:
             logger.debug(
                 "Unable to create user from JWT, defaulting to unauthenticated"

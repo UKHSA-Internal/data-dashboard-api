@@ -41,6 +41,19 @@ class GeographyTypeQuerySet(models.QuerySet):
         """
         return self.filter(id=geography_type_id).values_list("name", flat=True).first()
 
+    def get_id_by_name(self, geography_type_name: str) -> int | None:
+        """
+        Gets the geography type ID for a given geography type name.
+
+        Args:
+            geography_type_name: The name of the geography type to look up
+
+        Returns:
+            The geography type ID if found, or None otherwise
+        """
+        record = self.filter(name=geography_type_name).first()
+        return int(record.id) if record else None
+
     def get_all_names_and_ids(self) -> models.QuerySet:
         """Gets all available geography_type names as a flat list queryset.
 
@@ -76,6 +89,18 @@ class GeographyTypeManager(models.Manager):
             None
         """
         return self.get_queryset().get_name_by_id(geography_type_id)
+
+    def get_id_by_name(self, geography_type_name: str) -> int | None:
+        """
+        Gets the geography type ID for a given geography type name.
+
+        Args:
+            geography_type_name: The name of the geography type to look up
+
+        Returns:
+            The geography type ID if found, or None otherwise
+        """
+        return self.get_queryset().get_id_by_name(geography_type_name)
 
     def get_all_names(self) -> GeographyTypeQuerySet:
         """Gets all available geography_type names as a flat list queryset.
