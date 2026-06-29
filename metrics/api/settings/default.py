@@ -93,7 +93,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "metrics.api.middleware.current_user.CurrentUserMiddleware",
+    "django_cprofile_middleware.middleware.ProfilerMiddleware",
 ]
+
+DJANGO_CPROFILE_MIDDLEWARE_REQUIRE_STAFF = False
 
 APPEND_SLASH = True
 
