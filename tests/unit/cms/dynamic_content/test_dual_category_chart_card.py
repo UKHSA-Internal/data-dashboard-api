@@ -31,7 +31,7 @@ class TestDualCategoryChartCard:
             "y_axis_minimum_value",
             "y_axis_maximum_value",
             "chart_type",
-            "second_category",
+            "secondary_category",
         ),
     )
     def test_dual_chart_card_has_expected_fields(
