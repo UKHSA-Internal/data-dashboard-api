@@ -1,3 +1,4 @@
+from copy import deepcopy
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 
@@ -22,6 +23,29 @@ class TestCMSBlockParserExtractionOfSelectedTopics:
 
         # Then
         assert topics == {"COVID-19"}
+
+    def test_get_all_selected_topics_from_dual_category_chart_blocks(
+        self, example_dual_category_chart_block: dict[str, str | list[dict]]
+    ):
+        """
+        Given a list of dual category chart blocks
+        When `get_all_selected_topics_from_chart_blocks()` is called
+            from the `CMSBlockParser` class
+        Then a set of the correct topics is returned
+        """
+        # Given
+        dual_category_chart_block_1 = deepcopy(example_dual_category_chart_block)
+        dual_category_chart_block_2 = deepcopy(example_dual_category_chart_block)
+        dual_category_chart_block_2["static_fields"]["topic"] = "Influenza"
+        chart_blocks = [dual_category_chart_block_1, dual_category_chart_block_2]
+
+        # When
+        topics = CMSBlockParser.get_all_selected_topics_from_chart_blocks(
+            chart_blocks=chart_blocks
+        )
+
+        # Then
+        assert sorted(topics) == ["Influenza", "Lead"]
 
     def test_get_all_selected_topics_from_headline_blocks(
         self, example_headline_cms_block: dict[str, str | dict[str, str]]

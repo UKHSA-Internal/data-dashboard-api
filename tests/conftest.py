@@ -440,6 +440,60 @@ def example_chart_block() -> dict[str, str | list[dict]]:
 
 
 @pytest.fixture
+def example_dual_category_chart_block() -> dict[str, str | list[dict]]:
+    return {
+        "title": "Lead headline rates by age and sex",
+        "x_axis": "age",
+        "x_axis_title": "Age groups",
+        "primary_field_values": [
+            "00-01",
+            "01-04",
+            "05-09",
+            "05-11",
+            "05-14",
+            "10-14",
+        ],
+        "y_axis": "metric",
+        "y_axis_title": "Genders by age",
+        "y_axis_minimum_value": 0,
+        "y_axis_maximum_value": None,
+        "chart_type": "stacked_bar",
+        "static_fields": {
+            "topic": "Lead",
+            "metric": "lead_headline_ratesByAgeSex",
+            "geography": "England",
+            "geography_type": "Nation",
+            "sex": "all",
+            "age": "all",
+            "stratum": "default",
+            "date_from": "2020-05-21",
+            "date_to": "2026-05-21",
+        },
+        "secondary_category": "sex",
+        "segments": [
+            {
+                "type": "segment",
+                "value": {
+                    "secondary_field_value": "f",
+                    "colour": "COLOUR_1_DARK_BLUE",
+                    "label": "",
+                },
+                "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4",
+            },
+            {
+                "type": "segment",
+                "value": {
+                    "secondary_field_value": "m",
+                    "colour": "COLOUR_1_DARK_BLUE",
+                    "label": "Males",
+                },
+                "id": "c1fbe09c-5213-59f7-c05f-ff8cdffe2ed5",
+            },
+        ],
+    }
+
+
+@pytest.fixture
 def example_headline_chart_block() -> dict[str, str | list[dict]]:
     return {
         "title": "COVID-19 headline cases 7 Days Total",
