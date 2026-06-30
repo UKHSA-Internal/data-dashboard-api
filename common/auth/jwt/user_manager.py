@@ -28,7 +28,7 @@ class CognitoManager(BaseUserManager):
             username = jwt_payload["entraObjectId"]
             # Check if the JWT already includes permissionSets
             # Use if found, if not grab user permissions from the database
-            if "permissionSets" in jwt_payload:
+            if "permissionSets" in jwt_payload and jwt_payload["permissionSets"] != []:
                 permission_sets = jwt_payload["permissionSets"]
             else:
                 permission_sets = get_user_permission_set(username)

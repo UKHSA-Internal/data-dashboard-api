@@ -144,17 +144,22 @@ def test_authenticate_valid_token_without_permission_set(
     mock_get_perms.assert_called_once_with(entra_id)
 
 
+@patch("common.auth.jwt.user_manager.get_user_permission_set")
 def test_authenticate_valid_token_with_empty_permission_set(
-    rf, cognito_well_known_keys, jwk_private_key_one
+    mock_get_perms, rf, cognito_well_known_keys, jwk_private_key_one
 ):
+    fake_permissions = ["Permission_1", "Permission_2"]
+    mock_get_perms.return_value = fake_permissions
+
     settings.COGNITO_USER_MANAGER = "common.auth.jwt.user_manager.CognitoManager"
+    entra_id = str(uuid.uuid4())
     token = create_jwt_token(
         jwk_private_key_one,
         {
             "iss": "https://cognito-idp.eu-central-1.amazonaws.com/bla",
             "aud": settings.COGNITO_AUDIENCE,
             "sub": "username",
-            "entraObjectId": "entraOID",
+            "entraObjectId": entra_id,
             "permissionSets": [],
         },
     )
@@ -164,8 +169,9 @@ def test_authenticate_valid_token_with_empty_permission_set(
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
     assert user
-    assert user.username == "entraOID"
+    assert user.username == entra_id
     assert auth_token == token.encode("utf8")
+    mock_get_perms.assert_called_once_with(entra_id)
 
 
 def test_authenticate_invalid(rf, cognito_well_known_keys, jwk_private_key_two):
