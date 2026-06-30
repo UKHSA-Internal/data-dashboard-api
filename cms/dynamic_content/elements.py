@@ -11,9 +11,11 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_headline_metric_names,
     get_all_sex_names,
     get_all_stratum_names,
+    get_all_theme_names,
     get_all_timeseries_metric_names,
     get_all_topic_names,
     get_all_unique_metric_names,
+    get_all_unique_sub_theme_names,
     get_chart_line_types,
     get_chart_types,
     get_colours,
@@ -32,6 +34,24 @@ DEFAULT_SIMPLIFIED_CHART_TYPE = "line_single_simplified"
 
 
 class BaseMetricsElement(blocks.StructBlock):
+    """
+    Base block for the chart plots that are embedded in each CMS page body.
+
+    Each field below is a dropdown with options that are supplied by its
+    "choices=get_all_XXX_names", which queries valid values. The values a CMS
+    editor selects are stored on the page's body and serialized by the pages API.
+    """
+
+    theme = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_theme_names,
+        help_text=help_texts.THEME_FIELD,
+    )
+    sub_theme = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_unique_sub_theme_names,
+        help_text=help_texts.SUB_THEME_FIELD,
+    )
     topic = blocks.ChoiceBlock(
         required=True,
         choices=get_all_topic_names,
