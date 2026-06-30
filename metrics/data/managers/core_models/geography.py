@@ -108,42 +108,6 @@ class GeographyQuerySet(models.QuerySet):
 
         return None, None
 
-    def get_id_by_name(
-        self, geography_name: str, geography_type_name: str
-    ) -> int | None:
-        """
-        Gets the geography ID for a given geography name. A geography_type_name
-        must also be provided because of geographies that share the same name
-        across different geography types (e.g. "Liverpool").
-
-        Returns:
-            The geography ID if found, or None otherwise
-        """
-        record = self.filter(
-            name=geography_name, geography_type__name=geography_type_name
-        ).first()
-
-        return int(record.id) if record else None
-
-    def get_code_by_name(
-        self, geography_name: str, geography_type_name: str
-    ) -> str | None:
-        """
-        Gets the geography code for a given geography name. A geography_type_name
-        must also be provided because of geographies that share the same name
-        across different geography types (e.g. "Liverpool").
-
-        The geography_type__name filter performs the inner join to GeographyType.
-
-        Returns:
-            The geography_code (eg E10000011) if found, or None otherwise
-        """
-        return (
-            self.filter(name=geography_name, geography_type__name=geography_type_name)
-            .values_list("geography_code", flat=True)
-            .first()
-        )
-
     def get_all_geography_codes_by_geography_type(
         self, geography_type_name: str
     ) -> Self:
@@ -263,36 +227,6 @@ class GeographyManager(models.Manager):
             None
         """
         return self.get_queryset().get_name_by_code(geography_code)
-
-    def get_id_by_name(
-        self, geography_name: str, geography_type_name: str
-    ) -> int | None:
-        """
-        Gets the geography ID for a given geography name. A geography_type_name
-        must also be provided because of geographies that share the same name
-        across different geography types (e.g. "Liverpool").
-
-        Returns:
-            The geography ID if found, or None otherwise
-        """
-        return self.get_queryset().get_id_by_name(
-            geography_name, geography_type_name=geography_type_name
-        )
-
-    def get_code_by_name(
-        self, geography_name: str, geography_type_name: str
-    ) -> str | None:
-        """
-        Gets the geography code for a given geography name. A geography_type_name
-        must also be provided because of geographies that share the same name
-        across different geography types (e.g. "Liverpool").
-
-        Returns:
-            The geography_code (eg E10000011) if found, or None otherwise
-        """
-        return self.get_queryset().get_code_by_name(
-            geography_name, geography_type_name=geography_type_name
-        )
 
     def get_id_by_name(
         self, geography_name: str, geography_type_name: str
