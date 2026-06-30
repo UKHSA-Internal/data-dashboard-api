@@ -303,6 +303,8 @@ def plot_serializer_payload_and_model_managers() -> (
     fake_topic = fake_metric.metric_group.topic
 
     data: DATA_PAYLOAD_HINT = {
+        "theme": fake_topic.sub_theme.theme.name,
+        "sub_theme": fake_topic.sub_theme.name,
         "topic": fake_topic.name,
         "metric": fake_metric.name,
         "chart_type": ChartTypes.bar.value,
