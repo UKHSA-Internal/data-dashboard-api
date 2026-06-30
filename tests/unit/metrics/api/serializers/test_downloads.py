@@ -9,6 +9,8 @@ class TestDownloadsSerializer:
     def _build_valid_payload() -> dict[str, str | list[dict[str, str]]]:
         requested_file_format = "csv"
         requested_plot = {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": "COVID-19",
             "metric": "COVID-19_cases_rateRollingMean",
             "age": "all",

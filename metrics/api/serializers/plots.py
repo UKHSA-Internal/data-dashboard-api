@@ -10,6 +10,14 @@ from metrics.data.models.core_models import Metric, Topic
 
 class PlotSerializer(serializers.Serializer):
     # Required fields
+    theme = serializers.CharField(
+        help_text=help_texts.THEME_FIELD,
+        required=True,
+    )
+    sub_theme = serializers.CharField(
+        help_text=help_texts.SUB_THEME_FIELD,
+        required=True,
+    )
     topic = serializers.ChoiceField(
         help_text=help_texts.TOPIC_FIELD,
         choices=[],
