@@ -25,7 +25,7 @@ class TestSubThemeByThemeView:
             name="respiratory", theme="infectious_disease"
         )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines"
+            name="immunisation", theme="childhood-vaccines"
         )
 
         # Retrieve the subthemes
@@ -51,7 +51,7 @@ class TestSubThemeByThemeView:
             name="respiratory", theme="infectious_disease"
         )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines"
+            name="immunisation", theme="childhood-vaccines"
         )
 
         # Retrieve the subthemes
@@ -77,7 +77,7 @@ class TestSubThemeByThemeView:
             name="respiratory", theme="infectious_disease"
         )
         childhoodVaccinesSubtheme = SubThemeFactory.create_with_theme(
-            name="immunisation", theme="childhood_vaccines"
+            name="immunisation", theme="childhood-vaccines"
         )
 
         # Retrieve the subthemes
