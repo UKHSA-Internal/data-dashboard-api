@@ -9,6 +9,8 @@ class HeadlineParameters(BaseRequestParams):
     geography_type: str
     sex: str
     age: str
+    is_public: bool | None = True
+    data_classification: str | None = None
 
     @property
     def topic_name(self) -> str:

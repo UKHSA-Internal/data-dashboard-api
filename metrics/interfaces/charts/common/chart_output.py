@@ -2,7 +2,15 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
+from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.domain.common.utils import (
+    DEFAULT_CHART_WIDTH,
+)
+from metrics.interfaces.data_classification.access import DataClassification
+
 HEX_COLOUR_BLACK = "#0b0c0c"
+WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
+WATERMARK_OPACITY = 0.58
 
 
 @dataclass
@@ -10,7 +18,41 @@ class ChartOutput:
     figure: go.Figure
     description: str
     is_headline: bool
+    chart_width: int = DEFAULT_CHART_WIDTH
     is_subplot: bool = False
+    is_public: bool = True
+    data_classification: str | None = None
+
+    def __post_init__(self) -> None:
+        if (not self.is_public) and (self.data_classification) and (AUTH_ENABLED):
+            self._apply_watermark()
+
+    def _apply_watermark(self) -> None:
+        """
+        Adds a horizontal watermark to the Plotly figure.
+
+        The watermark is added directly to the figure as a layout
+        annotation using paper coordinates, so it is consistently
+        rendered in static SVG exports, interactive Plotly outputs,
+        and any downloaded chart artefacts.
+        """
+
+        watermark_text = DataClassification[self.data_classification].value
+        target_px = self.chart_width * 0.75
+        font_size = target_px / (max(len(watermark_text), 1) * 0.6)
+        watermark_font_size = round(max(8, min(font_size, 300)))
+
+        self.figure.add_annotation(
+            text=watermark_text,
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.8,
+            showarrow=False,
+            font={"size": watermark_font_size, "color": WATERMARK_FONT_COLOUR},
+            textangle=0,
+            opacity=WATERMARK_OPACITY,
+        )
 
     @property
     def interactive_chart_figure_output(self) -> dict:

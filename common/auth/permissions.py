@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from ingestion.metrics_interface.interface import MetricsAPIInterface
+from common.metrics_interface.interface import MetricsAPIInterface
 
 WILDCARD_ID_VALUE = "-1"
 

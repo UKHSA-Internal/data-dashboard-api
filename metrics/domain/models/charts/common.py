@@ -17,3 +17,5 @@ class ChartBaseRequestParams(BaseRequestParams):
     legend_title: str | None = ""
     confidence_intervals: bool | None = False
     confidence_colour: str | None = ""
+    is_public: bool | None = True
+    data_classification: str | None = None

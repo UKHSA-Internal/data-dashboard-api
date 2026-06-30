@@ -620,13 +620,11 @@ class TestPlotsInterface:
         self,
     ):
         """
-        Given `plot_params` which already contain `theme` and `sub_theme`
-            (posted by the front-end)
-        When `get_queryset_from_core_model_manager` is called
-            from an instance of `PlotsInterface`
-        Then those `theme` and `sub_theme` values are passed straight through to
-            the core model manager (i.e. they are no longer derived from the topic)
+        Given a `CoreHeadlineManager`
+        When `get_headline_data` is called from an instance of `PlotsInterface`
+        Then the correct method is called from `CoreHeadlineManager` to retrieve headline data.
         """
+
         # Given
         spy_core_headline_manager = mock.Mock()
         fake_metric = FakeMetricFactory.build_example_metric()
@@ -679,6 +677,8 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            theme=fake_metric.topic.sub_theme.theme.name,
+            sub_theme=fake_metric.topic.sub_theme.name,
             permission_sets=mocked_chart_request_params.permission_sets,
         )
 

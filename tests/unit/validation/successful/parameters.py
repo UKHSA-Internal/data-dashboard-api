@@ -70,6 +70,20 @@ VALID_PARAMETERS = [
         "cases",
     ),
     (
+        "infectious_disease",
+        "bloodborne",
+        "transfusion-safety",
+        "transfusion-safety_testing_confirmedInvestigated",
+        "testing",
+    ),
+    (
+        "infectious_disease",
+        "bloodborne",
+        "transfusion-safety",
+        "transfusion-safety_cases_confirmedInfection",
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "chemical_exposure",
         "Lead",
