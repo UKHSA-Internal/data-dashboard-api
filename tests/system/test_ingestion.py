@@ -80,6 +80,8 @@ class TestIngestion:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": example_time_series_data["parent_theme"],
+                    "sub_theme": example_time_series_data["child_theme"],
                     "topic": example_time_series_data["topic"],
                     "metric": example_time_series_data["metric"],
                     "date_from": "2020-01-01",
@@ -255,9 +257,14 @@ class TestIngestion:
 
         # Check that the `tables/` endpoint returns the correct data
         # which matches the first ingested file
+        theme = first_sample_data["parent_theme"]
+        sub_theme = first_sample_data["child_theme"]
         topic = first_sample_data["topic"]
         metric = first_sample_data["metric"]
-        tables_response = self._hit_tables_endpoint(topic=topic, metric=metric)
+
+        tables_response = self._hit_tables_endpoint(
+            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+        )
         expected_first_metric_value = (
             f"{first_sample_data['time_series'][1]['metric_value']:.4f}"
         )
@@ -302,7 +309,9 @@ class TestIngestion:
         )
         # After the 2nd file was ingested and subsequently de-duplicated
         # the `tables/` endpoint should still return the same values as before
-        tables_response = self._hit_tables_endpoint(topic=topic, metric=metric)
+        tables_response = self._hit_tables_endpoint(
+            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+        )
         returned_metric_values = [row["values"][0]["value"] for row in tables_response]
         assert returned_metric_values[0] == expected_first_metric_value
         assert returned_metric_values[1] == expected_second_metric_value
@@ -329,7 +338,9 @@ class TestIngestion:
         assert final_refresh_date in CoreTimeSeries.objects.all().values_list(
             "refresh_date", flat=True
         )
-        tables_response = self._hit_tables_endpoint(topic=topic, metric=metric)
+        tables_response = self._hit_tables_endpoint(
+            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+        )
         returned_metric_values = [row["values"][0]["value"] for row in tables_response]
         assert returned_metric_values[0] == expected_first_metric_value
         # We expect the 1st row to be as per the original data
@@ -366,6 +377,8 @@ class TestIngestion:
         example_headline_data["data"].pop(1)
 
         headlines_endpoint_payload = {
+            "theme": example_headline_data["parent_theme"],
+            "sub_theme": example_headline_data["child_theme"],
             "topic": example_headline_data["topic"],
             "metric": example_headline_data["metric"],
             "geography": example_headline_data["geography"],
@@ -556,7 +569,9 @@ class TestIngestion:
         return sample_data_with_one_retrospective_update
 
     @staticmethod
-    def _hit_tables_endpoint(topic: str, metric: str) -> list[dict]:
+    def _hit_tables_endpoint(
+        theme: str, sub_theme: str, topic: str, metric: str
+    ) -> list[dict]:
         client = APIClient()
 
         path = "/api/tables/v4/"
@@ -564,6 +579,8 @@ class TestIngestion:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": theme,
+                    "sub_theme": sub_theme,
                     "topic": topic,
                     "metric": metric,
                     "date_from": "2020-01-01",

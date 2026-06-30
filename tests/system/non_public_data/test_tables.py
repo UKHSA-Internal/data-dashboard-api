@@ -25,6 +25,8 @@ class TestNonPublicDataTablesAPI:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": core_time_series.metric.topic.sub_theme.theme.name,
+                    "sub_theme": core_time_series.metric.topic.sub_theme.name,
                     "topic": core_time_series.metric.topic.name,
                     "metric": core_time_series.metric.name,
                     "chart_type": "bar",

@@ -129,7 +129,7 @@ class TestMetricManager:
     def test_get_id_by_name(self, lookup_name: str, expected_index: int | None):
         """
         Given some Metric records
-        When get_theme_sub_theme_topic_and_metric_id_by_name() is called
+        When get_id_by_name() is called
         Then the matching metric id is returned, or None if no match
         """
 
@@ -146,7 +146,7 @@ class TestMetricManager:
         ]
 
         # When
-        metric_id = Metric.objects.get_theme_sub_theme_topic_and_metric_id_by_name(lookup_name)
+        metric_id = Metric.objects.get_id_by_name(lookup_name)
 
         # Then
         expected_id = (
