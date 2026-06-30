@@ -17,6 +17,8 @@ class TestChartsView:
             "file_format": "png",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries.metric.metric_group.topic.name,
                     "metric": core_timeseries.metric.name,
                     "chart_type": "bar",
@@ -152,6 +154,8 @@ class TestChartsView:
             "x_axis": "age",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": "COVID-19",
                     "metric": "COVID-19_deaths_ONSByDay",
                     "chart_type": "bar",
@@ -203,6 +207,8 @@ class TestChartsView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries_example[0].metric.topic.name,
                     "metric": core_timeseries_example[0].metric.name,
                     "chart_type": "bar",

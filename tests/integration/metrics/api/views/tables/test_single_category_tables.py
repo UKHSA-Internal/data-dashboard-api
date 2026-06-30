@@ -33,6 +33,8 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -73,6 +75,8 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -115,6 +119,8 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -178,6 +184,8 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -185,6 +193,8 @@ class TestTablesView:
                     "date_to": datetime.date.today(),
                 },
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -259,6 +269,8 @@ class TestTablesView:
             "y_axis": "metric",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "bar",
@@ -303,6 +315,8 @@ class TestTablesView:
         valid_payload = {
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries_example[0].metric.topic.name,
                     "metric": core_timeseries_example[0].metric.name,
                     "chart_type": "bar",
