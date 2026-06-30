@@ -147,7 +147,6 @@ class TestCMSPagesAPIViewSetPermissions:
         result = view.get_queryset()
 
         # Then
-        print("--------------TESTS-----------------")
         titles = [p.title for p in result]
         assert "Public Topic" in titles
         assert "Public Metric" in titles
