@@ -6,11 +6,13 @@ from metrics.domain.models.trends import TrendsParameters
 
 class TestTrendParameters:
     valid_payload = {
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
         "topic": "COVID-19",
         "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-        "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
         "geography": "England",
         "geography_type": "Nation",
+        "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
         "stratum": "default",
         "sex": "all",
         "age": "all",
@@ -19,13 +21,15 @@ class TestTrendParameters:
     @pytest.mark.parametrize(
         "field",
         [
-            "stratum",
-            "geography",
-            "geography_type",
-            "sex",
-            "age",
+            "theme",
+            "sub_theme",
             "topic",
             "metric",
+            "geography",
+            "geography_type",
+            "stratum",
+            "sex",
+            "age",
             "percentage_metric",
         ],
     )
@@ -59,6 +63,8 @@ class TestTrendParameters:
 
         # Then
         expected = {
+            "theme": input_data["theme"],
+            "sub_theme": input_data["sub_theme"],
             "topic": input_data["topic"],
             "metric": input_data["metric"],
             "geography": input_data["geography"],
@@ -85,6 +91,8 @@ class TestTrendParameters:
 
         # Then
         expected = {
+            "theme": input_data["theme"],
+            "sub_theme": input_data["sub_theme"],
             "topic": input_data["topic"],
             "metric": input_data["percentage_metric"],
             "geography": input_data["geography"],
