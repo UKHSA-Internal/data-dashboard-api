@@ -40,7 +40,7 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
-    def get_id_by_name(
+    def get_theme_sub_theme_topic_and_metric_id_by_name(
         self,
         theme_name: str,
         sub_theme_name: str,
@@ -177,7 +177,7 @@ class TopicManager(models.Manager):
             A tuple of (theme_id, sub_theme_id, topic_id, metric_id) if the whole
             combination exists, or (None, None, None, None) if it does not.
         """
-        return self.get_queryset().get_id_by_name(
+        return self.get_queryset().get_theme_sub_theme_topic_and_metric_id_by_name(
             theme_name, sub_theme_name, topic_name, metric_name
         )
 

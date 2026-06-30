@@ -647,10 +647,10 @@ class TestPlotsInterface:
         # When
         plots_params = {
             "fields_to_export": [mocked_x_axis, mocked_y_axis],
+            "theme": fake_metric.topic.sub_theme.theme.name,
+            "sub_theme": fake_metric.topic.sub_theme.name,
             "topic": fake_metric.topic.name,
             "metric": fake_metric.name,
-            "theme": "infectious_disease",
-            "sub_theme": "respiratory",
             "geography": mocked_geography,
             "geography_type": mocked_geography_type,
             "geography_code": "",
@@ -666,10 +666,10 @@ class TestPlotsInterface:
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
             fields_to_export=[mocked_x_axis, mocked_y_axis],
+            theme=fake_metric.topic.sub_theme.theme.name,
+            sub_theme=fake_metric.topic.sub_theme.name,
             topic=fake_metric.topic.name,
             metric=fake_metric.name,
-            theme="infectious_disease",
-            sub_theme="respiratory",
             geography=mocked_geography,
             geography_type=mocked_geography_type,
             geography_code="",
@@ -677,8 +677,6 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
-            theme=fake_metric.topic.sub_theme.theme.name,
-            sub_theme=fake_metric.topic.sub_theme.name,
             permission_sets=mocked_chart_request_params.permission_sets,
         )
 

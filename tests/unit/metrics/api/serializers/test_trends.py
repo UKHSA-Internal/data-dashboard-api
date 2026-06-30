@@ -54,14 +54,16 @@ class TestTrendsQuerySerializer:
         fake_stratum = FakeStratumFactory.build_example(stratum_name="default")
 
         data: cls.DATA_PAYLOAD_HINT = {
+            "theme": fake_topic.sub_theme.theme.name,
+            "sub_theme": fake_topic.sub_theme.name,
             "topic": fake_topic.name,
             "metric": fake_metric.name,
+            "geography": fake_geography.name,
+            "geography_type": fake_geography.geography_type.name,
             "percentage_metric": fake_percentage_metric.name,
             "stratum": fake_stratum.name,
             "age": fake_age.name,
             "sex": "all",
-            "geography": fake_geography.name,
-            "geography_type": fake_geography.geography_type.name,
         }
 
         return (
