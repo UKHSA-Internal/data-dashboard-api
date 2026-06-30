@@ -52,6 +52,8 @@ class TestHeadlinesQuerySerializer:
         fake_topic = fake_metric.metric_group.topic
 
         data: cls.DATA_PAYLOAD_HINT = {
+            "theme": fake_topic.sub_theme.theme.name,
+            "sub_theme": fake_topic.sub_theme.name,
             "topic": fake_topic.name,
             "metric": fake_metric.name,
         }

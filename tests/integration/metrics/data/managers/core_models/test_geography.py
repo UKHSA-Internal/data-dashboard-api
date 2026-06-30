@@ -132,7 +132,7 @@ class TestGeographyManager:
     def test_get_id_by_name(self, lookup_name: str, expected_index: int | None):
         """
         Given some Geography records
-        When get_theme_sub_theme_topic_and_metric_id_by_name() is called
+        When get_id_by_name() is called
         Then the matching geography_id is returned, or None if no match
         """
 
@@ -151,7 +151,7 @@ class TestGeographyManager:
         ]
 
         # When
-        geography_id = Geography.objects.get_theme_sub_theme_topic_and_metric_id_by_name(lookup_name, "DUMMY")
+        geography_id = Geography.objects.get_id_by_name(lookup_name, "DUMMY")
 
         # Then
         expected_id = (

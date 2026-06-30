@@ -1,6 +1,5 @@
 from django.db.models import Manager
 
-from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreHeadline, Topic
 from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
@@ -35,15 +34,8 @@ class HeadlinesInterface:
                 `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
         """
-        params = self.headline_parameters.to_dict_for_query()
 
-        if auth.AUTH_ENABLED:
-            # Needed for the downstream permissions check
-            topic = self.topic_manager.get_by_name(
-                name=self.headline_parameters.topic_name
-            )
-            params["theme"] = topic.sub_theme.theme.name
-            params["sub_theme"] = topic.sub_theme.name
+        params = self.headline_parameters.to_dict_for_query()
 
         core_headline: CoreHeadline | None = (
             self.core_headline_manager.get_latest_headline(**params)
