@@ -70,6 +70,7 @@ class _BloodbourneTopic(Enum):
     HEPATITIS_B = "Hepatitis-B"
     HEPATITIS_C = "Hepatitis-C"
     HIV = "HIV"
+    TRANSFUSION_SAFETY = "transfusion-safety"
 
 
 class _MortalityReportTopic(Enum):
