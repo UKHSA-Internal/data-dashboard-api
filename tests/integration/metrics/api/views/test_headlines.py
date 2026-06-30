@@ -28,6 +28,8 @@ class TestHeadlinesView:
         # Given
         client = APIClient()
         payload = {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": core_headline_example.metric.topic.name,
             "metric": core_headline_example.metric.name,
             "geography": core_headline_example.geography.name,
