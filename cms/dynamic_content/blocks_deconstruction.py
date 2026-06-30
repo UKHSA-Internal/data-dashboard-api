@@ -563,9 +563,14 @@ class CMSBlockParser:
             once in the list of given `chart_blocks`
 
         """
-        return {
-            plot["value"]["metric"] for block in chart_blocks for plot in block["chart"]
-        }
+        metrics: set[str] = set()
+        for block in chart_blocks:
+            if is_dual_category_chart_block(block):
+                metrics.add(block["static_fields"]["metric"])
+            else:
+                metrics.update(plot["value"]["metric"] for plot in block["chart"])
+
+        return metrics
 
     @classmethod
     def get_all_selected_metrics_from_headline_blocks(
