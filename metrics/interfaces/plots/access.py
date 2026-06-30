@@ -7,7 +7,6 @@ from typing import Any
 from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
-from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
