@@ -382,6 +382,13 @@ The timeseries filter allows a user to change the timeseries range for example b
 1m, 3m, 6m, 1y etc.
 """
 
+DUAL_CATEGORY_CHART_TIMESERIES_FILTER: str = """
+This option enables the timeseries filter for this chart when it is used for timeseries data.
+The timeseries filter allows a user to change the timeseries range for example between
+1m, 3m, 6m, 1y etc.
+Only enable this when the dual category chart is configured with timeseries metrics.
+"""
+
 ANNOUNCEMENT_BANNER_TITLE: str = """
 The title to associate with the announcement. This must be provided.
 """
