@@ -114,6 +114,8 @@ class TestBaseMetricsElementClean:
         A valid basic block payload for all tests to use.
         """
         return {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": "Adenovirus",
             "metric": "adenovirus_testing_positivityByWeek",
             "geography": "England",

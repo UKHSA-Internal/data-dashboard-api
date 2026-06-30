@@ -103,6 +103,8 @@ class PlotParameters(BaseModel):
             ],
             "metric": self.metric or "",
             "topic": self.topic or "",
+            "theme": self.theme or "",
+            "sub_theme": self.sub_theme or "",
             "stratum": self.stratum or "",
             "geography": self.geography or "",
             "geography_type": self.geography_type or "",
