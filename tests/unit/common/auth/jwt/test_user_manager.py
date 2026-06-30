@@ -48,7 +48,10 @@ def test_get_or_create_for_cognito_returns_without_permission_sets(mock_get_perm
     mock_get_perms.assert_called_once_with(jwt_payload["entraObjectId"])
 
 
-def test_get_or_create_for_cognito_returns_with_empty_permission_sets():
+@patch("common.auth.jwt.user_manager.get_user_permission_set")
+def test_get_or_create_for_cognito_returns_with_empty_permission_sets(mock_get_perms):
+    fake_permissions = ["Permission_1", "Permission_2"]
+    mock_get_perms.return_value = fake_permissions
     jwt_payload = {
         "entraObjectId": uuid.uuid4(),
         "permissionSets": [],
@@ -57,8 +60,9 @@ def test_get_or_create_for_cognito_returns_with_empty_permission_sets():
     user = CognitoManager.get_or_create(jwt_payload)
     assert user
     assert user.username == jwt_payload["entraObjectId"]
-    assert user.permission_sets == jwt_payload["permissionSets"]
+    assert user.permission_sets == fake_permissions
     assert user.is_active is True
+    mock_get_perms.assert_called_once_with(jwt_payload["entraObjectId"])
 
 
 @patch("cms.auth_content.models.users.User.objects.filter")
