@@ -518,6 +518,11 @@ class DualCategoryChartCard(blocks.StructBlock):
         choices=get_dual_category_chart_types,
         help_text=help_texts.CHART_TYPE_FIELD,
     )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.DUAL_CATEGORY_CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
+    )
 
     static_fields = DualCategoryChartStaticFieldComponent()
 
