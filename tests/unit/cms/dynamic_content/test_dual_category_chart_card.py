@@ -31,6 +31,7 @@ class TestDualCategoryChartCard:
             "y_axis_minimum_value",
             "y_axis_maximum_value",
             "chart_type",
+            "show_timeseries_filter",
             "secondary_category",
         ),
     )
