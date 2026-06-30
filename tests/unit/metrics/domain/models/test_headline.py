@@ -6,6 +6,8 @@ from metrics.domain.models.headline import HeadlineParameters
 
 class TestHeadlineParameters:
     valid_payload = {
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
         "topic": "COVID-19",
         "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
         "geography": "England",
@@ -19,13 +21,15 @@ class TestHeadlineParameters:
     @pytest.mark.parametrize(
         "field",
         [
-            "stratum",
-            "geography",
-            "geography_type",
-            "sex",
-            "age",
+            "theme",
+            "sub_theme",
             "topic",
             "metric",
+            "geography",
+            "geography_type",
+            "stratum",
+            "sex",
+            "age",
         ],
     )
     def test_mandatory_fields_are_enforced(self, field: str):
@@ -58,6 +62,8 @@ class TestHeadlineParameters:
 
         # Then
         expected_params = {
+            "theme": self.valid_payload["theme"],
+            "sub_theme": self.valid_payload["sub_theme"],
             "topic": self.valid_payload["topic"],
             "metric": self.valid_payload["metric"],
             "geography": self.valid_payload["geography"],
