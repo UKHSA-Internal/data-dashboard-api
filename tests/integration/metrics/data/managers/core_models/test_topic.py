@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.data.models.core_models.supporting import SubTheme, Theme, Topic
+from metrics.data.models.core_models.supporting import Metric, SubTheme, Theme, Topic
 from tests.factories.metrics.topic import TopicFactory
 
 
@@ -75,12 +75,25 @@ class TestTopicManager:
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
-        "theme_name, sub_theme_name, topic_name, expected_index",
+        "theme_name, sub_theme_name, topic_name, metric_name, is_match",
         [
-            ("Infectious Diseases", "Respiratory", "COVID-19", 0),
-            ("NON-EXISTENT", "Respiratory", "COVID-19", None),
-            ("Infectious Diseases", "NON-EXISTENT", "COVID-19", None),
-            ("Infectious Diseases", "Respiratory", "NON-EXISTENT", None),
+            ("Infectious Diseases", "Respiratory", "COVID-19", "COVID-19_metric", True),
+            ("NON-EXISTENT", "Respiratory", "COVID-19", "COVID-19_metric", False),
+            (
+                "Infectious Diseases",
+                "NON-EXISTENT",
+                "COVID-19",
+                "COVID-19_metric",
+                False,
+            ),
+            (
+                "Infectious Diseases",
+                "Respiratory",
+                "NON-EXISTENT",
+                "COVID-19_metric",
+                False,
+            ),
+            ("Infectious Diseases", "Respiratory", "COVID-19", "NON-EXISTENT", False),
         ],
     )
     def test_get_id_by_name(
@@ -88,32 +101,35 @@ class TestTopicManager:
         theme_name: str,
         sub_theme_name: str,
         topic_name: str,
-        expected_index: int | None,
+        metric_name: str,
+        is_match: bool,
     ):
         """
-        Given some theme, sub-theme and topic records
-        When get_id_by_name() is called
-        Then the matching 3 ids are returned, or 3 None values if no match
+        Given some theme, sub-theme, topic and metric records
+        When get_theme_sub_theme_topic_and_metric_id_by_name() is called
+        Then the matching 4 ids are returned, or 4 None values if the combination is not consistent
         """
 
         # Given
         given_theme = Theme.objects.create(name="Infectious Diseases")
         given_sub_theme = SubTheme.objects.create(name="Respiratory", theme=given_theme)
-        given_topics = [
-            Topic.objects.create(name="COVID-19", sub_theme=given_sub_theme)
-        ]
+        given_topic = Topic.objects.create(name="COVID-19", sub_theme=given_sub_theme)
+        given_metric = Metric.objects.create(name="COVID-19_metric", topic=given_topic)
 
         # When
-        ids = Topic.objects.get_id_by_name(theme_name, sub_theme_name, topic_name)
+        ids = Topic.objects.get_theme_sub_theme_topic_and_metric_id_by_name(
+            theme_name, sub_theme_name, topic_name, metric_name
+        )
 
         # Then
         expected_ids = (
             (
                 given_theme.id,
                 given_sub_theme.id,
-                given_topics[expected_index].id,
+                given_topic.id,
+                given_metric.id,
             )
-            if expected_index is not None
-            else (None, None, None)
+            if is_match
+            else (None, None, None, None)
         )
         assert ids == expected_ids
