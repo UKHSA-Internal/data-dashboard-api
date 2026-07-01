@@ -333,7 +333,7 @@ you will need to set up the variables for validating the token via cognito:
 
 - `export COGNITO_AWS_REGION=eu-west-2` - This is unlikely to change
 - `export COGNITO_USER_POOL=eu-west-2_a123bc4DE` - Can be found be checking the `User pool ID` value for your environment on the [AWS console] (https://eu-west-2.console.aws.amazon.com/cognito/v2/idp/user-pools?region=eu-west-2)
-- `export COGNITO_JWT_AUTH_HEADER=HTTP_X_UHD_AUTH` - This is unlikely to change
+- `export JWT_AUTH_HEADER=HTTP_X_UHD_AUTH` - This is unlikely to change
 
 ---
 
