@@ -244,7 +244,7 @@ class PageLink(StructBlock):
         if not page:
             data["is_authorised"] = False
             data["title"] = ""
-            data["subtitle"] = ""
+            data["sub_title"] = ""
             data["page"] = ""
             return data
 
@@ -255,28 +255,21 @@ class PageLink(StructBlock):
 
         if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
-            logger.warning(f"user_permissions raw: {user_permissions}")
-            logger.warning(f"type: {type(user_permissions)}")
 
-            if hasattr(user_permissions, "permission_sets"):
-                logger.warning(f"inner permission_sets: {user_permissions.permission_sets}")
             full_user_permissions = (
                 user_permissions.get("permission_sets")
                 if user_permissions
                 else None
             )
-            logger.warning(f"Permissions passed to check: {full_user_permissions}")
-            logger.warning(f"Page topic: {getattr(page, 'topic', None)}")
             if not check_permissions(
                     full_user_permissions,
                     getattr(page, "theme", None),
                     getattr(page, "sub_theme", None),
                     getattr(page, "topic", None),
                 ):
-                print("🦄 check_permissions failed")
                 data["is_authorised"] = False
                 data["title"] = ""
-                data["subtitle"] = ""
+                data["sub_title"] = ""
                 data["page"] = ""
                 return data
 
