@@ -138,7 +138,6 @@ def test_get_or_create_for_entra_returns_none_without_username():
 def test_entra_rejected_appid_creates_audit_log(
     mock_audit_logger, mock_api_application_filter
 ):
-    # mock_audit_logger = mock_get_logger.return_value
     mock_api_application_filter.return_value.exists.return_value = False
 
     jwt_payload = {
