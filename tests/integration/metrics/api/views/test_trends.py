@@ -86,6 +86,8 @@ class TestTrendsView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": incorrect_topic_name,
                 "metric": metric_name,
                 "percentage_metric": percentage_metric_name,
