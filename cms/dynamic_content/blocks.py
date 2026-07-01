@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.blocks import (
-    BooleanBlock,
     CharBlock,
     ChoiceBlock,
     PageChooserBlock,
@@ -23,7 +22,6 @@ from cms.dynamic_content.components import (
     TrendNumberComponent,
 )
 from validation.url import validate_https_scheme
-
 
 logger = logging.getLogger(__name__)
 
@@ -252,21 +250,18 @@ class PageLink(StructBlock):
         request = context.get("request") if context else None
         user = getattr(request, "user", None)
 
-
         if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
 
             full_user_permissions = (
-                user_permissions.get("permission_sets")
-                if user_permissions
-                else None
+                user_permissions.get("permission_sets") if user_permissions else None
             )
             if not check_permissions(
-                    full_user_permissions,
-                    getattr(page, "theme", None),
-                    getattr(page, "sub_theme", None),
-                    getattr(page, "topic", None),
-                ):
+                full_user_permissions,
+                getattr(page, "theme", None),
+                getattr(page, "sub_theme", None),
+                getattr(page, "topic", None),
+            ):
                 data["is_authorised"] = False
                 data["title"] = ""
                 data["sub_title"] = ""
