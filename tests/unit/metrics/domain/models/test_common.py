@@ -79,6 +79,8 @@ def _build_models(request: Request) -> tuple:
                     chart_type="bar",
                     topic="COVID-19",
                     metric="COVID-19_metric",
+                    geography="England",
+                    geography_type="Nation",
                 )
             ],
             request=request,
