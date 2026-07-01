@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
@@ -21,6 +23,10 @@ from cms.dynamic_content.components import (
     TrendNumberComponent,
 )
 from validation.url import validate_https_scheme
+
+
+logger = logging.getLogger(__name__)
+
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
@@ -249,6 +255,11 @@ class PageLink(StructBlock):
 
         if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
+            logger.warning(f"user_permissions raw: {user_permissions}")
+            logger.warning(f"type: {type(user_permissions)}")
+
+            if hasattr(user_permissions, "permission_sets"):
+                logger.warning(f"inner permission_sets: {user_permissions.permission_sets}")
             full_user_permissions = (
                 user_permissions.permission_sets.get("permission_sets")
                 if user_permissions and hasattr(user_permissions, "permission_sets")
@@ -260,6 +271,7 @@ class PageLink(StructBlock):
                     getattr(page, "sub_theme", None),
                     getattr(page, "topic", None),
                 ):
+                print("🦄 check_permissions failed")
                 data["is_authorised"] = False
                 data["title"] = ""
                 data["subtitle"] = ""
