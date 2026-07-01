@@ -52,6 +52,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Darlington",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("95.4")],
@@ -61,6 +62,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Hartlepool",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("93.4")],
@@ -70,6 +72,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
@@ -84,6 +87,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Darlington",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("92.4")],
@@ -93,6 +97,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Hartlepool",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("91.4")],
@@ -102,6 +107,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
+                        "geography_type": "Upper Tier Local Authority",
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
@@ -121,6 +127,8 @@ def create_subplots_data() -> list[Subplots]:
                 chart_type="bar",
                 topic="COVID-19",
                 metric="COVID-19_testing_positivity7DayRolling",
+                geography="England",
+                geography_type="Nation",
                 stratum="default",
                 date_from="2023-01-01",
                 date_to="2023-12-31",
@@ -188,6 +196,8 @@ def fake_chart_plot_parameters() -> PlotParameters:
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_testing_positivity7DayRolling",
+        geography="England",
+        geography_type="Nation",
         stratum="default",
         date_from="2023-01-01",
         date_to="2023-12-31",
@@ -213,9 +223,11 @@ def fake_chart_request_params(
 @pytest.fixture
 def fake_chart_plot_parameters_headline_data() -> PlotParameters:
     return PlotParameters(
-        metric="COVID-19_headline_vaccines_spring24Uptake",
-        topic="COVID-19",
         chart_type=ChartTypes.bar,
+        topic="COVID-19",
+        metric="COVID-19_headline_vaccines_spring24Uptake",
+        geography="England",
+        geography_type="Nation",
         x_axis="age",
         y_axis="metric",
         date_from=None,
@@ -229,6 +241,8 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_deaths_ONSByDay",
+        geography="England",
+        geography_type="Nation",
         date_from="2023-01-01",
         date_to="2023-12-31",
     )
@@ -237,9 +251,11 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
 @pytest.fixture
 def valid_plot_parameters() -> PlotParameters:
     return PlotParameters(
-        metric="COVID-19_deaths_ONSByDay",
-        topic="COVID-19",
         chart_type=ChartTypes.line_multi_coloured.value,
+        topic="COVID-19",
+        metric="COVID-19_deaths_ONSByDay",
+        geography="England",
+        geography_type="Nation",
         date_from="2023-01-01",
         date_to="2023-12-31",
         x_axis="date",
@@ -250,9 +266,11 @@ def valid_plot_parameters() -> PlotParameters:
 @pytest.fixture
 def valid_plot_parameters_for_headline_data() -> PlotParameters:
     return PlotParameters(
-        metric="COVID-19_headline_vaccines_spring24Uptake",
-        topic="COVID-19",
         chart_type=ChartTypes.bar.value,
+        topic="COVID-19",
+        metric="COVID-19_headline_vaccines_spring24Uptake",
+        geography="England",
+        geography_type="Nation",
         date_from="",
         date_to="",
         x_axis="age",
@@ -266,9 +284,10 @@ def fake_plot_data() -> PlotGenerationData:
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_deaths_ONSByDay",
+        geography="London",
+        geography_type="Nation",
         x_axis="metric",
         y_axis="date",
-        geography="London",
         age="all",
         sex="all",
         line_type="SOLID",
@@ -303,8 +322,12 @@ def plot_serializer_payload_and_model_managers() -> (
     fake_topic = fake_metric.metric_group.topic
 
     data: DATA_PAYLOAD_HINT = {
+        "theme": fake_topic.sub_theme.theme.name,
+        "sub_theme": fake_topic.sub_theme.name,
         "topic": fake_topic.name,
         "metric": fake_metric.name,
+        "geography": "England",
+        "geography_type": "Nation",
         "chart_type": ChartTypes.bar.value,
     }
 

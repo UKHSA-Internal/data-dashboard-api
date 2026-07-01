@@ -35,6 +35,8 @@ def _create_plot_data(
         chart_type="",
         topic="COVID-19",
         metric="COVID-19_deaths_ONSByDay",
+        geography="England",
+        geography_type="Nation",
         stratum="default",
         label=label,
         x_axis=x_axis,

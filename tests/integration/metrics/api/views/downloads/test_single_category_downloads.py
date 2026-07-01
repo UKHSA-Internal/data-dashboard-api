@@ -36,9 +36,9 @@ class TestDownloadsView:
         "theme": "infectious_disease",
         "sub_theme": "respiratory",
         "topic": "COVID-19",
-        "geography_type": "",
-        "geography": "",
         "metric": "COVID-19_headline_vaccines_spring24Uptake",
+        "geography_type": "Nation",
+        "geography": "England",
         "stratum": "default",
         "sex": "",
         "age": "01-04",
@@ -52,6 +52,8 @@ class TestDownloadsView:
             "file_format": "csv",
             "plots": [
                 {
+                    "theme": self.core_timeseries_data["theme"],
+                    "sub_theme": self.core_timeseries_data["sub_theme"],
                     "metric": self.core_timeseries_data["metric"],
                     "topic": self.core_timeseries_data["topic"],
                     "stratum": self.core_timeseries_data["stratum"],
@@ -72,6 +74,8 @@ class TestDownloadsView:
             "y_axis": "metric",
             "plots": [
                 {
+                    "theme": self.core_headline_data["theme"],
+                    "sub_theme": self.core_headline_data["sub_theme"],
                     "metric": self.core_headline_data["metric"],
                     "topic": self.core_headline_data["topic"],
                     "stratum": self.core_headline_data["stratum"],
