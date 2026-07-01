@@ -1,5 +1,8 @@
+import datetime
 import logging
+from decimal import Decimal
 
+from django.db import models
 from django.db.models.signals import m2m_changed, post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -7,13 +10,24 @@ from metrics.api.middleware.current_user import get_current_user
 
 audit_logger = logging.getLogger("audit")
 
-AUDITABLE_MODELS = ["PermissionSet", "User"]
-AUDITABLE_RELATIONSHIPS = ["User_permission_sets"]
+AUDITABLE_MODELS = ["PermissionSet", "User", "APIApplication"]
+AUDITABLE_RELATIONSHIPS = ["User_permission_sets", "APIApplication_permission_sets"]
 
 
 def _concrete_field_names(instance):
     """Return attnames of all concrete (non-M2M) fields on this instance."""
     return [f.attname for f in instance._meta.concrete_fields]  # noqa: E261 SLF001
+
+
+def _serialize_value(value):
+    """Make values JSON/log-safe (dates, Decimals, model instances, etc.)."""
+    if isinstance(value, (datetime.date, datetime.datetime)):
+        return value.isoformat()
+    if isinstance(value, Decimal):
+        return str(value)
+    if isinstance(value, models.Model):
+        return value.pk
+    return value
 
 
 @receiver(pre_save)
@@ -27,7 +41,17 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
 
     if not instance.pk:
         instance.audit_fields_changed = True
+        instance.audit_field_diff = {}
         return
+
+    try:
+        stored = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        instance.audit_fields_changed = True
+        instance.audit_field_diff = {}
+        return
+
+    fields_to_check = _concrete_field_names(instance)
 
     if update_fields is not None:
         m2m_names = {
@@ -35,17 +59,22 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
             for f in instance._meta.get_fields()  # noqa: E261 SLF001
             if f.many_to_many
         }
-        instance.audit_fields_changed = bool(set(update_fields) - m2m_names)
-        return
+        relevant = set(update_fields) - m2m_names
+        fields_to_check = [
+            f.attname
+            for f in instance._meta.concrete_fields  # noqa: E261 SLF001
+            if f.name in relevant
+        ]
 
-    try:
-        stored = sender.objects.get(pk=instance.pk)
-        instance.audit_fields_changed = any(
-            getattr(instance, f) != getattr(stored, f)
-            for f in _concrete_field_names(instance)
-        )
-    except sender.DoesNotExist:
-        instance.audit_fields_changed = True
+    diff = {}
+    for attname in fields_to_check:
+        old = getattr(stored, attname)
+        new = getattr(instance, attname)
+        if old != new:
+            diff[attname] = (_serialize_value(old), _serialize_value(new))
+
+    instance.audit_field_diff = diff
+    instance.audit_fields_changed = bool(diff)
 
 
 @receiver(m2m_changed)
@@ -100,14 +129,20 @@ def audit_save_log(sender, instance, created, **kwargs):
     user_id = user.id if user else "anonymous"
     action = "CREATED" if created else "UPDATED"
 
-    audit_logger.info(
-        "Model saved",
-        extra={
-            "user": user_id,
-            "action": f"{action} {sender.__name__}",
-            "target": f"id={instance.pk}",
-        },
-    )
+    extra = {
+        "user": user_id,
+        "action": f"{action} {sender.__name__}",
+        "target": f"id={instance.pk}",
+    }
+
+    if not created:
+        diff = getattr(instance, "audit_field_diff", {})
+        changes = {
+            field: {"old": old, "new": new} for field, (old, new) in diff.items()
+        }
+        extra["target"] += f", Changes: {changes}"
+
+    audit_logger.info("Model saved", extra=extra)
 
 
 @receiver(post_delete)

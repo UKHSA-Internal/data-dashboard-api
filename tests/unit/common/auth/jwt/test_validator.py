@@ -128,14 +128,13 @@ def test_validate_entra_token(entra_well_known_keys, jwk_private_key_one):
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     auth.validate(token)
 
@@ -147,14 +146,13 @@ def test_validate_token_error_key_entra(entra_well_known_keys, jwk_private_key_t
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
@@ -167,7 +165,7 @@ def test_validate_token_valid_expiry_entra(entra_well_known_keys, jwk_private_ke
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
             "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=15),
         },
@@ -175,7 +173,6 @@ def test_validate_token_valid_expiry_entra(entra_well_known_keys, jwk_private_ke
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     auth.validate(token)
 
@@ -187,7 +184,7 @@ def test_validate_token_error_expired_entra(entra_well_known_keys, jwk_private_k
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
             "exp": datetime.now(tz=timezone.utc) - timedelta(minutes=15),
         },
@@ -195,7 +192,6 @@ def test_validate_token_error_expired_entra(entra_well_known_keys, jwk_private_k
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
@@ -208,14 +204,13 @@ def test_validate_token_error_aud_entra(entra_well_known_keys, jwk_private_key_o
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": "other-aud",
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
 
     with pytest.raises(validator.TokenError):
@@ -228,14 +223,13 @@ def test_validate_token_missing_aud_entra(entra_well_known_keys, jwk_private_key
         {
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     with pytest.raises(validator.TokenError):
         auth.validate(token)
@@ -261,14 +255,13 @@ def test_validate_token_caching_entra(
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
     auth = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     auth.validate(token)
     assert len(responses.calls) == 1
@@ -276,7 +269,6 @@ def test_validate_token_caching_entra(
     auth_again = validator.EntraTokenValidator(
         settings.ENTRA_TENANT_ID,
         settings.ENTRA_AUDIENCE,
-        settings.ENTRA_ALLOWED_APP_IDS[0],
     )
     auth_again.validate(token)
     assert len(responses.calls) == responses_calls
