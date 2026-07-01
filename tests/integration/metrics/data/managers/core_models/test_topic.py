@@ -74,6 +74,24 @@ class TestTopicManager:
         assert get_name_by_id == fake_topic_name_three
 
     @pytest.mark.django_db
+    def test_get_by_name(self):
+        """
+        Given a number of existing Topic records
+        When get_by_name is called with a matching name
+        Then the corresponding Topic record is returned
+        """
+
+        # Given
+        TopicFactory(name="Cold-alert")
+        expected_topic = TopicFactory(name="COVID-19")
+
+        # When
+        retrieved_topic = Topic.objects.get_by_name(name="COVID-19")
+
+        # Then
+        assert retrieved_topic == expected_topic
+
+    @pytest.mark.django_db
     @pytest.mark.parametrize(
         "theme_name, sub_theme_name, topic_name, metric_name, is_match",
         [
