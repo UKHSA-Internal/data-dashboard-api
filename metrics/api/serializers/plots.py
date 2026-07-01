@@ -28,6 +28,14 @@ class PlotSerializer(serializers.Serializer):
         choices=[],
         required=True,
     )
+    geography = serializers.CharField(
+        help_text=help_texts.GEOGRAPHY_FIELD,
+        required=True,
+    )
+    geography_type = serializers.CharField(
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
+        required=True,
+    )
     # Optional fields
     stratum = serializers.CharField(
         help_text=help_texts.STRATUM_FIELD,
@@ -38,20 +46,6 @@ class PlotSerializer(serializers.Serializer):
     )
     age = serializers.CharField(
         help_text=help_texts.AGE_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography_type = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
