@@ -2,7 +2,6 @@ from itertools import chain
 
 from django.urls import path
 from django.urls.resolvers import RoutePattern
-from django.db.models import Q
 from drf_spectacular.utils import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -61,14 +60,15 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                     page_ptr__in=queryset,
                 ).values_list("page_ptr_id", flat=True)
 
-                public_metrics_doc_child_page_ids = MetricsDocumentationChildEntry.objects.filter(
-                    is_public=True,
-                    page_ptr__in=queryset,
-                ).values_list("page_ptr_id", flat=True)
+                public_metrics_doc_child_page_ids = (
+                    MetricsDocumentationChildEntry.objects.filter(
+                        is_public=True,
+                        page_ptr__in=queryset,
+                    ).values_list("page_ptr_id", flat=True)
+                )
 
                 always_public_page_ids = queryset.not_type(
-                    TopicPage,
-                    MetricsDocumentationChildEntry
+                    TopicPage, MetricsDocumentationChildEntry
                 ).values_list("id", flat=True)
 
                 allowed_page_ids = [
