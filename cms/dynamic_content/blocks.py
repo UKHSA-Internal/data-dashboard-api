@@ -261,10 +261,12 @@ class PageLink(StructBlock):
             if hasattr(user_permissions, "permission_sets"):
                 logger.warning(f"inner permission_sets: {user_permissions.permission_sets}")
             full_user_permissions = (
-                user_permissions.permission_sets.get("permission_sets")
-                if user_permissions and hasattr(user_permissions, "permission_sets")
+                user_permissions.get("permission_sets")
+                if user_permissions
                 else None
             )
+            logger.warning(f"Permissions passed to check: {full_user_permissions}")
+            logger.warning(f"Page topic: {getattr(page, 'topic', None)}")
             if not check_permissions(
                     full_user_permissions,
                     getattr(page, "theme", None),
