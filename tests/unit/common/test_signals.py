@@ -38,7 +38,7 @@ class TrackConcreteFieldChangesTests(SimpleTestCase):
         self.assertFalse(hasattr(instance, "audit_field_diff"))
 
     def test_new_instance_without_pk_is_treated_as_changed(self):
-        instance = User(user_id=uuid.uuid4())  # no pk yet
+        instance = User(user_id=uuid.uuid4())
         track_concrete_field_changes(sender=User, instance=instance)
         self.assertTrue(instance.audit_fields_changed)
         self.assertEqual(instance.audit_field_diff, {})
@@ -51,24 +51,24 @@ class TrackConcreteFieldChangesTests(SimpleTestCase):
         self.assertEqual(instance.audit_field_diff, {})
 
     def test_no_changes_detected(self):
-        uid = uuid.uuid4()
-        stored = make_user(pk=1, user_id=uid)
-        instance = make_user(pk=1, user_id=uid)
+        user_id = uuid.uuid4()
+        stored = make_user(pk=1, user_id=user_id)
+        instance = make_user(pk=1, user_id=user_id)
         with mock.patch.object(User.objects, "get", return_value=stored):
             track_concrete_field_changes(sender=User, instance=instance)
         self.assertFalse(instance.audit_fields_changed)
         self.assertEqual(instance.audit_field_diff, {})
 
     def test_changed_field_is_captured_as_old_new_pair(self):
-        old_uid, new_uid = uuid.uuid4(), uuid.uuid4()
-        stored = make_user(pk=1, user_id=old_uid)
-        instance = make_user(pk=1, user_id=new_uid)
+        old_user_id, new_user_id = uuid.uuid4(), uuid.uuid4()
+        stored = make_user(pk=1, user_id=old_user_id)
+        instance = make_user(pk=1, user_id=new_user_id)
         with mock.patch.object(User.objects, "get", return_value=stored):
             track_concrete_field_changes(sender=User, instance=instance)
         self.assertTrue(instance.audit_fields_changed)
         self.assertEqual(
             instance.audit_field_diff,
-            {"user_id": (old_uid, new_uid)},
+            {"user_id": (old_user_id, new_user_id)},
         )
 
     def test_update_fields_restricts_diff_to_named_fields(self):
@@ -130,9 +130,10 @@ class AuditM2MRelationshipsLogTests(SimpleTestCase):
         self.mock_logger.info.assert_not_called()
 
     def test_post_add_logs_expected_message(self):
+        user_id = uuid.uuid4()
         audit_m2m_relationships_log(
             sender=through_model("User_permission_sets"),
-            instance=User(pk=1),
+            instance=User(pk=1, user_id=user_id),
             action="post_add",
             pk_set={5},
         )
@@ -141,7 +142,7 @@ class AuditM2MRelationshipsLogTests(SimpleTestCase):
             extra={
                 "user": 7,
                 "action": "ADD User_permission_sets {5}",
-                "target": 1,
+                "target": f"pk=1, id={user_id}",
             },
         )
 
@@ -157,14 +158,15 @@ class AuditM2MRelationshipsLogTests(SimpleTestCase):
             extra={
                 "user": 7,
                 "action": "REMOVE APIApplication_permission_sets {9}",
-                "target": 2,
+                "target": "pk=2",
             },
         )
 
     def test_post_clear_logs_expected_message(self):
+        user_id = uuid.uuid4()
         audit_m2m_relationships_log(
             sender=through_model("User_permission_sets"),
-            instance=User(pk=3),
+            instance=User(pk=3, user_id=user_id),
             action="post_clear",
             pk_set=None,
         )
@@ -173,7 +175,7 @@ class AuditM2MRelationshipsLogTests(SimpleTestCase):
             extra={
                 "user": 7,
                 "action": "CLEAR User_permission_sets",
-                "target": 3,
+                "target": f"pk=3, id={user_id}",
             },
         )
 
@@ -212,11 +214,12 @@ class AuditSaveLogTests(SimpleTestCase):
         self.mock_logger.info.assert_not_called()
 
     def test_create_is_logged(self):
-        instance = User(pk=10, user_id=uuid.uuid4())
+        user_id = uuid.uuid4()
+        instance = User(pk=10, user_id=user_id)
         audit_save_log(sender=User, instance=instance, created=True)
         self.mock_logger.info.assert_called_once_with(
             "Model saved",
-            extra={"user": 3, "action": "CREATED User", "target": "id=10"},
+            extra={"user": 3, "action": "CREATED User", "target": f"pk=10, id={user_id}"},
         )
 
     def test_update_with_no_changes_is_not_logged(self):
@@ -238,7 +241,7 @@ class AuditSaveLogTests(SimpleTestCase):
                 "user": 3,
                 "action": "UPDATED User",
                 "target": (
-                    "id=10, Changes: "
+                    f"pk=10, id={new_id}, Changes: "
                     f"{{'user_id': {{'old': '{old_id}', 'new': '{new_id}'}}}}"
                 ),
             },
@@ -273,7 +276,7 @@ class AuditDeleteLogTests(SimpleTestCase):
         audit_delete_log(sender=APIApplication, instance=instance)
         self.mock_logger.info.assert_called_once_with(
             "Model deleted",
-            extra={"user": 4, "action": "DELETE APIApplication", "target": "id=8"},
+            extra={"user": 4, "action": "DELETE APIApplication", "target": "pk=8"},
         )
 
     def test_no_current_user_is_logged_as_anonymous(self):
