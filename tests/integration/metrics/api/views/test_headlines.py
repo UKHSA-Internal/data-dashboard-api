@@ -74,6 +74,8 @@ class TestHeadlinesView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": incorrect_topic_name,
                 "metric": core_headline_example.metric.name,
                 "geography": core_headline_example.geography.name,
