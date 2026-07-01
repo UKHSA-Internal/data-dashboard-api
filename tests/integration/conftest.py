@@ -9,6 +9,8 @@ from metrics.data.models.core_models import (
     Metric,
     MetricGroup,
     Topic,
+    Geography,
+    GeographyType,
 )
 
 from tests.factories.metrics.headline import CoreHeadlineFactory
@@ -86,6 +88,10 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         metric_group=metric_group,
         topic=topic,
     )
+    geography_type = GeographyType.objects.create(name="Nation")
+    geography = Geography.objects.create(
+        name="England", geography_type=geography_type, geography_code="E92000001"
+    )
     age = Age.objects.create(name="all")
     year = 2023
     month = 1
@@ -93,6 +99,7 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         CoreTimeSeries.objects.create(
             metric_value=123,
             metric=metric,
+            geography=geography,
             age=age,
             year=year,
             epiweek=1,

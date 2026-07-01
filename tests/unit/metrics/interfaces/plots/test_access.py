@@ -105,9 +105,11 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_cases_topic_cases_abc",
-            topic="non_cases_topic",
             chart_type="line",
+            topic="non_cases_topic",
+            metric="non_cases_topic_cases_abc",
+            geography="England",
+            geography_type="Nation",
             date_from="2023-01-01",
             date_to="2023-12-31",
         )
@@ -240,9 +242,11 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_cases_topic_cases_abc",
-            topic="non_cases_topic",
             chart_type="line",
+            topic="non_cases_topic",
+            metric="non_cases_topic_cases_abc",
+            geography="England",
+            geography_type="Nation",
             date_from="2023-01-01",
             date_to="2023-12-31",
         )

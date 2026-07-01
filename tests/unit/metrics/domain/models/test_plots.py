@@ -21,11 +21,11 @@ class TestPlotParameters:
         "chart_type": "bar",
         "topic": "COVID-19",
         "metric": "COVID-19_deaths_ONSByDay",
+        "geography": "England",
+        "geography_type": "Nation",
     }
     optional_field_names = [
         "stratum",
-        "geography",
-        "geography_type",
         "sex",
         "age",
         "date_from",
@@ -262,6 +262,8 @@ class TestPlotParameters:
             topic=topic_name,
             metric=metric_name,
             chart_type="bar",
+            geography="England",
+            geography_type="Nation",
         )
 
         # Then
@@ -283,6 +285,8 @@ class TestPlotParameters:
             topic=topic_name,
             metric=metric_name,
             chart_type="bar",
+            geography="England",
+            geography_type="Nation",
             override_y_axis_choice_to_none=True,
         )
 

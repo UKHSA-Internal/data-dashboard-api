@@ -157,9 +157,11 @@ class TestValidateDates:
         date_from = datetime.datetime(year=2022, month=10, day=2)
         date_to = datetime.datetime(year=2021, month=7, day=1)
         plot_parameters = PlotParameters(
-            metric="COVID-19_deaths_ONSByDay",
-            topic="COVID-19",
             chart_type=ChartTypes.line_multi_coloured.value,
+            topic="COVID-19",
+            metric="COVID-19_deaths_ONSByDay",
+            geography="England",
+            geography_type="Nation",
             date_from=date_from.strftime(EXPECTED_DATE_FORMAT),
             date_to=date_to.strftime(EXPECTED_DATE_FORMAT),
         )
