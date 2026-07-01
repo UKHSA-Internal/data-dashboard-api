@@ -321,7 +321,7 @@ class TestCMSPagesAPI:
     @staticmethod
     def _get_response_titles(response) -> set[str]:
         return {item["title"] for item in response.data["items"]}
-    
+
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_anonymous_search_returns_public_pages(self, setup_pages):
         """
@@ -377,7 +377,9 @@ class TestCMSPagesAPI:
         assert "Regression Search Private Metric 2" in titles
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
-    def test_restricted_user_search_returns_public_and_permitted_pages(self, setup_pages):
+    def test_restricted_user_search_returns_public_and_permitted_pages(
+        self, setup_pages
+    ):
         """
         Given an athenticated restricted user has access to some private pages
         When the list `GET /api/pages/?search=<term>` endpoint is hit
@@ -387,8 +389,7 @@ class TestCMSPagesAPI:
         mock_user = mock.MagicMock()
         mock_user.username = "restricted-user"
         mock_user.permission_sets = MockPermissionSets(
-            [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}],
-            has_global_access=False
+            [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}], has_global_access=False
         )
 
         api_client = APIClient()
