@@ -42,12 +42,12 @@ class HeadlinesQuerySerializer(serializers.Serializer):
     )
     geography = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     stratum = serializers.ChoiceField(

@@ -29,6 +29,8 @@ class TestNonPublicDataTablesAPI:
                     "sub_theme": core_time_series.metric.topic.sub_theme.name,
                     "topic": core_time_series.metric.topic.name,
                     "metric": core_time_series.metric.name,
+                    "geography": core_time_series.geography.name,
+                    "geography_type": core_time_series.geography.geography_type.name,
                     "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,

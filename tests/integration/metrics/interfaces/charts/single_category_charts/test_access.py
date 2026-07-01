@@ -91,6 +91,8 @@ class TestChartsOutput:
             chart_type="line_multi_coloured",
             topic="COVID-19",
             metric="COVID-19_cases_casesByDay",
+            geography="England",
+            geography_type="Nation",
             stratum="default",
             label=label,
             line_type=line_type,
