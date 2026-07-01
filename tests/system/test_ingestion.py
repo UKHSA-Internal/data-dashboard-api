@@ -84,6 +84,8 @@ class TestIngestion:
                     "sub_theme": example_time_series_data["child_theme"],
                     "topic": example_time_series_data["topic"],
                     "metric": example_time_series_data["metric"],
+                    "geography": example_time_series_data["geography"],
+                    "geography_type": example_time_series_data["geography_type"],
                     "date_from": "2020-01-01",
                     "chart_type": "bar",
                 }
@@ -261,9 +263,16 @@ class TestIngestion:
         sub_theme = first_sample_data["child_theme"]
         topic = first_sample_data["topic"]
         metric = first_sample_data["metric"]
+        geography = first_sample_data["geography"]
+        geography_type = first_sample_data["geography_type"]
 
         tables_response = self._hit_tables_endpoint(
-            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
         )
         expected_first_metric_value = (
             f"{first_sample_data['time_series'][1]['metric_value']:.4f}"
@@ -310,7 +319,12 @@ class TestIngestion:
         # After the 2nd file was ingested and subsequently de-duplicated
         # the `tables/` endpoint should still return the same values as before
         tables_response = self._hit_tables_endpoint(
-            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
         )
         returned_metric_values = [row["values"][0]["value"] for row in tables_response]
         assert returned_metric_values[0] == expected_first_metric_value
@@ -339,7 +353,12 @@ class TestIngestion:
             "refresh_date", flat=True
         )
         tables_response = self._hit_tables_endpoint(
-            theme=theme, sub_theme=sub_theme, topic=topic, metric=metric
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
         )
         returned_metric_values = [row["values"][0]["value"] for row in tables_response]
         assert returned_metric_values[0] == expected_first_metric_value
@@ -570,7 +589,12 @@ class TestIngestion:
 
     @staticmethod
     def _hit_tables_endpoint(
-        theme: str, sub_theme: str, topic: str, metric: str
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
     ) -> list[dict]:
         client = APIClient()
 
@@ -583,6 +607,8 @@ class TestIngestion:
                     "sub_theme": sub_theme,
                     "topic": topic,
                     "metric": metric,
+                    "geography": geography,
+                    "geography_type": geography_type,
                     "date_from": "2020-01-01",
                     "chart_type": "bar",
                 }
