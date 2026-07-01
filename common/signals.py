@@ -145,7 +145,7 @@ def audit_delete_log(sender, instance, **kwargs):
         "Model deleted",
         extra={
             "user": user_id,
-            "action": f"pk={instance.pk}, DELETE {sender.__name__}",
+            "action": f"DELETE {sender.__name__}",
             "target": target_string,
         },
     )
