@@ -64,7 +64,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         custom_user_manager = self.get_custom_user_manager(provider_name)
 
         if custom_user_manager:
-            user = custom_user_manager.get_or_create(jwt_payload)
+            user = custom_user_manager.get_or_create(jwt_payload, request.path)
         else:
             user_model = self.get_user_model()
             user = user_model.objects.get_or_create(jwt_payload)
@@ -142,7 +142,6 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             validator = EntraTokenValidator(
                 settings.ENTRA_TENANT_ID,
                 settings.ENTRA_AUDIENCE,
-                settings.ENTRA_ALLOWED_APP_IDS,
             )
             return validator, "entra"
 
