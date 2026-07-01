@@ -202,9 +202,7 @@ class TestPageLinkBlock:
 
         mock_user = mock.MagicMock()
         mock_user.permission_sets = mock.MagicMock()
-        mock_user.permission_sets = {
-            "permission_sets": []
-        }
+        mock_user.permission_sets = {"permission_sets": []}
 
         mock_request = mock.MagicMock()
         mock_request.user = mock_user
@@ -243,13 +241,11 @@ class TestPageLinkBlock:
         mock_page.theme = 1
         mock_page.sub_theme = 2
         mock_page.topic = 3
-        mock_page.full_url = "http://test-page-url"
+        mock_page.full_url = "https://test-page-url"
 
         mock_user = mock.MagicMock()
         mock_user.permission_sets = mock.MagicMock()
-        mock_user.permission_sets = {
-            "permission_sets": []
-        }
+        mock_user.permission_sets = {"permission_sets": []}
 
         mock_request = mock.MagicMock()
         mock_request.user = mock_user
@@ -267,7 +263,7 @@ class TestPageLinkBlock:
         assert result["is_authorised"] is True
         assert result["title"] == "Test title"
         assert result["sub_title"] == "Test subtitle"
-        assert result["page"] == "http://test-page-url"
+        assert result["page"] == "https://test-page-url"
 
         mock_check_permissions.assert_called_once()
 
