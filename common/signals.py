@@ -126,7 +126,7 @@ def audit_save_log(sender, instance, created, **kwargs):
         return
 
     user = get_current_user()
-    user_id = user.id if user else "anonymous"
+    user_id = user.id if user and user.is_authenticated else "anonymous"
     action = "CREATED" if created else "UPDATED"
 
     extra = {
@@ -151,7 +151,7 @@ def audit_delete_log(sender, instance, **kwargs):
         return
 
     user = get_current_user()
-    user_id = user.id if user else "anonymous"
+    user_id = user.id if user and user.is_authenticated else "anonymous"
 
     audit_logger.info(
         "Model deleted",
