@@ -11,11 +11,6 @@ from metrics.api.middleware.current_user import get_current_user
 audit_logger = logging.getLogger("audit")
 
 
-AUDIT_EXCLUDED_FIELDS: dict[str, set[str]] = {
-    "User": {"last_login"},
-    "PermissionSet": set(),
-    "APIApplication": set(),
-}
 AUDITABLE_MODELS = ["PermissionSet", "User", "APIApplication"]
 AUDITABLE_RELATIONSHIPS = ["User_permission_sets", "APIApplication_permission_sets"]
 
@@ -44,8 +39,6 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
     """
     if sender.__name__ not in AUDITABLE_MODELS:
         return
-
-    excluded = AUDIT_EXCLUDED_FIELDS.get(sender.__name__, set())
 
     if not instance.pk:
         instance.audit_fields_changed = True

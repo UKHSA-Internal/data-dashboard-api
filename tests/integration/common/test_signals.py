@@ -14,6 +14,7 @@ def make_user(user_id=None, pk=None):
 
 class FakeUser:
     """Stand-in for a request.user, avoiding a real auth User."""
+
     def __init__(self, id_=1, is_authenticated=True):
         self.id = id_
         self.is_authenticated = is_authenticated

@@ -20,6 +20,7 @@ def make_user(user_id=None, pk=None):
 
 class FakeUser:
     """Stand-in for a request.user, avoiding a real auth User/DB hit."""
+
     def __init__(self, id_=1, is_authenticated=True):
         self.id = id_
         self.is_authenticated = is_authenticated
@@ -219,7 +220,11 @@ class AuditSaveLogTests(SimpleTestCase):
         audit_save_log(sender=User, instance=instance, created=True)
         self.mock_logger.info.assert_called_once_with(
             "Model saved",
-            extra={"user": 3, "action": "CREATED User", "target": f"pk=10, id={user_id}"},
+            extra={
+                "user": 3,
+                "action": "CREATED User",
+                "target": f"pk=10, id={user_id}",
+            },
         )
 
     def test_update_with_no_changes_is_not_logged(self):
