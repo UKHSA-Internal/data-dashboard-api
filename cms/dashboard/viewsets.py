@@ -55,29 +55,29 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
             req = self.request
 
             if req.auth is None:
-                # Get all page ids for pages with is_public
                 public_topic_page_ids = TopicPage.objects.filter(
-                    is_public=True, page_ptr__in=queryset
+                    is_public=True,
+                    page_ptr__in=queryset,
                 ).values_list("page_ptr_id", flat=True)
-                public_metric_doc_child_page_ids = (
+
+                public_metrics_doc_child_page_ids = (
                     MetricsDocumentationChildEntry.objects.filter(
-                        is_public=True, page_ptr__in=queryset
+                        is_public=True,
+                        page_ptr__in=queryset,
                     ).values_list("page_ptr_id", flat=True)
                 )
 
-                # Combine all public pages into one queryset
-                all_public_page_ids = list(public_topic_page_ids) + list(
-                    public_metric_doc_child_page_ids
-                )
-                is_public_pages = queryset.filter(id__in=all_public_page_ids)
-
-                # Get always public pages
-                pages_without_is_public = queryset.not_type(
+                always_public_page_ids = queryset.not_type(
                     TopicPage, MetricsDocumentationChildEntry
-                )
+                ).values_list("id", flat=True)
 
-                # Combine into single unified queryset
-                filtered_queryset = is_public_pages | pages_without_is_public
+                allowed_page_ids = [
+                    *public_topic_page_ids,
+                    *public_metrics_doc_child_page_ids,
+                    *always_public_page_ids,
+                ]
+
+                filtered_queryset = queryset.filter(id__in=allowed_page_ids)
 
             else:
                 log_user_permission_summary(req.user)
