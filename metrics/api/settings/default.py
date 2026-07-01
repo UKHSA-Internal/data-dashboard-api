@@ -206,7 +206,8 @@ LOGGING = {
             "format": f"%(asctime)s [%(levelname)s] [ENVIRONMENT:{config.APIENV}] [%(name)s - %(funcName)s] %(message)s"
         },
         "audit": {
-            "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]"
+            "()": "common.logging.AuditFormatter",
+            "format": "[AUDIT_EVENT] %(asctime)s [User:%(user)s - Action:%(action)s - Target:%(target)s]",
         },
     },
     "handlers": {
@@ -216,7 +217,7 @@ LOGGING = {
             "formatter": "standard",
         },
         "audit_console": {
-            "level": config.LOG_LEVEL,
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "audit",
         },
@@ -234,7 +235,7 @@ LOGGING = {
         },
         "audit": {
             "handlers": ["audit_console"],
-            "level": config.LOG_LEVEL,
+            "level": "INFO",
             "propagate": False,
         },
     },
