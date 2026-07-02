@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 import pytest
 from wagtail.blocks import StructBlock, StructValue
 
-from cms.dynamic_content.blocks import PageLink, SourceLinkBlock, check_permissions
+from cms.dynamic_content.blocks import PageLink, SourceLinkBlock
 
 
 class TestSourceLinkBlockClean:
@@ -182,7 +182,7 @@ class TestPageLinkBlock:
         assert result["title"] == "Test title"
         assert result["sub_title"] == "Test subtitle"
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_permission_denied(self, mock_check_permissions):
         """
         Given a non-public page and permissions are denied
@@ -224,7 +224,7 @@ class TestPageLinkBlock:
 
         mock_check_permissions.assert_called_once()
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_permission_granted(self, mock_check_permissions):
         """
         Given a non-public page and permissions are granted
@@ -267,7 +267,7 @@ class TestPageLinkBlock:
 
         mock_check_permissions.assert_called_once()
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_missing_request(self, mock_check_permissions):
         """
         Given a non-public page and no request in context

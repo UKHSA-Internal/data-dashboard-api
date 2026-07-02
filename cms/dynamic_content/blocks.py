@@ -19,6 +19,7 @@ from cms.dynamic_content.components import (
     PercentageNumberComponent,
     TrendNumberComponent,
 )
+from common.auth.permissions import check_page_permissions
 from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
@@ -28,31 +29,6 @@ POPULAR_TOPICS_BOTTOM_RIGHT_COLUMN_COUNT: int = 2
 POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
 
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
-
-
-def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
-    if not isinstance(user_permissions, list):
-        return False
-
-    for permission in user_permissions:
-        permission_theme_id = permission.get("theme", {}).get("id")
-        permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
-        permission_topic_id = permission.get("topic", {}).get("id")
-
-        if permission_theme_id == "-1":
-            return True
-
-        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
-            return True
-
-        if (
-            permission_theme_id == theme_id
-            and permission_sub_theme_id == sub_theme_id
-            and (permission_topic_id in {"-1", topic_id})
-        ):
-            return True
-
-    return False
 
 
 class HeadlineNumberBlockTypes(StreamBlock):
@@ -248,11 +224,8 @@ class PageLink(StructBlock):
         if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
 
-            full_user_permissions = (
-                user_permissions.get("permission_sets") if user_permissions else None
-            )
-            if not check_permissions(
-                user_permissions=full_user_permissions,
+            if not check_page_permissions(
+                permission_sets=user_permissions,
                 theme_id=getattr(page, "theme", None),
                 sub_theme_id=getattr(page, "sub_theme", None),
                 topic_id=getattr(page, "topic", None),
