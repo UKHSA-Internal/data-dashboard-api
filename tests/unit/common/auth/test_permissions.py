@@ -1136,7 +1136,7 @@ class TestCheckPagePermissions:
             [{"theme": {"id": "10"}}, "invalid"],
         ],
     )
-    def test_check_page_permissions_non_dict_permission_entry(user_permissions):
+    def test_check_page_permissions_non_dict_permission_entry(self, user_permissions):
         assert not check_page_permissions(
             permission_sets=user_permissions,
             theme_id="10",
@@ -1154,7 +1154,7 @@ class TestCheckPagePermissions:
         ],
     )
     def test_check_page_permissions_invalid_resource_ids(
-        theme_id, sub_theme_id, topic_id
+        self, theme_id, sub_theme_id, topic_id
     ):
         assert not check_page_permissions(
             permission_sets=[{"theme": {"id": "-1"}}],

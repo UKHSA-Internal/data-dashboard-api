@@ -31,6 +31,31 @@ POPULAR_TOPICS_HEADLINE_NUMBER_BLOCK_COUNT: int = 2
 METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
+def check_permissions(user_permissions, theme_id, sub_theme_id, topic_id) -> bool:
+    if not isinstance(user_permissions, list):
+        return False
+
+    for permission in user_permissions:
+        permission_theme_id = permission.get("theme", {}).get("id")
+        permission_sub_theme_id = permission.get("sub_theme", {}).get("id")
+        permission_topic_id = permission.get("topic", {}).get("id")
+
+        if permission_theme_id == "-1":
+            return True
+
+        if permission_theme_id == theme_id and permission_sub_theme_id == "-1":
+            return True
+
+        if (
+            permission_theme_id == theme_id
+            and permission_sub_theme_id == sub_theme_id
+            and (permission_topic_id in {"-1", topic_id})
+        ):
+            return True
+
+    return False
+
+
 class HeadlineNumberBlockTypes(StreamBlock):
     headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
     trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
@@ -227,8 +252,8 @@ class PageLink(StructBlock):
             full_user_permissions = (
                 user_permissions.get("permission_sets") if user_permissions else None
             )
-            if not check_page_permissions(
-                permission_sets=full_user_permissions,
+            if not check_permissions(
+                user_permissions=full_user_permissions,
                 theme_id=getattr(page, "theme", None),
                 sub_theme_id=getattr(page, "sub_theme", None),
                 topic_id=getattr(page, "topic", None),
