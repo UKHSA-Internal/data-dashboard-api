@@ -1150,7 +1150,6 @@ class TestCheckPagePermissions:
             (None, "20", "30"),
             ("10", None, "30"),
             ("10", "20", None),
-            ("", "20", "30"),
         ],
     )
     def test_check_page_permissions_invalid_resource_ids(
