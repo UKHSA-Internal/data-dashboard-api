@@ -21,7 +21,6 @@ from cms.dynamic_content.components import (
 )
 from validation.url import validate_https_scheme
 
-
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
 
