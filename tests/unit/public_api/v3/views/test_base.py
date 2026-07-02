@@ -1,10 +1,10 @@
 import pytest
 from unittest import mock
 
-from public_api.version.v2.views.base import BaseNestedAPITimeSeriesViewV2
+from public_api.version.v3.views.base import BaseNestedAPIViewV3
 
 
-class TestNestedTimeSeriesView(BaseNestedAPITimeSeriesViewV2):
+class TestNestedTimeSeriesView(BaseNestedAPIViewV3):
     """
     Minimal concrete implementation so BaseNestedAPITimeSeriesView can be instantiated
     during unit tests.
@@ -15,7 +15,7 @@ class TestNestedTimeSeriesView(BaseNestedAPITimeSeriesViewV2):
     serializer_class = mock.MagicMock
 
 
-class TestBaseNestedAPITimeSeriesViewV2:
+class TestBaseNestedAPITimeSeriesViewV3:
     def test_raises_error_for_lookup_field_property(self):
         """
         Given an instance of the `BaseNestedAPITimeSeriesView`
@@ -24,7 +24,7 @@ class TestBaseNestedAPITimeSeriesViewV2:
             as this should be implemented by the child class
         """
         # Given
-        base_view = BaseNestedAPITimeSeriesViewV2()
+        base_view = BaseNestedAPIViewV3()
 
         # When / Then
         with pytest.raises(NotImplementedError):
@@ -38,7 +38,7 @@ class TestBaseNestedAPITimeSeriesViewV2:
             as this should be implemented by the child class
         """
         # Given
-        base_view = BaseNestedAPITimeSeriesViewV2()
+        base_view = BaseNestedAPIViewV3()
 
         # When / Then
         with pytest.raises(NotImplementedError):
@@ -50,7 +50,7 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
     Tests for the newly added private Cache-Control header behaviour in the `get()` method.
     """
 
-    @mock.patch("public_api.version.v2.views.base.Response")
+    @mock.patch("public_api.version.v3.views.base.Response")
     @mock.patch("public_api.version.v2.views.base.APITimeSeriesRequestSerializerv2")
     def test_private_header_added_when_valid_jwt(
         self,
@@ -88,7 +88,7 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         )
         assert response == mocked_response
 
-    @mock.patch("public_api.version.v2.views.base.Response")
+    @mock.patch("public_api.version.v3.views.base.Response")
     @mock.patch("public_api.version.v2.views.base.APITimeSeriesRequestSerializerv2")
     def test_private_header_not_added_when_is_valid_non_public_request_is_false(
         self,
