@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from common.auth.permissions import check_page_permissions
 from wagtail import blocks
 from wagtail.blocks import (
     CharBlock,
