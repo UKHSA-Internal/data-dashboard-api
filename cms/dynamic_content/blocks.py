@@ -1,5 +1,3 @@
-import logging
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
@@ -22,8 +20,6 @@ from cms.dynamic_content.components import (
     TrendNumberComponent,
 )
 from validation.url import validate_https_scheme
-
-logger = logging.getLogger(__name__)
 
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
