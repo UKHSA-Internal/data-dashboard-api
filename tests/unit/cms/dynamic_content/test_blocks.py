@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 import pytest
 from wagtail.blocks import StructBlock, StructValue
 
-from cms.dynamic_content.blocks import PageLink, SourceLinkBlock, check_permissions
+from cms.dynamic_content.blocks import PageLink, SourceLinkBlock
 
 
 class TestSourceLinkBlockClean:
@@ -182,14 +182,14 @@ class TestPageLinkBlock:
         assert result["title"] == "Test title"
         assert result["sub_title"] == "Test subtitle"
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
-    def test_non_public_page_permission_denied(self, mock_check_permissions):
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
+    def test_non_public_page_permission_denied(self, mock_check_page_permissions):
         """
         Given a non-public page and permissions are denied
         When get_api_representation() is called
         Then the response is unauthorised and fields are blanked.
         """
-        mock_check_permissions.return_value = False
+        mock_check_page_permissions.return_value = False
 
         block = PageLink()
 
@@ -222,16 +222,16 @@ class TestPageLinkBlock:
         assert result["sub_title"] == ""
         assert result["page"] == ""
 
-        mock_check_permissions.assert_called_once()
+        mock_check_page_permissions.assert_called_once()
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
-    def test_non_public_page_permission_granted(self, mock_check_permissions):
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
+    def test_non_public_page_permission_granted(self, mock_check_page_permissions):
         """
         Given a non-public page and permissions are granted
         When get_api_representation() is called
         Then the response is authorised and fields are preserved.
         """
-        mock_check_permissions.return_value = True
+        mock_check_page_permissions.return_value = True
 
         block = PageLink()
 
@@ -265,16 +265,16 @@ class TestPageLinkBlock:
         assert result["sub_title"] == "Test subtitle"
         assert result["page"] == "https://test-page-url"
 
-        mock_check_permissions.assert_called_once()
+        mock_check_page_permissions.assert_called_once()
 
-    @mock.patch("cms.dynamic_content.blocks.check_permissions")
-    def test_non_public_page_missing_request(self, mock_check_permissions):
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
+    def test_non_public_page_missing_request(self, mock_check_page_permissions):
         """
         Given a non-public page and no request in context
         When get_api_representation() is called
         Then the response is unauthorised and fields are blanked.
         """
-        mock_check_permissions.return_value = False
+        mock_check_page_permissions.return_value = False
 
         block = PageLink()
 
@@ -298,4 +298,4 @@ class TestPageLinkBlock:
         assert result["sub_title"] == ""
         assert result["page"] == ""
 
-        mock_check_permissions.assert_called_once()
+        mock_check_page_permissions.assert_called_once()
