@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from common.auth.permissions import check_page_permissions
 from wagtail import blocks
 from wagtail.blocks import (
     CharBlock,
@@ -20,6 +19,7 @@ from cms.dynamic_content.components import (
     PercentageNumberComponent,
     TrendNumberComponent,
 )
+from common.auth.permissions import check_page_permissions
 from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
