@@ -534,27 +534,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
-    @staticmethod
-    def _has_access_to_non_public_data(
-        *,
-        topic: str,
-        metric: str,
-        geography: str | None,
-        geography_type: str | None,
-        theme: str,
-        sub_theme: str,
-        rbac_permissions: Iterable[RBACPermission],
-    ) -> bool:
-        return validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            rbac_permissions=rbac_permissions,
-        )
-
     def query_for_data(
         self,
         *,
@@ -668,17 +647,6 @@ class CoreTimeSeriesManager(models.Manager):
         age: str | None = kwargs.get("age")
         theme: str = kwargs.get("theme") or ""
         sub_theme: str = kwargs.get("sub_theme") or ""
-
-        rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        has_access_to_non_public_data: bool = self._has_access_to_non_public_data(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            rbac_permissions=rbac_permissions,
-        )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
