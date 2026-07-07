@@ -259,7 +259,7 @@ def register_link_props(features):
     features.register_converter_rule("contentstate", "link", rule)
 
 
-def validate_preview_parameters(page: Page) -> None:
+def validate_preview_parameters(page: Page) -> bool:
     if not page or not getattr(page, "pk", None):
         logger.debug("Skipping frontend preview action: page missing or unsaved")
         return False
