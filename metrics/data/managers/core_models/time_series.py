@@ -534,7 +534,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
-    def query_for_data(
+    def query_for_data(  # noqa: PLR0914
         self,
         *,
         topic: str,
@@ -543,10 +543,16 @@ class CoreTimeSeriesManager(models.Manager):
         fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
         field_to_order_by: str = "date",
+        geography: str | None = None,
+        geography_type: str | None = None,
+        stratum: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+        theme: str = "",
+        sub_theme: str = "",
         metric_value_ranges: list[str | float | int] | None = None,
         rbac_permissions: Iterable[RBACPermission] | None = None,
         permission_sets: PermissionSetsType | None = None,
-        **kwargs,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -623,31 +629,6 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        allowed_kwargs = {
-            "geography",
-            "geography_type",
-            "stratum",
-            "sex",
-            "age",
-            "theme",
-            "sub_theme",
-        }
-        unexpected_kwargs = set(kwargs) - allowed_kwargs
-        if unexpected_kwargs:
-            unexpected = ", ".join(sorted(unexpected_kwargs))
-            message = (
-                "query_for_data() got unexpected keyword argument(s): " f"{unexpected}"
-            )
-            raise TypeError(message)
-
-        geography: str | None = kwargs.get("geography")
-        geography_type: str | None = kwargs.get("geography_type")
-        stratum: str | None = kwargs.get("stratum")
-        sex: str | None = kwargs.get("sex")
-        age: str | None = kwargs.get("age")
-        theme: str = kwargs.get("theme") or ""
-        sub_theme: str = kwargs.get("sub_theme") or ""
-
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
