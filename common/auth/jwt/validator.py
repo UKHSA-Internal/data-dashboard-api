@@ -66,17 +66,18 @@ class CognitoTokenValidator:
             "key": public_key,
             "issuer": self.pool_url,
             "algorithms": ["RS256"],
+            "options": {"verify_iat": False},
         }
 
         logger.debug("JWT - %s", params)
         token_payload = jwt.decode(
             token, options={"verify_signature": False}  # noqa: S5659
         )
-        logger.debug("JWT decoded - %s", token_payload)
+        logger.info("JWT decoded - %s", token_payload)
 
         if "aud" in token_payload:
             params.update({"audience": self.audience})
-
+        
         try:
             jwt_data = jwt.decode(**params)
         except (
