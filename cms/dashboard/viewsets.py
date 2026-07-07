@@ -1,3 +1,4 @@
+import logging
 from itertools import chain
 from typing import override
 
@@ -10,13 +11,11 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.auth_content.auth_utils import is_auth_enabled
-from cms.auth_content.constants import WILDCARD_ID_VALUE
-from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
+from cms.dashboard.serializers import ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 from cms.topic.models import TopicPage
 from common.auth.logging import log_user_permission_summary
 from common.auth.permissions import check_page_permissions
-
 from common.page_previews import (
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
