@@ -383,6 +383,11 @@ class DualCategoryChartCard {
             rootNode
                 .querySelectorAll('.dual-category-chart-card__segments')
                 .forEach(segments => {
+                    const streamfieldChild = segments.closest('[data-streamfield-child]');
+                    if (streamfieldChild?.getAttribute('aria-hidden') === 'true') {
+                        return;
+                    }
+
                     const section = segments.closest('section[id$="-section"]');
                     section
                         ?.querySelector('[data-streamfield-action="DELETE"]')
