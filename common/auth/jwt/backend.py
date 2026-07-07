@@ -48,7 +48,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         try:
             token_validator, provider_name = self.get_token_validator(jwt_token)
         except TokenError as e:
-            logger.debug("Failed to identify token provider: %s", e)
+            logger.info("Failed to identify token provider: %s", e)
             raise exceptions.AuthenticationFailed(
                 _("Unknown or malformed token issuer.")
             ) from e
@@ -56,7 +56,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         try:
             jwt_payload = token_validator.validate(jwt_token)
         except TokenError as e:
-            logger.debug(
+            logger.info(
                 "%s token validation failed: %s", provider_name.capitalize(), e
             )
             raise exceptions.AuthenticationFailed from None
