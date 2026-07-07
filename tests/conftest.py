@@ -30,6 +30,8 @@ from validation.is_public import NON_PUBLIC_DATA_PREFIX
 
 DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
 
+UPPER_TIER_LOCAL_AUTHORITY = "Upper Tier Local Authority"
+
 
 @pytest.fixture
 def test_filename() -> str:
@@ -43,7 +45,6 @@ def non_public_test_filename() -> str:
 
 @pytest.fixture
 def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]:
-    geography_type = "Upper Tier Local Authority"
     return [
         {
             "subplot_title": "6-in-1",
@@ -53,7 +54,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Darlington",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("95.4")],
@@ -63,7 +64,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Hartlepool",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("93.4")],
@@ -73,7 +74,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
@@ -88,7 +89,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Darlington",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("92.4")],
@@ -98,7 +99,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Hartlepool",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("91.4")],
@@ -108,7 +109,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
-                        "geography_type": geography_type,
+                        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
@@ -500,7 +501,7 @@ def example_headline_number_block() -> dict[str, str]:
         "topic": "COVID-19",
         "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
         "geography": "Croydon",
-        "geography_type": "Upper Tier Local Authority",
+        "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
         "sex": "all",
         "age": "all",
         "stratum": "default",
@@ -594,7 +595,7 @@ def example_global_filter():
                                             "value": {
                                                 "label": "Local Authority",
                                                 "colour": "COLOUR_3_DARK_PINK",
-                                                "geography_type": "Upper Tier Local Authority",
+                                                "geography_type": UPPER_TIER_LOCAL_AUTHORITY,
                                             },
                                             "id": "b531fee6-149d-429d-8de6-90bf27f4f9e6",
                                         },
