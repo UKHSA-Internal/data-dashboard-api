@@ -43,6 +43,7 @@ def non_public_test_filename() -> str:
 
 @pytest.fixture
 def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]:
+    geography_type = "Upper Tier Local Authority"
     return [
         {
             "subplot_title": "6-in-1",
@@ -52,7 +53,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Darlington",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("95.4")],
@@ -62,7 +63,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Hartlepool",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("93.4")],
@@ -72,7 +73,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
@@ -87,7 +88,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Darlington",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Darlington"],
                     "y_axis_values": [Decimal("92.4")],
@@ -97,7 +98,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric-two",
                         "topic": "fake-topic-two",
                         "geography": "Hartlepool",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("91.4")],
@@ -107,7 +108,7 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                         "metric": "fake-metric",
                         "topic": "fake-topic",
                         "geography": "Stockton-on-Tees",
-                        "geography_type": "Upper Tier Local Authority",
+                        "geography_type": geography_type,
                     },
                     "x_axis_values": ["Stockton-on-Tees"],
                     "y_axis_values": [Decimal("95.4")],
