@@ -100,7 +100,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                             for page in queryset.type(MetricsDocumentationChildEntry)
                         ),
                     )
-                    allowed_page_ids = [
+                    permitted_page_ids = [
                         page_id
                         for page_id, page in pages_to_check
                         if page.is_public
@@ -112,12 +112,16 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
                         )
                     ]
 
-                    public_pages = queryset.not_type(
+                    always_public_page_ids = queryset.not_type(
                         TopicPage, MetricsDocumentationChildEntry
-                    )
-                    permitted_private_pages = queryset.filter(id__in=allowed_page_ids)
+                    ).values_list("id", flat=True)
 
-                    filtered_queryset = public_pages | permitted_private_pages
+                    allowed_page_ids = [
+                        *permitted_page_ids,
+                        *always_public_page_ids,
+                    ]
+
+                    filtered_queryset = queryset.filter(id__in=allowed_page_ids)
 
             return filtered_queryset.specific()
         return queryset.specific()
