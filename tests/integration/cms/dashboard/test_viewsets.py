@@ -588,23 +588,3 @@ class TestCMSPagesAPIDetail:
 
         # Then
         assert response.status_code == HTTPStatus.NOT_FOUND
-
-    # This shouldn't be a legitimate case, if the AUTH_ENABLED flag is False
-    # then all is_public: False pages are filtered out at the DB level
-    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", False)
-    def test_auth_disabled_detail_returns_private_page(self, setup_pages):
-        """
-        Given an unathenticated request is made when auth is disabled
-        When the detail `GET /api/pages/{id}/` endpoint is hit for a private page
-        Then an HTTP 200 OK response is returned with the page
-        """
-        # Given
-        page = setup_pages["private_metrics"]
-        api_client = APIClient()
-
-        # When
-        response = api_client.get(path=self._get_detail_path(page=page), format="json")
-
-        # Then
-        assert response.status_code == HTTPStatus.OK
-        assert response.data["title"] == "Regression Search Private Metric"
