@@ -229,7 +229,7 @@ class TestCMSPagesAPIViewSetPermissions:
             "standard_page": standard_page,
         }
 
-    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_anonymous_user_access(self, setup_pages):
         """
         Given a request is made by an unauthenticated user
@@ -261,7 +261,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric" not in titles
         assert "Private Metric 2" not in titles
 
-    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_global_access_user(self, setup_pages):
         """
         Given a request is made by an authenticated user with global access
@@ -299,7 +299,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric" in titles
         assert "Private Metric 2" in titles
 
-    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", True)
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_restricted_user_with_permission(self, setup_pages):
         """
         Given a request is made by an authenticated user with access to some private pages
@@ -334,7 +334,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric 2" in titles
         assert "Private Metric" not in titles
 
-    @mock.patch(f"cms.dashboard.viewsets.AUTH_ENABLED", False)
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", False)
     def test_auth_disabled_returns_unfiltered_pages(self, setup_pages):
         """
         Given a request is made when auth is disabled
