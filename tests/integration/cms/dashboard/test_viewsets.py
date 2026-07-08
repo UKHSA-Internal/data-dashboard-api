@@ -39,12 +39,12 @@ def set_last_published_at(page):
 
 
 def create_regression_search_pages():
-    influenza_topic = Topic.objects.create(name='Search Influenza')
+    influenza_topic = Topic.objects.create(name="Search Influenza")
     metric = Metric.objects.create(
         name="search_influenza_headline_positivityLatest", topic=influenza_topic
     )
 
-    covid_topic = Topic.objects.create(name='Search COVID-19')
+    covid_topic = Topic.objects.create(name="Search COVID-19")
     private_metric = Metric.objects.create(
         name="search_COVID-19_headline_cases_7DayTotals", topic=covid_topic
     )
@@ -460,7 +460,7 @@ class TestCMSPagesAPIDetail:
     @staticmethod
     def _get_detail_path(page) -> str:
         return f"/api/pages/{page.id}/"
-    
+
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     @pytest.mark.parametrize(
         ("page_key", "expected_title"),
