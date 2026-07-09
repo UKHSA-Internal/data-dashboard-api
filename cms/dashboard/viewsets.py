@@ -51,7 +51,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         queryset = super().get_queryset()
         req = self.request
 
-        if  not AUTH_ENABLED or req.auth is None:
+        if not AUTH_ENABLED or req.auth is None:
             public_topic_page_ids = TopicPage.objects.filter(
                 is_public=True,
                 page_ptr__in=queryset,
@@ -79,19 +79,14 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         else:
             log_user_permission_summary(req.user)
 
-            has_global_access = req.user.permission_sets["summary"][
-                "has_global_access"
-            ]
+            has_global_access = req.user.permission_sets["summary"]["has_global_access"]
 
             if has_global_access:
                 filtered_queryset = queryset
             else:
                 user_permissions = req.user.permission_sets["permission_sets"]
                 pages_to_check = chain(
-                    (
-                        (page.id, page.topicpage)
-                        for page in queryset.type(TopicPage)
-                    ),
+                    ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
                     (
                         (page.id, page.metricsdocumentationchildentry)
                         for page in queryset.type(MetricsDocumentationChildEntry)

@@ -605,4 +605,3 @@ class TestCMSPagesAPIDetail:
 
         # Then
         assert response.status_code == HTTPStatus.NOT_FOUND
-        
