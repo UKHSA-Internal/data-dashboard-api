@@ -185,7 +185,7 @@ class TestPageLinkBlock:
     @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_permission_denied(self, mock_check_page_permissions):
         """
-        Given a non-public page and permissions are denied
+        Given a non-public official-sensitive page and permissions are denied
         When get_api_representation() is called
         Then the response is unauthorised and fields are blanked.
         """
@@ -199,6 +199,7 @@ class TestPageLinkBlock:
         mock_page.theme = 1
         mock_page.sub_theme = 2
         mock_page.topic = 3
+        mock_page.page_classification = "official_sensitive"
 
         mock_user = mock.MagicMock()
         mock_user.permission_sets = mock.MagicMock()
@@ -218,11 +219,41 @@ class TestPageLinkBlock:
         result = block.get_api_representation(value=value, context=context)
 
         assert result["is_authorised"] is False
+        assert result["page_classification"] == "official_sensitive"
         assert result["title"] == ""
         assert result["sub_title"] == ""
         assert result["page"] == ""
 
         mock_check_page_permissions.assert_called_once()
+
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
+    def test_non_public_page_permission_granted_with_no_classification(
+        self, mock_check_page_permissions
+    ):
+        """
+        Given a non-public page with permissions granted and no classification
+        When get_api_representation() is called
+        Then the response is authorised and page_classification is None.
+        """
+        mock_check_page_permissions.return_value = True
+
+        block = PageLink()
+
+        mock_page = mock.MagicMock()
+        mock_page.specific = mock_page
+        mock_page.is_public = False
+        mock_page.page_classification = None
+
+        value = {
+            "title": "Test title",
+            "sub_title": "Test subtitle",
+            "page": mock_page,
+        }
+
+        result = block.get_api_representation(value=value, context={})
+
+        assert "page_classification" in result
+        assert result["page_classification"] is None
 
     @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_permission_granted(self, mock_check_page_permissions):
@@ -242,6 +273,7 @@ class TestPageLinkBlock:
         mock_page.sub_theme = 2
         mock_page.topic = 3
         mock_page.full_url = "https://test-page-url"
+        mock_page.page_classification = "official_sensitive"
 
         mock_user = mock.MagicMock()
         mock_user.permission_sets = mock.MagicMock()
@@ -261,6 +293,7 @@ class TestPageLinkBlock:
         result = block.get_api_representation(value=value, context=context)
 
         assert result["is_authorised"] is True
+        assert result["page_classification"] == "official_sensitive"
         assert result["title"] == "Test title"
         assert result["sub_title"] == "Test subtitle"
         assert result["page"] == "https://test-page-url"
