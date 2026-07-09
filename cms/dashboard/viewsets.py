@@ -49,82 +49,78 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
         """
         queryset = super().get_queryset()
+        req = self.request
 
-        if AUTH_ENABLED:
+        if  not AUTH_ENABLED or req.auth is None:
+            public_topic_page_ids = TopicPage.objects.filter(
+                is_public=True,
+                page_ptr__in=queryset,
+            ).values_list("page_ptr_id", flat=True)
 
-            req = self.request
-
-            if req.auth is None:
-                public_topic_page_ids = TopicPage.objects.filter(
+            public_metrics_doc_child_page_ids = (
+                MetricsDocumentationChildEntry.objects.filter(
                     is_public=True,
                     page_ptr__in=queryset,
                 ).values_list("page_ptr_id", flat=True)
+            )
 
-                public_metrics_doc_child_page_ids = (
-                    MetricsDocumentationChildEntry.objects.filter(
-                        is_public=True,
-                        page_ptr__in=queryset,
-                    ).values_list("page_ptr_id", flat=True)
+            always_public_page_ids = queryset.not_type(
+                TopicPage, MetricsDocumentationChildEntry
+            ).values_list("id", flat=True)
+
+            allowed_page_ids = [
+                *public_topic_page_ids,
+                *public_metrics_doc_child_page_ids,
+                *always_public_page_ids,
+            ]
+
+            filtered_queryset = queryset.filter(id__in=allowed_page_ids)
+
+        else:
+            log_user_permission_summary(req.user)
+
+            has_global_access = req.user.permission_sets["summary"][
+                "has_global_access"
+            ]
+
+            if has_global_access:
+                filtered_queryset = queryset
+            else:
+                user_permissions = req.user.permission_sets["permission_sets"]
+                pages_to_check = chain(
+                    (
+                        (page.id, page.topicpage)
+                        for page in queryset.type(TopicPage)
+                    ),
+                    (
+                        (page.id, page.metricsdocumentationchildentry)
+                        for page in queryset.type(MetricsDocumentationChildEntry)
+                    ),
                 )
+                permitted_page_ids = [
+                    page_id
+                    for page_id, page in pages_to_check
+                    if page.is_public
+                    or check_page_permissions(
+                        permission_sets=user_permissions,
+                        theme_id=page.theme,
+                        sub_theme_id=page.sub_theme,
+                        topic_id=page.topic,
+                    )
+                ]
 
                 always_public_page_ids = queryset.not_type(
                     TopicPage, MetricsDocumentationChildEntry
                 ).values_list("id", flat=True)
 
                 allowed_page_ids = [
-                    *public_topic_page_ids,
-                    *public_metrics_doc_child_page_ids,
+                    *permitted_page_ids,
                     *always_public_page_ids,
                 ]
 
                 filtered_queryset = queryset.filter(id__in=allowed_page_ids)
 
-            else:
-                log_user_permission_summary(req.user)
-
-                has_global_access = req.user.permission_sets["summary"][
-                    "has_global_access"
-                ]
-
-                if has_global_access:
-                    filtered_queryset = queryset
-                else:
-                    user_permissions = req.user.permission_sets["permission_sets"]
-                    pages_to_check = chain(
-                        (
-                            (page.id, page.topicpage)
-                            for page in queryset.type(TopicPage)
-                        ),
-                        (
-                            (page.id, page.metricsdocumentationchildentry)
-                            for page in queryset.type(MetricsDocumentationChildEntry)
-                        ),
-                    )
-                    permitted_page_ids = [
-                        page_id
-                        for page_id, page in pages_to_check
-                        if page.is_public
-                        or check_page_permissions(
-                            permission_sets=user_permissions,
-                            theme_id=page.theme,
-                            sub_theme_id=page.sub_theme,
-                            topic_id=page.topic,
-                        )
-                    ]
-
-                    always_public_page_ids = queryset.not_type(
-                        TopicPage, MetricsDocumentationChildEntry
-                    ).values_list("id", flat=True)
-
-                    allowed_page_ids = [
-                        *permitted_page_ids,
-                        *always_public_page_ids,
-                    ]
-
-                    filtered_queryset = queryset.filter(id__in=allowed_page_ids)
-
-            return filtered_queryset.specific()
-        return queryset.specific()
+        return filtered_queryset.specific()
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:

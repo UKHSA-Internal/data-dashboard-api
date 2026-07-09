@@ -335,11 +335,11 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Private Metric" not in titles
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", False)
-    def test_auth_disabled_returns_unfiltered_pages(self, setup_pages):
+    def test_auth_disabled_returns_public_pages(self, setup_pages):
         """
         Given a request is made when auth is disabled
         When the queryset is retrieved
-        Then all pages are returned
+        Then only public pages are returned
         """
         # Given
         rf = RequestFactory()
@@ -362,9 +362,9 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Public Topic" in titles
         assert "Public Metric" in titles
         assert "Standard" in titles
-        assert "Private Topic" in titles
-        assert "Private Metric" in titles
-        assert "Private Metric 2" in titles
+        assert "Private Topic" not in titles
+        assert "Private Metric" not in titles
+        assert "Private Metric 2" not in titles
 
 
 @pytest.mark.django_db
@@ -588,3 +588,21 @@ class TestCMSPagesAPIDetail:
 
         # Then
         assert response.status_code == HTTPStatus.NOT_FOUND
+
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", False)
+    def test_auth_detail_returns_not_found_for_private_page(self, setup_pages):
+        """
+        Given an unathenticated request is made when auth is disabled
+        When the detail `GET /api/pages/{id}/` endpoint is hit for a private page
+        Then an HTTP 404 NOT FOUND response is returned
+        """
+        # Given
+        page = setup_pages["private_metrics"]
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path=self._get_detail_path(page=page), format="json")
+
+        # Then
+        assert response.status_code == HTTPStatus.NOT_FOUND
+        
