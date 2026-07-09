@@ -241,6 +241,7 @@ class PageLink(StructBlock):
                 return data
 
         data["is_authorised"] = True
+        data["page_classification"] = page.page_classification
         return data
 
 
