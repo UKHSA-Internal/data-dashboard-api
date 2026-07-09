@@ -13,6 +13,9 @@ audit_logger = logging.getLogger("audit")
 
 AUDITABLE_MODELS = ["PermissionSet", "User", "APIApplication"]
 AUDITABLE_RELATIONSHIPS = ["User_permission_sets", "APIApplication_permission_sets"]
+AUDIT_EXCLUDED_FIELDS: dict[str, set[str]] = {
+    "User": {"last_login"},
+}
 SENSITIVE_FIELDS = {
     "User": {"password"},
 }
@@ -65,7 +68,8 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
             for f in instance._meta.get_fields()  # noqa: E261 SLF001
             if f.many_to_many
         }
-        relevant = set(update_fields) - m2m_names
+        excluded = AUDIT_EXCLUDED_FIELDS.get(sender.__name__, set())
+        relevant = set(update_fields) - m2m_names - excluded
         fields_to_check = [
             f.attname
             for f in instance._meta.concrete_fields  # noqa: E261 SLF001
