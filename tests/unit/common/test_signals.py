@@ -1,6 +1,7 @@
 import uuid
 from unittest import mock
 
+from django.contrib.auth.models import User as AuthUser
 from django.test import SimpleTestCase
 
 from cms.auth_content.models.users import User
@@ -10,12 +11,20 @@ from common.signals import (
     audit_m2m_relationships_log,
     audit_save_log,
     track_concrete_field_changes,
+    REDACTED,
 )
 
 
 def make_user(user_id=None, pk=None):
     """Build a real (unsaved) User instance to use as before/after state."""
     return User(pk=pk, user_id=user_id or uuid.uuid4())
+
+
+def make_auth_user(pk=None, password=None):
+    """Build a real (unsaved) Django auth User instance, for testing
+    password redaction specifically - distinct from this app's own
+    User model, which shares the same class name but has no password field."""
+    return AuthUser(pk=pk, password=password or "")
 
 
 class FakeUser:
@@ -103,6 +112,19 @@ class TrackConcreteFieldChangesTests(SimpleTestCase):
             )
         self.assertEqual(instance.audit_field_diff, {})
         self.assertFalse(instance.audit_fields_changed)
+
+    def test_password_change_is_redacted(self):
+        stored = make_auth_user(pk=1, password="old$hashed$value")
+        instance = make_auth_user(pk=1, password="new$hashed$value")
+        with mock.patch.object(User.objects, "get", return_value=stored):
+            track_concrete_field_changes(
+                sender=User, instance=instance, update_fields=["password"]
+            )
+        self.assertTrue(instance.audit_fields_changed)
+        self.assertEqual(
+            instance.audit_field_diff,
+            {"password": (REDACTED, REDACTED)},
+        )
 
 
 class AuditM2MRelationshipsLogTests(SimpleTestCase):

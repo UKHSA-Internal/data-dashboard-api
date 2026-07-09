@@ -13,6 +13,11 @@ audit_logger = logging.getLogger("audit")
 
 AUDITABLE_MODELS = ["PermissionSet", "User", "APIApplication"]
 AUDITABLE_RELATIONSHIPS = ["User_permission_sets", "APIApplication_permission_sets"]
+SENSITIVE_FIELDS = {
+    "User": {"password"},
+}
+
+REDACTED = "***REDACTED***"
 
 
 def _concrete_field_names(instance):
@@ -68,11 +73,15 @@ def track_concrete_field_changes(sender, instance, update_fields=None, **kwargs)
         ]
 
     diff = {}
+    sensitive = SENSITIVE_FIELDS.get(sender.__name__, set())
     for attname in fields_to_check:
         old = getattr(stored, attname)
         new = getattr(instance, attname)
         if old != new:
-            diff[attname] = (_serialize_value(old), _serialize_value(new))
+            if attname in sensitive:
+                diff[attname] = (REDACTED, REDACTED)
+            else:
+                diff[attname] = (_serialize_value(old), _serialize_value(new))
 
     instance.audit_field_diff = diff
     instance.audit_fields_changed = bool(diff)
