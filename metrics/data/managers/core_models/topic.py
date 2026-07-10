@@ -138,7 +138,7 @@ class TopicQuerySet(models.QuerySet):
 
 
 class TopicManager(models.Manager):
-    """Custom model manager class for the `Metric` model."""
+    """Custom model manager class for the `Topic` model."""
 
     def get_queryset(self) -> TopicQuerySet:
         return TopicQuerySet(model=self.model, using=self.db)
