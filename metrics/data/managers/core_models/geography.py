@@ -270,7 +270,7 @@ class GeographyManager(models.Manager):
             or (None, None) if it does not.
         """
         return self.get_queryset().get_geography_type_id_and_code_by_name(
-            geography_name, geography_type_name=geography_type_name
+            geography_name, geography_type_name
         )
 
     def get_all_names(self) -> GeographyQuerySet:
