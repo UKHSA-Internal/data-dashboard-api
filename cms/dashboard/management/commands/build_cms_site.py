@@ -4,6 +4,7 @@ Only intended for use during development
 """
 
 import os
+from urllib.parse import urlparse
 
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
@@ -49,9 +50,11 @@ class Command(BaseCommand):
         wagtail_root_page.add_child(instance=root_page)
         wagtail_root_page.save_revision().publish()
 
+        frontend_url = os.environ.get("FRONTEND_URL", "localhost")
+
         Site.objects.create(
-            hostname=os.environ.get("FRONTEND_URL", "localhost"),
-            port=443,
+            hostname=urlparse(frontend_url).hostname or "localhost",
+            port=urlparse(frontend_url).port or 443,
             site_name=WAGTAIL_SITE_NAME,
             root_page=root_page,
             is_default_site=True,
