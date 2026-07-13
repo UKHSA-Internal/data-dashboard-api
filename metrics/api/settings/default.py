@@ -126,7 +126,6 @@ JWT_AUTH_HEADER = config.JWT_AUTH_HEADER
 ENTRA_USER_MANAGER = "common.auth.jwt.user_manager.EntraManager"
 ENTRA_AUDIENCE = config.ENTRA_AUDIENCE
 ENTRA_APP_ID = config.ENTRA_APP_ID
-ENTRA_ALLOWED_APP_IDS = config.ENTRA_ALLOWED_APP_IDS.split(",")
 ENTRA_TENANT_ID = config.ENTRA_TENANT_ID
 ENTRA_PUBLIC_KEYS_CACHING_ENABLED = True
 ENTRA_PUBLIC_KEYS_CACHING_TIMEOUT = 60 * 60 * 24  # 24h caching, default is 300s
@@ -144,6 +143,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "common.auth.jwt.JSONWebTokenAuthentication",
     ],
+    "EXCEPTION_HANDLER": "common.auth.jwt.exception_handler.custom_exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {
