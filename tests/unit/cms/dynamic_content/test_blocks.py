@@ -219,7 +219,7 @@ class TestPageLinkBlock:
         result = block.get_api_representation(value=value, context=context)
 
         assert result["is_authorised"] is False
-        assert result["page_classification"] == "official_sensitive"
+        assert "page_classification" not in result
         assert result["title"] == ""
         assert result["sub_title"] == ""
         assert result["page"] == ""
