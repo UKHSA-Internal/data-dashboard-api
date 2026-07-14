@@ -1,6 +1,10 @@
 import os
 
-from metrics.api.settings import INSTALLED_APPS, MIDDLEWARE, ROOT_LEVEL_BASE_DIR
+from metrics.api.settings import (
+    INSTALLED_APPS,
+    MIDDLEWARE,
+    ROOT_LEVEL_BASE_DIR,
+)
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
@@ -32,3 +36,10 @@ MIDDLEWARE += [
 ]
 
 INTERNAL_IPS = ["127.0.0.1"]
+
+PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "true").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}

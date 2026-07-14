@@ -17,7 +17,7 @@ class TestWagtailHooks(TestCase):
         assert result.menu_label == AuthGroup.menu_label
         assert result.menu_icon == AuthGroup.menu_icon
         assert result.menu_order == AuthGroup.menu_order
-        assert len(result.items) == 2
+        assert len(result.items) == 3
 
 
 class TestPermissionSetDetailsProperty(TestCase):

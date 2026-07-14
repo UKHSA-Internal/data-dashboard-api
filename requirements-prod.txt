@@ -54,7 +54,7 @@ packageurl-python==0.17.6
 packaging==26.2
 pathspec==1.1.1
 pbr==7.0.3
-Pillow==12.2.0
+Pillow==12.3.0
 platformdirs==4.10.0
 plotly==6.7.0
 pluggy==1.6.0
