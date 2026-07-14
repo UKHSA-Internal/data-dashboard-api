@@ -71,7 +71,7 @@ class PageLinkChooserBlock(PageChooserBlock):
     @classmethod
     def get_api_representation(cls, value, context=None) -> str | None:
         if value:
-            return value.full_url
+            return value.specific.full_url
 
         return None
 
@@ -204,7 +204,7 @@ class PageLink(StructBlock):
         required=False,
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
-    page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
+    page = PageLinkChooserBlock(target_model=["topic.TopicPage", "composite.CompositePage"])
 
 
 class InternalPageLinks(StreamBlock):
