@@ -234,7 +234,6 @@ class PageLink(StructBlock):
                 topic_id=getattr(page, "topic", None),
             ):
                 data["is_authorised"] = False
-                data["page_classification"] = page.page_classification
                 data["title"] = ""
                 data["sub_title"] = ""
                 data["page"] = ""
