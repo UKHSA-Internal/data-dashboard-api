@@ -12,8 +12,8 @@ class StaticFields(BaseModel):
     age: str
     sex: str
     stratum: str
-    date_from: str
-    date_to: str
+    date_from: str | None = ""
+    date_to: str | None = ""
 
 
 class DualCategoryChartRequestParams(ChartBaseRequestParams):

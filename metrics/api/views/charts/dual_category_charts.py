@@ -1,3 +1,4 @@
+import datetime
 import io
 import logging
 from http import HTTPStatus
@@ -62,8 +63,8 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
         "geography": "England",
         "geography_type": "Nation",
         "sex": "all",
-        "date_from": "2020-02-01",
-        "date_to": "2021-02-01",
+        "date_from": (datetime.date.today() - datetime.timedelta(days=365)).isoformat(),
+        "date_to": datetime.date.today().isoformat(),
     },
     "segments": [
         {
