@@ -271,7 +271,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self._filter_for_metric_value_ranges(
             queryset=queryset, metric_value_ranges=metric_value_ranges
         )
-        queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
+
+        # queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
+        latest_record_ids: list[int] = self._get_ids_of_latest_records(queryset=queryset)
+        queryset = self.filter(pk__in=latest_record_ids)
+
         queryset = self._ascending_order(
             queryset=queryset,
             field_name=field_to_order_by,
