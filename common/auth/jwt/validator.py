@@ -89,10 +89,9 @@ class CognitoTokenValidator:
 
 
 class EntraTokenValidator:
-    def __init__(self, tenant_id, audience, allowed_app_ids):
+    def __init__(self, tenant_id, audience):
         self.tenant_id = tenant_id
         self.audience = audience
-        self.allowed_app_ids = allowed_app_ids
         self.jwks_url = "https://login.microsoftonline.com/common/discovery/keys"
 
     @cached_property
@@ -153,11 +152,6 @@ class EntraTokenValidator:
         roles = payload.get("roles", [])
         if "application.read" not in roles:
             msg = "Missing required role: application.read"
-            raise TokenError(msg)
-
-        app_id_claim = payload.get("appid") or payload.get("azp")
-        if app_id_claim not in self.allowed_app_ids:
-            msg = "Invalid app_id claim"
             raise TokenError(msg)
 
         return payload

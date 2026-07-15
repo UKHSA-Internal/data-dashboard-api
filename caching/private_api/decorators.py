@@ -1,3 +1,4 @@
+import logging
 import os
 from functools import wraps
 
@@ -5,6 +6,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from caching.private_api.management import CacheManagement, CacheMissError
+from common.request_caching import get_request_caching
+
+logger = logging.getLogger(__name__)
 
 
 class CacheCheckResultedInMissError(Exception): ...
@@ -56,12 +60,14 @@ def cache_response(
 
             request = args[1]
             is_public = not (_check_if_valid_non_public_request(request=request))
+            request_caching_disabled = get_request_caching()
 
             return _retrieve_response_from_cache_or_calculate(
                 view_function,
                 timeout,
                 is_reserved_namespace,
                 is_public,
+                request_caching_disabled,
                 *args,
                 **kwargs,
             )
@@ -76,7 +82,13 @@ def _check_if_valid_non_public_request(request) -> bool:
 
 
 def _retrieve_response_from_cache_or_calculate(
-    view_function, timeout, is_reserved_namespace, is_public, *args, **kwargs
+    view_function,
+    timeout,
+    is_reserved_namespace,
+    is_public,
+    request_caching_disabled: str | None,
+    *args,
+    **kwargs,
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
@@ -90,6 +102,9 @@ def _retrieve_response_from_cache_or_calculate(
         will take place.
 
     Args:
+        request_caching_disabled: if this is True,
+            we must recalculate the view, bypassing caching.
+            This input variable is derived from the request context.
         view_function: The view associated with the endpoint
         timeout: The number of seconds after which the response is expired
             and evicted from the cache
@@ -104,6 +119,12 @@ def _retrieve_response_from_cache_or_calculate(
 
     """
     request: Request = args[1]
+
+    if request_caching_disabled:
+        return _calculate_response_from_view(
+            view_function, *args, is_public=is_public, **kwargs
+        )
+
     if not is_public:
         return _calculate_response_from_view(
             view_function, *args, is_public=is_public, **kwargs
