@@ -431,7 +431,12 @@ class TestCMSDraftPagesViewSet:
 
     @patch(
         "cms.dashboard.viewsets.PagesAPIViewSet.get_queryset",
-        return_value=MagicMock(specific=MagicMock(return_value=[])),
+        return_value=MagicMock(
+            specific=MagicMock(return_value=[]),
+            filter=MagicMock(
+                return_value=MagicMock(specific=MagicMock(return_value=[]))
+            ),
+        ),
     )
     def test_cms_pages_api_viewset_get_queryset_calls_super(self, mock_super):
         """
@@ -441,6 +446,7 @@ class TestCMSDraftPagesViewSet:
         """
         # Given
         viewset = CMSPagesAPIViewSet()
+        viewset.request = MagicMock(spec=Request)
 
         # When
         result = viewset.get_queryset()
