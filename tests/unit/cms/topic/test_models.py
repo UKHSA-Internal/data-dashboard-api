@@ -20,6 +20,7 @@ class TestTopicPageAdminForm:
     MOCK_THEME_FIELDS = [
         {"field_name": "theme", "label": "Theme", "required": True},
         {"field_name": "sub_theme", "label": "Sub Theme", "required": False},
+        {"field_name": "metric", "label": "Metric", "required": False},
     ]
 
     def _make_form(self, instance=None):

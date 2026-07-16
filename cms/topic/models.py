@@ -42,6 +42,8 @@ class TopicPageAdminForm(WagtailAdminPageForm):
         super().__init__(*args, **kwargs)
 
         for field in THEME_FIELDS:
+            if field["field_name"] == "metric":
+                continue
             self.fields[field["field_name"]] = _create_form_field(field)
 
         if self.instance and self.instance.pk:
