@@ -26,7 +26,7 @@ def build_sections(*, sections: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, str | list[dict]]:
+def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, bool | str | list[dict]]:
     """Build a metrics documentation page entry.
 
     Args:
@@ -42,6 +42,7 @@ def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, str | list[d
     sections: list[tuple[str, str]] = gather_sections_and_omit_if_needed(row=row)
     return {
         "title": title,
+        "is_public": True,
         "topic": topic,
         "theme": "test",
         "sub_theme": "test",
