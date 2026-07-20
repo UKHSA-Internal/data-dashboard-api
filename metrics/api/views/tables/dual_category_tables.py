@@ -4,6 +4,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from caching.private_api.decorators import cache_response
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.tables import (
     DualCategoryTableRequestParamsSerializer,
@@ -27,6 +28,7 @@ class DualCategoryTablesView(APIView):
         tags=[TABLES_API_TAG],
     )
     @require_authorisation
+    @cache_response()
     def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format."""
         request_serializer = DualCategoryTableRequestParamsSerializer(data=request.data)
