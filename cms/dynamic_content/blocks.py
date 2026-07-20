@@ -19,6 +19,7 @@ from cms.dynamic_content.components import (
     PercentageNumberComponent,
     TrendNumberComponent,
 )
+from common.auth.permissions import check_page_permissions
 from validation.url import validate_https_scheme
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
@@ -72,7 +73,6 @@ class PageLinkChooserBlock(PageChooserBlock):
     def get_api_representation(cls, value, context=None) -> str | None:
         if value:
             return value.full_url
-
         return None
 
 
@@ -205,6 +205,43 @@ class PageLink(StructBlock):
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
     page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
+
+    def get_api_representation(self, value, context=None):
+        data = super().get_api_representation(value, context)
+        page = value.get("page")
+
+        if not page:
+            data["is_authorised"] = False
+            data["title"] = ""
+            data["sub_title"] = ""
+            data["page"] = ""
+            return data
+
+        page = page.specific
+        request = context.get("request") if context else None
+        user = getattr(request, "user", None)
+
+        if not page.is_public:
+            user_permissions = getattr(user, "permission_sets", None)
+
+            full_user_permissions = (
+                user_permissions.get("permission_sets") if user_permissions else None
+            )
+            if not check_page_permissions(
+                permission_sets=full_user_permissions,
+                theme_id=getattr(page, "theme", None),
+                sub_theme_id=getattr(page, "sub_theme", None),
+                topic_id=getattr(page, "topic", None),
+            ):
+                data["is_authorised"] = False
+                data["title"] = ""
+                data["sub_title"] = ""
+                data["page"] = ""
+                return data
+
+        data["is_authorised"] = True
+        data["page_classification"] = page.page_classification
+        return data
 
 
 class InternalPageLinks(StreamBlock):

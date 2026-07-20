@@ -1,6 +1,10 @@
 import datetime
+import logging
 from decimal import Decimal
+from typing import override
+from urllib.parse import urlsplit
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -12,6 +16,8 @@ from wagtail.models import Orderable, Page, SiteRootPath
 from wagtail.search import index
 
 from cms import seo
+
+logger = logging.getLogger(__name__)
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
@@ -51,6 +57,13 @@ class UKHSAPage(Page):
         across multiple page types / tables.
 
     """
+
+    # Overridable setting for disabling previews
+    # on derived UKHSAPage objects.
+    # When disabled, the CMS will not allow page previews.
+    # Page previews allow the user to view draft content
+    # and pre-release, "embargoed" data.
+    custom_preview_enabled: bool = True
 
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(
@@ -106,6 +119,34 @@ class UKHSAPage(Page):
 
     class Meta:
         abstract = True
+
+    @override
+    def is_previewable(self) -> bool:
+        """Disable built-in Wagtail preview for all headless dashboard pages."""
+        return False
+
+    @override
+    def get_url(self, request=None, current_site=None) -> str | None:
+        """Return an absolute frontend URL for headless dashboard pages.
+        We want admin "View live" actions to target the frontend host consistently,
+        using the configured FRONTEND_URL
+        """
+        resolved_url = super().get_url(request=request, current_site=current_site)
+        if not resolved_url:
+            return resolved_url
+
+        base_url = getattr(settings, "FRONTEND_URL", "")
+        base_parts = urlsplit(base_url)
+        if base_parts.scheme not in {"http", "https"} or not base_parts.netloc:
+            logger.error(
+                "FRONTEND_URL is not an absolute http(s) URL; "
+                "falling back to relative page URL"
+            )
+            return resolved_url
+
+        resolved_parts = urlsplit(str(resolved_url))
+        page_path = resolved_parts.path or str(resolved_url)
+        return f"{base_url.rstrip('/')}/{page_path.lstrip('/')}"
 
     def _raise_error_if_slug_not_unique(self) -> None:
         """Compares the provided slug against all pages to confirm the slug's `uniqueness`

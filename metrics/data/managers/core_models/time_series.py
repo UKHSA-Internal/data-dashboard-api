@@ -11,9 +11,9 @@ from typing import Self
 
 from django.db import models
 from django.db.models.query_utils import Q
-from django.utils import timezone
 
 from common.auth.permissions import PermissionSetsType, check_chart_permissions_by_name
+from common.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
@@ -470,7 +470,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             The filtered queryset which excludes emargoed data
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
@@ -518,7 +518,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             or None if no data could be found.
 
         """
-        current_time = timezone.now()
+
+        current_time = get_embargo_time()
         try:
             return (
                 self.filter(metric__name__in=metrics, embargo__lte=current_time)
@@ -533,7 +534,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
-    def query_for_data(
+    def query_for_data(  # noqa: PLR0914
         self,
         *,
         topic: str,
@@ -628,7 +629,6 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,

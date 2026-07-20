@@ -18,7 +18,9 @@ MODULE_PATH = "caching.private_api.decorators"
 
 class TestRetrieveResponseFromCacheOrCalculate:
     # Tests for cache hits + no force refreshing
-    def test_can_return_response_if_already_available(self):
+    def test_can_return_response_if_already_available_with_request_caching_configs(
+        self,
+    ):
         """
         Given a mocked request and a `CacheManagement` object
             which returns the expected response
@@ -28,26 +30,33 @@ class TestRetrieveResponseFromCacheOrCalculate:
         # Given
         mocked_request = mock.MagicMock(method="POST")
         mocked_cache_management = mock.Mock()
+        mocked_view_function = mock.Mock()
 
         # When
-        retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mock.Mock(),  # view_function
-            None,  # timeout
-            False,  # is_reserved_namespace
-            True,  # is_public
-            mock.Mock(),
-            mocked_request,
-            cache_management=mocked_cache_management,
-        )
+        for request_caching_disabled in [True, None]:
+            retrieved_response = _retrieve_response_from_cache_or_calculate(
+                mocked_view_function,  # view_function
+                None,  # timeout
+                False,  # is_reserved_namespace
+                True,  # is_public
+                request_caching_disabled,  # request_caching_disabled
+                mock.Mock(),
+                mocked_request,
+                cache_management=mocked_cache_management,
+            )
 
-        # Then
-        assert (
-            retrieved_response
-            == mocked_cache_management.retrieve_item_from_cache.return_value
-        )
+            # Then
+            match request_caching_disabled:
+                case None:
+                    assert (
+                        retrieved_response
+                        == mocked_cache_management.retrieve_item_from_cache.return_value
+                    )
+                case True:
+                    assert mocked_view_function.assert_called_once
 
     @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
-    def test_does_not_recalculate_response_if_already_available(
+    def test_does_not_recalculate_response_if_already_available_with_request_caching_configs(
         self, spy_calculate_response_and_save_in_cache: mock.MagicMock
     ):
         """
@@ -68,6 +77,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             None,  # timeout
             False,  # is_reserved_namespace
             True,  # is_public
+            None,  # request_caching_disabled
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -105,6 +115,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             None,  # timeout
             False,  # is_reserved_namespace
             True,  # is_public
+            None,  # request_caching_disabled
             *mocked_args,
             **mocked_kwargs,
         )
@@ -157,6 +168,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             None,  # timeout
             False,  # is_reserved_namespace
             True,  # is_public
+            None,  # request_caching_disabled
             mocked_args,
             mocked_request,
             cache_management=mock.Mock(),
@@ -197,6 +209,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             None,  # timeout
             False,  # is_reserved_namespace
             False,  # is_public
+            None,  # request_caching_disabled
             mocked_args,
             mocked_request,
             cache_management=mocked_cache_management,
@@ -234,6 +247,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             None,  # timeout
             False,  # is_reserved_namespace
             True,  # is_public
+            None,  # request_caching_disabled
             mocked_args,
             mocked_request,
             cache_management=mocked_cache_management,

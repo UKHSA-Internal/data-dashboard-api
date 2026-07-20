@@ -70,7 +70,6 @@ COGNITO_USER_POOL = os.environ.get("COGNITO_USER_POOL")
 # Entra configuration
 ENTRA_AUDIENCE = os.environ.get("ENTRA_AUDIENCE")
 ENTRA_APP_ID = os.environ.get("ENTRA_APP_ID")
-ENTRA_ALLOWED_APP_IDS = os.environ.get("ENTRA_ALLOWED_APP_IDS", "")
 ENTRA_TENANT_ID = os.environ.get("ENTRA_TENANT_ID")
 
 # Database configuration
