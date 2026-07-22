@@ -13,6 +13,7 @@ ALLOWABLE_BODY_CONTENT = StreamField(
         ("section", sections.Section()),
     ],
     use_json_field=True,
+    collapsed=True,
 )
 
 ALLOWABLE_BODY_CONTENT_SECTION_LINK = StreamField(
@@ -20,6 +21,7 @@ ALLOWABLE_BODY_CONTENT_SECTION_LINK = StreamField(
         ("section", sections.SectionWithLink()),
     ],
     use_json_field=True,
+    collapsed=True,
 )
 
 ALLOWABLE_BODY_CONTENT_TEXT_SECTION = StreamField(
@@ -27,6 +29,7 @@ ALLOWABLE_BODY_CONTENT_TEXT_SECTION = StreamField(
         ("section", sections.TextSection()),
     ],
     use_json_field=True,
+    collapsed=True,
 )
 
 ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
@@ -70,4 +73,5 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
         ),
     ],
     use_json_field=True,
+    collapsed=True,
 )
