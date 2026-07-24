@@ -83,6 +83,31 @@ class GeographyQuerySet(models.QuerySet):
             .first()
         )
 
+    def get_geography_type_id_and_code_by_name(
+        self, geography_name: str, geography_type_name: str
+    ) -> tuple[int | None, str | None]:
+        """
+        Gets the geography_type id and geography code for the given names.
+
+        Both are resolved in a single query, which also enforces that the geography
+        actually belongs to the given geography_type. An inconsistent pair matches
+        no row, so this returns (None, None) and access is denied.
+
+        Returns:
+            A tuple of (geography_type_id, geography_code) if the pair exists,
+            or (None, None) if it does not.
+        """
+        record = (
+            self.select_related("geography_type")
+            .filter(name=geography_name, geography_type__name=geography_type_name)
+            .first()
+        )
+
+        if record:
+            return int(record.geography_type_id), record.geography_code
+
+        return None, None
+
     def get_all_geography_codes_by_geography_type(
         self, geography_type_name: str
     ) -> Self:
@@ -231,6 +256,21 @@ class GeographyManager(models.Manager):
         """
         return self.get_queryset().get_code_by_name(
             geography_name, geography_type_name=geography_type_name
+        )
+
+    def get_geography_type_id_and_code_by_name(
+        self, geography_name: str, geography_type_name: str
+    ) -> tuple[int | None, str | None]:
+        """
+        Gets the geography_type id and geography code for the given names in a
+        single query that also validates the pair is consistent.
+
+        Returns:
+            A tuple of (geography_type_id, geography_code) if the pair exists,
+            or (None, None) if it does not.
+        """
+        return self.get_queryset().get_geography_type_id_and_code_by_name(
+            geography_name, geography_type_name
         )
 
     def get_all_names(self) -> GeographyQuerySet:
