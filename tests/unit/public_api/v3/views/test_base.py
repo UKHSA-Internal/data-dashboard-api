@@ -1,32 +1,24 @@
 import pytest
-from unittest import mock
-
-from public_api.version.v3.views.base import BaseNestedAPIViewV3
 
 
-class TestNestedTimeSeriesView(BaseNestedAPIViewV3):
-    """
-    Minimal concrete implementation so BaseNestedAPITimeSeriesView can be instantiated
-    during unit tests.
-    """
-
-    lookup_field = "mock"
-
-    serializer_class = mock.MagicMock
-
-
-@pytest.fixture
-class TestPublicApi:
-
-    # Timeseries gives timeseries data
-    # Headline gives headline data
+class TestTheme:
     # Test theme list
     # Test theme detail
+
+class TestSubTheme:
     # Test subtheme list
     # Test subtheme detail
+
+class TestTopic:
     # Test topic list
     # Test topic detail
+
+class TestGeography:
     # Test geography type list
     # Test geography type detail
-    # Test geography metric list
-    # Test geography metric detail
+
+class Metric:
+    # Test headline metric list
+    # Test headline metric detail
+    # Test timeseries metric list
+    # Test timeseries metric detail
