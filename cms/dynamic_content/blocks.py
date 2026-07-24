@@ -205,12 +205,13 @@ class PageLink(StructBlock):
         required=False,
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
-    page = PageLinkChooserBlock(target_model=["topic.TopicPage", "composite.CompositePage"])
+    page = PageLinkChooserBlock(
+        target_model=["topic.TopicPage", "composite.CompositePage"]
+    )
 
     def get_api_representation(self, value, context=None):
         data = super().get_api_representation(value, context)
         page = value.get("page")
-
 
         if not page:
             data["is_authorised"] = False
@@ -223,7 +224,7 @@ class PageLink(StructBlock):
         request = context.get("request") if context else None
         user = getattr(request, "user", None)
 
-        if  not hasattr(page, "is_public") :
+        if not hasattr(page, "is_public"):
             return data
 
         if not page.is_public:
@@ -247,6 +248,7 @@ class PageLink(StructBlock):
         data["is_authorised"] = True
         data["page_classification"] = page.page_classification
         return data
+
 
 class InternalPageLinks(StreamBlock):
     page_link = PageLink()
