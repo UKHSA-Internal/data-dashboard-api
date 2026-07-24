@@ -1,11 +1,15 @@
 from metrics.api.settings.auth import AUTH_ENABLED
-from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.api_models import APITimeSeries, APIHeadline
 
 
 class MetricsPublicAPIInterface:
     @classmethod
     def get_api_timeseries_model(cls) -> APITimeSeries:
         return APITimeSeries
+
+    @classmethod
+    def get_api_headline_model(cls) -> APIHeadline:
+        return APIHeadline
 
     @classmethod
     def is_auth_enabled(cls) -> bool:

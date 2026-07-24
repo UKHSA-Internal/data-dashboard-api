@@ -19,10 +19,10 @@ MODULE_PATH = "ingestion.file_ingestion"
 
 class TestDataIngester:
     @mock.patch.object(Consumer, "process_core_and_api_timeseries")
-    @mock.patch.object(Consumer, "process_core_headlines")
+    @mock.patch.object(Consumer, "process_core_and_api_headlines")
     def test_delegates_call_to_create_headlines_for_headline_data(
         self,
-        spy_process_core_headlines: mock.MagicMock,
+        spy_process_core_and_api_headlines: mock.MagicMock,
         spy_process_core_and_api_timeseries: mock.MagicMock,
         example_headline_data: type_hints.INCOMING_DATA_TYPE,
         test_filename: str,
@@ -41,7 +41,7 @@ class TestDataIngester:
         data_ingester(data=fake_data, filename=test_filename)
 
         # Then
-        spy_process_core_headlines.assert_called_once()
+        spy_process_core_and_api_headlines.assert_called_once()
         spy_process_core_and_api_timeseries.assert_not_called()
 
     @pytest.mark.parametrize(
@@ -62,12 +62,12 @@ class TestDataIngester:
             ),
         ),
     )
-    @mock.patch.object(Consumer, "process_core_headlines")
+    @mock.patch.object(Consumer, "process_core_and_api_headlines")
     @mock.patch.object(Consumer, "process_core_and_api_timeseries")
     def test_delegates_call_to_create_timeseries_for_timeseries_data(
         self,
         spy_process_core_and_api_timeseries: mock.MagicMock,
-        spy_process_core_headlines: mock.MagicMock,
+        process_core_and_api_headlines: mock.MagicMock,
         metric: str,
         metric_group: str,
         topic: str,
@@ -92,7 +92,7 @@ class TestDataIngester:
 
         # Then
         spy_process_core_and_api_timeseries.assert_called_once()
-        spy_process_core_headlines.assert_not_called()
+        process_core_and_api_headlines.assert_not_called()
 
 
 class TestUploadData:
