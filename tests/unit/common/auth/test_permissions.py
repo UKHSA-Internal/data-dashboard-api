@@ -1090,6 +1090,7 @@ class TestCheckPagePermissions:
         "user_permissions, theme_id, sub_theme_id, topic_id",
         [
             ([{}], "10", "20", "30"),
+            ("invalid", "10", "20", "30"),
             (None, "10", "20", "30"),
             ([{"sub_theme": {"id": "-1"}, "topic": {"id": "-1"}}], "10", "20", "30"),
             (
@@ -1121,6 +1122,41 @@ class TestCheckPagePermissions:
 
         assert not check_page_permissions(
             permission_sets=user_permissions,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+        )
+
+    @pytest.mark.parametrize(
+        "user_permissions",
+        [
+            ["invalid"],
+            [123],
+            [None],
+            [{"theme": {"id": "10"}}, "invalid"],
+        ],
+    )
+    def test_check_page_permissions_non_dict_permission_entry(self, user_permissions):
+        assert not check_page_permissions(
+            permission_sets=user_permissions,
+            theme_id="10",
+            sub_theme_id="20",
+            topic_id="30",
+        )
+
+    @pytest.mark.parametrize(
+        "theme_id, sub_theme_id, topic_id",
+        [
+            (None, "20", "30"),
+            ("10", None, "30"),
+            ("10", "20", None),
+        ],
+    )
+    def test_check_page_permissions_invalid_resource_ids(
+        self, theme_id, sub_theme_id, topic_id
+    ):
+        assert not check_page_permissions(
+            permission_sets=[{"theme": {"id": "-1"}}],
             theme_id=theme_id,
             sub_theme_id=sub_theme_id,
             topic_id=topic_id,

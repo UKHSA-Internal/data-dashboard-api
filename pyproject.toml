@@ -165,6 +165,9 @@ exclude = '''
 # This is needed to point pytest at the settings.py file for the django app
 DJANGO_SETTINGS_MODULE = "metrics.api.settings"
 addopts = "--random-order"
+env = [
+	 "APIENV=LOCAL",
+]
 
 ########################################################################################################################
 # Test coverage configuration
