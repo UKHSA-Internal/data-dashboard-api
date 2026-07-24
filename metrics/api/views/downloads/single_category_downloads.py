@@ -8,10 +8,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers import (
     CoreHeadlineSerializer,
     CoreTimeSeriesSerializer,
-    DownloadsSerializer,
+    SingleCategoryDownloadsSerializer,
 )
 from metrics.api.views.downloads.common import DOWNLOADS_API_TAG
 from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
@@ -27,7 +28,7 @@ from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
 
 
-class DownloadsView(APIView):
+class SingleCategoryDownloadsView(APIView):
     timeseries_serializer_class = CoreTimeSeriesSerializer
     headline_serializer_class = CoreHeadlineSerializer
     permission_classes = []
@@ -85,7 +86,7 @@ class DownloadsView(APIView):
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
+        response["Content-Disposition"] = 'attachment; filename="chart_download.csv"'
 
         serializer = self._get_serializer_class(
             queryset=queryset, metric_group=metric_group
@@ -98,8 +99,9 @@ class DownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
-    @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
+    @extend_schema(request=SingleCategoryDownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
+    @require_authorisation
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -127,7 +129,7 @@ class DownloadsView(APIView):
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
 
         """
-        request_serializer = DownloadsSerializer(data=request.data)
+        request_serializer = SingleCategoryDownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
         file_format: str = request_serializer.data["file_format"]

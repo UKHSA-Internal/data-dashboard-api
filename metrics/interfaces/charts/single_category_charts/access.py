@@ -22,17 +22,12 @@ from metrics.domain.models import (
 )
 from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts.common.chart_output import ChartOutput
+from metrics.interfaces.charts.common.exceptions import InvalidFileFormatError
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
-
-
-class InvalidFileFormatError(Exception):
-    def __init__(self):
-        message = "Invalid file format, must be `svg`"
-        super().__init__(message)
 
 
 class InvalidChartTypeCombinationError(Exception):
