@@ -47,7 +47,7 @@ class TestHeadlinesInterface:
         # Then
         assert headlines_interface.core_headline_manager == CoreHeadline.objects
 
-    def test_get_metric_value_calls_core_time_series_manager_with_correct_args(
+    def test_get_metric_value_calls_core_headline_manager_with_correct_args(
         self, example_headline_args: dict[str, str]
     ):
         """
