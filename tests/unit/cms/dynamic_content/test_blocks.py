@@ -183,7 +183,9 @@ class TestPageLinkBlock:
         assert result["sub_title"] == "Test subtitle"
 
     @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
-    def test_page_without_is_public_attribute_returns_data_unmodified(self, mock_check_page_permissions):
+    def test_page_without_is_public_attribute_returns_data_unmodified(
+        self, mock_check_page_permissions
+    ):
         """
         Given a page with no 'is_public' attribute present
         When get_api_representation() is called
@@ -194,7 +196,7 @@ class TestPageLinkBlock:
         mock_page = mock.MagicMock()
         mock_page.specific = mock_page
         del mock_page.is_public
-        
+
         value = {
             "title": "Test title",
             "sub_title": "Test subtitle",
