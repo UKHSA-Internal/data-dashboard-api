@@ -97,21 +97,38 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
             else:
                 user_permissions = req.user.permission_sets["permission_sets"]
                 pages_to_check = chain(
-                    ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
                     (
-                        (page.id, page.metricsdocumentationchildentry)
-                        for page in queryset.type(MetricsDocumentationChildEntry)
+                        {k.split("__")[-1]: v for k, v in page.items()}
+                        for page in queryset.type(TopicPage).values(
+                            "id",
+                            "topicpage__theme",
+                            "topicpage__sub_theme",
+                            "topicpage__topic",
+                            "topicpage__is_public",
+                        )
+                    ),
+                    (
+                        {k.split("__")[-1]: v for k, v in page.items()}
+                        for page in queryset.type(
+                            MetricsDocumentationChildEntry
+                        ).values(
+                            "id",
+                            "metricsdocumentationchildentry__theme",
+                            "metricsdocumentationchildentry__sub_theme",
+                            "metricsdocumentationchildentry__topic",
+                            "metricsdocumentationchildentry__is_public",
+                        )
                     ),
                 )
                 permitted_page_ids = [
-                    page_id
-                    for page_id, page in pages_to_check
-                    if page.is_public
+                    page["id"]
+                    for page in pages_to_check
+                    if page["is_public"]
                     or check_page_permissions(
                         permission_sets=user_permissions,
-                        theme_id=page.theme,
-                        sub_theme_id=page.sub_theme,
-                        topic_id=page.topic,
+                        theme_id=page["theme"],
+                        sub_theme_id=page["sub_theme"],
+                        topic_id=page["topic"],
                     )
                 ]
 
