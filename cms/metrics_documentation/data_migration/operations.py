@@ -13,9 +13,6 @@ from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
 )
-from cms.metrics_documentation.models.child import (
-    InvalidTopicForChosenMetricForChildEntryError,
-)
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 logger = logging.getLogger(__name__)
@@ -131,12 +128,6 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
         try:
             add_page_as_subpage_to_parent(
                 subpage=metrics_child, parent_page=parent_page
-            )
-        except (InvalidTopicForChosenMetricForChildEntryError, AttributeError):
-            logger.warning(
-                "Metrics Documentation Child Entry for %s was not created. "
-                "Because the corresponding `Topic` was not created beforehand",
-                entry["metric"],
             )
         except ValidationError:
             logger.warning(

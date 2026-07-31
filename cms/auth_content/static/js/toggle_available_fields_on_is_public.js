@@ -1,47 +1,31 @@
 ;(function () {
   "use strict"
-  let theme, subTheme, topic, metric, isPublicCheckbox;
-  let originalMetricOptions;
+  let theme, subTheme, topic, isPublicCheckbox;
 
   function toggleAvailableFields() {
     /*
-        When the is_public box is checked, this will clear any selected page_classification, 
-        and disable the field. If the is_public box is then unchecked, it will re-enable the field
-         */
+    When the is_public box is checked, this will clear any selected page_classification,
+    and disable the field. If the is_public box is then unchecked, it will re-enable the field
+     */
 
     const fields = {
       classification: document.querySelector(
         'select[name="page_classification"]',
       ),
       theme: theme,
-      subTheme: subTheme, 
+      subTheme: subTheme,
       topic: topic,
-      // metric: metric,
     }
 
     if (isPublicCheckbox.checked) {
       Object.values(fields).forEach(disableField)
       clearDropdown(fields.subTheme, "Select theme first")
       clearDropdown(fields.topic, "Select sub-theme first")
-      // clearDropdown(fields.metric, "Select topic first")
-      restoreMetricOptions()
       fields.theme.value = ""
     } else {
-      if (!theme.value && !subTheme.value && !topic.value) {
-        clearDropdown(metric, "Select topic first")
-      }
       Object.values(fields).forEach(enableField)
       fields.classification.value="official_sensitive"
     }
-  }
-
-  function restoreMetricOptions() {
-    clearDropdown(metric, "----------")
-    originalMetricOptions.forEach(option => {
-        if (option.text !== "Select topic first") {
-          metric.appendChild(option.cloneNode(true));
-        }
-    });
   }
 
   function disableField(field) {
@@ -82,7 +66,7 @@
    * @param {HTMLSelectElement} dropdown - The select element to populate
    * @param {Array} choices - Array of [id, name] tuples
    */
-  function populateDropdown(dropdown, choices, metrics = null) {
+  function populateDropdown(dropdown, choices) {
     const currentValue = dropdown.value
     dropdown.disabled = false
     dropdown.innerHTML = ""
@@ -126,13 +110,11 @@
     if (!themeValue || themeValue === "") {
       clearDropdown(subTheme, "Select theme first")
       clearDropdown(topic, "Select sub-theme first")
-      clearDropdown(metric, "Select topic first");
       return
     }
 
     clearDropdown(subTheme, "Select theme")
     clearDropdown(topic, "Select sub-theme")
-    clearDropdown(metric, "Select topic first");
 
     // Fetch and populate sub-themes
     const choices = await fetchChoices("subthemes", themeValue)
@@ -158,7 +140,6 @@
 
     // Clear dependent dropdowns
     clearDropdown(topic, "Select sub-theme")
-    clearDropdown(metric, "Select topic first");
 
     // Fetch and populate topics
     const choices = await fetchChoices("topics", subThemeValue)
@@ -171,30 +152,6 @@
   }
 
   /**
-   * Handle topic selection change
-   */
-  async function handleTopicChange() {
-    const topicValue = topic.value;
-
-    if (!topicValue || topicValue === "") {
-      // No topic selected - clear metrics
-      clearDropdown(metric, "Select topic first");
-      return;
-    }
-
-    clearDropdown(metric, "--------");
-
-    // Fetch and populate metrics
-    const choices = await fetchChoices("metrics", topicValue);
-
-    if (choices.length > 0) {
-      populateDropdown(metric, choices, "* All metrics");
-    } else {
-      clearDropdown(metric, "No metrics available");
-    }
-  }
-
-  /**
    * Initialize dropdowns for edit mode
    * Loads the dropdown options based on saved values
    */
@@ -203,7 +160,6 @@
     const savedTheme = theme.value
     const savedSubTheme = subTheme.value
     const savedTopic = topic.value
-    const savedMetric = metric ? metric.value : undefined
 
     // If theme has a value (not empty), load sub-themes
     if (savedTheme && savedTheme !== "") {
@@ -220,28 +176,16 @@
           populateDropdown(topic, topicChoices)
           topic.value = savedTopic // Restore selection
         }
-
-        if (savedTopic && savedTopic !== "") {
-          const metricChoices = await fetchChoices("metrics", savedTopic)
-          if (metricChoices.length > 0) {
-            populateDropdown(metric, metricChoices)
-            metric.value = savedMetric // Restore selection
-          }
-        }
       }
     }
   }
 
   function initialize() {
-    // Get dropdown elements
-
+    // Get form elements
     isPublicCheckbox = document.querySelector('input[name="is_public"]')
-    theme = document.querySelector('select[name="theme"]')
-    subTheme = document.querySelector('select[name="sub_theme"]')
-    topic = document.querySelector('select[name="topic"]')
-    metric = document.querySelector('select[name="metric"]')
-    // Take a copy of all available metrics so they can be restored if this becomes a public page
-    originalMetricOptions = Array.from(metric.options).map(option => option.cloneNode(true));
+    theme = document.querySelector('select[name="page_theme"]')
+    subTheme = document.querySelector('select[name="page_sub_theme"]')
+    topic = document.querySelector('select[name="page_topic"]')
 
     // Exit if not on page with themes and is_public toggle
     if (!theme || !subTheme || !topic || !isPublicCheckbox) {
@@ -254,16 +198,14 @@
     // Add event listeners
     theme.addEventListener("change", handleThemeChange)
     subTheme.addEventListener("change", handleSubThemeChange)
-    topic.addEventListener("change", handleTopicChange);
 
-    const isEditMode = theme.value || subTheme.value || topic.value || metric.value
+    const isEditMode = theme.value || subTheme.value || topic.value
 
     if (isEditMode) {
       initializeEditMode()
     } else {
       clearDropdown(subTheme, "Select theme first")
       clearDropdown(topic, "Select sub-theme first")
-      clearDropdown(metric, "Select topic first");
     }
   }
 

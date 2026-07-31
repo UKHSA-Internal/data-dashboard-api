@@ -26,7 +26,9 @@ def build_sections(*, sections: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, bool | str | list[dict]]:
+def build_entry_from_row_data(
+    *, row: tuple[str, ...]
+) -> dict[str, bool | str | list[dict]]:
     """Build a metrics documentation page entry.
 
     Args:
@@ -36,16 +38,16 @@ def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, bool | str |
         dictionary containing metric documentation entry.
     """
     title: str = row[0]
+    metric = row[1]
     page_description: str = row[4]
-    metric = row[7]
-    topic = row[1].split("_")[0]
     sections: list[tuple[str, str]] = gather_sections_and_omit_if_needed(row=row)
     return {
         "title": title,
         "is_public": True,
-        "topic": topic,
-        "theme": "test",
-        "sub_theme": "test",
+        "page_classification": "",
+        "page_topic": "",
+        "page_theme": "",
+        "page_sub_theme": "",
         "seo_title": f"{title} | UKHSA data dashboard",
         "search_description": page_description,
         "page_description": page_description,

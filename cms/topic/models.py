@@ -1,6 +1,5 @@
 import datetime
 
-from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -8,21 +7,19 @@ from wagtail.admin.panels import (
     InlinePanel,
     ObjectList,
     TabbedInterface,
-    WagtailAdminPageForm,
 )
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
-from cms.auth_content.auth_utils import _create_form_field
-from cms.dashboard.constants import THEME_FIELDS
+from cms.auth_content.forms.non_public_page import NonPublicPageAdminForm
+from cms.auth_content.models.non_public_page import NonPublicPage
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
-    DataClassificationLevels,
     UKHSAPage,
     UKHSAPageRelatedLink,
 )
@@ -37,40 +34,9 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class TopicPageAdminForm(WagtailAdminPageForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class TopicPage(UKHSAPage, NonPublicPage):
+    base_form_class = NonPublicPageAdminForm
 
-        for field in THEME_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(field)
-
-        if self.instance and self.instance.pk:
-            self._initialize_dependent_fields()
-
-    def _initialize_dependent_fields(self):
-        """Initialize choices for cascading dependent fields"""
-        dependent_fields = {
-            "sub_theme": ("Select theme first"),
-            "topic": ("Select sub-theme first"),
-        }
-
-        for field_name, (placeholder) in dependent_fields.items():
-            value = getattr(self.instance, field_name, None)
-            if value:
-                choices = self._get_field_choices(value, placeholder)
-                self.fields[field_name].widget.choices = choices
-
-    @staticmethod
-    def _get_field_choices(value, placeholder):
-        """Generate choices list based on field value"""
-        return [("", placeholder), (value, f"Loading... (ID: {value})")]
-
-    class Media:
-        js = ["js/toggle_available_fields_on_is_public.js"]
-
-
-class TopicPage(UKHSAPage):
-    base_form_class = TopicPageAdminForm
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -80,24 +46,6 @@ class TopicPage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
-
-    is_public = models.BooleanField(
-        default=False,
-        verbose_name="enable public page",
-    )
-
-    page_classification = models.CharField(
-        max_length=50,
-        choices=DataClassificationLevels.choices,
-        default=DataClassificationLevels.OFFICIAL_SENSITIVE.value,
-        help_text=help_texts.PAGE_CLASSIFICATION,
-        blank=True,
-        null=True,
-    )
-
-    theme = models.CharField(max_length=255, blank=True, default="", null=True)
-    sub_theme = models.CharField(max_length=255, blank=True, default="", null=True)
-    topic = models.CharField(max_length=255, blank=True, default="", null=True)
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -117,12 +65,8 @@ class TopicPage(UKHSAPage):
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
+        *NonPublicPage.content_panels,
         FieldPanel("enable_area_selector"),
-        FieldPanel("is_public"),
-        FieldPanel("page_classification"),
-        FieldPanel("theme"),
-        FieldPanel("sub_theme"),
-        FieldPanel("topic"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
@@ -136,8 +80,7 @@ class TopicPage(UKHSAPage):
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("enable_area_selector"),
-        APIField("is_public"),
-        APIField("page_classification"),
+        *NonPublicPage.api_fields,
         APIField("selected_topics"),
     ]
 
@@ -257,36 +200,6 @@ class TopicPage(UKHSAPage):
         timestamps.append(self.last_published_at)
         timestamps = [timestamp for timestamp in timestamps if timestamp]
         return max(timestamps)
-
-    def clean(self):
-        super().clean()
-
-        # If is_public is true, automatically clear non-public fields
-        if self.is_public:
-            self.page_classification = None
-            self.theme = None
-            self.sub_theme = None
-            self.topic = None
-
-        # If not public page, non-public fields must be set
-        elif not self.page_classification:
-            raise ValidationError(
-                {
-                    "page_classification": "Please select a classification level for this non-public page"
-                }
-            )
-        elif not self.theme:
-            raise ValidationError(
-                {"theme": "Please select a theme for this non-public page"}
-            )
-        elif not self.sub_theme:
-            raise ValidationError(
-                {"sub_theme": "Please select a sub theme for this non-public page"}
-            )
-        elif not self.topic:
-            raise ValidationError(
-                {"topic": "Please select a topic for this non-public page"}
-            )
 
 
 class TopicPageRelatedLink(UKHSAPageRelatedLink):
