@@ -17,7 +17,7 @@ from cms.dynamic_content.announcements import Announcement
 from cms.metrics_interface.field_choices_callables import get_all_unique_metric_names
 
 
-class MetricsDocumentationChildEntryForm(NonPublicPageAdminForm):
+class MetricsDocumentationChildEntryAdminForm(NonPublicPageAdminForm):
     """
     Admin form for child entries. All this does currently is populate the metric field's choices.
     """
@@ -33,7 +33,7 @@ class MetricsDocumentationChildEntryForm(NonPublicPageAdminForm):
 
 
 class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
-    base_form_class = MetricsDocumentationChildEntryForm
+    base_form_class = MetricsDocumentationChildEntryAdminForm
 
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
