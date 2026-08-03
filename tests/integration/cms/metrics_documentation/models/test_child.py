@@ -36,12 +36,10 @@ def _create_metrics_documentation_child_entry(
     metric_id: int,
     path: str,
 ) -> MetricsDocumentationChildEntry:
-    MetricsDocumentationChildEntry.objects.create(
+    return MetricsDocumentationChildEntry.objects.create(
         metric=metric_id,
         title=metric_name,
-        theme="test",
-        sub_theme="test",
-        topic=1,
+        is_public=True,
         path=path,
         depth=1,
         slug=metric_name,
