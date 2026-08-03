@@ -89,6 +89,8 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
         """
         API field `topic`, simply extract the topic from the metric name.
         """
+        if not self.metric or "_" not in self.metric:
+            return ""
         return self.metric.split("_")[0]
 
     @property
@@ -96,6 +98,8 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
         """
         API field `metric_group`, simply extract the group from the metric name.
         """
+        if not self.metric or self.metric.count("_") < 2:
+            return ""
         return self.metric.split("_")[1]
 
 
