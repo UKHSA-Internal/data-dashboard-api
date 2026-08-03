@@ -98,7 +98,9 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
         """
         API field `metric_group`, simply extract the group from the metric name.
         """
-        if not self.metric or self.metric.count("_") < 2:
+        # the metric name isn't valid if it doesn't have at least 2 underscores in it
+        minimum_valid_underscore_count = 2
+        if not self.metric or self.metric.count("_") < minimum_valid_underscore_count:
             return ""
         return self.metric.split("_")[1]
 
