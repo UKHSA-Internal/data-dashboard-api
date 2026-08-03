@@ -38,18 +38,18 @@ class NonPublicPageAdminField:
 
 
 # create fields to be used by the NonPublicPageAdminForm below
-theme_field = NonPublicPageAdminField(
+THEME_FIELD = NonPublicPageAdminField(
     name="page_theme",
     label="Theme",
     choice_default="----------",
     choice_callable=get_all_theme_names_and_ids,
 )
-sub_theme_field = NonPublicPageAdminField(
+SUB_THEME_FIELD = NonPublicPageAdminField(
     name="page_sub_theme",
     label="Sub-theme",
     choice_default="Select theme first",
 )
-topic_field = NonPublicPageAdminField(
+TOPIC_FIELD = NonPublicPageAdminField(
     name="page_topic",
     label="Topic",
     choice_default="Select sub-theme first",
@@ -65,7 +65,7 @@ class NonPublicPageAdminForm(WagtailAdminPageForm):
         super().__init__(*args, **kwargs)
 
         # create the fields
-        for field in [theme_field, sub_theme_field, topic_field]:
+        for field in [THEME_FIELD, SUB_THEME_FIELD, TOPIC_FIELD]:
             self.fields[field.name] = field.create_form_field()
 
         # if there are already values, initialise further
@@ -76,7 +76,7 @@ class NonPublicPageAdminForm(WagtailAdminPageForm):
         """
         Initialize choices for cascading dependent fields.
         """
-        for field in [sub_theme_field, topic_field]:
+        for field in [SUB_THEME_FIELD, TOPIC_FIELD]:
             value = getattr(self.instance, field.name, None)
             if value:
                 choices = self._get_field_choices(value, field.choice_default)
