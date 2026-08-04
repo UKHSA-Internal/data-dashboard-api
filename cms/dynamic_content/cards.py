@@ -463,20 +463,10 @@ class HeadlineChartWithDescriptionCard(blocks.StructBlock):
         required=False,
         help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
     )
-    show_tooltips = blocks.BooleanBlock(
-        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
-        default=False,
-        required=False,
-    )
     confidence_intervals = blocks.BooleanBlock(
         required=False,
         default=False,
         help_text=help_texts.CONFIDENCE_INTERVAL,
-    )
-    confidence_intervals_description = blocks.TextBlock(
-        required=False,
-        help_text=help_texts.CONFIDENCE_INTERVALS_DESCRIPTION,
-        default=CONFIDENCE_INTERVALS_DESCRIPTION_DEFAULT_TEXT,
     )
     confidence_colour = blocks.ChoiceBlock(
         required=False,
