@@ -10,7 +10,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("home", "0036_alter_landingpage_make_health_topic_optional"),
+        ("home", "0038_alter_landingpage_body_dual_category_update"),
     ]
 
     operations = [
