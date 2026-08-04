@@ -1,5 +1,7 @@
 import copy
 
+from caching.common.chart_block import is_dual_category_chart_block
+
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
 
 
@@ -118,9 +120,19 @@ class CMSBlockParser:
 
         """
         chart_block_with_geography = copy.deepcopy(chart_block)
-        for plot in chart_block_with_geography["chart"]:
-            plot["value"]["geography_type"] = geography_data.geography_type
-            plot["value"]["geography"] = geography_data.name
+
+        if is_dual_category_chart_block(chart_block_with_geography):
+            chart_block_with_geography["static_fields"][
+                "geography_type"
+            ] = geography_data.geography_type
+            chart_block_with_geography["static_fields"][
+                "geography"
+            ] = geography_data.name
+
+        else:
+            for plot in chart_block_with_geography["chart"]:
+                plot["value"]["geography_type"] = geography_data.geography_type
+                plot["value"]["geography"] = geography_data.name
 
         return chart_block_with_geography
 
@@ -424,9 +436,14 @@ class CMSBlockParser:
             once in the list of given `chart_blocks`
 
         """
-        return {
-            plot["value"]["topic"] for block in chart_blocks for plot in block["chart"]
-        }
+        topics = set()
+        for block in chart_blocks:
+            if is_dual_category_chart_block(block):
+                topics.add(block["static_fields"]["topic"])
+            else:
+                topics.update(plot["value"]["topic"] for plot in block["chart"])
+
+        return topics
 
     @classmethod
     def get_all_selected_topics_from_headline_blocks(
@@ -546,9 +563,14 @@ class CMSBlockParser:
             once in the list of given `chart_blocks`
 
         """
-        return {
-            plot["value"]["metric"] for block in chart_blocks for plot in block["chart"]
-        }
+        metrics: set[str] = set()
+        for block in chart_blocks:
+            if is_dual_category_chart_block(block):
+                metrics.add(block["static_fields"]["metric"])
+            else:
+                metrics.update(plot["value"]["metric"] for plot in block["chart"])
+
+        return metrics
 
     @classmethod
     def get_all_selected_metrics_from_headline_blocks(

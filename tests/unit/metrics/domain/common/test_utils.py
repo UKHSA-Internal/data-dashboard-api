@@ -219,8 +219,19 @@ class TestChartTypes:
         ]
         assert values == expected_values
 
+    def test_dual_category_chart_options(self):
+        """
+        Given no input
+        When the `dual_category_chart_options()` class method is called
+            from the `ChartTypes` enum
+        Then only stacked_bar is returned as a CMS-selectable dual category chart type
+        """
+        # Given / When
+        choices = ChartTypes.dual_category_chart_options()
 
-class TestCheckForSubstringMatch:
+        # Then
+        assert choices == (("stacked_bar", "stacked_bar"),)
+
     @pytest.mark.parametrize(
         "metric_name",
         [

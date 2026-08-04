@@ -148,6 +148,40 @@ class TestCMSBlockParserExtractionOfCharts:
             == geography_data.geography_type
         )
 
+    @pytest.mark.parametrize(
+        "geography_data",
+        [
+            GeographyData(name="Reading", geography_type="Lower Tier Local Authority"),
+            GeographyData(name="Wales", geography_type="Nation"),
+        ],
+    )
+    def test_rebuild_dual_category_chart_block_for_geography(
+        self,
+        geography_data: GeographyData,
+        example_dual_category_chart_block: CMS_COMPONENT_BLOCK_TYPE,
+    ):
+        """
+        Given a dual category chart block and an enriched `GeographyData` model
+        When `rebuild_chart_block_for_geography()` is called
+            from the `CMSBlockParser` class
+        Then a copy of the chart block is returned
+            with the geography data injected into the static fields
+        """
+        # Given
+        base_chart_block = example_dual_category_chart_block
+
+        # When
+        rebuilt_chart_block = CMSBlockParser.rebuild_chart_block_for_geography(
+            chart_block=base_chart_block, geography_data=geography_data
+        )
+
+        # Then
+        assert rebuilt_chart_block["static_fields"]["geography"] == geography_data.name
+        assert (
+            rebuilt_chart_block["static_fields"]["geography_type"]
+            == geography_data.geography_type
+        )
+
     def test_get_chart_blocks_from_chart_row_cards(self, example_chart_row_cards):
         """
         Given a list of example chart row cards

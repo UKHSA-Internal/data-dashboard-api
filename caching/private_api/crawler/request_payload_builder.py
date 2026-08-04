@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 from metrics.domain.common.utils import (
     DataSourceFileType,
@@ -65,8 +67,8 @@ class RequestPayloadBuilder:
         Returns:
             A dict which can be used as the payload to the
             `charts` endpoint
-
         """
+
         return {
             "plots": [
                 self._build_plot_data_for_chart(plot_value=plot["value"])
@@ -81,6 +83,35 @@ class RequestPayloadBuilder:
             "y_axis_title": chart_block.get("y_axis_title", ""),
             "y_axis_minimum_value": chart_block.get("y_axis_minimum_value", None),
             "y_axis_maximum_value": chart_block.get("y_axis_maximum_value", None),
+        }
+
+    def build_dual_category_chart_request_data(
+        self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE, chart_is_double_width: bool
+    ) -> dict[str, str | int]:
+        """Builds the dual category charts endpoint request payload from the given `chart_block`
+
+        Args:
+            chart_block: The chart block from the CMS
+            chart_is_double_width: If True, a chart width of 1100 is applied.
+                If False, a chart width of 515 is applied.
+
+        Returns:
+            A dict which can be used as the payload to the
+            `dual category charts` endpoint
+        """
+        request_data = self.base_dual_category_request_data(chart_block)
+
+        return {
+            **request_data,
+            "file_format": "svg",
+            "chart_height": 260,
+            "chart_width": 1100 if chart_is_double_width else 515,
+            "x_axis_title": chart_block.get("x_axis_title", ""),
+            "y_axis_title": chart_block.get("y_axis_title", ""),
+            "y_axis_minimum_value": chart_block.get("y_axis_minimum_value", None),
+            "y_axis_maximum_value": chart_block.get("y_axis_maximum_value", None),
+            "chart_type": chart_block["chart_type"],
+            "legend_title": chart_block["title"],
         }
 
     @classmethod
@@ -161,6 +192,21 @@ class RequestPayloadBuilder:
             "y_axis": chart_block["y_axis"],
         }
 
+    def build_dual_category_tables_request_data(
+        self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE
+    ) -> dict[str, str | int, list[dict[str, str]]]:
+        """Builds the dual category tables endpoint request payload from the given `chart_block`
+
+        Args:
+            chart_block: The chart block from the CMS
+
+        Returns:
+            A dict which can be used as the payload to the
+            `tables` endpoint
+
+        """
+        return self.base_dual_category_request_data(chart_block)
+
     def build_downloads_request_data(
         self,
         *,
@@ -175,7 +221,7 @@ class RequestPayloadBuilder:
 
         Returns:
             A dict which can be used as the payload to the
-            `tables` endpoint
+            `downloads` endpoint
 
         """
         return {
@@ -185,6 +231,57 @@ class RequestPayloadBuilder:
             ],
             "x_axis": chart_block["x_axis"],
             "file_format": file_format,
+        }
+
+    def build_dual_category_downloads_request_data(
+        self,
+        *,
+        chart_block: CMS_COMPONENT_BLOCK_TYPE,
+        file_format: str,
+    ) -> dict[str, str | int, list[dict[str, str]]]:
+        """Builds the dual category downloads endpoint request payload from the given `chart_block`
+
+        Args:
+            chart_block: The chart block from the CMS
+            file_format: The request format for downloaded data.
+
+        Returns:
+            A dict which can be used as the payload to the
+            `downloads` endpoint
+
+        """
+        request_data = self.base_dual_category_request_data(chart_block)
+        return {
+            **request_data,
+            "file_format": file_format,
+        }
+
+    @classmethod
+    def base_dual_category_request_data(
+        cls, chart_block: CMS_COMPONENT_BLOCK_TYPE
+    ) -> dict[str, str | int, list[dict[str, str]]]:
+        """Base dual category request payload
+
+        Args:
+            chart_block: The chart block from the CMS
+
+        Returns:
+            A dict which can be used as part of the payload for several dual category endpoints
+
+        """
+        segments = [plot["value"] for plot in chart_block["segments"]]
+        static_fields = chart_block["static_fields"]
+
+        if static_fields["date_to"] is None:
+            static_fields["date_to"] = datetime.now().strftime("%Y-%m-%d")
+
+        return {
+            "x_axis": chart_block["x_axis"],
+            "primary_field_values": chart_block["primary_field_values"],
+            "y_axis": chart_block["y_axis"],
+            "static_fields": static_fields,
+            "secondary_category": chart_block["secondary_category"],
+            "segments": segments,
         }
 
     @classmethod

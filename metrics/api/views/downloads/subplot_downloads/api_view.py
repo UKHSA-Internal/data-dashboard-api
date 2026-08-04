@@ -6,7 +6,9 @@ from caching.private_api.decorators import cache_response
 from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.charts.subplot_charts import SubplotChartRequestSerializer
 from metrics.api.views.downloads.common import DOWNLOADS_API_TAG
-from metrics.api.views.downloads.single_category_downloads import DownloadsView
+from metrics.api.views.downloads.single_category_downloads import (
+    SingleCategoryDownloadsView,
+)
 from metrics.api.views.downloads.subplot_downloads.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
@@ -25,7 +27,7 @@ from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
 
 
-class SubplotDownloadsView(DownloadsView):
+class SubplotDownloadsView(SingleCategoryDownloadsView):
     @extend_schema(
         request=SubplotChartRequestSerializer,
         examples=[

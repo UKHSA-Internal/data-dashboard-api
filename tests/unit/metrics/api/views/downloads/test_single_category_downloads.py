@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.api.views.downloads import DownloadsView
+from metrics.api.views.downloads import SingleCategoryDownloadsView
 
 
 class TestDownloadsView:
@@ -13,7 +13,7 @@ class TestDownloadsView:
         Then a `ValueError` is raised
         """
         # Given
-        downloads_view = DownloadsView()
+        downloads_view = SingleCategoryDownloadsView()
         invalid_metric_group = "invalid_metric_group"
 
         # When / Then

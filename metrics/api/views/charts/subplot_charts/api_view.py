@@ -8,11 +8,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
-from metrics.api.serializers.charts import (
+from metrics.api.serializers.charts.common import (
+    ChartPreviewQueryParamsSerializer,
     EncodedChartResponseSerializer,
 )
 from metrics.api.serializers.charts.subplot_charts import (
-    ChartPreviewQueryParamsSerializer,
     SubplotChartRequestSerializer,
 )
 from metrics.api.views.charts.subplot_charts.request_example import (
@@ -66,8 +66,7 @@ class SubplotChartsView(APIView):
             actually put into the cache
 
         Returns:
-            `Response` containing the JSON data for the
-                chart and all of its associated deliverables
+            `Response` containing the rendered chart as an image file
 
         """
         serializer = SubplotChartRequestSerializer(data=request.data)

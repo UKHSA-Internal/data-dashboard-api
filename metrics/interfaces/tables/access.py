@@ -6,7 +6,8 @@ from metrics.domain.common.utils import (
     extract_metric_group_from_metric,
 )
 from metrics.domain.models import ChartRequestParams
-from metrics.domain.tables.generation import TabularData
+from metrics.domain.models.tables.dual_category import DualCategoryTableRequestParams
+from metrics.domain.tables.generation import DualCategoryTabularData, TabularData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
@@ -76,6 +77,19 @@ class TablesInterface:
         return tabular_data.create_tabular_plots()
 
 
+class DualCategoryTablesInterface(TablesInterface):
+    def __init__(self, *, request_params: DualCategoryTableRequestParams, **kwargs):
+        super().__init__(request_params=request_params, **kwargs)
+        self.dual_category_request_params = request_params
+
+    def _build_tabular_data_from_plots_data(self) -> DualCategoryTabularData:
+        plots = self.plots_interface.build_plots_data()
+        return DualCategoryTabularData(
+            plots=plots,
+            primary_field_values=self.dual_category_request_params.primary_field_values,
+        )
+
+
 def generate_table_for_full_plots(
     *,
     request_params: ChartRequestParams,
@@ -104,7 +118,12 @@ def generate_table_for_full_plots(
         `DataNotFoundForAnyPlotError`: If no plots
             returned any data from the underlying queries
     """
-    tables_interface = TablesInterface(
-        request_params=request_params,
-    )
+    if isinstance(request_params, DualCategoryTableRequestParams):
+        tables_interface = DualCategoryTablesInterface(
+            request_params=request_params,
+        )
+    else:
+        tables_interface = TablesInterface(
+            request_params=request_params,
+        )
     return tables_interface.generate_full_plots_for_table()

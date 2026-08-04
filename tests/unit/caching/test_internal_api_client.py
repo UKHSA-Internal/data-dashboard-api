@@ -106,7 +106,7 @@ class TestInternalAPIClient:
     def test_build_headers(self, reserved_namespace: bool):
         """
         Given provided `reserved_namespace` values
-        When `build_headers()` is called
+        When `_build_headers()` is called
             from an instance of `InternalAPIClient`
         Then the correct dict representing the headers is returned
         """
@@ -118,7 +118,7 @@ class TestInternalAPIClient:
         )
 
         # When
-        headers: dict = internal_api_client.build_headers()
+        headers: dict = internal_api_client._build_headers()
 
         # Then
         expected_headers = {
@@ -175,7 +175,7 @@ class TestInternalAPIClient:
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_once_with(
             path=internal_api_client.headlines_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             data=mocked_request_data,
         )
 
@@ -197,7 +197,7 @@ class TestInternalAPIClient:
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_once_with(
             path=internal_api_client.trends_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             data=mocked_request_data,
         )
 
@@ -220,7 +220,7 @@ class TestInternalAPIClient:
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.charts_endpoint_path,
             data=mocked_request_data,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             format="json",
         )
 
@@ -240,7 +240,7 @@ class TestInternalAPIClient:
 
         # Then
         assert response == internal_api_client._client.post.return_value
-        expected_headers = internal_api_client.build_headers()
+        expected_headers = internal_api_client._build_headers()
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.tables_endpoint_path,
             data=mocked_request_data,
@@ -267,7 +267,86 @@ class TestInternalAPIClient:
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.downloads_endpoint_path,
             data=mocked_request_data,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
+            format="json",
+        )
+
+    def test_hit_dual_category_charts_endpoint_delegates_call_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_dual_category_charts_endpoint()` is called
+            from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        mocked_request_data = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_dual_category_charts_endpoint(
+            data=mocked_request_data
+        )
+
+        # Then
+        assert response == internal_api_client._client.post.return_value
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.dual_category_charts_endpoint_path,
+            data=mocked_request_data,
+            headers=internal_api_client._build_headers(),
+            format="json",
+        )
+
+    def test_hit_dual_category_tables_endpoint_delegates_calls_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_dual_category_tables_endpoint()` is called
+            from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        mocked_request_data = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_dual_category_tables_endpoint(
+            data=mocked_request_data
+        )
+
+        # Then
+        assert response == internal_api_client._client.post.return_value
+        expected_headers = internal_api_client._build_headers()
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.dual_category_tables_endpoint_path,
+            data=mocked_request_data,
+            headers=expected_headers,
+            format="json",
+        )
+
+    def test_hit_dual_category_downloads_endpoint_delegates_call_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_dual_category_downloads_endpoint()` is called
+            from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        mocked_request_data = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_dual_category_downloads_endpoint(
+            data=mocked_request_data
+        )
+
+        # Then
+        assert response == internal_api_client._client.post.return_value
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.dual_category_downloads_endpoint_path,
+            data=mocked_request_data,
+            headers=internal_api_client._build_headers(),
             format="json",
         )
 
@@ -291,7 +370,7 @@ class TestInternalAPIClient:
         # Then
         assert response == internal_api_client._client.get.return_value
         expected_path = internal_api_client.geographies_endpoint_path
-        headers = internal_api_client.build_headers()
+        headers = internal_api_client._build_headers()
         deprecated_api_call = mock.call(
             path=f"{internal_api_client.geographies_endpoint_path_deprecated}{topic}",
             headers=headers,
@@ -324,7 +403,7 @@ class TestInternalAPIClient:
 
         # Then
         assert response == internal_api_client._client.post.return_value
-        expected_headers = internal_api_client.build_headers()
+        expected_headers = internal_api_client._build_headers()
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.maps_endpoint_path,
             data=mocked_request_data,
@@ -349,7 +428,7 @@ class TestInternalAPIClient:
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_once_with(
             path=internal_api_client.pages_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             format="json",
         )
 
@@ -379,7 +458,7 @@ class TestInternalAPIClient:
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_with(
             path=internal_api_client.pages_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             data={"type": page_type_query_param},
             format="json",
         )
@@ -500,12 +579,12 @@ class TestInternalAPIClient:
         expected_calls = [
             mock.call(
                 path=expected_path,
-                headers=internal_api_client.build_headers(),
+                headers=internal_api_client._build_headers(),
                 format="json",
             ),
             mock.call(
                 path=f"{expected_path}/",
-                headers=internal_api_client.build_headers(),
+                headers=internal_api_client._build_headers(),
                 format="json",
             ),
         ]
@@ -530,7 +609,7 @@ class TestInternalAPIClient:
         assert response == mocked_client.get.return_value
         mocked_client.get.assert_called_once_with(
             path=internal_api_client.global_banners_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             format="json",
         )
 
@@ -552,6 +631,6 @@ class TestInternalAPIClient:
         assert response == mocked_client.get.return_value
         mocked_client.get.assert_called_once_with(
             path=internal_api_client.menus_endpoint_path,
-            headers=internal_api_client.build_headers(),
+            headers=internal_api_client._build_headers(),
             format="json",
         )

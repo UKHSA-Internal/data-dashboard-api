@@ -52,8 +52,8 @@ class FormStateManger {
         this.secondary_field_value_state = Array.from(inputs).map(input => {
             const selectedValues = [];
 
-            for (let i = 0; i < input.options.length; i++) {
-                const option = input.options[i];
+            for (const element of input.options) {
+                const option = element;
                 if (option.selected && option.value !== "") {
                     selectedValues.push(option.value);
                 }
@@ -71,9 +71,7 @@ class FormStateManger {
      * @return {boolean} whether the value should be selected
      */
     isSecondaryFieldOptionValueSelected(value, segmentIndex) {
-        return this.secondary_field_value_state &&
-            this.secondary_field_value_state[segmentIndex] &&
-            this.secondary_field_value_state[segmentIndex].includes(value);
+        return this.secondary_field_value_state?.[segmentIndex]?.includes(value);
     }
 
     /**
@@ -83,24 +81,32 @@ class FormStateManger {
      * @return {boolean} whether the value should be selected
      */
     isPrimaryValueSelected(value) {
-        return this.primary_field_values_state &&
-            this.primary_field_values_state.includes(value)
+        return this.primary_field_values_state?.includes(value)
     }
 }
 
 
-class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blocks.StructBlockDefinition {
+class DualCategoryChartCardBlockDefinition extends globalThis.wagtailStreamField.blocks.StructBlockDefinition {
+    render(placeholder, prefix, initialState, initialError) {
+        const block = super.render(placeholder, prefix, initialState, initialError);
+        const chart = new DualCategoryChartCard()
+        chart.render(prefix, initialState, block)
+        return block;
+    }
+}
 
-   static SELECTORS = {
-        SEGMENTS_CONTAINER: '[class="dual-category-chart-card"] [data-streamfield-list-container]',
-        SEGMENT_ITEM: 'dual-category-chart-card__segments',
-        SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]'
+class DualCategoryChartCard {
+    static SELECTORS = {
+        SEGMENTS_CONTAINER: '.dual-category-chart-segments-container-form',
+        SEGMENT_ITEM: '.dual-category-chart-card__segments',
+        SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]',
+        DUAL_CATEGORY_CHART_CARD: 'dual-category-chart-card'
     };
 
     static FIELD_SUFFIXES = {
         X_AXIS: 'x_axis',
         GEOGRAPHY: 'static_fields-geography_type',
-        SECONDARY_CATEGORY: 'second_category',
+        SECONDARY_CATEGORY: 'secondary_category',
         PRIMARY_VALUES: 'primary_field_values',
         SECONDARY_VALUES: 'secondary_field_values',
         DATA_SCRIPT: 'subcategory-data',
@@ -135,7 +141,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @param prefix - {string} html form prefix for element IDs
      */
     setupDataScript(prefix) {
-        const script_id = `${prefix}-${DualCategoryChartCardBlockDefinition.FIELD_SUFFIXES.DATA_SCRIPT}`;
+        const script_id = `${prefix}-${DualCategoryChartCard.FIELD_SUFFIXES.DATA_SCRIPT}`;
         this.data_script = document.getElementById(script_id);
 
         if (!this.data_script) {
@@ -161,19 +167,19 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * `primary_field_values` options with age related options.
      * @param prefix - {string} html form prefix for element IDs
      */
-    setupCategoryFormFields(prefix) {
-        const { FIELD_SUFFIXES } = DualCategoryChartCardBlockDefinition;
+    setupCategoryFormFields(prefix, rootNode) {
+        const { FIELD_SUFFIXES } = DualCategoryChartCard;
 
-        this.x_axis_field = document.getElementById(`${prefix}-${FIELD_SUFFIXES.X_AXIS}`);
-        this.geography_type_field = document.getElementById(`${prefix}-${FIELD_SUFFIXES.GEOGRAPHY}`);
-        this.secondary_category_field = document.getElementById(`${prefix}-${FIELD_SUFFIXES.SECONDARY_CATEGORY}`);
+        this.x_axis_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.X_AXIS}`);
+        this.geography_type_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.GEOGRAPHY}`);
+        this.secondary_category_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.SECONDARY_CATEGORY}`);
 
         const missingFields = [];
         if (!this.x_axis_field) missingFields.push(FIELD_SUFFIXES.X_AXIS);
         if (!this.geography_type_field) missingFields.push(FIELD_SUFFIXES.GEOGRAPHY);
         if (!this.secondary_category_field) missingFields.push(FIELD_SUFFIXES.SECONDARY_CATEGORY);
 
-        if(missingFields.length > 0) {
+        if (missingFields.length > 0) {
             console.error(`Category form fields not found: ${missingFields.join(', ')}`, {
                 prefix,
                 x_axis_field: this.x_axis_field,
@@ -190,25 +196,24 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * to the category selected in `x_axis` field from our `primary form fields`
      * @param prefix
      */
-    setupSubCategoryFormFields(prefix) {
-        const { FIELD_SUFFIXES, SELECTORS } = DualCategoryChartCardBlockDefinition;
+    setupSubCategoryFormFields(prefix, rootNode) {
+        const { FIELD_SUFFIXES, SELECTORS } = DualCategoryChartCard;
 
-        this.primary_field_values_inputs = document.getElementById(
-            `${prefix}-${FIELD_SUFFIXES.PRIMARY_VALUES}`
+        this.primary_field_values_inputs = rootNode.querySelector(
+            `select#${prefix}-${FIELD_SUFFIXES.PRIMARY_VALUES}`
         );
-        this.secondary_field_value_inputs = document.querySelectorAll(
+        this.secondary_field_value_inputs = rootNode.querySelectorAll(
             `[id^="${prefix}-${FIELD_SUFFIXES.SEGMENTS}-"]${SELECTORS.SECONDARY_FIELD_VALUE}`
         );
 
         const missingFields = [];
         if (!this.primary_field_values_inputs) missingFields.push(FIELD_SUFFIXES.PRIMARY_VALUES);
         if (!this.secondary_field_value_inputs) missingFields.push(FIELD_SUFFIXES.SECONDARY_VALUES);
-
         if (missingFields.length > 0) {
             console.error(`Sub-category form fields not found: ${missingFields.join(', ')}`, {
                 prefix,
-                primary_field_values: this.primary_field_values_inputs,
-                secondary_field_value: this.primary_field_values_inputs?.length || 0
+                primary_field_values: this.primary_field_values_inputs?.length || 0,
+                secondary_field_value: this.secondary_field_value_inputs?.length || 0,
             });
         }
     }
@@ -219,25 +224,25 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * and restore saved state for existing content
      */
     initialiseFieldOptions() {
-        if(!this.x_axis_field || !this.secondary_category_field || !this.secondary_category_choices) {
+        if (!this.x_axis_field || !this.secondary_category_field || !this.secondary_category_choices) {
             return;
         }
 
-        const { DEFAULT_OPTION } = DualCategoryChartCardBlockDefinition;
+        const { DEFAULT_OPTION } = DualCategoryChartCard;
 
-        if(this.x_axis_field && this.primary_field_values_inputs) {
+        if (this.x_axis_field && this.primary_field_values_inputs) {
             this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
         }
 
-        if(this.secondary_category_field && this.secondary_field_value_inputs) {
+        if (this.secondary_category_field && this.secondary_field_value_inputs) {
             this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
         }
 
-        if(!this.x_axis_field.value && this.primary_field_values_inputs) {
+        if (!this.x_axis_field.value && this.primary_field_values_inputs) {
             this.primary_field_values_inputs.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
         }
 
-        if(!this.secondary_category_field.value && this.secondary_field_value_inputs.length > 0) {
+        if (!this.secondary_category_field.value && this.secondary_field_value_inputs.length > 0) {
             this.secondary_field_value_inputs.forEach(input => {
                 input.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
             });
@@ -252,7 +257,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @param subcategory_key {string} representing the sub category key (primary category)
      */
     getFieldOptions(subcategory_key) {
-        const { GEOGRAPHY_SUBCATEGORY_KEY } = DualCategoryChartCardBlockDefinition.FIELD_SUFFIXES
+        const { GEOGRAPHY_SUBCATEGORY_KEY } = DualCategoryChartCard.FIELD_SUFFIXES
 
         if (subcategory_key && subcategory_key !== GEOGRAPHY_SUBCATEGORY_KEY) {
             return this.secondary_category_choices[subcategory_key] || [];
@@ -271,7 +276,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @param subcategory_key - {string} the subcategory key used to retrieve the primary field value options.
      */
     updatePrimaryFieldValueOptions(subcategory_key) {
-        const { DEFAULT_OPTION } = DualCategoryChartCardBlockDefinition;
+        const { DEFAULT_OPTION } = DualCategoryChartCard;
 
         this.primary_field_values_inputs.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
 
@@ -296,7 +301,7 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @param subcategory_key - {string} the subcategory key used to retrieve the primary field value options.
      */
     updateSecondaryFieldValueOptions(subcategory_key) {
-        const { DEFAULT_OPTION } = DualCategoryChartCardBlockDefinition;
+        const { DEFAULT_OPTION } = DualCategoryChartCard;
 
         this.secondary_field_value_inputs.forEach((secondary_field_value, index) => {
             secondary_field_value.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
@@ -324,11 +329,11 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * `SecondaryFormFields` and then update the options of these lists to ensure they align with the primary fields.
      * @param prefix
      */
-    observeSegmentBlocks(prefix) {
-        const { SELECTORS } =  DualCategoryChartCardBlockDefinition;
-        const segments_container = document.querySelector(SELECTORS.SEGMENTS_CONTAINER)
+    observeSegmentBlocks(prefix, rootNode) {
+        const { SELECTORS } = DualCategoryChartCard;
+        const segments_container = rootNode.querySelector(SELECTORS.SEGMENTS_CONTAINER)
 
-        if(!segments_container) {
+        if (!segments_container) {
             console.warn("Segments container not found - observer disabled");
             return;
         }
@@ -337,11 +342,10 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
             mutations.forEach((mutation) => {
                 if (mutation.type === "childList") {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1 && node.classList.contains(SELECTORS.SEGMENT_ITEM)) {
-
+                        if (node.nodeType === 1 && node.matches(SELECTORS.SEGMENT_ITEM)) {
                             this.stateManager.storeCurrentSelections(this.secondary_field_value_inputs);
 
-                            this.setupSubCategoryFormFields(prefix);
+                            this.setupSubCategoryFormFields(prefix, rootNode);
                             if (this.secondary_category_field.value) {
                                 this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
                             }
@@ -363,8 +367,8 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
      * @name setupEvents
      * @description Setup event handlers for dynamic choice fields `secondary_category` and `x_axis_field`.
      */
-    setupEvents() {
-        const { FIELD_SUFFIXES } = DualCategoryChartCardBlockDefinition;
+    setupEvents(rootNode) {
+        const { FIELD_SUFFIXES } = DualCategoryChartCard;
 
         this.x_axis_field.addEventListener("change", (evt) => {
             this.stateManager.clearPrimaryFieldState();
@@ -374,23 +378,42 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
         this.secondary_category_field.addEventListener("change", (evt) => {
             this.stateManager.clearSecondaryFieldState();
             this.updateSecondaryFieldValueOptions(evt.target.value);
+
+            // clear all segments
+            rootNode
+                .querySelectorAll('.dual-category-chart-card__segments')
+                .forEach(segments => {
+                    const streamfieldChild = segments.closest('[data-streamfield-child]');
+                    if (streamfieldChild?.getAttribute('aria-hidden') === 'true') {
+                        return;
+                    }
+
+                    const section = segments.closest('section[id$="-section"]');
+                    section
+                        ?.querySelector('[data-streamfield-action="DELETE"]')
+                        ?.click();
+                });
         });
 
         this.geography_type_field.addEventListener("change", (evt) => {
-            if(this.x_axis_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
+            if (this.x_axis_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearPrimaryFieldState();
                 this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
             }
 
-            if(this.secondary_category_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
+            if (this.secondary_category_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearSecondaryFieldState();
                 this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
             }
         });
     }
 
-    render(placeholder, prefix, initialState, initialError) {
-        const block = super.render(placeholder, prefix, initialState, initialError);
+    render(prefix, initialState, block) {
+        // from the telepath StructBlock representation, 
+        // find the DOM element in which this chart is rendered.
+        const rootNode = Array.from(block.container).find(
+            el => el.className === DualCategoryChartCard.SELECTORS.DUAL_CATEGORY_CHART_CARD
+        )
 
         // initialise form state
         this.stateManager.initialise(initialState);
@@ -399,22 +422,20 @@ class DualCategoryChartCardBlockDefinition extends window.wagtailStreamField.blo
         this.setupDataScript(prefix);
 
         // setup primary and secondary form fields
-        this.setupCategoryFormFields(prefix);
-        this.setupSubCategoryFormFields(prefix);
+        this.setupCategoryFormFields(prefix, rootNode);
+        this.setupSubCategoryFormFields(prefix, rootNode);
 
         // Initial population of field options based on current/initial values
         this.initialiseFieldOptions();
 
         // Setup observer for watching segments list and event handlers on
-        this.observeSegmentBlocks(prefix);
-        this.setupEvents();
-
-        return block;
+        this.observeSegmentBlocks(prefix, rootNode);
+        this.setupEvents(rootNode);
     }
 
 }
 
-window.telepath.register(
+globalThis.telepath.register(
     'cms.dynamic_content.cards.DualCategoryChartCard',
     DualCategoryChartCardBlockDefinition,
 );

@@ -1,5 +1,6 @@
 import logging
 
+from caching.common.chart_block import is_dual_category_chart_block
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
@@ -177,12 +178,27 @@ class DynamicContentBlockCrawler:
     # Sub methods for processing charts
 
     def _process_table_for_chart_block(self, *, chart_block: dict):
-        tables_data = self._request_payload_builder.build_tables_request_data(
-            chart_block=chart_block
-        )
-        self._internal_api_client.hit_tables_endpoint(data=tables_data)
+        if is_dual_category_chart_block(chart_block):
+            plot_data = (
+                self._request_payload_builder.build_dual_category_tables_request_data(
+                    chart_block=chart_block
+                )
+            )
+            self._internal_api_client.hit_dual_category_tables_endpoint(data=plot_data)
+        else:
+            tables_data = self._request_payload_builder.build_tables_request_data(
+                chart_block=chart_block
+            )
+            self._internal_api_client.hit_tables_endpoint(data=tables_data)
 
     def process_download_for_chart_block(self, *, chart_block: dict, file_format: str):
+        if is_dual_category_chart_block(chart_block):
+            downloads_data = self._request_payload_builder.build_dual_category_downloads_request_data(
+                chart_block=chart_block, file_format=file_format
+            )
+            return self._internal_api_client.hit_dual_category_downloads_endpoint(
+                data=downloads_data
+            )
         downloads_data = self._request_payload_builder.build_downloads_request_data(
             chart_block=chart_block, file_format=file_format
         )
@@ -205,12 +221,24 @@ class DynamicContentBlockCrawler:
             None
 
         """
+
         for chart_is_double_width in (True, False):
-            charts_data = self._request_payload_builder.build_chart_request_data(
-                chart_block=chart_block,
-                chart_is_double_width=chart_is_double_width,
-            )
-            self._internal_api_client.hit_charts_endpoint(data=charts_data)
+            if is_dual_category_chart_block(chart_block):
+                charts_data = self._request_payload_builder.build_dual_category_chart_request_data(
+                    chart_block=chart_block,
+                    chart_is_double_width=chart_is_double_width,
+                )
+
+                self._internal_api_client.hit_dual_category_charts_endpoint(
+                    data=charts_data
+                )
+            else:
+                charts_data = self._request_payload_builder.build_chart_request_data(
+                    chart_block=chart_block,
+                    chart_is_double_width=chart_is_double_width,
+                )
+
+                self._internal_api_client.hit_charts_endpoint(data=charts_data)
 
     # Sub methods for processing headline number blocks
 

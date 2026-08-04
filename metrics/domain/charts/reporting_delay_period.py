@@ -1,6 +1,6 @@
 import contextlib
 import logging
-from datetime import datetime
+from datetime import date, datetime
 
 import plotly
 from plotly.graph_objs import Scatter
@@ -55,9 +55,13 @@ def _get_last_x_value_at_end_of_reporting_delay_period(
 
 def get_x_value_at_start_of_reporting_delay_period(
     chart_plots_data: list[PlotGenerationData],
-) -> str:
-    index: int = chart_plots_data[0].start_of_reporting_delay_period_index
-    return chart_plots_data[0].x_axis_values[index]
+) -> date:
+    values = [
+        plot.x_axis_values[plot.start_of_reporting_delay_period_index]
+        for plot in chart_plots_data
+    ]
+
+    return min(values)
 
 
 def add_reporting_delay_period(

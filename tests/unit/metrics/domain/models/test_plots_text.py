@@ -484,6 +484,27 @@ class TestPlotsText:
         assert "This plot has a value of '123'" in text
         assert "This plot has a value of '456.01'" in text
 
+    def test_returns_correct_text_for_dual_category_stacked_bar_chart(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        """
+        Given a dual category stacked bar plot
+        When `construct_text()` is called from an instance of `PlotsText`
+        Then the returned text describes a stacked bar chart
+        """
+        # Given
+        fake_plot_data.parameters.chart_type = ChartTypes.stacked_bar.value
+        fake_plot_data.parameters.line_colour = (
+            RGBAChartLineColours.COLOUR_1_DARK_BLUE.name
+        )
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        assert "This is a dark blue stacked bar chart." in text
+
     def test_describe_singular_metric_value_returns_empty_string_for_timeseries_plots_with_no_data(
         self, fake_plot_data: PlotGenerationData
     ):
