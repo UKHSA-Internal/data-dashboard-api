@@ -43,6 +43,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_headline_positivityLatest",
                           "geography": "England",
@@ -66,6 +68,8 @@
                       {
                         "type": "headline_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_headline_ICUHDUadmissionRateLatest",
                           "geography": "England",
@@ -80,6 +84,8 @@
                       {
                         "type": "trend_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_headline_ICUHDUadmissionRateChange",
                           "geography": "England",
@@ -126,6 +132,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -161,6 +169,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -182,6 +192,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -203,6 +215,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -224,6 +238,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -245,6 +261,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -266,6 +284,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -287,6 +307,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -308,6 +330,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                           "geography": "England",
@@ -360,6 +384,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
@@ -395,6 +421,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
@@ -416,6 +444,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
@@ -437,6 +467,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
@@ -458,6 +490,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
@@ -479,6 +513,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Influenza",
                           "metric": "influenza_testing_positivityByWeek",
                           "geography": "England",
