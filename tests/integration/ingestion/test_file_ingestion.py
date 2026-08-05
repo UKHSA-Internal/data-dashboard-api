@@ -8,6 +8,7 @@ from ingestion.file_ingestion import data_ingester
 from ingestion.utils import type_hints
 from metrics.data.models.api_models import APIHeadline, APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from validation.data_transfer_models.base import MissingFieldError
 from validation.is_public import (
     MISSING_IS_PUBLIC_FIELD_ERROR,
 )
@@ -263,3 +264,30 @@ class TestDataIngester:
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_failure_creates_no_data(
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        """
+        Given incoming data
+        When `data_ingester()` is called
+        And the transaction fails
+        Then no records are created
+        """
+        # Given
+        assert APIHeadline.objects.all().count() == 0
+        assert CoreHeadline.objects.all().count() == 0
+
+        # When
+        data = example_headline_data
+        data["data"][0].pop("metric_value")
+        with pytest.raises(MissingFieldError):
+            data_ingester(data=data, filename=test_filename)
+
+        # Then
+        # Check that 0 records are created
+        assert APIHeadline.objects.all().count() == 0
+        assert CoreHeadline.objects.all().count() == 0
