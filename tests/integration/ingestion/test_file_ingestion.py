@@ -204,3 +204,30 @@ class TestDataIngester:
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_failure_creates_no_data(
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        """
+        Given incoming data
+        When `data_ingester()` is called
+        And the transaction fails
+        Then no records are created
+        """
+        # Given
+        assert APIHeadline.objects.all().count() == 0
+        assert CoreHeadline.objects.all().count() == 0
+
+        # When
+        data = example_headline_data
+        data["data"][0].pop("metric_value")
+        pytest.fail("This should should mock something in the database layer to fail")
+        data_ingester(data=data, filename=test_filename)
+
+        # Then
+        # Check that 0 records are created
+        assert APIHeadline.objects.all().count() == 0
+        assert CoreHeadline.objects.all().count() == 0
