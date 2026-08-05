@@ -17,6 +17,7 @@ from ingestion.metrics_interface.interface import DataSourceFileType
 MODULE_PATH = "ingestion.file_ingestion"
 
 
+@pytest.mark.django_db
 class TestDataIngester:
     @mock.patch.object(Consumer, "process_core_and_api_timeseries")
     @mock.patch.object(Consumer, "process_core_and_api_headlines")
