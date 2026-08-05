@@ -37,6 +37,8 @@ class TestDualCategoryDownloadSerializer:
 
         payload = EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
         payload["static_fields"] = payload["static_fields"].copy()
+        payload["static_fields"]["theme"] = fake_topic.sub_theme.theme.name
+        payload["static_fields"]["sub_theme"] = fake_topic.sub_theme.name
         payload["static_fields"]["topic"] = fake_topic.name
         payload["static_fields"]["metric"] = HEADLINE_METRIC
 
@@ -80,6 +82,8 @@ class TestDualCategoryDownloadSerializer:
             "y_axis": "metric",
             "chart_type": "stacked_bar",
             "static_fields": {
+                "theme": plot_payload["theme"],
+                "sub_theme": plot_payload["sub_theme"],
                 "topic": plot_payload["topic"],
                 "metric": plot_payload["metric"],
                 "stratum": plot_payload.get("stratum", "default"),

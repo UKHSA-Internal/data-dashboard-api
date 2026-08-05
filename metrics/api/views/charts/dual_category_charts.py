@@ -56,6 +56,8 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
     "chart_type": "stacked_bar",
     "secondary_category": "age",
     "static_fields": {
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
         "topic": "COVID-19",
         "metric": "COVID-19_cases_rateRollingMean",
         "stratum": "default",

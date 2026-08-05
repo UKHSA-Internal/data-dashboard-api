@@ -12,6 +12,8 @@ from metrics.data.models.core_models import (
     Topic,
     Geography,
     GeographyType,
+    Theme,
+    SubTheme,
 )
 
 from tests.factories.common.auth.permissions import UserPermissionsFactory
@@ -96,7 +98,9 @@ def core_trend_example(request) -> tuple[CoreHeadline, CoreHeadline]:
 
 @pytest.fixture
 def core_timeseries_example() -> list[CoreTimeSeries]:
-    topic = Topic.objects.create(name="COVID-19")
+    theme = Theme.objects.create(name="infectious_disease")
+    sub_theme = SubTheme.objects.create(name="respiratory", theme=theme)
+    topic = Topic.objects.create(name="COVID-19", sub_theme=sub_theme)
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
         name="COVID-19_deaths_ONSByDay",
