@@ -10,7 +10,7 @@ from cms.auth_content.forms.non_public_page import (
 )
 from cms.auth_content.models.non_public_page import (
     DataClassificationLevels,
-    NonPublicPage,
+    NonPublicCapablePage,
 )
 from cms.topic.models import TopicPage
 
@@ -18,7 +18,9 @@ from cms.topic.models import TopicPage
 class TestNonPublicPageAdminForm:
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("non_public_subclass", NonPublicPage.__subclasses__())
+    @pytest.mark.parametrize(
+        "non_public_subclass", NonPublicCapablePage.__subclasses__()
+    )
     def test_binding_to_non_public_page_classes(self, non_public_subclass):
         """
         When a new form is instantiated for a non-public page subclass
@@ -38,7 +40,9 @@ class TestNonPublicPageAdminForm:
             ), f"{field} is missing when bound to {non_public_subclass.__name__}"
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("non_public_subclass", NonPublicPage.__subclasses__())
+    @pytest.mark.parametrize(
+        "non_public_subclass", NonPublicCapablePage.__subclasses__()
+    )
     def test_non_public_pages_are_using_form(self, non_public_subclass):
         """
         When a new form is instantiated for a non-public page subclass

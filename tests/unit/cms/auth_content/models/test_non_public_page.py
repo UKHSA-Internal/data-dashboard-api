@@ -4,23 +4,23 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from cms.auth_content.models.non_public_page import (
-    NonPublicPage,
+    NonPublicCapablePage,
     DataClassificationLevels,
 )
 
 
-def create_non_public_page(*args, **kwargs) -> NonPublicPage:
-    class MockNonPublicPage(NonPublicPage):
+def create_non_public_page(*args, **kwargs) -> NonPublicCapablePage:
+    class MockNonPublicCapablePage(NonPublicCapablePage):
         class Meta:
             app_label = "data"
 
-    return MockNonPublicPage(*args, **kwargs)
+    return MockNonPublicCapablePage(*args, **kwargs)
 
 
 class TestNonPublicPage:
 
     def test_is_abstract_model(self):
-        assert NonPublicPage._meta.abstract == True
+        assert NonPublicCapablePage._meta.abstract == True
 
     @pytest.mark.parametrize(
         "expected_content_panel_name",
@@ -31,7 +31,7 @@ class TestNonPublicPage:
     )
     def test_default_content_panels(self, expected_content_panel_name: str):
         assert expected_content_panel_name in [
-            panel.clean_name for panel in NonPublicPage.content_panels
+            panel.clean_name for panel in NonPublicCapablePage.content_panels
         ]
 
     @pytest.mark.parametrize(
@@ -47,7 +47,7 @@ class TestNonPublicPage:
         non_public_page_options_panel = next(
             (
                 panel
-                for panel in NonPublicPage.content_panels
+                for panel in NonPublicCapablePage.content_panels
                 if panel.clean_name == "non_public_page_options"
             ),
             None,
@@ -69,7 +69,7 @@ class TestNonPublicPage:
     )
     def test_default_api_fields(self, expected_api_field_name: str):
         assert expected_api_field_name in [
-            panel.name for panel in NonPublicPage.api_fields
+            panel.name for panel in NonPublicCapablePage.api_fields
         ]
 
     def test_clean_public_page(self):
