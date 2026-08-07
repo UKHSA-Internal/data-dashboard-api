@@ -10,7 +10,7 @@ from wagtail.api import APIField
 from wagtail.search import index
 
 from cms.auth_content.forms.non_public_page import NonPublicPageAdminForm
-from cms.auth_content.models.non_public_page import NonPublicPage
+from cms.auth_content.models.non_public_page import NonPublicCapablePage
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
@@ -32,7 +32,7 @@ class MetricsDocumentationChildEntryAdminForm(NonPublicPageAdminForm):
         ]
 
 
-class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
+class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
     base_form_class = MetricsDocumentationChildEntryAdminForm
 
     page_description = models.TextField()
@@ -46,7 +46,7 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
 
     # Content panels to render for editing within the CMS application.
     content_panels = UKHSAPage.content_panels + [
-        *NonPublicPage.content_panels,
+        *NonPublicCapablePage.content_panels,
         FieldPanel("page_description"),
         FieldPanel("metric", widget=forms.Select()),
         FieldPanel("body"),
@@ -57,7 +57,7 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicPage):
         APIField("title"),
         APIField("metric"),
         APIField("body"),
-        *NonPublicPage.api_fields,
+        *NonPublicCapablePage.api_fields,
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),

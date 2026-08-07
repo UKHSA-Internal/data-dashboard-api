@@ -13,7 +13,7 @@ from wagtail.fields import RichTextField
 from wagtail.search import index
 
 from cms.auth_content.forms.non_public_page import NonPublicPageAdminForm
-from cms.auth_content.models.non_public_page import NonPublicPage
+from cms.auth_content.models.non_public_page import NonPublicCapablePage
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
@@ -34,7 +34,7 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class TopicPage(UKHSAPage, NonPublicPage):
+class TopicPage(UKHSAPage, NonPublicCapablePage):
     base_form_class = NonPublicPageAdminForm
 
     page_description = RichTextField(
@@ -65,7 +65,7 @@ class TopicPage(UKHSAPage, NonPublicPage):
 
     # Editor panels configuration
     content_panels = UKHSAPage.content_panels + [
-        *NonPublicPage.content_panels,
+        *NonPublicCapablePage.content_panels,
         FieldPanel("enable_area_selector"),
         FieldPanel("page_description"),
         FieldPanel("body"),
@@ -80,7 +80,7 @@ class TopicPage(UKHSAPage, NonPublicPage):
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("enable_area_selector"),
-        *NonPublicPage.api_fields,
+        *NonPublicCapablePage.api_fields,
         APIField("selected_topics"),
     ]
 
