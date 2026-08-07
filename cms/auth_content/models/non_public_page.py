@@ -18,9 +18,9 @@ class DataClassificationLevels(models.TextChoices):
     TOP_SECRET = "top_secret"  # nosec #noqa: S105
 
 
-class NonPublicPage(models.Model):
+class NonPublicCapablePage(models.Model):
     """
-    An abstract model to be reused on pages which require non-public access control.
+    An abstract model to be used as a mixin class on pages which are capable of non-public access control.
     """
 
     class Meta:
