@@ -1,18 +1,28 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.api.conf import APIField
 
+from cms.auth_content.forms.non_public_page import THEME_FIELD
 from cms.metrics_documentation.models import MetricsDocumentationChildEntry
 from tests.fakes.factories.cms.metrics_documentation_child_entry_factory import (
     FakeMetricsDocumentationChildEntryFactory,
+)
+from tests.fakes.models.cms.metrics_documentation_child import (
+    FakeMetricsDocumentationChildEntry,
 )
 
 
 class TestMetricsDocumentationChildEntryAdminForm:
 
-    @pytest.mark.django_db
     @patch("cms.metrics_documentation.models.child.get_all_unique_metric_names")
+    # swap the parent NonPublicAdminForm init for its parent WagtailAdminPageForm init to avoid mocking a load of stuff
+    # we need to actually do this test on the MetricsDocumentationChildEntryAdminForm
+    @patch(
+        "cms.auth_content.forms.non_public_page.NonPublicPageAdminForm.__init__",
+        WagtailAdminPageForm.__init__,
+    )
     def test_metric_choices_are_loaded(
         self, mock_get_all_unique_metric_names: MagicMock
     ):
@@ -27,7 +37,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
             ("3", "test3"),
         ]
         mock_get_all_unique_metric_names.configure_mock(return_value=expected)
-        page = MetricsDocumentationChildEntry()
+        page = FakeMetricsDocumentationChildEntry()
 
         form = page.get_edit_handler().get_form_class()(instance=page)
 
