@@ -3,12 +3,14 @@ import datetime
 import io
 from collections import OrderedDict
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreTimeSeries, Geography, CoreHeadline
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
