@@ -17,6 +17,7 @@ class TestTrendsView:
     def test_get_returns_correct_response(
         self,
         core_trend_example: tuple[CoreHeadline, CoreHeadline],
+        user_global_access,
     ):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
@@ -25,6 +26,8 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         main_record, percentage_record = core_trend_example
         topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
@@ -65,6 +68,7 @@ class TestTrendsView:
     def test_get_returns_error_message_for_timeseries_type_metric(
         self,
         core_trend_example: tuple[CoreHeadline, CoreHeadline],
+        user_global_access,
     ):
         """
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`
@@ -73,6 +77,8 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         main_record, percentage_record = core_trend_example
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
