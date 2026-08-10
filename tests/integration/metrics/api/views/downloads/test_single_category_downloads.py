@@ -72,7 +72,10 @@ class TestDownloadsView:
             ],
         }
 
-    def _build_valid_headline_payload(self) -> dict[str, str | list[dict[str, str]]]:
+    def _build_valid_headline_payload(
+        self, is_public: bool = True
+    ) -> dict[str, str | list[dict[str, str]]]:
+        metric_prefix = "OFF-SENS_" if not is_public else ""
         return {
             "file_format": "csv",
             "x_axis": "age",
@@ -81,7 +84,7 @@ class TestDownloadsView:
                 {
                     "theme": self.core_headline_data["theme"],
                     "sub_theme": self.core_headline_data["sub_theme"],
-                    "metric": self.core_headline_data["metric"],
+                    "metric": metric_prefix + self.core_headline_data["metric"],
                     "topic": self.core_headline_data["topic"],
                     "stratum": self.core_headline_data["stratum"],
                     "age": self.core_headline_data["age"],
@@ -116,13 +119,14 @@ class TestDownloadsView:
             is_public=is_public,
         )
 
-    def _create_examples_headline_data(self) -> CoreHeadline:
+    def _create_examples_headline_data(self, is_public: bool = True) -> CoreHeadline:
+        metric_prefix = "OFF-SENS_" if not is_public else ""
         return CoreHeadlineFactory.create_record(
             metric_value=self.core_headline_data["metric_value"],
             theme=self.core_headline_data["theme"],
             sub_theme=self.core_headline_data["sub_theme"],
             topic=self.core_headline_data["topic"],
-            metric=self.core_headline_data["metric"],
+            metric=metric_prefix + self.core_headline_data["metric"],
             geography=self.core_headline_data["geography"],
             geography_type=self.core_headline_data["geography_type"],
             stratum=self.core_headline_data["stratum"],
@@ -130,6 +134,7 @@ class TestDownloadsView:
             sex=self.core_headline_data["sex"],
             period_start=self.core_headline_data["period_start"],
             period_end=self.core_headline_data["period_end"],
+            is_public=is_public,
         )
 
     @property
@@ -442,6 +447,88 @@ class TestDownloadsView:
                     core_time_series.date,
                     f"{core_time_series.metric_value:.4f}",
                     str(core_time_series.in_reporting_delay_period),
+                ]
+            ]
+            assert csv_output == expected_csv_content
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        ("authenticated_user", "expected_status"),
+        [
+            (True, HTTPStatus.OK),
+            (False, HTTPStatus.BAD_REQUEST),
+        ],
+    )
+    def test_csv_download_non_pub_headline_returns_correct_response(
+        self, authenticated_user, expected_status
+    ):
+        """
+        Given a valid authenticated `headline` payload to request a download
+        When the `POST /api/downloads/v2` endpoint is hit
+        Then the response contains the expected output in csv format
+        """
+        # Given
+        client = APIClient()
+        if authenticated_user:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
+
+        core_headline_data = self._create_examples_headline_data(is_public=False)
+        valid_payload = self._build_valid_headline_payload(is_public=False)
+
+        # When
+        response: Response = client.post(
+            path=self.path, data=valid_payload, format="json"
+        )
+
+        # Then
+        assert response.status_code == expected_status
+
+        if authenticated_user:
+            # Check that the headers on the response indicate csv is being returned
+            assert response.headers["Content-Type"] == "text/csv"
+
+            # Check the output itself is as expected
+            csv_file = csv.reader(io.StringIO(response.content.decode("utf-8")))
+            csv_output = list(csv_file)
+            csv_headers = csv_output.pop(0)
+
+            expected_csv_headings = [
+                "theme",
+                "sub_theme",
+                "topic",
+                "geography_type",
+                "geography",
+                "metric",
+                "sex",
+                "age",
+                "stratum",
+                "period_start",
+                "period_end",
+                "metric_value",
+            ]
+            assert csv_headers == expected_csv_headings
+
+            expected_csv_content = [
+                [
+                    core_headline_data.metric.topic.sub_theme.theme.name,
+                    core_headline_data.metric.topic.sub_theme.name,
+                    core_headline_data.metric.topic.name,
+                    core_headline_data.geography.geography_type.name,
+                    core_headline_data.geography.name,
+                    core_headline_data.metric.name,
+                    core_headline_data.sex,
+                    core_headline_data.age.name,
+                    core_headline_data.stratum.name,
+                    str(core_headline_data.period_start),
+                    str(core_headline_data.period_end),
+                    f"{core_headline_data.metric_value:.4f}",
                 ]
             ]
             assert csv_output == expected_csv_content
