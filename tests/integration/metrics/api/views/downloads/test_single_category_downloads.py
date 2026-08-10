@@ -3,14 +3,12 @@ import datetime
 import io
 from collections import OrderedDict
 from http import HTTPStatus
-from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreTimeSeries, Geography, CoreHeadline
-from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
@@ -368,7 +366,7 @@ class TestDownloadsView:
         ],
     )
     def test_csv_download_non_pub_timeseries_returns_correct_response(
-        self, authenticated_user, expected_status
+        self, authenticated_user, expected_status, user_global_access
     ):
         """
         Given a valid authenticated payload to request a download
@@ -378,14 +376,7 @@ class TestDownloadsView:
         # Given
         client = APIClient()
         if authenticated_user:
-            mock_user = mock.MagicMock()
-            mock_user.username = "restricted-user"
-
-            mock_user.permission_sets = UserPermissionsFactory(
-                [],
-                has_global_access=True,
-            )
-            client.force_authenticate(user=mock_user, token="token")
+            client.force_authenticate(user=user_global_access, token="token")
 
         core_time_series = self._create_example_core_time_series(is_public=False)
         valid_payload = self._build_valid_payload(is_public=False)
@@ -456,7 +447,7 @@ class TestDownloadsView:
         ],
     )
     def test_csv_download_non_pub_headline_returns_correct_response(
-        self, authenticated_user, expected_status
+        self, authenticated_user, expected_status, user_global_access
     ):
         """
         Given a valid authenticated `headline` payload to request a download
@@ -466,14 +457,7 @@ class TestDownloadsView:
         # Given
         client = APIClient()
         if authenticated_user:
-            mock_user = mock.MagicMock()
-            mock_user.username = "restricted-user"
-
-            mock_user.permission_sets = UserPermissionsFactory(
-                [],
-                has_global_access=True,
-            )
-            client.force_authenticate(user=mock_user, token="token")
+            client.force_authenticate(user=user_global_access, token="token")
 
         core_headline_data = self._create_examples_headline_data(is_public=False)
         valid_payload = self._build_valid_headline_payload(is_public=False)
