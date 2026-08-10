@@ -183,6 +183,33 @@ class TestPageLinkBlock:
         assert result["sub_title"] == "Test subtitle"
 
     @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
+    def test_page_without_is_public_attribute_returns_data_unmodified(
+        self, mock_check_page_permissions
+    ):
+        """
+        Given a page with no 'is_public' attribute present
+        When get_api_representation() is called
+        Then the response is returned as is, no check performed
+        """
+        block = PageLink()
+
+        mock_page = mock.MagicMock()
+        mock_page.specific = mock_page
+        del mock_page.is_public
+
+        value = {
+            "title": "Test title",
+            "sub_title": "Test subtitle",
+            "page": mock_page,
+        }
+
+        result = block.get_api_representation(value=value, context={})
+
+        assert "is_authorised" not in result
+        assert "page_classification" not in result
+        mock_check_page_permissions.assert_not_called()
+
+    @mock.patch("cms.dynamic_content.blocks.check_page_permissions")
     def test_non_public_page_permission_denied(self, mock_check_page_permissions):
         """
         Given a non-public official-sensitive page and permissions are denied
