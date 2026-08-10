@@ -70,7 +70,6 @@ def create_example_core_timeseries() -> None:
         geography_type_name="Nation",
         metric_value=78,
     )
-
     CoreTimeSeriesFactory.create_record(
         theme_name="immunisation",
         sub_theme_name="childhood-vaccines",
@@ -92,6 +91,30 @@ def create_example_core_timeseries() -> None:
         geography_name="North East",
         geography_type_name="Region",
         metric_value=84,
+    )
+    CoreTimeSeriesFactory.create_record(
+        theme_name="immunisation",
+        sub_theme_name="childhood-vaccines",
+        topic_name="MMR1",
+        metric_name="OFF-SENS_MMR1_coverage_coverageByYear",
+        stratum_name="24m",
+        date="2021-03-31",
+        geography_name="Leeds",
+        geography_type_name="Upper Tier Local Authority",
+        metric_value=94,
+        is_public=False,
+    )
+    CoreTimeSeriesFactory.create_record(
+        theme_name="immunisation",
+        sub_theme_name="childhood-vaccines",
+        topic_name="MMR1",
+        metric_name="OFF-SENS_MMR1_coverage_coverageByYear",
+        stratum_name="24m",
+        date="2021-03-31",
+        geography_name="North West",
+        geography_type_name="Region",
+        metric_value=95,
+        is_public=False,
     )
     # There is intentionally no corresponding record for England / MMR1 / 24m
 
@@ -132,4 +155,17 @@ def create_example_core_headlines() -> None:
         geography="England",
         geography_type="Nation",
         metric_value=90,
+    )
+    CoreHeadlineFactory.create_record(
+        theme="infectious_disease",
+        sub_theme="respiratory",
+        topic="COVID-19",
+        metric="COVID-19_headline_tests_7DayTotal",
+        stratum="default",
+        period_start="2021-03-31",
+        period_end="2021-03-31",
+        geography="Scotland",
+        geography_type="Nation",
+        metric_value=90,
+        is_public=False,
     )

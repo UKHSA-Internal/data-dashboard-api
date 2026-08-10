@@ -1,6 +1,7 @@
 import copy
 import csv
 import io
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from rest_framework.test import APIClient
 from metrics.api.views.downloads.subplot_downloads.request_example import (
     REQUEST_PAYLOAD_EXAMPLE,
 )
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.integration.metrics.api.views.downloads.subplot_downloads.common import (
     create_example_core_timeseries,
     create_example_core_headlines,
@@ -21,7 +23,16 @@ class TestDownloadsSubplotView:
         return "/api/downloads/subplot/v1/"
 
     @pytest.mark.django_db
-    def test_csv_download_for_timeseries_data_with_filtered_metric_value_ranges(self):
+    @pytest.mark.parametrize(
+        ("authenticated_user", "no_of_expected_rows"),
+        [
+            (True, 5),
+            (False, 3),
+        ],
+    )
+    def test_csv_download_for_timeseries_data_with_filtered_metric_value_ranges(
+        self, authenticated_user, no_of_expected_rows
+    ):
         """
         Given a valid payload to create a JSON subplot download
             which filters for a particular `metric_value_range`
@@ -30,12 +41,47 @@ class TestDownloadsSubplotView:
         """
         # Given
         client = APIClient()
+        if authenticated_user:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
+
         valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         valid_payload["file_format"] = "csv"
         valid_payload["chart_parameters"]["metric_value_ranges"] = [
             # We're asking for 1 boundary, excluding anything under 90
             {"start": 90, "end": 100}
         ]
+        valid_payload["subplots"].append(
+            {
+                "subplot_title": "OFF SENS MMR1 (24 months)",
+                "subplot_parameters": {
+                    "topic": "MMR1",
+                    "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                    "stratum": "24m",
+                },
+                "plots": [
+                    {
+                        "label": "North West",
+                        "geography": "North West",
+                        "geography_type": "Region",
+                        "line_colour": "COLOUR_4_ORANGE",
+                    },
+                    {
+                        "label": "Leeds",
+                        "geography": "Leeds",
+                        "geography_type": "Upper Tier Local Authority",
+                        "line_colour": "COLOUR_5_DARK_GREY",
+                    },
+                ],
+            }
+        )
+
         create_example_core_timeseries()
 
         # When
@@ -47,58 +93,19 @@ class TestDownloadsSubplotView:
         csv_reader = csv.DictReader(io.StringIO(response.text))
         rows = list(csv_reader)
 
-        expected_rows = [
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "97.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "6-in-1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "6-in-1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "12m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "90.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "immunisation",
-                "sub_theme": "childhood-vaccines",
-                "topic": "MMR1",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "MMR1_coverage_coverageByYear",
-                "sex": "all",
-                "age": "all",
-                "stratum": "24m",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "93.0000",
-                "in_reporting_delay_period": "False",
-            },
-        ]
-
-        assert len(rows) == len(expected_rows)
+        assert len(rows) == no_of_expected_rows
 
     @pytest.mark.django_db
-    def test_csv_download_for_headline_data(self):
+    @pytest.mark.parametrize(
+        ("authenticated_user", "no_of_expected_rows"),
+        [
+            (True, 4),
+            (False, 3),
+        ],
+    )
+    def test_csv_download_for_headline_data(
+        self, authenticated_user, no_of_expected_rows
+    ):
         """
         Given a valid payload to create a JSON subplot download
         When a POST request is made to `/api/downloads/subplot/v1/`
@@ -106,6 +113,16 @@ class TestDownloadsSubplotView:
         """
         # Given
         client = APIClient()
+        if authenticated_user:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
+
         valid_payload = {
             "file_format": "csv",
             "chart_height": 300,
@@ -155,6 +172,12 @@ class TestDownloadsSubplotView:
                             "geography_type": "Upper Tier Local Authority",
                             "line_colour": "COLOUR_3_DARK_PINK",
                         },
+                        {
+                            "label": "Scotland",
+                            "geography": "Scotland",
+                            "geography_type": "Nation",
+                            "line_colour": "COLOUR_4_ORANGE",
+                        },
                     ],
                 },
             ],
@@ -170,52 +193,4 @@ class TestDownloadsSubplotView:
         csv_reader = csv.DictReader(io.StringIO(response.text))
         rows = list(csv_reader)
 
-        expected_rows = [
-            {
-                "theme": "infectious_disease",
-                "sub_theme": "respiratory",
-                "topic": "COVID-19",
-                "geography_type": "Nation",
-                "geography": "England",
-                "metric": "COVID-19_headline_tests_7DayTotal",
-                "sex": "all",
-                "age": "all",
-                "stratum": "default",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "88.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "infectious_disease",
-                "sub_theme": "respiratory",
-                "topic": "COVID-19",
-                "geography_type": "Region",
-                "geography": "North East",
-                "metric": "COVID-19_headline_tests_7DayTotal",
-                "sex": "all",
-                "age": "all",
-                "stratum": "default",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "85.0000",
-                "in_reporting_delay_period": "False",
-            },
-            {
-                "theme": "infectious_disease",
-                "sub_theme": "respiratory",
-                "topic": "COVID-19",
-                "geography_type": "Upper Tier Local Authority",
-                "geography": "Darlington",
-                "metric": "COVID-19_headline_tests_7DayTotal",
-                "sex": "all",
-                "age": "all",
-                "stratum": "default",
-                "year": "2023",
-                "date": "2021-03-31",
-                "metric_value": "86.0000",
-                "in_reporting_delay_period": "False",
-            },
-        ]
-
-        assert len(rows) == len(expected_rows)
+        assert len(rows) == no_of_expected_rows

@@ -1,11 +1,13 @@
 import datetime
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreHeadline, Topic
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 
 
 class TestTrendsView:
@@ -25,6 +27,15 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
         main_record, percentage_record = core_trend_example
         topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
@@ -73,6 +84,15 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
         main_record, percentage_record = core_trend_example
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name

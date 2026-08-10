@@ -1,11 +1,13 @@
 import datetime
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
@@ -85,6 +87,16 @@ class TestDualCategoryTablesView:
         """
         # Given
         client = APIClient()
+        if not core_headline_example.is_public:
+            mock_user = mock.MagicMock()
+            mock_user.username = "restricted-user"
+
+            mock_user.permission_sets = UserPermissionsFactory(
+                [],
+                has_global_access=True,
+            )
+            client.force_authenticate(user=mock_user, token="token")
+
         theme: str = (
             core_headline_example.metric.metric_group.topic.sub_theme.theme.name
         )
