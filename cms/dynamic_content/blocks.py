@@ -72,7 +72,8 @@ class PageLinkChooserBlock(PageChooserBlock):
     @classmethod
     def get_api_representation(cls, value, context=None) -> str | None:
         if value:
-            return value.full_url
+            return value.specific.full_url
+
         return None
 
 
@@ -204,7 +205,9 @@ class PageLink(StructBlock):
         required=False,
         help_text=help_texts.PAGE_LINK_SUB_TITLE,
     )
-    page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
+    page = PageLinkChooserBlock(
+        target_model=["topic.TopicPage", "composite.CompositePage"]
+    )
 
     def get_api_representation(self, value, context=None):
         data = super().get_api_representation(value, context)
@@ -220,6 +223,9 @@ class PageLink(StructBlock):
         page = page.specific
         request = context.get("request") if context else None
         user = getattr(request, "user", None)
+
+        if not hasattr(page, "is_public"):
+            return data
 
         if not page.is_public:
             user_permissions = getattr(user, "permission_sets", None)
