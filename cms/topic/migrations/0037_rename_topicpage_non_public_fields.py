@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("topic", "0035_alter_topicpage_body_dual_category_update"),
+        ("topic", "0036_alter_topicpage_add_HeadlineChartWithDescriptionCard"),
     ]
 
     operations = [
