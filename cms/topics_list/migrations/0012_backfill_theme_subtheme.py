@@ -13,7 +13,7 @@ def noop(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("topics_list", "0010_alter_topicslistpage_body"),
+        ("topics_list", "0011_alter_topicslistpage_body"),
     ]
     operations = [
         migrations.RunPython(backfill_topics_list_pages, noop),
