@@ -9,7 +9,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("topic", "0035_alter_topicpage_body_dual_category_update"),
+        ("topic", "0037_rename_topicpage_non_public_fields"),
     ]
 
     operations = [
