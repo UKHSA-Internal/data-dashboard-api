@@ -772,6 +772,7 @@ class TestIncomingBaseValidationForIntegratedCareBoardCode:
         "geography_code",
         (
             VALID_INTEGRATED_CARE_BOARD_CODE,
+            "T6Y0W",
             "RTE",
             "R0A",
             "AD2",
