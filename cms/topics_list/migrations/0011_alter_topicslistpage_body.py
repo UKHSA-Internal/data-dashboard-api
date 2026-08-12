@@ -10,12 +10,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("home", "0038_alter_landingpage_body_dual_category_update"),
+        ("topics_list", "0010_alter_topicslistpage_add_HeadlineChartWithDescriptionCard"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="landingpage",
+            model_name="topicslistpage",
             name="body",
             field=wagtail.fields.StreamField(
                 [("section", 110)],
