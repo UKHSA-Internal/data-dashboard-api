@@ -113,6 +113,7 @@ class _RespiratoryTopic(Enum):
     ASTHMA = "asthma"
     UPPER_RESPIRATORY_TRACT_INFECTION = "upper-respiratory-tract-infection"
     LOWER_RESPIRATORY_TRACT_INFECTION = "lower-respiratory-tract-infection"
+    MYCOPLASMA = "mycoplasma"
 
 
 class _InvasiveBacterialInfectionsTopic(Enum):
