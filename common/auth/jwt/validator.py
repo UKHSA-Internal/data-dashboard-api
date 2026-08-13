@@ -73,7 +73,7 @@ class CognitoTokenValidator:
         token_payload = jwt.decode(
             token, options={"verify_signature": False}  # noqa: S5659
         )
-        logger.info("JWT decoded - %s", token_payload)
+        logger.debug("JWT decoded - %s", token_payload)
 
         if "aud" in token_payload:
             params.update({"audience": self.audience})
