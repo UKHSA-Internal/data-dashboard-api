@@ -20,6 +20,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_headline_chart_types,
     get_simplified_chart_types,
 )
+from metrics.domain.common.utils import extract_metric_group_from_metric
 from validation.data_transfer_models.base import IncomingBaseDataModel
 
 DEFAULT_GEOGRAPHY = "England"
@@ -153,8 +154,10 @@ class BaseMetricsElement(blocks.StructBlock):
             StructBlockValidationError on the metric if a group was not extractable
         """
         try:
-            return value["metric"].split("_")[1]
-        except IndexError as e:
+            return MetricsAPIInterface.get_metric_group_from_metric(
+                metric=value["metric"]
+            )
+        except (KeyError, TypeError, ValueError) as e:
             raise blocks.StructBlockValidationError(
                 block_errors={
                     "metric": ValidationError("Invalid metric, could not extract group")
