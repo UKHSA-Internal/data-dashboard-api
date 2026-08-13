@@ -20,7 +20,6 @@ from cms.metrics_interface.field_choices_callables import (
     get_headline_chart_types,
     get_simplified_chart_types,
 )
-from metrics.domain.common.utils import extract_metric_group_from_metric
 from validation.data_transfer_models.base import IncomingBaseDataModel
 
 DEFAULT_GEOGRAPHY = "England"
