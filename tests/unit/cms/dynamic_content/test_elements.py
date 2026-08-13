@@ -12,12 +12,12 @@ from cms.metrics_interface import MetricsAPIInterface
 class TestValidateMetricGroup:
 
     @pytest.mark.parametrize(
-            "metric, expected_group",
-            [
-                ("covid-19_testing_count", "testing"),
-                ("OFF-SENS_influenza_headline_positivityLatest", "headline"),
-                ("OFF-SENS_MMR1_coverage_coverageByYear", "coverage"),
-            ]
+        "metric, expected_group",
+        [
+            ("covid-19_testing_count", "testing"),
+            ("OFF-SENS_influenza_headline_positivityLatest", "headline"),
+            ("OFF-SENS_MMR1_coverage_coverageByYear", "coverage"),
+        ],
     )
     def test_successful_extraction(self, metric: str, expected_group: str):
         """

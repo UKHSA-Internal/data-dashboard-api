@@ -39,9 +39,7 @@ class TestMetricsAPIInterface:
         metric = "OFF-SENS_influenza_headline_positivityLatest"
 
         # When
-        metric_group = metrics_api_interface.get_metric_group_from_metric(
-            metric=metric
-        )
+        metric_group = metrics_api_interface.get_metric_group_from_metric(metric=metric)
 
         # Then
         assert metric_group == spy_extract_metric_group_from_metric.return_value
