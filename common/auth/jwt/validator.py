@@ -89,7 +89,7 @@ class CognitoTokenValidator:
 
         if "aud" in token_payload:
             params.update({"audience": self.audience})
-        
+
         try:
             jwt_data = jwt.decode(**params)
         except (
