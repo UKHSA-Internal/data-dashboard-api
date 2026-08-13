@@ -138,7 +138,7 @@ def create_regression_search_pages():
         terms_of_service_error="Please accept the terms of service",
         disagree_button="I do not agree",
         agree_button="I agree",
-        seo_title="regression-search-acknowledgement"
+        seo_title="regression-search-acknowledgement",
     )
     home.add_child(instance=acknowledgement_page)
     acknowledgement_page = set_last_published_at(page=acknowledgement_page)
@@ -248,7 +248,7 @@ class TestCMSPagesAPIViewSetPermissions:
             terms_of_service_error="Please accept the terms of service",
             disagree_button="I do not agree",
             agree_button="I agree",
-            seo_title="acknowledgement"
+            seo_title="acknowledgement",
         )
         home.add_child(instance=acknowledgement_page)
 
