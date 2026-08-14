@@ -10,7 +10,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("topics_list", "0010_alter_topicslistpage_add_HeadlineChartWithDescriptionCard"),
+        (
+            "topics_list",
+            "0010_alter_topicslistpage_add_HeadlineChartWithDescriptionCard",
+        ),
     ]
 
     operations = [
