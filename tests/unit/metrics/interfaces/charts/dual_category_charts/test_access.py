@@ -243,6 +243,8 @@ class TestDualCategoryChartsInterface:
             y_axis_title="Cases",
             secondary_category="age",
         )
+        dual_category_chart_request_params.is_public = False
+        dual_category_chart_request_params.data_classification = "official_sensitive"
         charts_interface = DualCategoryChartsInterface(
             chart_request_params=dual_category_chart_request_params,
         )
@@ -253,3 +255,8 @@ class TestDualCategoryChartsInterface:
         # Then
         assert isinstance(chart_output, ChartOutput)
         assert chart_output.figure == mock_build_chart_figure.return_value
+        assert (
+            chart_output.chart_width == dual_category_chart_request_params.chart_width
+        )
+        assert chart_output.is_public is False
+        assert chart_output.data_classification == "official_sensitive"

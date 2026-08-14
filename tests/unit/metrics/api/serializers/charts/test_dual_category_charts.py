@@ -322,6 +322,8 @@ class TestDualCategoryChartSerializer:
         valid_payload.pop("primary_field_values", None)
         valid_payload["static_fields"]["topic"] = plot_payload["topic"]
         valid_payload["static_fields"]["metric"] = plot_payload["metric"]
+        valid_payload["is_public"] = False
+        valid_payload["data_classification"] = "offcial_sensitive"
 
         serializer_context = {
             "topic_manager": topic_manager,
