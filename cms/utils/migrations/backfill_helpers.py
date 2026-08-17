@@ -7,6 +7,7 @@ change that would require extensive changes throughout the CMS following deploym
 automated. These functions apply the required changes throughout the database to prevent
 any potential downtime, or error pages encountered by users due to a schema mismatch.
 """
+
 from wagtail.fields import StreamValue
 
 
