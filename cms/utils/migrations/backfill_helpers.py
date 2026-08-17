@@ -1,3 +1,12 @@
+"""
+This file contains a set of utility functions for handling the backfill of data via Django migrations.
+
+backfill_pages_with_theme_and_subtheme was introduced when changes were added to the codebase
+that made theme and subtheme mandatory across all pages. Introducing this would be a breaking
+change that would require extensive changes throughout the CMS following deployment if not
+automated. These functions apply the required changes throughout the database to prevent
+any potential downtime, or error pages encountered by users due to a schema mismatch.
+"""
 from wagtail.fields import StreamValue
 
 
@@ -42,9 +51,9 @@ def _fill_node(node, topic_map) -> bool:
 def backfill_pages_with_theme_and_subtheme(apps, model_section, model_name):
     topic_map = _build_topic_map(apps)
 
-    LandingPage = apps.get_model(model_section, model_name)
+    app_model = apps.get_model(model_section, model_name)
 
-    for page in LandingPage.objects.all().iterator():
+    for page in app_model.objects.all().iterator():
         if not page.body:
             continue
 
