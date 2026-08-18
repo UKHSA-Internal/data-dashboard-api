@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from django.http import StreamingHttpResponse
+from django.views.decorators.http import require_http_methods
 
 from cms.auth_content.exporters import generate_user_permission_sets_csv_rows
 from cms.auth_content.models.users import User
@@ -9,6 +10,7 @@ from cms.auth_content.models.users import User
 audit_logger = logging.getLogger("audit")
 
 
+@require_http_methods(["GET"])
 def export_user_permission_sets_csv(request):
     user_id = (
         request.user.id
