@@ -1,11 +1,11 @@
 from functools import reduce
 
 from rest_framework.fields import CharField
-from rest_framework.serializers import HyperlinkedIdentityField, Serializer
+from rest_framework.serializers import Serializer
 from rest_framework_nested.serializers import NestedHyperlinkedIdentityField
 
 
-class PrefixedHyperlinkedIdentityField(HyperlinkedIdentityField):
+class PrefixedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
     url_prefix = ""
 
     def get_url(self, obj, view_name, request, format):
@@ -15,29 +15,6 @@ class PrefixedHyperlinkedIdentityField(HyperlinkedIdentityField):
         May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
         attributes are not configured to correctly match the URL conf.
         """
-        # Unsaved objects will not yet have a valid URL.
-        if hasattr(obj, "pk") and obj.pk in (None, ""):
-            return None
-
-        lookup_value = getattr(obj, self.lookup_field)
-        kwargs = {self.lookup_url_kwarg: lookup_value}
-        url = obj.url_prefix + "-" + view_name
-        return self.reverse(kwargs=kwargs, request=request, format=format, viewname=url)
-
-
-class NestedPrefixedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
-    url_prefix = ""
-
-    def get_url(self, obj, view_name, request, format):
-        """
-        Given an object, return the URL that hyperlinks to the object.
-
-        May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
-        attributes are not configured to correctly match the URL conf.
-        """
-        # Unsaved objects will not yet have a valid URL.
-        if hasattr(obj, "pk") and obj.pk in (None, ""):
-            return None
         # default lookup from rest_framework.relations.HyperlinkedRelatedField
         lookup_value = getattr(obj, self.lookup_field)
         kwargs = {self.lookup_url_kwarg: lookup_value}
@@ -54,8 +31,11 @@ class NestedPrefixedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
                 # use the Django ORM to lookup this value, e.g., obj.parent.pk
                 lookup_value = reduce(getattr, [obj] + lookups)  # type: ignore[operator,arg-type]
             except AttributeError:
-                # Not nested. Act like a standard HyperlinkedRelatedField
-                return super().get_url(obj, view_name, request, format)
+                # Not nested, just look it up
+                url = obj.url_prefix + "-" + view_name
+                return self.reverse(
+                    kwargs=kwargs, request=request, format=format, viewname=url
+                )
 
             # store the lookup_name and value in kwargs, which is later passed to the reverse method
             kwargs.update({parent_lookup_kwarg: lookup_value})
@@ -83,7 +63,7 @@ class ThemeDetailSerializerv3(Serializer):
 
 class SubThemeListSerializerv3(Serializer):
     name = CharField()
-    link = NestedPrefixedHyperlinkedIdentityField(
+    link = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="sub_theme-detail-v3",
         lookup_field="sub_theme",
@@ -92,7 +72,7 @@ class SubThemeListSerializerv3(Serializer):
 
 
 class SubThemeDetailSerializerv3(Serializer):
-    topics = NestedPrefixedHyperlinkedIdentityField(
+    topics = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="topic-list-v3",
         lookup_field="sub_theme",
@@ -105,7 +85,7 @@ class SubThemeDetailSerializerv3(Serializer):
 
 class TopicListSerializerv3(Serializer):
     name = CharField()
-    link = NestedPrefixedHyperlinkedIdentityField(
+    link = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="topic-detail-v3",
         lookup_field="topic",
@@ -117,7 +97,7 @@ class TopicListSerializerv3(Serializer):
 
 
 class TopicDetailSerializerv3(Serializer):
-    geography_types = NestedPrefixedHyperlinkedIdentityField(
+    geography_types = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography_type-list-v3",
         lookup_field="topic",
@@ -131,7 +111,7 @@ class TopicDetailSerializerv3(Serializer):
 
 class GeographyTypeListSerializerv3(Serializer):
     name = CharField()
-    link = NestedPrefixedHyperlinkedIdentityField(
+    link = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography_type-detail-v3",
         lookup_field="geography_type",
@@ -144,7 +124,7 @@ class GeographyTypeListSerializerv3(Serializer):
 
 
 class GeographyTypeDetailSerializerv3(Serializer):
-    geographies = NestedPrefixedHyperlinkedIdentityField(
+    geographies = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography-list-v3",
         lookup_field="geography_type",
@@ -159,7 +139,7 @@ class GeographyTypeDetailSerializerv3(Serializer):
 
 class GeographyListSerializerv3(Serializer):
     name = CharField()
-    link = NestedPrefixedHyperlinkedIdentityField(
+    link = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography-detail-v3",
         lookup_field="geography",
@@ -173,7 +153,7 @@ class GeographyListSerializerv3(Serializer):
 
 
 class GeographyDetailSerializerv3(Serializer):
-    metrics = NestedPrefixedHyperlinkedIdentityField(
+    metrics = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="metric-list-v3",
         lookup_field="geography",
@@ -189,7 +169,7 @@ class GeographyDetailSerializerv3(Serializer):
 
 class MetricListSerializerv3(Serializer):
     name = CharField()
-    link = NestedPrefixedHyperlinkedIdentityField(
+    link = PrefixedHyperlinkedIdentityField(
         read_only=True,
         view_name="metric-detail-v3",
         lookup_field="metric",
