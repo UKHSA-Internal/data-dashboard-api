@@ -6,6 +6,7 @@ import pytest
 from requests.models import Response
 from rest_framework.test import RequestsClient
 
+from metrics.data.models.api_models import APIHeadline, APITimeSeries
 from tests.factories.metrics.api_models.headline import APIHeadlineFactory
 from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
 

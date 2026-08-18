@@ -57,7 +57,7 @@ class PublicAPIRootViewV3(APIView):
 
     @classmethod
     @extend_schema(tags=[PUBLIC_API_TAG])
-    def get(cls, request, format=None):
+    def get(cls, request, format=None):  # noqa:A002
         data = {
             "links": {
                 "headline/themes": reverse(

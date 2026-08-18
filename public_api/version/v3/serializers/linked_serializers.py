@@ -8,7 +8,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedIdentityField
 class PrefixedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
     url_prefix = ""
 
-    def get_url(self, obj, view_name, request, format):
+    def get_url(self, obj, view_name, request, format):  # noqa:A002
         """
         Given an object, return the URL that hyperlinks to the object.
 
