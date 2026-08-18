@@ -1,12 +1,11 @@
-from datetime import datetime
-from django.http import StreamingHttpResponse
 import logging
+from datetime import datetime
 
-from cms.auth_content.models.users import User
+from django.http import StreamingHttpResponse
+
 from cms.auth_content.exporters import generate_user_permission_sets_csv_rows
-
+from cms.auth_content.models.users import User
 from metrics.api.middleware.current_user import get_current_user
-
 
 audit_logger = logging.getLogger("audit")
 
@@ -19,7 +18,7 @@ def export_user_permission_sets_csv(request):
         extra={
             "user": user_id,
             "action": "CSV EXPORT",
-            "target": "Users and permissions"
+            "target": "Users and permissions",
         },
     )
 
@@ -29,5 +28,7 @@ def export_user_permission_sets_csv(request):
         content_type="text/csv",
     )
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    response["Content-Disposition"] = f'attachment; filename="dashboard_cms_users_{timestamp}.csv"'
+    response["Content-Disposition"] = (
+        f'attachment; filename="dashboard_cms_users_{timestamp}.csv"'
+    )
     return response

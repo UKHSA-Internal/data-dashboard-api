@@ -1,12 +1,12 @@
 from django.urls import path, reverse
 from django.utils.functional import cached_property
 from wagtail import hooks
+from wagtail.admin.views.generic import IndexView
 from wagtail.admin.viewsets.model import (
     ModelPermissionPolicy,
     ModelViewSet,
     ModelViewSetGroup,
 )
-from wagtail.admin.views.generic import IndexView
 from wagtail.admin.widgets import Button
 
 from cms.auth_content.models.api_application import APIApplication
@@ -48,12 +48,14 @@ class UserIndexView(IndexView):
         )
         return buttons
 
+
 class UserViewSet(ModelViewSet):
     model = User
     menu_label = "Users"
     icon = "user"
 
     index_view_class = UserIndexView
+
 
 class APIApplicationViewSet(ModelViewSet):
     model = APIApplication
