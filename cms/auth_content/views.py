@@ -5,14 +5,16 @@ from django.http import StreamingHttpResponse
 
 from cms.auth_content.exporters import generate_user_permission_sets_csv_rows
 from cms.auth_content.models.users import User
-from metrics.api.middleware.current_user import get_current_user
 
 audit_logger = logging.getLogger("audit")
 
 
 def export_user_permission_sets_csv(request):
-    user = get_current_user()
-    user_id = user.id if user and user.is_authenticated else "anonymous"
+    user_id = (
+        request.user.id
+        if request.user and request.user.is_authenticated
+        else "anonymous"
+    )
     audit_logger.info(
         "User permission sets relationships cleared",
         extra={
