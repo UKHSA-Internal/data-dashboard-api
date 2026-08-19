@@ -18,7 +18,7 @@ def export_user_permission_sets_csv(request):
         else "anonymous"
     )
     audit_logger.info(
-        "User permission sets relationships cleared",
+        "User permission sets exported to CSV",
         extra={
             "user": user_id,
             "action": "CSV EXPORT",

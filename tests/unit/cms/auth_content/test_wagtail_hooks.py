@@ -24,7 +24,6 @@ class TestWagtailHooks(TestCase):
 class TestUserIndexView(TestCase):
     def test_header_more_buttons(self):
         view = UserIndexView()
-        print(dir(view.header_more_buttons[0]))
         assert len(view.header_more_buttons) == 1
         assert view.header_more_buttons[0].label == "Export to CSV"
         assert view.header_more_buttons[0].url == "/cms-admin/user/export-csv/"
