@@ -11,6 +11,7 @@ from cms.auth_content.forms.non_public_page import (
 from cms.auth_content.models.non_public_page import (
     NonPublicCapablePage,
     DataClassificationLevels,
+    get_non_public_page_types,
 )
 from cms.topic.models import TopicPage
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
@@ -26,7 +27,7 @@ def test_class_coverage():
     Tests that our set of CLASSES_UNDER_TEST cover all the subclasses of the NonPublicCapablePage class. This ensures
     we don't miss any out of this test suite ensuring good coverage.
     """
-    for cls in NonPublicCapablePage.__subclasses__():
+    for cls in get_non_public_page_types():
         # skip any mock classes which have been created prior to this test running
         if cls.__module__.startswith("tests."):
             continue
