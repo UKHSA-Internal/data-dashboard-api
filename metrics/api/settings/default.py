@@ -341,6 +341,8 @@ SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+SILK_PROFILING_ENABLED = False
+
 PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "false").lower() in {
     "1",
     "true",
