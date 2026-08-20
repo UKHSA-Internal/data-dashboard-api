@@ -33,8 +33,12 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
@@ -73,8 +77,12 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
@@ -115,8 +123,12 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
@@ -178,15 +190,23 @@ class TestTablesView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
                 },
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "label": "plot_label",
                     "date_from": "2000-01-01",
@@ -259,8 +279,12 @@ class TestTablesView:
             "y_axis": "metric",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": topic_name,
                     "metric": metric_name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "sex": "f",
                     "label": "female",
@@ -303,8 +327,12 @@ class TestTablesView:
         valid_payload = {
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries_example[0].metric.topic.name,
                     "metric": core_timeseries_example[0].metric.name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "age": "non-existent-age",
                 }

@@ -186,3 +186,59 @@ class TestGeographyManager:
 
         # Then
         assert geography_code == liverpool_combined_authority.geography_code
+
+    @pytest.mark.django_db
+    def test_get_geography_type_id_and_code_by_name(self):
+        """
+        Given some Geography records that share a name across geography types
+        When get_geography_type_id_and_code_by_name() is called with a specific geography_type
+        Then the matching (geography_type_id, geography_code) pair is returned
+        """
+
+        # Given
+        GeographyFactory.create_with_geography_type(
+            name="Liverpool",
+            geography_code="E08000012",
+            geography_type="Lower Tier Local Authority",
+        )
+        liverpool_combined_authority = GeographyFactory.create_with_geography_type(
+            name="Liverpool",
+            geography_code="E47000004",
+            geography_type="Combined Authority",
+        )
+
+        # When
+        result = Geography.objects.get_geography_type_id_and_code_by_name(
+            "Liverpool", "Combined Authority"
+        )
+
+        # Then
+        assert result == (
+            liverpool_combined_authority.geography_type_id,
+            liverpool_combined_authority.geography_code,
+        )
+
+    @pytest.mark.django_db
+    def test_get_geography_type_id_and_code_by_name_returns_none_for_inconsistent_pair(
+        self,
+    ):
+        """
+        Given a Geography that belongs to one geography_type
+        When get_geography_type_id_and_code_by_name() is called with a different geography_type
+        Then (None, None) is returned
+        """
+
+        # Given
+        GeographyFactory.create_with_geography_type(
+            name="Liverpool",
+            geography_code="E47000004",
+            geography_type="Combined Authority",
+        )
+
+        # When
+        result = Geography.objects.get_geography_type_id_and_code_by_name(
+            "Liverpool", "Nation"
+        )
+
+        # Then
+        assert result == (None, None)
