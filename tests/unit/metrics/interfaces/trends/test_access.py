@@ -15,6 +15,8 @@ class TestTrendsInterface:
     @property
     def example_trend_parameters(self) -> TrendsParameters:
         return TrendsParameters(
+            theme="infectious_disease",
+            sub_theme="respiratory",
             topic="COVID-19",
             metric="COVID-19_headline_ONSdeaths_7DayChange",
             percentage_metric="COVID-19_headline_ONSdeaths_7DayPercentChange",
@@ -62,7 +64,6 @@ class TestTrendsInterface:
         metric_name = trend_parameters.metric_name
         percentage_metric_name = trend_parameters.percentage_metric_name
         params = trend_parameters.to_dict_for_main_metric_query()
-        params.pop("rbac_permissions")
         params["percentage_metric"] = percentage_metric_name
 
         period_end = "2024-02-29"

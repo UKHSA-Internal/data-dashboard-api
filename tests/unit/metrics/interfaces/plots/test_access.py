@@ -27,7 +27,6 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
 )
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
-from tests.fakes.managers.topic_manager import FakeTopicManager
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.queryset import FakeQuerySet
 
@@ -106,9 +105,11 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_cases_topic_cases_abc",
-            topic="non_cases_topic",
             chart_type="line",
+            topic="non_cases_topic",
+            metric="non_cases_topic_cases_abc",
+            geography="England",
+            geography_type="Nation",
             date_from="2023-01-01",
             date_to="2023-12-31",
         )
@@ -241,9 +242,11 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_cases_topic_cases_abc",
-            topic="non_cases_topic",
             chart_type="line",
+            topic="non_cases_topic",
+            metric="non_cases_topic_cases_abc",
+            geography="England",
+            geography_type="Nation",
             date_from="2023-01-01",
             date_to="2023-12-31",
         )
@@ -617,19 +620,20 @@ class TestPlotsInterface:
             permission_sets=mocked_chart_request_params.permission_sets,
         )
 
-    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
-    def test_get_queryset_from_core_model_manager_passes_theme_and_topic_into_query_when_auth_enabled(
+    def test_get_queryset_from_core_model_manager_passes_theme_and_sub_theme_through_from_plot_params(
         self,
     ):
         """
-        Given a `CoreHeadlineManager`
-        When `get_headline_data` is called from an instance of `PlotsInterface`
-        Then the correct method is called from `CoreHeadlineManager` to retrieve headline data.
+        Given `plot_params` which already contain `theme` and `sub_theme`
+            (posted by the front-end)
+        When `get_queryset_from_core_model_manager` is called
+            from an instance of `PlotsInterface`
+        Then those `theme` and `sub_theme` values are passed straight through to
+            the core model manager (i.e. they are no longer derived from the topic)
         """
         # Given
         spy_core_headline_manager = mock.Mock()
         fake_metric = FakeMetricFactory.build_example_metric()
-        fake_topic_manager = FakeTopicManager(topics=[fake_metric.topic])
 
         mocked_x_axis = mock.Mock()
         mocked_y_axis = mock.Mock()
@@ -644,12 +648,13 @@ class TestPlotsInterface:
         plots_interface = PlotsInterface(
             chart_request_params=mocked_chart_request_params,
             core_model_manager=spy_core_headline_manager,
-            topic_model_manager=fake_topic_manager,
         )
 
         # When
         plots_params = {
             "fields_to_export": [mocked_x_axis, mocked_y_axis],
+            "theme": fake_metric.topic.sub_theme.theme.name,
+            "sub_theme": fake_metric.topic.sub_theme.name,
             "topic": fake_metric.topic.name,
             "metric": fake_metric.name,
             "geography": mocked_geography,
@@ -667,6 +672,8 @@ class TestPlotsInterface:
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
             fields_to_export=[mocked_x_axis, mocked_y_axis],
+            theme=fake_metric.topic.sub_theme.theme.name,
+            sub_theme=fake_metric.topic.sub_theme.name,
             topic=fake_metric.topic.name,
             metric=fake_metric.name,
             geography=mocked_geography,
@@ -676,8 +683,6 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
-            theme=fake_metric.topic.sub_theme.theme.name,
-            sub_theme=fake_metric.topic.sub_theme.name,
             permission_sets=mocked_chart_request_params.permission_sets,
         )
 

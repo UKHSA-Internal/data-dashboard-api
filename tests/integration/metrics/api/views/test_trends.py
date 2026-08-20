@@ -17,6 +17,7 @@ class TestTrendsView:
     def test_get_returns_correct_response(
         self,
         core_trend_example: tuple[CoreHeadline, CoreHeadline],
+        user_global_access,
     ):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
@@ -25,6 +26,8 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         main_record, percentage_record = core_trend_example
         topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
@@ -34,11 +37,13 @@ class TestTrendsView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": topic_name,
                 "metric": metric_name,
-                "percentage_metric": percentage_metric_name,
                 "geography": main_record.geography.name,
                 "geography_type": main_record.geography.geography_type.name,
+                "percentage_metric": percentage_metric_name,
                 "sex": main_record.sex,
                 "age": main_record.age,
                 "stratum": main_record.stratum.name,
@@ -63,6 +68,7 @@ class TestTrendsView:
     def test_get_returns_error_message_for_timeseries_type_metric(
         self,
         core_trend_example: tuple[CoreHeadline, CoreHeadline],
+        user_global_access,
     ):
         """
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`
@@ -71,6 +77,8 @@ class TestTrendsView:
         """
         # Given
         client = APIClient()
+        if not core_trend_example[0].is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         main_record, percentage_record = core_trend_example
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
@@ -84,6 +92,8 @@ class TestTrendsView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": incorrect_topic_name,
                 "metric": metric_name,
                 "percentage_metric": percentage_metric_name,
