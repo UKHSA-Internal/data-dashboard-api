@@ -26,7 +26,10 @@ from metrics.domain.models.downloads.dual_category import (
 from metrics.interfaces.downloads.dual_category.access import (
     get_dual_category_downloads_data,
 )
-from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 
 EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD = {
     "file_format": "json",
@@ -193,7 +196,7 @@ class DualCategoryDownloadsView(SingleCategoryDownloadsView):
                     download_request_params=chart_plot_models,
                 )
             )
-        except DataNotFoundForAnyPlotError as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
