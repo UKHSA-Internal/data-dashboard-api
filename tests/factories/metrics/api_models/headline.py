@@ -3,16 +3,16 @@ import datetime
 
 import factory
 from django.utils import timezone
-from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.api_models import APIHeadline
 
 
-class APITimeSeriesFactory(factory.django.DjangoModelFactory):
+class APIHeadlineFactory(factory.django.DjangoModelFactory):
     """
-    Factory for creating `APITimeSeries` instances for tests
+    Factory for creating `APIHeadline` instances for tests
     """
 
     class Meta:
-        model = APITimeSeries
+        model = APIHeadline
 
     @classmethod
     def create_record(
@@ -21,19 +21,20 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
         theme: str = "infectious_disease",
         sub_theme: str = "respiratory",
         topic: str = "COVID-19",
+        metric: str = "COVID-19_headline_positivity_latest",
+        metric_group: str = "headline",
         geography: str = "England",
         geography_type: str = "Nation",
         geography_code: str = "E92000001",
-        metric: str = "COVID-19_cases_casesByDay",
-        metric_frequency: str = "D",
         stratum: str = "default",
         age: str = "all",
         sex: str = "all",
-        year: int = 2023,
-        epiweek: int = 1,
-        refresh_date: str | datetime.datetime = datetime.datetime(2023, 8, 10),
-        date: str | datetime.date = "2023-01-01",
+        refresh_date: str | datetime.datetime = datetime.datetime(2023, 10, 1),
+        period_start: str | datetime.date = "2023-01-01",
+        period_end: str | datetime.date = "2023-01-07",
         embargo: str | datetime.datetime = datetime.datetime(2024, 4, 10),
+        upper_confidence: float | None = None,
+        lower_confidence: float | None = None,
         is_public: bool = True,
         **kwargs
     ):
@@ -45,25 +46,25 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
         )
 
         return cls.create(
-            metric_value=metric_value,
-            metric_frequency=metric_frequency,
-            metric=metric,
-            geography=geography,
-            geography_code=geography_code,
-            geography_type=geography_type,
             theme=theme,
             sub_theme=sub_theme,
             topic=topic,
+            metric_value=metric_value,
+            metric=metric,
+            metric_group=metric_group,
+            geography=geography,
+            geography_type=geography_type,
+            geography_code=geography_code,
             stratum=stratum,
             age=age,
             sex=sex,
-            year=year,
-            month=1,
-            epiweek=epiweek,
-            date=date,
-            refresh_date=refresh_date,
+            period_start=period_start,
+            period_end=period_end,
             embargo=embargo,
+            upper_confidence=upper_confidence,
+            lower_confidence=lower_confidence,
             is_public=is_public,
+            refresh_date=refresh_date,
             **kwargs
         )
 
@@ -72,11 +73,10 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
         cls, datetime_obj: str | datetime.datetime | None
     ) -> datetime.datetime:
 
-        if datetime_obj is None:
+        if datetime_obj.tzinfo is None:
             return datetime_obj
 
-        with contextlib.suppress(TypeError):
-            # If it is already a datetime object then suppress the resulting TypeError
+        with contextlib.suppress(ValueError):
             datetime_obj = datetime.datetime.strptime(datetime_obj, "%Y-%m-%d")
 
         try:
