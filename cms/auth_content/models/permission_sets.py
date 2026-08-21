@@ -115,6 +115,10 @@ class PermissionSet(models.Model):
         parts = [part.strip() for part in self.name.split("|")]
         return mark_safe("<br>".join(parts))
 
+    @property
+    def global_access(self):
+        return self.theme == "-1" and self.geography_type == "-1"
+
     panels = [
         FieldPanel("display_name"),
         FieldPanel("theme"),
