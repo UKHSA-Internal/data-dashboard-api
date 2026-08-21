@@ -96,18 +96,20 @@ class TestBuildEntryFromRowData:
             "Fake page description",
             "Fake methodology content",
             "Fake caveats content",
-            1,
+            "Fake_metric_name",
         )
         spy_build_sections.return_value = []
         expected_response = {
             "title": "Fake title",
-            "topic": "Fake",
-            "theme": "test",
-            "sub_theme": "test",
+            "is_public": True,
+            "page_theme": "",
+            "page_sub_theme": "",
+            "page_topic": "",
+            "page_classification": "",
             "seo_title": "Fake title | UKHSA data dashboard",
             "search_description": "Fake page description",
             "page_description": "Fake page description",
-            "metric": 1,
+            "metric": "Fake_metric_name",
             "body": [],
         }
 
@@ -154,14 +156,16 @@ class TestGetMetricsDefinitions:
         spy_load_source_data_as_worksheet.return_value = self.build_worksheet()
         expected_response = [
             {
+                "is_public": True,
+                "page_classification": "",
+                "page_theme": "",
+                "page_sub_theme": "",
+                "page_topic": "",
                 "title": "Fake title",
-                "topic": "Fake",
-                "theme": "test",
-                "sub_theme": "test",
+                "metric": "Fake_metric_name",
                 "seo_title": "Fake title | UKHSA data dashboard",
                 "search_description": "Fake page description",
                 "page_description": "Fake page description",
-                "metric": 1,
                 "body": [
                     {
                         "type": "section",
