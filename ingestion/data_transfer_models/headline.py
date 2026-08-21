@@ -20,6 +20,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
     lower_confidence: float | None = None
+    force_write: bool = False
     is_public: bool = True
 
     @field_validator("embargo")
@@ -166,18 +167,19 @@ def _build_enriched_headline_specific_fields(
 ) -> list[InboundHeadlineSpecificFields]:
     return [
         InboundHeadlineSpecificFields(
-            period_start=individual_time_series["period_start"],
-            period_end=individual_time_series["period_end"],
-            embargo=individual_time_series["embargo"],
-            upper_confidence=individual_time_series.get("upper_confidence", None),
-            metric_value=individual_time_series["metric_value"],
-            lower_confidence=individual_time_series.get("lower_confidence", None),
+            period_start=headline["period_start"],
+            period_end=headline["period_end"],
+            embargo=headline["embargo"],
+            upper_confidence=headline.get("upper_confidence", None),
+            metric_value=headline["metric_value"],
+            lower_confidence=headline.get("lower_confidence", None),
             is_public=(
-                individual_time_series["is_public"]
+                headline["is_public"]
                 if not ALLOW_MISSING_IS_PUBLIC_FIELD
-                else individual_time_series.get("is_public", True)
+                else headline.get("is_public", True)
             ),
+            force_write=headline.get("force_write", False),
         )
-        for individual_time_series in source_data["data"]
-        if individual_time_series["metric_value"] is not None
+        for headline in source_data["data"]
+        if headline["metric_value"] is not None
     ]
