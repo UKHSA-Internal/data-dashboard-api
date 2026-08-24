@@ -17,6 +17,7 @@ from metrics.api.serializers.geographies import (
 )
 from metrics.api.views.permission_sets import PERMISSION_SETS_API_TAG
 
+from common.auth.permissions import filter_geographies_by_permission
 GEOGRAPHIES_API_TAG = "geographies"
 
 
@@ -49,6 +50,8 @@ class GeographiesViewDeprecated(APIView):
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
+        data = filter_geographies_by_permission(request=request, data=data)
+        print(f"Filtered geographies by permission: {data}")
 
         return Response(data)
 
@@ -85,7 +88,9 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-
+            data = filter_geographies_by_permission(request=request, data=data)
+            print(f"Filtered geographies by permission: {data}")
+            
         return Response(data)
 
     @classmethod
