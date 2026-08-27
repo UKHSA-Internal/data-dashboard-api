@@ -2,6 +2,8 @@ bandit==1.9.4
 black==26.5.1
 coverage==7.14.1
 cyclonedx-python-lib==11.8.0
+django-debug-toolbar==6.3.0
+django-silk==5.5.2
 django-factory-boy==1.0.0
 factory-boy==3.3.3
 freezegun==1.5.5
@@ -24,4 +26,3 @@ pytest-random-order==1.2.0
 pytest-responses==0.6.0
 ruff==0.15.20
 stevedore==5.9.0
-django-debug-toolbar==6.3.0
