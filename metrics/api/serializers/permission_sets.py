@@ -105,10 +105,11 @@ class TopicRequestSerializer(serializers.Serializer):
 
 
 class MetricRequestSerializer(serializers.Serializer):
-    """Fetches and formats metrics related to topics based on provided parent topic_id"""
+    """Fetches and formats metrics related to topics based on provided parent topic_id and public classification"""
 
     topic_id = serializers.CharField(required=True)
-
+    is_public = serializers.BooleanField(required=False)
+    
     @property
     def metric_manager(self):
         """
@@ -130,6 +131,7 @@ class MetricRequestSerializer(serializers.Serializer):
             Dict with 'choices' key containing list of [id, name] pairs
         """
         topic_id = self.validated_data["topic_id"]
+        is_public = self.validated_data.get("is_public")
 
         if topic_id == PERMISSION_SET_WILDCARD_ID_VALUE:
             return {"choices": [[PERMISSION_SET_WILDCARD_ID_VALUE, "* (All metrics)"]]}
@@ -137,7 +139,8 @@ class MetricRequestSerializer(serializers.Serializer):
         parent_topic_id = int(topic_id)
         metric_tuples = _queryset_to_id_name_tuples(
             self.metric_manager.get_filtered_unique_names_related_to_parent_topic_id(
-                parent_topic_id
+                parent_topic_id,
+                is_public=is_public
             )
         )
 

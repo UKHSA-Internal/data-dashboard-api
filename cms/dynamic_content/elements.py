@@ -1,6 +1,10 @@
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django import forms
 from wagtail import blocks
+from wagtail.admin.telepath import register
+from wagtail.blocks.struct_block import StructBlockAdapter
+
 
 from cms.dynamic_content import help_texts
 from cms.metrics_interface import MetricsAPIInterface
@@ -13,7 +17,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_stratum_names,
     get_all_theme_names,
     get_all_timeseries_metric_names,
-    get_all_topic_names,
+    get_all_topic_names_and_ids,
     get_all_unique_metric_names,
     get_all_unique_sub_theme_names,
     get_chart_line_types,
@@ -54,7 +58,7 @@ class BaseMetricsElement(blocks.StructBlock):
     )
     topic = blocks.ChoiceBlock(
         required=True,
-        choices=get_all_topic_names,
+        choices=get_all_topic_names_and_ids,
         help_text=help_texts.TOPIC_FIELD,
     )
     metric = blocks.ChoiceBlock(
@@ -217,6 +221,21 @@ class BaseMetricsElement(blocks.StructBlock):
                 }
             ) from e
 
+class BaseMetricsElementAdapter(StructBlockAdapter):
+
+    js_constructor = "cms.dynamic_content.elements.BaseMetricsElement"
+
+    @property
+    def media(self):
+        structblock_media = super().media
+        return forms.Media(
+            js=structblock_media._js + [
+                "js/metric_dropdown_manager.js",
+            ],
+            css=structblock_media._css,
+        )
+
+register(BaseMetricsElementAdapter(), BaseMetricsElement)
 
 class ChartPlotElement(BaseMetricsElement):
     metric = blocks.ChoiceBlock(
