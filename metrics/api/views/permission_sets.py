@@ -54,12 +54,13 @@ class TopicsBySubThemeView(APIView):
     responses={HTTPStatus.OK.value: PermissionSetResponseSerializer},
 )
 class MetricsByTopicView(APIView):
-    """Get metrics filtered by topic ID"""
+    """Get metrics filtered by topic ID and public classification"""
 
     permission_classes = []
 
     def get(self, request, topic_id, *args, **kwargs):  # noqa: PLR6301
         """API endpoint to fetch metrics based on selected topic."""
-        serializer = MetricRequestSerializer(data={"topic_id": topic_id})
+        is_public = request.GET.get("is_public")
+        serializer = MetricRequestSerializer(data={"topic_id": topic_id, "is_public": is_public})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())
