@@ -1,9 +1,8 @@
 from typing import TypedDict
 
-from common.metrics_interface.interface import MetricsAPIInterface
-from common.auth.logging import log_user_permission_summary
-
 from cms.auth_content.auth_utils import is_auth_enabled
+from common.auth.logging import log_user_permission_summary
+from common.metrics_interface.interface import MetricsAPIInterface
 
 AUTH_ENABLED = is_auth_enabled()
 
@@ -413,7 +412,9 @@ def _is_geography_permitted(
 ) -> bool:
     """Checks one single geography against the user's permission rows."""
 
-    geography_id = geography_manager.get_code_by_name(geography_name, geography_type_name)
+    geography_id = geography_manager.get_code_by_name(
+        geography_name, geography_type_name
+    )
     if geography_type_id is None or geography_id is None:
         return False
 
@@ -431,7 +432,9 @@ def _is_geography_permitted(
             continue
 
         permission_geography_id = (
-            _normalize_permission_id(field_name="geography", permission_set=permission_set)
+            _normalize_permission_id(
+                field_name="geography", permission_set=permission_set
+            )
             or ""
         )
 
