@@ -1,5 +1,6 @@
 from contextlib import ExitStack
 from unittest.mock import patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -9,6 +10,7 @@ from common.auth.permissions import (
     check_page_permissions,
     PermissionSetsType,
     PermissionRowType,
+    filter_geographies_by_permission
 )
 
 
@@ -1161,3 +1163,129 @@ class TestCheckPagePermissions:
             sub_theme_id=sub_theme_id,
             topic_id=topic_id,
         )
+
+class TestFilterGeographiesByPermission:
+    SAMPLE_DATA = [
+        {
+            "geography_type": "Nation",
+            "geographies": [{"name": "England"}, {"name": "Scotland"}],
+        },
+        {
+            "geography_type": "Region",
+            "geographies": [{"name": "London"}],
+        },
+    ]
+
+    @staticmethod
+    def _build_request(*, auth=None, permission_sets=None):
+        request = MagicMock()
+        request.auth = auth
+        request.user.permission_sets = permission_sets
+        return request
+
+    @staticmethod
+    def _permission_set(has_global_access: bool = False, rows: list | None = None) -> dict:
+        return {
+            "summary": {"has_global_access": has_global_access},
+            "permission_sets": rows or [],
+        }
+
+    @patch("common.auth.permissions.AUTH_ENABLED", False)
+    def test_returns_all_data_when_auth_disabled(self):
+        """Filter is a no-op when AUTH_ENABLED is False."""
+        request = self._build_request(auth=None)
+        result = filter_geographies_by_permission(request=request, data=self.SAMPLE_DATA)
+        assert result == self.SAMPLE_DATA
+
+    @patch("common.auth.permissions.AUTH_ENABLED", True)
+    def test_returns_all_data_when_request_has_no_auth(self):
+        """Unauthenticated requests (request.auth is None) see everything unfiltered."""
+        request = self._build_request(auth=None)
+        result = filter_geographies_by_permission(request=request, data=self.SAMPLE_DATA)
+        assert result == self.SAMPLE_DATA
+
+    @patch("common.auth.permissions.log_user_permission_summary")
+    @patch("common.auth.permissions.AUTH_ENABLED", True)
+    def test_returns_all_data_when_user_has_global_access(self, mocked_log_summary):
+        request = self._build_request(
+            auth="token", permission_sets=self._permission_set(has_global_access=True)
+        )
+        result = filter_geographies_by_permission(request=request, data=self.SAMPLE_DATA)
+        assert result == self.SAMPLE_DATA
+
+    @patch("metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name")
+    @patch("metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name")
+    @patch("common.auth.permissions.log_user_permission_summary")
+    @patch("common.auth.permissions.AUTH_ENABLED", True)
+    def test_filters_out_geographies_not_permitted(
+        self,
+        mocked_log_summary,
+        mocked_geography_type_lookup,
+        mocked_geography_code_lookup,
+    ):
+        """Only geographies matching a permission row survive the filter."""
+
+        mocked_geography_type_lookup.side_effect = lambda name: {"Nation": 5, "Region": 6}[name]
+        mocked_geography_code_lookup.side_effect = lambda geography_name, geography_type_name: {
+            ("England", "Nation"): "E92000001",
+            ("Scotland", "Nation"): "E92000099",
+            ("London", "Region"): "E12000007",
+        }[(geography_name, geography_type_name)]
+
+        permission_row = {"geography_type": {"id": "5"}, "geography": {"id": "E92000001"}}
+        request = self._build_request(
+            auth="token", permission_sets=self._permission_set(rows=[permission_row])
+        )
+
+        result = filter_geographies_by_permission(request=request, data=self.SAMPLE_DATA)
+
+        assert result == [{"geography_type": "Nation", "geographies": [{"name": "England"}]}]
+
+    @patch("metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name")
+    @patch("metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name")
+    @patch("common.auth.permissions.log_user_permission_summary")
+    @patch("common.auth.permissions.AUTH_ENABLED", True)
+    def test_wildcard_geography_permission_allows_all_geographies_of_that_type(
+        self,
+        mocked_log_summary,
+        mocked_geography_type_lookup,
+        mocked_geography_code_lookup,
+    ):
+        mocked_geography_type_lookup.return_value = 5
+        mocked_geography_code_lookup.side_effect = ["E92000001", "E92000099"]
+
+        permission_row = {"geography_type": {"id": "5"}, "geography": {"id": "-1"}}
+        request = self._build_request(
+            auth="token", permission_sets=self._permission_set(rows=[permission_row])
+        )
+
+        result = filter_geographies_by_permission(request=request, data=[self.SAMPLE_DATA[0]])
+
+        assert result == [
+            {
+                "geography_type": "Nation",
+                "geographies": [{"name": "England"}, {"name": "Scotland"}],
+            }
+        ]
+
+    @patch(
+        "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
+        return_value=None,
+    )
+    @patch(
+        "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
+        return_value=5,
+    )
+    @patch("common.auth.permissions.log_user_permission_summary")
+    @patch("common.auth.permissions.AUTH_ENABLED", True)
+    def test_excludes_geography_when_code_lookup_fails(
+        self, mocked_log_summary, mocked_geography_type_lookup, mocked_geography_code_lookup
+    ):
+        """A geography that can't be resolved to a code is excluded (fails closed)."""
+        permission_row = {"geography_type": {"id": "5"}, "geography": {"id": "-1"}}
+        request = self._build_request(
+            auth="token", permission_sets=self._permission_set(rows=[permission_row])
+        )
+
+        result = filter_geographies_by_permission(request=request, data=[self.SAMPLE_DATA[0]])
+        assert result == []

@@ -50,6 +50,7 @@ class GeographiesViewDeprecated(APIView):
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
+        print(f"Geographies for topic '{self.kwargs['topic']}': {data}")
         data = filter_geographies_by_permission(request=request, data=data)
         print(f"Filtered geographies by permission: {data}")
 
@@ -88,6 +89,7 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
+            print(f"Geographies for geography type: {data}")
             data = filter_geographies_by_permission(request=request, data=data)
             print(f"Filtered geographies by permission: {data}")
             

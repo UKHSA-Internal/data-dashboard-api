@@ -372,13 +372,12 @@ def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]
         return data
 
     log_user_permission_summary(request.user)
-
     has_global_access = request.user.permission_sets["summary"]["has_global_access"]
     if has_global_access:
         return data
 
     permission_sets = request.user.permission_sets["permission_sets"]
-    print(f"Filtering geographies by permission sets: {permission_sets}")
+    print(f"Permission sets: {permission_sets}")
     geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
     geography_manager = MetricsAPIInterface.get_geography_manager()
 
@@ -386,6 +385,7 @@ def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]
     for entry in data:
         geography_type_name = entry["geography_type"]
         geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
+        print(f"DEBUG geography_type_name={geography_type_name!r} -> geography_type_id={geography_type_id}")
 
         allowed_geographies = [
             geography
@@ -415,9 +415,7 @@ def _is_geography_permitted(
 ) -> bool:
     """Checks one single geography against the user's permission rows."""
 
-    geography_id = geography_manager.get_id_by_name(
-        geography_name, geography_type_name
-    )
+    geography_id = geography_manager.get_code_by_name(geography_name, geography_type_name)
     if geography_type_id is None or geography_id is None:
         return False
 
