@@ -89,9 +89,7 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-            print(f"Geographies for geography type: {data}")
             data = filter_geographies_by_permission(request=request, data=data)
-            print(f"Filtered geographies by permission: {data}")
             
         return Response(data)
 

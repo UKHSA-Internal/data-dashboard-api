@@ -377,7 +377,6 @@ def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]
         return data
 
     permission_sets = request.user.permission_sets["permission_sets"]
-    print(f"Permission sets: {permission_sets}")
     geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
     geography_manager = MetricsAPIInterface.get_geography_manager()
 
@@ -385,7 +384,6 @@ def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]
     for entry in data:
         geography_type_name = entry["geography_type"]
         geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
-        print(f"DEBUG geography_type_name={geography_type_name!r} -> geography_type_id={geography_type_id}")
 
         allowed_geographies = [
             geography
