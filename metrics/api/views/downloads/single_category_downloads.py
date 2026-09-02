@@ -2,7 +2,7 @@ import io
 from http import HTTPStatus
 
 from django.http import HttpResponse
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,9 +23,30 @@ from metrics.domain.exports.csv_output import (
     write_headline_data_to_csv,
 )
 from metrics.interfaces.downloads import access
-from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 
 DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
+
+EXAMPLE_SINGLE_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD = {
+    "file_format": "json",
+    "x_axis": "date",
+    "y_axis": "metric",
+    "plots": [
+        {
+            "theme": "immunisation",
+            "sub_theme": "childhood-vaccines",
+            "topic": "MMR1",
+            "metric": "MMR1_coverage_coverageByYear",
+            "geography": "East Sussex",
+            "geography_type": "Upper Tier Local Authority",
+            "date_from": "2022-03-30",
+            "date_to": "2022-03-31",
+        }
+    ],
+}
 
 
 class SingleCategoryDownloadsView(APIView):
@@ -99,7 +120,17 @@ class SingleCategoryDownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
-    @extend_schema(request=SingleCategoryDownloadsSerializer, tags=[DOWNLOADS_API_TAG])
+    @extend_schema(
+        request=SingleCategoryDownloadsSerializer,
+        tags=[DOWNLOADS_API_TAG],
+        examples=[
+            OpenApiExample(
+                name="MMR1 timeseries example",
+                value=EXAMPLE_SINGLE_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD,
+                request_only=True,
+            )
+        ],
+    )
     @cache_response()
     @require_authorisation
     def post(self, request, *args, **kwargs):
@@ -139,7 +170,7 @@ class SingleCategoryDownloadsView(APIView):
             queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
                 chart_plots=chart_plot_models
             )
-        except DataNotFoundForAnyPlotError as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
