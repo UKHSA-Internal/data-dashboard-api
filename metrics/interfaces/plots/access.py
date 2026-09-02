@@ -7,7 +7,6 @@ from typing import Any
 from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
-from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
@@ -147,11 +146,6 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        if auth.AUTH_ENABLED:
-            # Needed for the downstream permissions check
-            topic = self.topic_model_manager.get_by_name(name=plot_params["topic"])
-            plot_params["theme"] = topic.sub_theme.theme.name
-            plot_params["sub_theme"] = topic.sub_theme.name
 
         # Sometimes this is a Subplots request which doesn't support confidence intervals
         confidence_intervals = getattr(

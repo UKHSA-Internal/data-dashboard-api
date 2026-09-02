@@ -1,6 +1,7 @@
 import datetime
 import pytest
 from django.utils import timezone
+from unittest import mock
 
 from metrics.data.models.core_models import (
     Age,
@@ -9,13 +10,23 @@ from metrics.data.models.core_models import (
     Metric,
     MetricGroup,
     Topic,
+    Geography,
+    GeographyType,
+    Theme,
+    SubTheme,
 )
 
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
-@pytest.fixture
-def core_headline_example() -> CoreHeadline:
+@pytest.fixture(
+    params=[
+        pytest.param({"is_public": False}, id="non_public"),
+        pytest.param({"is_public": True}, id="public"),
+    ]
+)
+def core_headline_example(request) -> CoreHeadline:
     refresh_date: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
@@ -32,11 +43,17 @@ def core_headline_example() -> CoreHeadline:
         sex="f",
         period_start="2023-01-01",
         period_end="2023-01-07",
+        is_public=request.param["is_public"],
     )
 
 
-@pytest.fixture
-def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
+@pytest.fixture(
+    params=[
+        pytest.param({"is_public": False}, id="non_public"),
+        pytest.param({"is_public": True}, id="public"),
+    ]
+)
+def core_trend_example(request) -> tuple[CoreHeadline, CoreHeadline]:
     period_end: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
@@ -57,6 +74,7 @@ def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
         refresh_date=refresh_date,
         period_start="2023-01-01",
         period_end=period_end,
+        is_public=request.param["is_public"],
     )
 
     percentage_metric = CoreHeadlineFactory.create_record(
@@ -72,6 +90,7 @@ def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
         refresh_date=refresh_date,
         period_start="2023-01-01",
         period_end=period_end,
+        is_public=request.param["is_public"],
     )
 
     return main_metric, percentage_metric
@@ -79,12 +98,18 @@ def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
 
 @pytest.fixture
 def core_timeseries_example() -> list[CoreTimeSeries]:
-    topic = Topic.objects.create(name="COVID-19")
+    theme = Theme.objects.create(name="infectious_disease")
+    sub_theme = SubTheme.objects.create(name="respiratory", theme=theme)
+    topic = Topic.objects.create(name="COVID-19", sub_theme=sub_theme)
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
         name="COVID-19_deaths_ONSByDay",
         metric_group=metric_group,
         topic=topic,
+    )
+    geography_type = GeographyType.objects.create(name="Nation")
+    geography = Geography.objects.create(
+        name="England", geography_type=geography_type, geography_code="E92000001"
     )
     age = Age.objects.create(name="all")
     year = 2023
@@ -93,6 +118,7 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         CoreTimeSeries.objects.create(
             metric_value=123,
             metric=metric,
+            geography=geography,
             age=age,
             year=year,
             epiweek=1,
@@ -113,3 +139,15 @@ def patch_auth_enabled(monkeypatch):
 @pytest.fixture
 def patch_auth_disabled(monkeypatch):
     monkeypatch.setenv("AUTH_ENABLED", "0")
+
+
+@pytest.fixture
+def user_global_access() -> dict:
+    mock_user = mock.MagicMock()
+    mock_user.username = "restricted-user"
+
+    mock_user.permission_sets = UserPermissionsFactory(
+        [],
+        has_global_access=True,
+    )
+    return mock_user

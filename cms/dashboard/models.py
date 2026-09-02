@@ -39,14 +39,6 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
-class DataClassificationLevels(models.TextChoices):
-    OFFICIAL = "official"
-    OFFICIAL_SENSITIVE = "official_sensitive"
-    PROTECTIVE_MARKING_NOT_SET = "protective_marking_not_set"
-    SECRET = "secret"  # nosec #noqa: S105
-    TOP_SECRET = "top_secret"  # nosec #noqa: S105
-
-
 class UKHSAPage(Page):
     """Abstract base class for all page types
 

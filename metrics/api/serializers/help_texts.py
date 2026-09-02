@@ -1,3 +1,5 @@
+THEME_FIELD: str = "The name of the theme being queried for. E.g. `infectious_disease`"
+SUB_THEME_FIELD: str = "The name of the sub theme being queried for. E.g. `respiratory`"
 TOPIC_FIELD: str = "The name of the topic being queried for. E.g. `COVID-19`"
 METRIC_FIELD: str = "The name of the metric being queried for. E.g. `{}`"
 STRATUM_FIELD: str = """

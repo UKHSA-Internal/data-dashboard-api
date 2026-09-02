@@ -1,58 +1,52 @@
+import uuid
 from unittest import mock
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from rest_framework.request import Request
 
 from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
 from metrics.interfaces.headlines.access import HeadlinesInterface
+from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
-from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
-
-MODULE_PATH = "metrics.interfaces.headlines.access"
 
 
 class TestHeadlinesInterface:
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
-    @mock.patch(
-        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
-        False,
-    )
     def test_get_latest_metric_value_returns_non_public_record_for_matching_permission(
-        self, mocked_auth_enabled: mock.MagicMock
+        self,
     ):
         """
         Given public and non-public `CoreHeadline` records
         And an `RBACPermission` which gives access to the non-public portion of the data
-        And `AUTH_ENABLED` is set to True
         And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `get_latest_metric_value()` is called from the `HeadlinesInterface`
         Then the non-public record is returned
         """
         # Given
-        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )
         non_public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-02", metric_value=2, is_public=False
         )
-        rbac_permission = RBACPermissionFactory.create_record(
-            theme=public_record.metric.topic.sub_theme.theme.name,
-            sub_theme=public_record.metric.topic.sub_theme.name,
-            topic=public_record.metric.topic.name,
-            metric=public_record.metric.name,
-            geography=public_record.geography.name,
-            geography_type=public_record.geography.geography_type.name,
+        permission_sets = UserPermissionsFactory(
+            [],
+            has_global_access=True,
         )
 
+        user_class = get_user_model()
+        fake_user = user_class(username=uuid.uuid4())
         request_factory = RequestFactory()
         fake_request = Request(request=request_factory.get("/"))
-        fake_request.rbac_permissions = [rbac_permission]
+        fake_request.user = fake_user
+        fake_request.user.permission_sets = permission_sets
 
         headline_parameters = HeadlineParameters(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
             topic=public_record.metric.topic.name,
             metric=public_record.metric.name,
             stratum=public_record.stratum.name,
@@ -77,19 +71,16 @@ class TestHeadlinesInterface:
         )
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_excludes_non_public_record_for_no_matching_permission(
-        self, mocked_auth_enabled: mock.MagicMock
+        self,
     ):
         """
         Given public and non-public `CoreHeadline` records
         And no `RBACPermission` which allows access to the non-public portion of this dataset
-        And `AUTH_ENABLED` is set to True
         When `get_latest_metric_value()` is called from the `HeadlinesInterface`
         Then the non-public record is excluded
         """
         # Given
-        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )
@@ -102,6 +93,8 @@ class TestHeadlinesInterface:
         fake_request.rbac_permissions = []
 
         headline_parameters = HeadlineParameters(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
             topic=public_record.metric.topic.name,
             metric=public_record.metric.name,
             stratum=public_record.stratum.name,

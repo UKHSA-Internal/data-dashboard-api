@@ -15,6 +15,8 @@ EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 @pytest.fixture
 def example_headline_args() -> dict[str, str]:
     return {
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
         "topic": "COVID-19",
         "metric": "COVID-19_headline_ONSdeaths_7DayChange",
         "geography": "England",
@@ -82,6 +84,8 @@ class TestHeadlinesInterface:
         )
 
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
+            theme=headline_parameters.theme_name,
+            sub_theme=headline_parameters.sub_theme_name,
             topic=headline_parameters.topic,
             metric=headline_parameters.metric,
             geography=headline_parameters.geography,
@@ -89,7 +93,7 @@ class TestHeadlinesInterface:
             stratum=headline_parameters.stratum,
             age=headline_parameters.age_name,
             sex=headline_parameters.sex_name,
-            rbac_permissions=[],
+            permission_sets={},
         )
 
     def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(

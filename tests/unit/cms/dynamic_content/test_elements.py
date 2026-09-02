@@ -11,7 +11,15 @@ from cms.metrics_interface import MetricsAPIInterface
 
 class TestValidateMetricGroup:
 
-    def test_successful_extraction(self):
+    @pytest.mark.parametrize(
+        "metric, expected_group",
+        [
+            ("covid-19_testing_count", "testing"),
+            ("OFF-SENS_influenza_headline_positivityLatest", "headline"),
+            ("OFF-SENS_MMR1_coverage_coverageByYear", "coverage"),
+        ],
+    )
+    def test_successful_extraction(self, metric: str, expected_group: str):
         """
         Given a valid metric value in a block
         When `_validate_metric_group()` is called
@@ -19,13 +27,13 @@ class TestValidateMetricGroup:
         """
         # given
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value={"metric": "covid-19_testing_count"})
+        value: StructValue = block.to_python(value={"metric": metric})
 
         # when
         group = BaseMetricsElement._validate_metric_group(value=value)
 
         # then
-        assert group == "testing"
+        assert group == expected_group
 
     def test_unsuccessful_extraction(self):
         """
@@ -35,7 +43,7 @@ class TestValidateMetricGroup:
         """
         # given
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value={"metric": "covid-19-testing-count"})
+        value: StructValue = block.to_python(value={"metric": "not-a-valid-value"})
 
         # when
         with pytest.raises(StructBlockValidationError) as exc_info:
@@ -114,6 +122,8 @@ class TestBaseMetricsElementClean:
         A valid basic block payload for all tests to use.
         """
         return {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": "Adenovirus",
             "metric": "adenovirus_testing_positivityByWeek",
             "geography": "England",

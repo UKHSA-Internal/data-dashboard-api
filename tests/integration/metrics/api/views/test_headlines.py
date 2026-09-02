@@ -19,6 +19,7 @@ class TestHeadlinesView:
     def test_get_returns_correct_response(
         self,
         core_headline_example: CoreHeadline,
+        user_global_access,
     ):
         """
         Given a valid payload for a `CoreHeadline` which exists
@@ -27,7 +28,11 @@ class TestHeadlinesView:
         """
         # Given
         client = APIClient()
+        if not core_headline_example.is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         payload = {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": core_headline_example.metric.topic.name,
             "metric": core_headline_example.metric.name,
             "geography": core_headline_example.geography.name,
@@ -53,7 +58,9 @@ class TestHeadlinesView:
 
     @pytest.mark.django_db
     def test_get_returns_error_for_invalid_request(
-        self, core_headline_example: CoreHeadline
+        self,
+        core_headline_example: CoreHeadline,
+        user_global_access,
     ):
         """
         Given the name of a `metric` as well as an incorrect `topic`
@@ -62,6 +69,8 @@ class TestHeadlinesView:
         """
         # Given
         client = APIClient()
+        if not core_headline_example.is_public:
+            client.force_authenticate(user=user_global_access, token="token")
 
         # The `Topic` record needs to be available
         # Or else the serializer will invalidate the field choice first
@@ -72,6 +81,8 @@ class TestHeadlinesView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": incorrect_topic_name,
                 "metric": core_headline_example.metric.name,
                 "geography": core_headline_example.geography.name,
