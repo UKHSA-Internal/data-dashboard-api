@@ -35,6 +35,22 @@ MIDDLEWARE += [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
+# Silk profiling configuration
+SILK_PROFILING_ENABLED = os.environ.get("SILK_PROFILING_ENABLED", "false").lower() in {
+    "true",
+    "1",
+}
+
+if SILK_PROFILING_ENABLED:
+    INSTALLED_APPS += ["silk"]
+    MIDDLEWARE += [
+        "silk.middleware.SilkyMiddleware",
+        "metrics.api.middleware.silky.SilkProfileAllViewsMiddleware",
+    ]
+    SILKY_PYTHON_PROFILER = True
+    SILKY_PYTHON_PROFILER_BINARY = True
+
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 PAGE_PREVIEWS_ENABLED = os.environ.get("PAGE_PREVIEWS_ENABLED", "true").lower() in {
