@@ -40,8 +40,10 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
     body = ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 
     # Fields to index for searching within the CMS application.
-    search_fields = UKHSAPage.search_fields + [
+    search_fields = [
+        *UKHSAPage.search_fields,
         index.SearchField("body"),
+        *NonPublicCapablePage.search_fields,
     ]
 
     # Content panels to render for editing within the CMS application.
