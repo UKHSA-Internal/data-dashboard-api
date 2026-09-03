@@ -12,3 +12,12 @@ if settings.DEBUG:
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Silk profiling configuration
+if (
+    settings.SILK_PROFILING_ENABLED
+):  # pragma: no cover (code is not run in prod, no need for test coverage)
+    from django.conf.urls import include
+    from django.urls import path
+
+    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

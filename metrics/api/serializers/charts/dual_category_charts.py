@@ -73,6 +73,8 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
     def to_models(self, request: Request) -> DualCategoryChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
+        is_public: bool = self.data.get("is_public", True)
+        data_classification: str | None = self.data.get("data_classification")
 
         primary_field_values = self.data.get("primary_field_values") or []
         secondary_category = self.data["secondary_category"]
@@ -140,4 +142,6 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
             request=request,
             legend_title=self.data.get("legend_title", ""),
+            is_public=is_public,
+            data_classification=data_classification,
         )
