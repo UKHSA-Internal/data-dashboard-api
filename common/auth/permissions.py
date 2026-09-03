@@ -3,6 +3,7 @@ from typing import TypedDict
 from cms.auth_content.auth_utils import is_auth_enabled
 from common.auth.logging import log_user_permission_summary
 from common.metrics_interface.interface import MetricsAPIInterface
+from metrics.data.managers.core_models.geography import GeographyManager
 
 AUTH_ENABLED = is_auth_enabled()
 
@@ -405,10 +406,10 @@ def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]
 def _is_geography_permitted(
     *,
     permission_sets: list,
-    geography_type_id,
+    geography_type_id: int | None,
     geography_type_name: str,
     geography_name: str,
-    geography_manager,
+    geography_manager: GeographyManager,
 ) -> bool:
     """Checks one single geography against the user's permission rows."""
 
