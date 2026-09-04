@@ -75,7 +75,9 @@ def _backfill_revisions_for_content_type(apps, model_section, model_name, topic_
     content_type_model = apps.get_model("contenttypes", "ContentType")
 
     try:
-        content_type = content_type_model.objects.get(app_label=model_section, model=model_name.lower())
+        content_type = content_type_model.objects.get(
+            app_label=model_section, model=model_name.lower()
+        )
     except content_type_model.DoesNotExist:
         return
 
@@ -94,7 +96,9 @@ def _backfill_revisions_for_content_type(apps, model_section, model_name, topic_
         if not _fill_node(body_data, topic_map):
             continue
 
-        content["body"] = json.dumps(body_data) if isinstance(raw_body, str) else body_data
+        content["body"] = (
+            json.dumps(body_data) if isinstance(raw_body, str) else body_data
+        )
         revision.content = content
         updated.append(revision)
 
