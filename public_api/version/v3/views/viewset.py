@@ -2,26 +2,25 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
-from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.version_02.serializers.timeseries_serializers import (
-    APITimeSeriesListSerializerv2,
+from public_api.version.v3.serializers.serializers import (
+    APISerializerv3,
 )
-from public_api.version_02.views.base import PUBLIC_API_TAG
+from public_api.version.v3.views.base import PUBLIC_API_TAG
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 365
 
 
-class APITimeSeriesPaginationv2(pagination.PageNumberPagination):
+class APIPaginationv3(pagination.PageNumberPagination):
     page_size = DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE
     max_page_size = MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE
     page_size_query_param = "page_size"
 
 
 @extend_schema(tags=[PUBLIC_API_TAG])
-class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
+class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
     """
-    This endpoint will provide the full timeseries of a slice of data.
+    This endpoint will provide the slice of data
 
     There are a set of mandatory URL parameters and optional query parameters:
 
@@ -69,28 +68,24 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
 
     """
 
+    api_model = None
     permission_classes = []
-    name = "API Time Series Slice"
-    queryset = (
-        MetricsPublicAPIInterface.get_api_timeseries_model()
-        .objects.all()
-        .order_by("date")
-    )
-    serializer_class = APITimeSeriesListSerializerv2
-    pagination_class = APITimeSeriesPaginationv2
+    name = "API Slice"
+    serializer_class = APISerializerv3
+    pagination_class = APIPaginationv3
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "stratum",
         "sex",
         "age",
-        "year",
-        "epiweek",
-        "date",
-        "in_reporting_delay_period",
     ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.serializer_class.Meta.model = self.api_model
+
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = self.api_model.objects.get_queryset()
 
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
