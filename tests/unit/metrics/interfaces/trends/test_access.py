@@ -62,7 +62,6 @@ class TestTrendsInterface:
         metric_name = trend_parameters.metric_name
         percentage_metric_name = trend_parameters.percentage_metric_name
         params = trend_parameters.to_dict_for_main_metric_query()
-        params.pop("rbac_permissions")
         params["percentage_metric"] = percentage_metric_name
 
         period_end = "2024-02-29"
