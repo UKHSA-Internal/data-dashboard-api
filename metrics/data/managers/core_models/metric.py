@@ -122,13 +122,9 @@ class MetricQuerySet(models.QuerySet):
         """
         queryset = self.filter(topic_id=parent_topic_id)
         if is_public is True:
-            queryset = queryset.exclude(
-                name__startswith="OFF-SENS"
-            )
+            queryset = queryset.exclude(name__startswith="OFF-SENS")
         elif is_public is False:
-            queryset = queryset.filter(
-                name__startswith="OFF-SENS"
-            )
+            queryset = queryset.filter(name__startswith="OFF-SENS")
 
         return queryset.values("id", "name").distinct()
 
@@ -253,8 +249,7 @@ class MetricManager(models.Manager):
                     `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.get_queryset().get_filtered_unique_names_related_to_parent_topic_id(
-            parent_topic_id=parent_topic_id,
-            is_public=is_public
+            parent_topic_id=parent_topic_id, is_public=is_public
         )
 
     def get_all_names_and_ids(self) -> MetricQuerySet:

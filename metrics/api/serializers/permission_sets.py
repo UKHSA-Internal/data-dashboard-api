@@ -109,7 +109,7 @@ class MetricRequestSerializer(serializers.Serializer):
 
     topic_id = serializers.CharField(required=True)
     is_public = serializers.BooleanField(required=False)
-    
+
     @property
     def metric_manager(self):
         """
@@ -139,8 +139,7 @@ class MetricRequestSerializer(serializers.Serializer):
         parent_topic_id = int(topic_id)
         metric_tuples = _queryset_to_id_name_tuples(
             self.metric_manager.get_filtered_unique_names_related_to_parent_topic_id(
-                parent_topic_id,
-                is_public=is_public
+                parent_topic_id, is_public=is_public
             )
         )
 
