@@ -13,7 +13,7 @@ def noop(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("home", "0040_alter_landingpage_body"),
+        ("home", "0041_alter_landingpage_body"),
     ]
     operations = [
         migrations.RunPython(backfill_landing_pages, noop),

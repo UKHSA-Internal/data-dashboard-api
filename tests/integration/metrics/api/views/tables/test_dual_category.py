@@ -77,6 +77,7 @@ class TestDualCategoryTablesView:
     def test_headline_plot(
         self,
         core_headline_example: CoreHeadline,
+        user_global_access,
     ):
         """
         Given a valid dual-category headline payload
@@ -89,6 +90,9 @@ class TestDualCategoryTablesView:
             core_headline_example.metric.metric_group.topic.sub_theme.theme.name
         )
         sub_theme: str = core_headline_example.metric.metric_group.topic.sub_theme.name
+        if not core_headline_example.is_public:
+            client.force_authenticate(user=user_global_access, token="token")
+
         topic: str = core_headline_example.metric.metric_group.topic.name
         metric: str = core_headline_example.metric.name
         geography: str = core_headline_example.geography.name

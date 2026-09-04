@@ -9,7 +9,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("topic", "0036_alter_topicpage_add_HeadlineChartWithDescriptionCard"),
+        ("topic", "0037_add_dual_cat_chart_date_prefix"),
     ]
 
     operations = [
