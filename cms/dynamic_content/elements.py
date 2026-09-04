@@ -1,10 +1,9 @@
 import pydantic
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from wagtail import blocks
 from wagtail.admin.telepath import register
 from wagtail.blocks.struct_block import StructBlockAdapter
-
 
 from cms.dynamic_content import help_texts
 from cms.metrics_interface import MetricsAPIInterface
@@ -221,6 +220,7 @@ class BaseMetricsElement(blocks.StructBlock):
                 }
             ) from e
 
+
 class BaseMetricsElementAdapter(StructBlockAdapter):
 
     js_constructor = "cms.dynamic_content.elements.BaseMetricsElement"
@@ -229,13 +229,16 @@ class BaseMetricsElementAdapter(StructBlockAdapter):
     def media(self):
         structblock_media = super().media
         return forms.Media(
-            js=structblock_media._js + [
+            js=structblock_media._js
+            + [
                 "js/metric_dropdown_manager.js",
             ],
             css=structblock_media._css,
         )
 
+
 register(BaseMetricsElementAdapter(), BaseMetricsElement)
+
 
 class ChartPlotElement(BaseMetricsElement):
     metric = blocks.ChoiceBlock(
