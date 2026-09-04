@@ -11,10 +11,11 @@ class TestPermissionSetForm:
         {"field_name": "sub_theme", "field_label": "Sub Theme"},
         {"field_name": "topic", "field_label": "Topic"},
         {"field_name": "metric", "field_label": "Metric"},
+        {"field_name": "geography_type", "field_label": "Geography Type"},
         {"field_name": "geography", "field_label": "Geography"},
     ]
 
-    def _make_form(self, instance=None, queryset_exists=False):
+    def _make_form(self, instance=None, queryset_exists=False, data=None):
         """
         Instantiate PermissionSetForm with all Wagtail
         internals patched.
@@ -35,6 +36,8 @@ class TestPermissionSetForm:
             form = PermissionSetForm.__new__(PermissionSetForm)
             form.fields = {}
             form.instance = instance or MagicMock(pk=None)
+            form.is_bound = data is not None
+            form.data = data or {}
             default_data = {
                 "theme": 1,
                 "sub_theme": 2,
@@ -60,14 +63,15 @@ class TestPermissionSetForm:
         """
         form = self._make_form()
 
-        assert len(form.fields) == 5
+        assert len(form.fields) == 6
         assert "theme" in form.fields
         assert "sub_theme" in form.fields
         assert "topic" in form.fields
         assert "metric" in form.fields
+        assert "geography_type" in form.fields
         assert "geography" in form.fields
 
-    def test_initialize_dependent_fields(self):
+    def test_initialize_dependent_fields_for_saved_instance(self):
         """
         Given a new form
         When an instance has a pk value set
@@ -91,6 +95,56 @@ class TestPermissionSetForm:
         assert form.fields["geography"].widget.choices == [
             ("", "Select geography type first"),
             (4, "Loading... (ID: 4)"),
+        ]
+
+    def test_does_not_initialize_dependent_fields_for_unbound_instance(self):
+        """
+        Given a new unbound form
+        When the instance does not have a pk value set
+        then `_initialize_dependent_fields` is not called
+        """
+        with patch.object(
+            PermissionSetForm, "_initialize_dependent_fields"
+        ) as mock_initialize_dependent_fields:
+            self._make_form(instance=MagicMock(pk=None))
+
+        mock_initialize_dependent_fields.assert_not_called()
+        
+    def test_initialize_dependent_fields_from_bound_data_for_new_instance(self):
+        """
+        Given a bound form for a new instance
+        When the form is re-rendered after validation fails
+        The submitted dependent values are added to their dropdown choices
+        """
+        data = {
+            "theme": "1",
+            "sub_theme": "2",
+            "topic": "3",
+            "metric": "4",
+            "geography_type": "5",
+            "geography": "E92000001",
+        }
+
+        form = self._make_form(instance=MagicMock(pk=None), data=data)
+
+        assert form.fields["sub_theme"].widget.choices == [
+            ("", "Select theme first"),
+            ("2", "Loading... (ID: 2)"),
+        ]
+
+        assert form.fields["topic"].widget.choices == [
+            ("", "Select sub-theme first"),
+            ("3", "Loading... (ID: 3)"),
+        ]
+
+        assert form.fields["metric"].widget.choices == [
+            ("", "Select topic first"),
+            ("4", "Loading... (ID: 4)"),
+        ]
+
+        assert form.fields["geography"].widget.choices == [
+            ("", "Select geography type first"),
+            ("E92000001", "Loading... (ID: E92000001)"),
         ]
 
     def test_get_field_choices(self):
