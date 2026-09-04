@@ -54,16 +54,19 @@ def check_chart_permissions_by_name(
         return True
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
-    metric_manager = MetricsAPIInterface.get_metric_manager()
-    geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
     geography_manager = MetricsAPIInterface.get_geography_manager()
 
-    theme_id, sub_theme_id, topic_id = topic_manager.get_id_by_name(
-        theme_name, sub_theme_name, topic_name
+    # Any inconsistent combination below resolves to None ids and is denied
+    theme_id, sub_theme_id, topic_id, metric_id = (
+        topic_manager.get_theme_sub_theme_topic_and_metric_id_by_name(
+            theme_name, sub_theme_name, topic_name, metric_name
+        )
     )
-    metric_id = metric_manager.get_id_by_name(metric_name)
-    geography_type_id = geography_type_manager.get_id_by_name(geography_type)
-    geography_id = geography_manager.get_code_by_name(geography_name, geography_type)
+    geography_type_id, geography_id = (
+        geography_manager.get_geography_type_id_and_code_by_name(
+            geography_name, geography_type
+        )
+    )
 
     # Sanity check, because front-end must always
     # send content for any of these 6 requests
