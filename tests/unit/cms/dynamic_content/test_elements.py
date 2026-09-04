@@ -1,11 +1,13 @@
 from unittest.mock import MagicMock, patch
-
+from django import forms
+from unittest import mock
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from wagtail.blocks import StructBlock, StructBlockValidationError, StructValue
+from wagtail.blocks.struct_block import StructBlockAdapter
 
 from cms.dynamic_content.components import HeadlineNumberComponent
-from cms.dynamic_content.elements import BaseMetricsElement
+from cms.dynamic_content.elements import BaseMetricsElement, BaseMetricsElementAdapter
 from cms.metrics_interface import MetricsAPIInterface
 
 
@@ -251,3 +253,45 @@ class TestBaseMetricsElementClean:
         # validation is done on the metric field in the model
         assert "metric" in block_errors
         assert "age" in block_errors
+
+
+class TestBaseMetricsElementAdapter:
+    def test_js_constructor_is_set_correctly(self):
+        """
+        Given a BaseMetricsElementAdapter instance
+        When accessing the js_constructor property
+        Then it returns the correct javascript constructor name
+        """
+        # Given
+        adapter = BaseMetricsElementAdapter()
+        expected_js_constructor = "cms.dynamic_content.elements.BaseMetricsElement"
+
+        # When
+        received_js_constructor = adapter.js_constructor
+
+        # Then
+        assert received_js_constructor == expected_js_constructor
+
+    @mock.patch.object(
+        StructBlockAdapter,
+        "media",
+        forms.Media(js=["mock_parent.js"]),
+    )
+    def test_media_preserves_parent_js_unchanged(self):
+        """
+        Given a BaseMetricsElementAdapter instance and mocked parent media with existing js
+        When accessing the media property
+        Then it combines parent JS files with metric_dropdown_manager.js
+        """
+        # Given
+        adapter = BaseMetricsElementAdapter()
+        expected_media_js = [
+            "mock_parent.js",
+            "js/metric_dropdown_manager.js",
+        ]
+
+        # When
+        adapter_media = adapter.media
+
+        # Then
+        assert adapter_media._js == expected_media_js
