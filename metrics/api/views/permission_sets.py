@@ -61,6 +61,11 @@ class MetricsByTopicView(APIView):
     def get(self, request, topic_id, *args, **kwargs):  # noqa: PLR6301
         """API endpoint to fetch metrics based on selected topic."""
         is_public = request.GET.get("is_public")
-        serializer = MetricRequestSerializer(data={"topic_id": topic_id, "is_public": is_public})
+        data = {"topic_id": topic_id}
+
+        if is_public is not None:
+            data["is_public"] = is_public
+
+        serializer = MetricRequestSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data())

@@ -193,6 +193,22 @@ class TestMetricByTopicView:
         assert result["choices"][0][1] == covid19metric.name
 
     @pytest.mark.django_db
+    def test_get_metric_by_topic_id_with_public_filter(self):
+        client = APIClient()
+
+        response = client.get(f"{self.path}/1?is_public=true")
+
+        assert response.status_code == HTTPStatus.OK
+
+    @pytest.mark.django_db
+    def test_get_metric_by_topic_id_without_public_filter(self):
+        client = APIClient()
+
+        response = client.get(f"{self.path}/1")
+
+        assert response.status_code == HTTPStatus.OK
+
+    @pytest.mark.django_db
     def test_get_metric_by_topic_id_should_return_wildcard(self):
 
         client = APIClient()
