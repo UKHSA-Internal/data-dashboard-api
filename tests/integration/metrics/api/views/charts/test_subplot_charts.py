@@ -1,4 +1,6 @@
+import copy
 import random
+from xml.etree import ElementTree as ET
 from http import HTTPStatus
 
 import pytest
@@ -48,14 +50,45 @@ class TestSubplotChartsView:
                     metric_value=metric_value,
                 )
             )
+        core_time_series.append(
+            CoreTimeSeriesFactory.create_record(
+                theme_name="immunisation",
+                sub_theme_name="childhood-vaccines",
+                topic_name="MMR1",
+                metric_name="OFF-SENS_MMR1_coverage_coverageByYear",
+                stratum_name="24m",
+                date="2021-08-01",
+                geography_name="Scotland",
+                geography_type_name="Nation",
+                metric_value=90,
+                is_public=False,
+            )
+        )
         return core_time_series
+
+    @staticmethod
+    def get_text_from_svg_response(response: Response) -> list[str]:
+        svg = response.getvalue().decode(response.charset)
+        return [
+            " ".join(ET.tostringlist(text, encoding="unicode", method="text"))
+            for text in ET.fromstring(svg).findall(".//{*}text")
+        ]
 
     @property
     def path(self) -> str:
         return "/api/charts/subplot/v1/"
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_preview(self):
+    @pytest.mark.parametrize(
+        ("authenticated_user"),
+        [
+            (True),
+            (False),
+        ],
+    )
+    def test_returns_correct_response_for_preview(
+        self, authenticated_user, user_global_access
+    ):
         """
         Given a valid payload to create a subplots chart
         When the `POST /api/charts/subplot/v1/` endpoint is hit
@@ -64,9 +97,37 @@ class TestSubplotChartsView:
         """
         # Given
         client = APIClient()
-        self._create_example_core_timeseries()
-        valid_payload = REQUEST_PAYLOAD_EXAMPLE.copy()
-        valid_payload["file_format"] = "png"
+
+        example_timeseries = self._create_example_core_timeseries()
+        valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+
+        if authenticated_user:
+            client.force_authenticate(user=user_global_access, token="token")
+            valid_payload["subplots"].append(
+                {
+                    "subplot_title": "OFF SENS MMR1 (24 months)",
+                    "subplot_parameters": {
+                        "topic": "MMR1",
+                        "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                        "stratum": "24m",
+                    },
+                    "plots": [
+                        {
+                            "label": "Scotland",
+                            "geography": "Scotland",
+                            "geography_type": "Nation",
+                            "line_colour": "COLOUR_4_ORANGE",
+                        },
+                    ],
+                }
+            )
+
+        expected_metrics = [ts.metric for ts in example_timeseries]
+        expected_titles = [
+            subplot["subplot_title"]
+            for subplot in valid_payload["subplots"]
+            if subplot["subplot_parameters"]["metric"] in expected_metrics
+        ]
 
         # When
         response: Response = client.post(
@@ -75,11 +136,17 @@ class TestSubplotChartsView:
             format="json",
         )
 
+        svg_text = self.get_text_from_svg_response(response)
+
         # Then
         assert response.status_code == HTTPStatus.OK != HTTPStatus.UNAUTHORIZED
 
-        # Check that the headers on the response indicate a `png` image being returned
-        assert response.headers["Content-Type"] == "image/png"
+        # Check that the headers on the response indicate a `svg` image being returned
+        assert response.headers["Content-Type"] == "image/svg"
+
+        # Check that the chart contains the expected plots
+        for expected_title in expected_titles:
+            assert expected_title in svg_text
 
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v3(

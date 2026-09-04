@@ -1,7 +1,7 @@
 import datetime
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
-from tests.fakes.models.metrics.rbac_models.rbac_permission import FakeRBACPermission
+from common.auth.permissions import PermissionSetsType
 
 
 class FakeCoreHeadlineManager(CoreHeadlineManager):
@@ -25,7 +25,7 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        rbac_permissions: list[FakeRBACPermission] = None,
+        permission_sets: PermissionSetsType | None = None,
         metric_value_ranges: list[tuple] | None = None,
     ) -> tuple[float, datetime.date] | None:
         filtered_headlines = [
