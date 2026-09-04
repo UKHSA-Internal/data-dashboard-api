@@ -42,9 +42,14 @@
    * @param {string} dataItemId - The ID value to pass
    * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
-  async function fetchChoices(endpoint, dataItemId) {
+  async function fetchChoices(endpoint, dataItemId, queryParams = {}) {
     try {
-      const url = `/api/data-hierarchy/${endpoint}/${dataItemId}`
+      const queryString =
+        "is_public" in queryParams
+          ? `?is_public=${queryParams.is_public}`
+          : ""
+
+      const url = `/api/data-hierarchy/${endpoint}/${dataItemId}${queryString}`
       const response = await fetch(url)
 
       if (!response.ok) {

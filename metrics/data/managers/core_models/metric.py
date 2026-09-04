@@ -111,7 +111,7 @@ class MetricQuerySet(models.QuerySet):
         return self.get_all_unique_names().filter(metric_group__name="headline")
 
     def get_filtered_unique_names_related_to_parent_topic_id(
-        self, parent_topic_id
+        self, parent_topic_id, is_public=None
     ) -> models.QuerySet:
         """Gets all available unique metrics with id and name fields that are related to the parent topic ID.
 
@@ -120,7 +120,13 @@ class MetricQuerySet(models.QuerySet):
                 Examples:
                     `<QuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
-        return self.filter(topic_id=parent_topic_id).values("id", "name").distinct()
+        queryset = self.filter(topic_id=parent_topic_id)
+        if is_public is True:
+            queryset = queryset.exclude(name__startswith="OFF-SENS")
+        elif is_public is False:
+            queryset = queryset.filter(name__startswith="OFF-SENS")
+
+        return queryset.values("id", "name").distinct()
 
     def get_all_names_and_ids(self) -> models.QuerySet:
         """Gets all available metrics with id and name fields.
@@ -233,7 +239,7 @@ class MetricManager(models.Manager):
         return self.get_queryset().get_all_headline_names()
 
     def get_filtered_unique_names_related_to_parent_topic_id(
-        self, parent_topic_id: str
+        self, parent_topic_id: str, is_public: bool | None = None
     ) -> MetricQuerySet:
         """Gets all available metrics with id and name fields.
 
@@ -243,7 +249,7 @@ class MetricManager(models.Manager):
                     `<MetricQuerySet [{'id': 1, 'name': '6-in-1_coverage_coverageByYear'}, {'id': 2, 'name': 'MMR1_coverage_coverageByYear'}, ...]>`
         """
         return self.get_queryset().get_filtered_unique_names_related_to_parent_topic_id(
-            parent_topic_id=parent_topic_id
+            parent_topic_id=parent_topic_id, is_public=is_public
         )
 
     def get_all_names_and_ids(self) -> MetricQuerySet:
