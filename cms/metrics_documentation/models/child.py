@@ -38,7 +38,7 @@ class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
         for field in THEME_FIELDS:
             self.fields[field["field_name"]] = _create_form_field(field)
 
-        if self.instance and self.instance.pk:
+        if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
             self._initialize_dependent_fields()
 
     def _initialize_dependent_fields(self):
@@ -49,10 +49,16 @@ class MetricsDocumentationChildEntryAdminForm(WagtailAdminPageForm):
         }
 
         for field_name, (placeholder) in dependent_fields.items():
-            value = getattr(self.instance, field_name, None)
+            value = self._get_dependent_field_value(field_name)
             if value:
                 choices = self._get_field_choices(value, placeholder)
                 self.fields[field_name].widget.choices = choices
+
+    def _get_dependent_field_value(self, field_name: str):
+        if getattr(self, "is_bound", False):
+            return self.data.get(field_name)
+
+        return getattr(self.instance, field_name, None)
 
     @staticmethod
     def _get_field_choices(value, placeholder):

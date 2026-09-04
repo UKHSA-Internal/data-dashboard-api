@@ -20,9 +20,10 @@ class TestTopicPageAdminForm:
     MOCK_THEME_FIELDS = [
         {"field_name": "theme", "label": "Theme", "required": True},
         {"field_name": "sub_theme", "label": "Sub Theme", "required": False},
+        {"field_name": "topic", "label": "Topic", "required": False},
     ]
 
-    def _make_form(self, instance=None):
+    def _make_form(self, instance=None, data=None):
         """
         Instantiate TopicPageAdminForm with all Wagtail
         internals patched.
@@ -40,6 +41,8 @@ class TestTopicPageAdminForm:
             form = TopicPageAdminForm.__new__(TopicPageAdminForm)
             form.fields = {}
             form.instance = instance or mock.MagicMock(pk=None)
+            form.is_bound = data is not None
+            form.data = data or {}
             form.__init__()
             return form
 
@@ -50,9 +53,10 @@ class TestTopicPageAdminForm:
         """
         form = self._make_form()
 
-        assert len(form.fields) == 2
+        assert len(form.fields) == 3
         assert "theme" in form.fields
         assert "sub_theme" in form.fields
+        assert "topic" in form.fields
 
     def test_dependent_fields_initialised_for_saved_instance(self):
         """
@@ -77,6 +81,27 @@ class TestTopicPageAdminForm:
         ) as init_fields_mock:
             self._make_form(instance=mock.MagicMock(pk=None))
         init_fields_mock.assert_not_called()
+
+    def test_dependent_fields_initialized_from_bound_data_for_new_instance(self):
+        """
+        Given a bound form for a new page
+        When the form is re-rendered after validation fails
+        Then submitted dependent values are added to their dropdown choices
+        """
+        form = self._make_form(
+            instance=mock.MagicMock(pk=None),
+            data={"theme": "1", "sub_theme": "2", "topic": "3"},
+        )
+
+        assert form.fields["sub_theme"].widget.choices == [
+            ("", "Select theme first"),
+            ("2", "Loading... (ID: 2)"),
+        ]
+
+        assert form.fields["topic"].widget.choices == [
+            ("", "Select sub-theme first"),
+            ("3", "Loading... (ID: 3)"),
+        ]
 
     def test_widget_choices_set_when_sub_theme_has_value(self):
         """

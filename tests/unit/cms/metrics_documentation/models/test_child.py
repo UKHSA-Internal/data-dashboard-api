@@ -35,7 +35,7 @@ class TestMetricsDocumentationChildEntryAdminForm:
         {"field_name": "topic", "label": "Topic", "required": False},
     ]
 
-    def _make_form(self, instance=None):
+    def _make_form(self, instance=None, data=None):
         """
         Instantiate MetricsDocumentationChildEntryAdminForm with all Wagtail
         internals patched.
@@ -58,6 +58,8 @@ class TestMetricsDocumentationChildEntryAdminForm:
             )
             form.fields = {}
             form.instance = instance or MagicMock(pk=None)
+            form.is_bound = data is not None
+            form.data = data or {}
             form.__init__()
             return form
 
@@ -145,6 +147,27 @@ class TestMetricsDocumentationChildEntryAdminForm:
             self._make_form(instance=instance)
 
         mock_init_deps.assert_not_called()
+
+    def test_initialize_dependent_fields_from_bound_data_for_new_instance(self):
+        """
+        Given a bound form for a new page
+        When the form is re-rendered after validation fails
+        Then submitted dependent values are added to their dropdown choices
+        """
+        form = self._make_form(
+            instance=MagicMock(pk=None),
+            data={"theme": "1", "sub_theme": "2", "topic": "3"},
+        )
+
+        assert form.fields["sub_theme"].widget.choices == [
+            ("", "Select theme first"),
+            ("2", "Loading... (ID: 2)"),
+        ]
+
+        assert form.fields["topic"].widget.choices == [
+            ("", "Select sub-theme first"),
+            ("3", "Loading... (ID: 3)"),
+        ]
 
     def test_both_fields_updated_when_both_have_values(self):
         """
