@@ -455,7 +455,6 @@ def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [(1, "6-in-1"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-
     return _build_id_name_tuple_choices(
         choices=metrics_interface.get_all_topic_names_and_ids()
     )
