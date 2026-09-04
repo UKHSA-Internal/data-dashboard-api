@@ -1,5 +1,7 @@
 import logging
 
+from django.db.migrations.state import StateApps
+
 logger = logging.getLogger(__name__)
 
 
