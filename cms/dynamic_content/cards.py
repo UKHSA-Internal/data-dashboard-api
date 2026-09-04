@@ -543,6 +543,11 @@ class DualCategoryChartCard(blocks.StructBlock):
         default=False,
         required=False,
     )
+    date_prefix = blocks.CharBlock(
+        required=True,
+        default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
+        help_text=help_texts.CHART_DATE_PREFIX,
+    )
 
     static_fields = DualCategoryChartStaticFieldComponent()
 
