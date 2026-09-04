@@ -1,6 +1,11 @@
 from typing import TypedDict
 
+from cms.auth_content.auth_utils import is_auth_enabled
+from common.auth.logging import log_user_permission_summary
 from common.metrics_interface.interface import MetricsAPIInterface
+from metrics.data.managers.core_models.geography import GeographyManager
+
+AUTH_ENABLED = is_auth_enabled()
 
 WILDCARD_ID_VALUE = "-1"
 
@@ -352,3 +357,94 @@ def _has_missing_ids(*ids: str | None) -> bool:
     """Check if any required id is missing, and if so normalize it to be None."""
 
     return any(my_id is None for my_id in ids)
+
+
+def filter_geographies_by_permission(*, request, data: list[dict]) -> list[dict]:
+    """
+    Takes the list of geography_type/geographies results and removes any
+    geography the logged-in user isn't allowed to see, based on their
+    JWT permissions.
+
+    If there's no logged-in user (or auth is turned off), nothing is
+    filtered - everyone sees everything.
+    """
+    if not AUTH_ENABLED or request.auth is None:
+        return data
+
+    log_user_permission_summary(request.user)
+    has_global_access = request.user.permission_sets["summary"]["has_global_access"]
+    if has_global_access:
+        return data
+
+    permission_sets = request.user.permission_sets["permission_sets"]
+    geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
+    geography_manager = MetricsAPIInterface.get_geography_manager()
+
+    filtered_data = []
+    for entry in data:
+        geography_type_name = entry["geography_type"]
+        geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
+
+        allowed_geographies = [
+            geography
+            for geography in entry["geographies"]
+            if _is_geography_permitted(
+                permission_sets=permission_sets,
+                geography_type_id=geography_type_id,
+                geography_type_name=geography_type_name,
+                geography_name=geography["name"],
+                geography_manager=geography_manager,
+            )
+        ]
+
+        if allowed_geographies:
+            filtered_data.append({**entry, "geographies": allowed_geographies})
+
+    return filtered_data
+
+
+def _is_geography_permitted(
+    *,
+    permission_sets: list,
+    geography_type_id: int | None,
+    geography_type_name: str,
+    geography_name: str,
+    geography_manager: GeographyManager,
+) -> bool:
+    """Checks one single geography against the user's permission rows."""
+
+    geography_id = geography_manager.get_code_by_name(
+        geography_name, geography_type_name
+    )
+    if geography_type_id is None or geography_id is None:
+        return False
+
+    geography_type_id = str(geography_type_id)
+    geography_id = str(geography_id)
+
+    for permission_set in permission_sets:
+        if not isinstance(permission_set, dict):
+            continue
+
+        permission_geography_type = _normalize_permission_id(
+            field_name="geography_type", permission_set=permission_set
+        )
+        if permission_geography_type is None:
+            continue
+
+        permission_geography_id = (
+            _normalize_permission_id(
+                field_name="geography", permission_set=permission_set
+            )
+            or ""
+        )
+
+        if check_geography_permissions(
+            permission_geography_type=permission_geography_type,
+            permission_geography_id=permission_geography_id,
+            geography_type=geography_type_id,
+            geography_id=geography_id,
+        ):
+            return True
+
+    return False
