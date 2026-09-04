@@ -19,7 +19,16 @@ class TestDownloadsSubplotView:
         return "/api/downloads/subplot/v1/"
 
     @pytest.mark.django_db
-    def test_returns_correct_data_for_json_download(self):
+    @pytest.mark.parametrize(
+        ("authenticated_user"),
+        [
+            (True),
+            (False),
+        ],
+    )
+    def test_returns_correct_data_for_json_download(
+        self, authenticated_user, user_global_access
+    ):
         """
         Given a valid payload to create a JSON subplot download
         When a POST request is made to `/api/downloads/subplot/v1/`
@@ -27,7 +36,35 @@ class TestDownloadsSubplotView:
         """
         # Given
         client = APIClient()
+        if authenticated_user:
+            client.force_authenticate(user=user_global_access, token="token")
+
         valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
+        valid_payload["subplots"].append(
+            {
+                "subplot_title": "OFF SENS MMR1 (24 months)",
+                "subplot_parameters": {
+                    "topic": "MMR1",
+                    "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                    "stratum": "24m",
+                },
+                "plots": [
+                    {
+                        "label": "North West",
+                        "geography": "North West",
+                        "geography_type": "Region",
+                        "line_colour": "COLOUR_4_ORANGE",
+                    },
+                    {
+                        "label": "Leeds",
+                        "geography": "Leeds",
+                        "geography_type": "Upper Tier Local Authority",
+                        "line_colour": "COLOUR_5_DARK_GREY",
+                    },
+                ],
+            }
+        )
+
         create_example_core_timeseries()
 
         # When
@@ -169,11 +206,59 @@ class TestDownloadsSubplotView:
                 },
             ],
         ]
+        if authenticated_user:
+            expected_response_data.extend(
+                [
+                    [
+                        {
+                            "theme": "immunisation",
+                            "sub_theme": "childhood-vaccines",
+                            "topic": "MMR1",
+                            "geography_type": "Region",
+                            "geography": "North West",
+                            "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                            "age": "all",
+                            "stratum": "24m",
+                            "sex": "all",
+                            "year": 2023,
+                            "date": "2021-03-31",
+                            "metric_value": "95.0000",
+                            "in_reporting_delay_period": False,
+                        }
+                    ],
+                    [
+                        {
+                            "theme": "immunisation",
+                            "sub_theme": "childhood-vaccines",
+                            "topic": "MMR1",
+                            "geography_type": "Upper Tier Local Authority",
+                            "geography": "Leeds",
+                            "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                            "age": "all",
+                            "stratum": "24m",
+                            "sex": "all",
+                            "year": 2023,
+                            "date": "2021-03-31",
+                            "metric_value": "94.0000",
+                            "in_reporting_delay_period": False,
+                        }
+                    ],
+                ]
+            )
 
         assert response.data == expected_response_data
 
     @pytest.mark.django_db
-    def test_returns_correct_data_for_filtered_metric_value_ranges(self):
+    @pytest.mark.parametrize(
+        ("authenticated_user"),
+        [
+            (True),
+            (False),
+        ],
+    )
+    def test_returns_correct_data_for_filtered_metric_value_ranges(
+        self, authenticated_user, user_global_access
+    ):
         """
         Given a valid payload to create a JSON subplot download
             with restricted permissible `metric_value_ranges`
@@ -183,11 +268,39 @@ class TestDownloadsSubplotView:
         """
         # Given
         client = APIClient()
+        if authenticated_user:
+            client.force_authenticate(user=user_global_access, token="token")
+
         valid_payload = copy.deepcopy(REQUEST_PAYLOAD_EXAMPLE)
         valid_payload["chart_parameters"]["metric_value_ranges"] = [
             # We're asking for 1 boundary, excluding anything under 90
             {"start": 90, "end": 100}
         ]
+        valid_payload["subplots"].append(
+            {
+                "subplot_title": "OFF SENS MMR1 (24 months)",
+                "subplot_parameters": {
+                    "topic": "MMR1",
+                    "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                    "stratum": "24m",
+                },
+                "plots": [
+                    {
+                        "label": "North West",
+                        "geography": "North West",
+                        "geography_type": "Region",
+                        "line_colour": "COLOUR_4_ORANGE",
+                    },
+                    {
+                        "label": "Leeds",
+                        "geography": "Leeds",
+                        "geography_type": "Upper Tier Local Authority",
+                        "line_colour": "COLOUR_5_DARK_GREY",
+                    },
+                ],
+            }
+        )
+
         create_example_core_timeseries()
 
         # When
@@ -255,6 +368,45 @@ class TestDownloadsSubplotView:
                 },
             ],
         ]
+        if authenticated_user:
+            expected_response_data.extend(
+                [
+                    [
+                        {
+                            "theme": "immunisation",
+                            "sub_theme": "childhood-vaccines",
+                            "topic": "MMR1",
+                            "geography_type": "Region",
+                            "geography": "North West",
+                            "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                            "age": "all",
+                            "stratum": "24m",
+                            "sex": "all",
+                            "year": 2023,
+                            "date": "2021-03-31",
+                            "metric_value": "95.0000",
+                            "in_reporting_delay_period": False,
+                        }
+                    ],
+                    [
+                        {
+                            "theme": "immunisation",
+                            "sub_theme": "childhood-vaccines",
+                            "topic": "MMR1",
+                            "geography_type": "Upper Tier Local Authority",
+                            "geography": "Leeds",
+                            "metric": "OFF-SENS_MMR1_coverage_coverageByYear",
+                            "age": "all",
+                            "stratum": "24m",
+                            "sex": "all",
+                            "year": 2023,
+                            "date": "2021-03-31",
+                            "metric_value": "94.0000",
+                            "in_reporting_delay_period": False,
+                        }
+                    ],
+                ]
+            )
         assert response.data == expected_response_data
 
     @pytest.mark.django_db
