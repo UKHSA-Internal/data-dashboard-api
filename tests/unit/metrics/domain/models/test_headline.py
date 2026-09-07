@@ -65,6 +65,6 @@ class TestHeadlineParameters:
             "stratum": self.valid_payload["stratum"],
             "age": self.valid_payload["age"],
             "sex": self.valid_payload["sex"],
-            "rbac_permissions": [],
+            "permission_sets": {},
         }
         assert params == expected_params
