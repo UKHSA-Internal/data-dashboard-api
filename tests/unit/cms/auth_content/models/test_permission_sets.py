@@ -109,7 +109,7 @@ class TestPermissionSetForm:
             self._make_form(instance=MagicMock(pk=None))
 
         mock_initialize_dependent_fields.assert_not_called()
-        
+
     def test_initialize_dependent_fields_from_bound_data_for_new_instance(self):
         """
         Given a bound form for a new instance
