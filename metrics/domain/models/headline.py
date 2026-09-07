@@ -59,5 +59,5 @@ class HeadlineParameters(BaseRequestParams):
             "stratum": self.stratum_name,
             "age": self.age_name,
             "sex": self.sex_name,
-            "rbac_permissions": self.rbac_permissions,
+            "permission_sets": self.permission_sets,
         }
