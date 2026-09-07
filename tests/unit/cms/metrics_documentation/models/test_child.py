@@ -260,6 +260,7 @@ class TestMetricsDocumentationChildEntry:
             (2, "headline"),
             (3, "vaccinations"),
             (4, "deaths"),
+            (5, "headline"),
         ],
     )
     def test_metric_group_returns_expected_string(
@@ -279,6 +280,7 @@ class TestMetricsDocumentationChildEntry:
             (2, "COVID-19_headline_vaccines_autumn23Total"),
             (3, "COVID-19_vaccinations_autumn22_uptakeByDay"),
             (4, "COVID-19_deaths_ONSByWeek"),
+            (5, "OFF-SENS_influenza_headline_positivityLatest"),
         ]
         fake_metrics_documentation_child_entry_page = (
             FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
@@ -309,6 +311,7 @@ class TestMetricsDocumentationChildEntry:
             (2, "COVID-19_"),
             (3, ""),
             (4, None),
+            (5, "COVID-19_invalid_metric"),
         ]
         fake_metrics_documentation_child_entry_page = (
             FakeMetricsDocumentationChildEntryFactory.build_page_from_template()
