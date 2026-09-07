@@ -136,8 +136,8 @@ class SingleCategoryDownloadsView(APIView):
         chart_plot_models = request_serializer.to_models(request=request)
 
         try:
-            queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
-                chart_plots=chart_plot_models
+            queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet = (
+                access.get_downloads_data(chart_plots=chart_plot_models)
             )
         except DataNotFoundForAnyPlotError as error:
             return Response(

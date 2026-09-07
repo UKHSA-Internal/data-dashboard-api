@@ -58,7 +58,9 @@ class DownloadsInterface:
 
         return DEFAULT_CORE_HEADLINE_MANAGER
 
-    def build_downloads_data_from_plots_data(self) -> list[CompletePlotData]:
+    def build_downloads_data_from_plots_data(
+        self,
+    ) -> CoreTimeSeriesQuerySet | CoreHeadlineQuerySet:
         complete_plots: list[CompletePlotData] = (
             self.plots_interface.build_plots_data_for_full_queryset()
         )
@@ -217,7 +219,9 @@ def sort_queryset_according_to_x_axis(
     return queryset.order_by("-date")
 
 
-def get_downloads_data(*, chart_plots: ChartRequestParams) -> CoreTimeSeriesQuerySet:
+def get_downloads_data(
+    *, chart_plots: ChartRequestParams
+) -> CoreTimeSeriesQuerySet | CoreHeadlineQuerySet:
     """Gets the final queryset for the downloads export associated with the given `chart_plots`
 
     Args:

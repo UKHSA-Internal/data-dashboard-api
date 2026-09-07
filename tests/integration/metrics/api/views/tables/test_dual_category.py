@@ -69,6 +69,7 @@ class TestDualCategoryTablesView:
     def test_headline_plot(
         self,
         core_headline_example: CoreHeadline,
+        user_global_access,
     ):
         """
         Given a valid dual-category headline payload
@@ -77,6 +78,9 @@ class TestDualCategoryTablesView:
         """
         # Given
         client = APIClient()
+        if not core_headline_example.is_public:
+            client.force_authenticate(user=user_global_access, token="token")
+
         topic: str = core_headline_example.metric.metric_group.topic.name
         metric: str = core_headline_example.metric.name
 
