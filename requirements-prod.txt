@@ -1,7 +1,7 @@
 -r requirements-prod-ingestion.txt
 anyascii==0.3.3
 attrs==26.1.0
-beautifulsoup4==4.14.3
+beautifulsoup4==4.15.0
 CacheControl==0.14.4
 certifi==2026.5.20
 cfgv==3.5.0
@@ -86,7 +86,7 @@ urllib3==2.7.0
 virtualenv==21.5.0
 wagtail==7.3.4
 wagtail_trash==3.2.0
-wagtail_modeladmin==2.3.0
+wagtail_modeladmin==2.4.0
 webencodings==0.5.1
 Willow==1.12.0
 zipp==3.23.1
