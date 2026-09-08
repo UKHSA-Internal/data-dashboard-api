@@ -235,9 +235,9 @@ class PageLink(StructBlock):
             )
             if not check_page_permissions(
                 permission_sets=full_user_permissions,
-                theme_id=getattr(page, "theme", None),
-                sub_theme_id=getattr(page, "sub_theme", None),
-                topic_id=getattr(page, "topic", None),
+                theme_id=getattr(page, "page_theme", None),
+                sub_theme_id=getattr(page, "page_sub_theme", None),
+                topic_id=getattr(page, "page_topic", None),
             ):
                 data["is_authorised"] = False
                 data["title"] = ""
