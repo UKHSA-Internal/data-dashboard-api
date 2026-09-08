@@ -79,3 +79,9 @@ class UserManager(models.Manager):
             5
         """
         return PermissionSet.objects.filter(user__user_id=user_id)
+
+    def with_permission_sets(self):
+        """
+        Gets all users and their assigned permission sets, ordering by user id.
+        """
+        return self.prefetch_related("permission_sets").order_by("user_id")
