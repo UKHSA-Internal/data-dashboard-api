@@ -19,6 +19,12 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         chart_config = self._get_base_chart_config()
 
         chart_config["barmode"] = "stack"
+        chart_config.setdefault("annotations", []).extend(
+            self._get_y_axis_title_annotation_config()
+        )
+        if self._chart_generation_payload.y_axis_title:
+            chart_config["margin"]["t"] = 30
+            
 
         return {**chart_config, **self._get_legend_config()}
 
