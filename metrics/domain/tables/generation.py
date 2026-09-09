@@ -326,3 +326,115 @@ class TabularData:
                     value_dict[LOWER_CONFIDENCE] = plot_values.get(LOWER_CONFIDENCE)
                 result.append(value_dict)
         return result
+
+
+class DualCategoryTabularData(TabularData):
+    def __init__(
+        self,
+        *,
+        plots: list["PlotGenerationData"],
+        primary_field_values: list[str] | None = None,
+    ):
+        super().__init__(plots=plots)
+        self.primary_field_values = primary_field_values or []
+
+    def create_multi_plot_row(
+        self, left_column: str, plot_values: dict[str, str]
+    ) -> dict[str, str | list[dict]]:
+        """Creates a row for dual-category tabular data
+
+        Args:
+            left_column: The primary axis value
+            plot_values: The plot values
+
+        Returns:
+            A dictionary representing the dual-category tabular row returned
+            Eg. {"reference": "00-01", "values": [{"label": "Male", "value": 6.00, in_reporting_delay_period: False}]}
+        """
+        return {
+            self.column_heading: left_column,
+            "values": self.create_timeseries_plot_values(plot_values=plot_values),
+        }
+
+    def add_plot_data_to_combined_plots(
+        self,
+        *,
+        plot_data: PLOT_DATA_LOOKUP_TYPE,
+        plot_label: str,
+        in_reporting_delay_period_lookup: (
+            IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE | None
+        ) = None,
+        upper_confidence_lookup: CONFIDENCE_LOOKUP_TYPE | None = None,
+        lower_confidence_lookup: CONFIDENCE_LOOKUP_TYPE | None = None,
+    ):
+        """Add the values to the combined plots dictionary
+
+        Notes:
+            For Dual-category tabular data, we won't have upper and lower confidence intervals
+            as these are not supported for this type of data.
+
+        Args:
+            plot_data: The raw plot data that is not by date
+            plot_label: The label for this plot
+            in_reporting_delay_period_lookup: The lookups for
+                the reporting delay period associated with
+                each data point in the `plot_data`
+            upper_confidence_lookup: The lookups for upper confidence
+                intervals associated with each data point
+            lower_confidence_lookup: The lookups for lower confidence
+                intervals associated with each data point
+        """
+
+        in_reporting_delay_period_lookup = in_reporting_delay_period_lookup or {}
+        upper_confidence_lookup = upper_confidence_lookup or {}
+        lower_confidence_lookup = lower_confidence_lookup or {}
+
+        for key, value in plot_data.items():
+            result = {plot_label: str(value)}
+            result[f"{plot_label}__{IN_REPORTING_DELAY_PERIOD}"] = (
+                self._fetch_reporting_delay_period(
+                    in_reporting_delay_period_lookup=in_reporting_delay_period_lookup,
+                    key=key,
+                )
+            )
+
+            upper_confidence_value = self._fetch_confidence_value(
+                confidence_lookup=upper_confidence_lookup,
+                key=key,
+            )
+            if upper_confidence_value is not None:
+                result[UPPER_CONFIDENCE] = str(upper_confidence_value)
+
+            lower_confidence_value = self._fetch_confidence_value(
+                confidence_lookup=lower_confidence_lookup,
+                key=key,
+            )
+            if lower_confidence_value is not None:
+                result[LOWER_CONFIDENCE] = str(lower_confidence_value)
+
+            self.combined_plots[str(key)].update(result)
+
+    def create_timeseries_plot_values(self, plot_values: dict[str, str]) -> list[dict]:
+        """Creates an array of values for times series tabular data row
+
+        Args:
+            plot_values: The plot values
+
+        Returns:
+            A list of dictionaries representing a plot and its values
+            Eg. [{label: "Male", value: "55", in_reporting_delay_period: False}, ...]
+        """
+        result = []
+        segment_labels = list(dict.fromkeys(self.plot_labels))
+
+        for plot_label in segment_labels:
+            value_dict = {
+                "label": plot_label,
+                "value": plot_values.get(plot_label),
+                IN_REPORTING_DELAY_PERIOD: plot_values.get(
+                    f"{plot_label}__{IN_REPORTING_DELAY_PERIOD}", False
+                ),
+            }
+
+            result.append(value_dict)
+        return result

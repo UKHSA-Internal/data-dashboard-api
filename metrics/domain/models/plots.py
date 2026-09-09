@@ -233,6 +233,7 @@ class ChartGenerationPayload(BaseModel):
     legend_title: str | None = ""
     confidence_intervals: bool | None = False
     confidence_colour: str | None = ""
+    secondary_category: str | None = ""
 
 
 class CompletePlotData(BaseModel):

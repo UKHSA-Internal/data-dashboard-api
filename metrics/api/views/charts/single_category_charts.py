@@ -14,9 +14,9 @@ from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
-    EncodedChartResponseSerializer,
     EncodedChartsRequestSerializer,
 )
+from metrics.api.serializers.charts.common import EncodedChartResponseSerializer
 from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts.single_category_charts import access
 from metrics.interfaces.plots.access import (

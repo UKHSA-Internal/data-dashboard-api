@@ -47,6 +47,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage.json
 *.cover
 *.py,cover
 .hypothesis/
@@ -249,3 +250,4 @@ fabric.properties
 
 # Static files collected by the Django app
 metrics/static/
+metrics/media/

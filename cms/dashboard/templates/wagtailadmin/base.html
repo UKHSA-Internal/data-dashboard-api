@@ -8,3 +8,7 @@
 {% block branding_favicon %}
     <link rel="shortcut icon" href="{% static 'gov_uk_icon.png' %}" />
 {% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+{% endblock %}

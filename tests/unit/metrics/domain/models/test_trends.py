@@ -72,7 +72,7 @@ class TestTrendParameters:
             "stratum": input_data["stratum"],
             "sex": input_data["sex"],
             "age": input_data["age"],
-            "rbac_permissions": [],
+            "permission_sets": {},
         }
         assert main_metric_dict == expected
 
@@ -100,6 +100,6 @@ class TestTrendParameters:
             "stratum": input_data["stratum"],
             "sex": input_data["sex"],
             "age": input_data["age"],
-            "rbac_permissions": [],
+            "permission_sets": {},
         }
         assert percentage_metric_dict == expected

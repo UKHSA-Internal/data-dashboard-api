@@ -9,7 +9,8 @@ from typing import Self
 
 from django.db import models
 from django.db.models.functions.window import Rank
-from django.utils import timezone
+
+from common.virtual_clock import get_embargo_time
 
 
 class APITimeSeriesQuerySet(models.QuerySet):
@@ -247,7 +248,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
             The filtered queryset which excludes emargoed data
 
         """
-        current_time = timezone.now()
+        current_time = get_embargo_time()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )

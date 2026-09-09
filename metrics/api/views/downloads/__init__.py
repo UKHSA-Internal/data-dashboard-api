@@ -1,3 +1,3 @@
-from .single_category_downloads import DownloadsView
+from .single_category_downloads import SingleCategoryDownloadsView
 from .bulk_downloads import BulkDownloadsView
 from .subplot_downloads.api_view import SubplotDownloadsView

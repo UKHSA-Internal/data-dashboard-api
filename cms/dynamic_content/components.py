@@ -69,6 +69,9 @@ class DualCategoryChartSegmentComponent(blocks.StructBlock):
 class DualCategoryChartSegmentComponents(blocks.StreamBlock):
     segment = DualCategoryChartSegmentComponent()
 
+    class Meta:
+        form_classname = "dual-category-chart-segments-container-form"
+
 
 class HeadlineNumberComponent(elements.BaseMetricsElement):
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)

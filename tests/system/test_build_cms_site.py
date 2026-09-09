@@ -164,8 +164,8 @@ class TestBuildCMSSite:
         Then the response contains the expected data
         """
         # Given
-        domain = "my-prefix.dev.ukhsa-data-dashboard.gov.uk"
-        monkeypatch.setenv(name="FRONTEND_URL", value=domain)
+        frontend_url = "https://my-prefix.dev.ukhsa-data-dashboard.gov.uk"
+        monkeypatch.setenv(name="FRONTEND_URL", value=frontend_url)
         call_command("build_cms_site")
 
         about_page = CommonPage.objects.get(slug="about")
@@ -179,7 +179,7 @@ class TestBuildCMSSite:
         response_data = response.data
 
         # Check the `html_url` has been constructed correctly
-        assert response_data["meta"]["html_url"] == f"https://{domain}/about/"
+        assert response_data["meta"]["html_url"] == f"{frontend_url}/about/"
 
         # Compare the response from the endpoint to the template used to build the page
         about_page_template = open_example_page_response(page_name="about")
@@ -325,8 +325,8 @@ class TestBuildCMSSite:
         Then the response contains the expected data
         """
         # Given
-        domain = "my-prefix.dev.ukhsa-data-dashboard.gov.uk"
-        monkeypatch.setenv(name="FRONTEND_URL", value=domain)
+        frontend_url = "https://my-prefix.dev.ukhsa-data-dashboard.gov.uk"
+        monkeypatch.setenv(name="FRONTEND_URL", value=frontend_url)
         call_command("build_cms_site")
 
         access_our_data_getting_started_page = CompositePage.objects.get(
@@ -348,7 +348,7 @@ class TestBuildCMSSite:
         # Check the `html_url` has been constructed correctly
         assert (
             response_data["meta"]["html_url"]
-            == f"https://{domain}/access-our-data/getting-started/"
+            == f"{frontend_url}/access-our-data/getting-started/"
         )
 
         assert (

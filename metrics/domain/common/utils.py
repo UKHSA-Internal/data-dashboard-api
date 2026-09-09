@@ -115,7 +115,11 @@ class ChartTypes(Enum):
             Examples:
                 ["stacked-bar", "pyramid"]
         """
-        selectable = (cls.stacked_bar, cls.pyramid)
+        selectable = (
+            cls.stacked_bar,
+            # Note: Uncomment this once we have a proper pyramid chart implementation
+            # cls.pyramid,
+        )
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 
     @classmethod

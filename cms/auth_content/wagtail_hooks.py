@@ -5,6 +5,7 @@ from wagtail.admin.viewsets.model import (
     ModelViewSetGroup,
 )
 
+from cms.auth_content.models.api_application import APIApplication
 from cms.auth_content.models.permission_sets import PermissionSet
 from cms.auth_content.models.users import User
 
@@ -36,8 +37,14 @@ class UserViewSet(ModelViewSet):
     icon = "user"
 
 
+class APIApplicationViewSet(ModelViewSet):
+    model = APIApplication
+    menu_label = "API Applications"
+    icon = "desktop"
+
+
 class AuthGroup(ModelViewSetGroup):
-    items = (PermissionSetViewSet, UserViewSet)
+    items = (PermissionSetViewSet, UserViewSet, APIApplicationViewSet)
     menu_label = "Auth"
     menu_icon = "lock"
     menu_order = 300

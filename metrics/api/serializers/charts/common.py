@@ -14,6 +14,8 @@ FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg"]
 
 
 class BaseChartsSerializer(serializers.Serializer):
+    """Base serializer for chart request payloads, containing common fields across different chart types."""
+
     file_format = serializers.ChoiceField(
         choices=FILE_FORMAT_CHOICES,
         help_text=help_texts.CHART_FILE_FORMAT_FIELD,
@@ -104,3 +106,21 @@ class BaseChartsSerializer(serializers.Serializer):
         default=None,
         help_text=help_texts.DATA_CLASSIFICATION_FIELD,
     )
+
+
+class ChartPreviewQueryParamsSerializer(serializers.Serializer):
+    """Serializer for query parameters when requesting a chart preview."""
+
+    preview = serializers.BooleanField(required=False)
+
+
+class EncodedChartResponseSerializer(serializers.Serializer):
+    """Serializer for the response of an encoded chart generation, containing the encoded chart and related metadata."""
+
+    last_updated = serializers.CharField(
+        help_text=help_texts.ENCODED_CHARTS_LAST_UPDATED,
+        allow_blank=True,
+    )
+    chart = serializers.CharField(help_text=help_texts.ENCODED_CHARTS_RESPONSE)
+    alt_text = serializers.CharField(help_text=help_texts.CHARTS_ALT_TEXT)
+    figure = serializers.DictField(help_text=help_texts.CHARTS_FIGURE_OUTPUT)

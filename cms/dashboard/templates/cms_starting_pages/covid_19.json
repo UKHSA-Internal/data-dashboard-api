@@ -43,6 +43,8 @@
                       {
                         "type": "headline_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_cases_7DayTotals",
                           "geography": "England",
@@ -57,6 +59,8 @@
                       {
                         "type": "trend_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_cases_7DayChange",
                           "geography": "England",
@@ -81,6 +85,8 @@
                       {
                         "type": "headline_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
                           "geography": "England",
@@ -95,6 +101,8 @@
                       {
                         "type": "trend_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_ONSdeaths_7DayChange",
                           "geography": "England",
@@ -119,6 +127,8 @@
                       {
                         "type": "headline_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_7DayAdmissions",
                           "geography": "England",
@@ -133,6 +143,8 @@
                       {
                         "type": "trend_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_7DayAdmissionsChange",
                           "geography": "England",
@@ -157,6 +169,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_vaccines_autumn23Uptake",
                           "geography": "England",
@@ -180,6 +194,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_headline_positivity_latest",
                           "geography": "England",
@@ -225,6 +241,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_cases_casesByDay",
                           "geography": "England",
@@ -268,6 +286,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_cases_countRollingMean",
                           "geography": "England",
@@ -303,6 +323,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_cases_rateRollingMean",
                           "geography": "England",
@@ -324,6 +346,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_cases_rateRollingMean",
                           "geography": "England",
@@ -376,6 +400,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_deaths_ONSByDay",
                           "geography": "England",
@@ -411,6 +437,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_deaths_ONSRollingMean",
                           "geography": "England",
@@ -463,6 +491,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_healthcare_admissionByDay",
                           "geography": "England",
@@ -498,6 +528,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_healthcare_occupiedBedsByDay",
                           "geography": "England",
@@ -550,6 +582,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_testing_PCRcountByDay",
                           "geography": "England",
@@ -585,6 +619,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_testing_positivity7DayRolling",
                           "geography": "England",
@@ -637,6 +673,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_spring23_dosesByDay",
                           "geography": "England",
@@ -672,6 +710,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
                           "geography": "England",
@@ -693,6 +733,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
                           "geography": "England",
@@ -736,6 +778,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_dosesByDay",
                           "geography": "England",
@@ -771,6 +815,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -792,6 +838,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -813,6 +861,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -834,6 +884,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -855,6 +907,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -876,6 +930,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -897,6 +953,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -918,6 +976,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",
@@ -939,6 +999,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "COVID-19",
                           "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
                           "geography": "England",

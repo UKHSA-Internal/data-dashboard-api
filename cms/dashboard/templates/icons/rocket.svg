@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 24 24"
+     xmlns="http://www.w3.org/2000/svg"
+     fill="none"
+     id="icon-rocket"
+>
+    <g transform="translate(12, 12) scale(-1, 1) rotate(-45) scale(1.15) translate(-12, -12)">
+        <!-- Rocket body -->
+        <path d="M12 2L9 8H15L12 2Z"
+              fill="currentColor"
+        />
+        <!-- Rocket fuselage -->
+        <rect x="10" y="6" width="4" height="12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+        />
+        <!-- Window/porthole -->
+        <circle cx="12" cy="9" r="1.2"
+                fill="currentColor"
+        />
+        <!-- Left fin -->
+        <path d="M10 16L7 20L10 18Z"
+              fill="currentColor"
+        />
+        <!-- Right fin -->
+        <path d="M14 16L17 20L14 18Z"
+              fill="currentColor"
+        />
+        <!-- Flame -->
+        <path d="M11 18C10.5 20 10 22 12 22.5C14 22 13.5 20 13 18"
+              stroke="currentColor"
+              stroke-width="1.5"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+        />
+    </g>
+</svg>

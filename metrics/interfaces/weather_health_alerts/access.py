@@ -2,8 +2,8 @@ import logging
 from collections.abc import Iterable
 
 from django.db.models.manager import Manager
-from django.utils import timezone
 
+from common.virtual_clock import get_embargo_time
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.weather_health_alerts.state import WeatherHealthAlarmState
 
@@ -149,7 +149,7 @@ class WeatherHealthAlertsInterface:
                 refresh_date=None,
             )
 
-        if core_headline.period_end <= timezone.now():
+        if core_headline.period_end <= get_embargo_time():
             # The last refresh is considered to be when the previous period_end expired
             # In this case, we fall back to the green/normal state of metric_value=1
             refresh_date = core_headline.period_end

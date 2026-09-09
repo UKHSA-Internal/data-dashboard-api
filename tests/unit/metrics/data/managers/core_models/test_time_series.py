@@ -4,6 +4,7 @@ from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
 class TestCoreTimeSeriesManager:
+
     @mock.patch.object(CoreTimeSeriesManager, "query_for_superseded_data")
     def test_delete_superseded_data(
         self, spy_query_for_superseded_data: mock.MagicMock

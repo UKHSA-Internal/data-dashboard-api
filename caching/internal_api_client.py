@@ -16,6 +16,10 @@ MAPS_ENDPOINT_PATH = f"{API_PREFIX}maps/v1/"
 GLOBAL_BANNERS_ENDPOINT_PATH = f"{API_PREFIX}global-banners/v1"
 MENUS_ENDPOINT_PATH = f"{API_PREFIX}menus/v1"
 
+DUAL_CATEGORY_CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/dual-category/v1/"
+DUAL_CATEGORY_TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/dual-category/v1/"
+DUAL_CATEGORY_DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/dual-category/v1/"
+
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
 CACHE_RESERVED_NAMESPACE_HEADER_KEY = "Cache-Reserved-Namespace"
@@ -57,6 +61,11 @@ class InternalAPIClient:
         self.maps_endpoint_path = MAPS_ENDPOINT_PATH
         self.global_banners_endpoint_path = GLOBAL_BANNERS_ENDPOINT_PATH
         self.menus_endpoint_path = MENUS_ENDPOINT_PATH
+        self.dual_category_charts_endpoint_path = DUAL_CATEGORY_CHARTS_ENDPOINT_PATH
+        self.dual_category_tables_endpoint_path = DUAL_CATEGORY_TABLES_ENDPOINT_PATH
+        self.dual_category_downloads_endpoint_path = (
+            DUAL_CATEGORY_DOWNLOADS_ENDPOINT_PATH
+        )
 
         # Header configurations
         self.reserved_namespace = reserved_namespace
@@ -75,7 +84,7 @@ class InternalAPIClient:
 
     # Headers
 
-    def build_headers(self) -> dict[str, bool]:
+    def _build_headers(self) -> dict[str, bool]:
         return {
             CACHE_RESERVED_NAMESPACE_HEADER_KEY: self.reserved_namespace,
         }
@@ -102,7 +111,7 @@ class InternalAPIClient:
 
         """
         path = self.headlines_endpoint_path
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.get(path=path, data=data, headers=headers)
 
     def hit_trends_endpoint(self, *, data: dict[str, str]) -> Response:
@@ -116,8 +125,22 @@ class InternalAPIClient:
 
         """
         path = self.trends_endpoint_path
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.get(path=path, data=data, headers=headers)
+
+    def hit_dual_category_charts_endpoint(self, *, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `charts/dual-category/v1/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `charts/dual-category/v1/` endpoint
+
+        """
+        path = self.dual_category_charts_endpoint_path
+        headers = self._build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")
 
     def hit_charts_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `charts/` endpoint with the given `data`
@@ -130,8 +153,26 @@ class InternalAPIClient:
 
         """
         path = self.charts_endpoint_path
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_dual_category_tables_endpoint(self, *, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `tables/dual-category/v1/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `tables/dual-category/v1/` endpoint
+
+        """
+        headers = self._build_headers()
+        return self._client.post(
+            path=self.dual_category_tables_endpoint_path,
+            data=data,
+            headers=headers,
+            format="json",
+        )
 
     def hit_tables_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `tables/` endpoint with the given `data`
@@ -143,10 +184,24 @@ class InternalAPIClient:
             `Response` from the `tables/` endpoint
 
         """
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.post(
             path=self.tables_endpoint_path, data=data, headers=headers, format="json"
         )
+
+    def hit_dual_category_downloads_endpoint(self, *, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `downloads/dual-category/v1/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `downloads/dual-category/v1/` endpoint
+
+        """
+        path = self.dual_category_downloads_endpoint_path
+        headers = self._build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")
 
     def hit_downloads_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `downloads/` endpoint with the given `data`
@@ -159,7 +214,7 @@ class InternalAPIClient:
 
         """
         path = self.downloads_endpoint_path
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
     def hit_geographies_list_endpoint_deprecated(self, *, topic: str) -> Response:
@@ -170,7 +225,7 @@ class InternalAPIClient:
 
         """
         path: str = urljoin(base=self.geographies_endpoint_path_deprecated, url=topic)
-        headers: dict[str, bool] = self.build_headers()
+        headers: dict[str, bool] = self._build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
     def hit_geographies_list_endpoint(self, *, topic: str) -> Response:
@@ -181,7 +236,7 @@ class InternalAPIClient:
 
         """
         self.hit_geographies_list_endpoint_deprecated(topic=topic)
-        headers: dict[str, bool] = self.build_headers()
+        headers: dict[str, bool] = self._build_headers()
         query_params = {"topic": topic}
         return self._client.get(
             path=self.geographies_endpoint_path,
@@ -200,7 +255,7 @@ class InternalAPIClient:
             `Response` from the `maps/` endpoint
 
         """
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.post(
             path=self.maps_endpoint_path, data=data, headers=headers, format="json"
         )
@@ -213,7 +268,7 @@ class InternalAPIClient:
 
         """
         path = self.pages_endpoint_path
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
     def hit_pages_list_endpoint_for_page_type(
@@ -235,7 +290,7 @@ class InternalAPIClient:
 
         """
         path: str = self.pages_endpoint_path
-        headers: dict[str, str] = self.build_headers()
+        headers: dict[str, str] = self._build_headers()
 
         query_params: dict[str, str] = self.build_query_params(
             page_type=page_type_query_param,
@@ -277,7 +332,7 @@ class InternalAPIClient:
 
         """
         path = f"{self.pages_endpoint_path}{page_id}"
-        headers = self.build_headers()
+        headers = self._build_headers()
         self._client.get(path=f"{path}/", headers=headers, format="json")
         return self._client.get(path=path, headers=headers, format="json")
 
@@ -288,7 +343,7 @@ class InternalAPIClient:
             `Response` from the `global-banners/` endpoint
 
         """
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.get(
             path=self.global_banners_endpoint_path, headers=headers, format="json"
         )
@@ -300,7 +355,7 @@ class InternalAPIClient:
             `Response` from the `menus/` endpoint
 
         """
-        headers = self.build_headers()
+        headers = self._build_headers()
         return self._client.get(
             path=self.menus_endpoint_path, headers=headers, format="json"
         )

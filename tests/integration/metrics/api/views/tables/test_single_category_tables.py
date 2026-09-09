@@ -261,6 +261,7 @@ class TestTablesView:
     def test_headline_charts_with_plot_label_uses_plot_label_for_reference(
         self,
         core_headline_example: list[CoreHeadline],
+        user_global_access,
     ):
         """
         Given a valid payload to create a headline chart
@@ -270,6 +271,8 @@ class TestTablesView:
         """
         # Given
         client = APIClient()
+        if not core_headline_example.is_public:
+            client.force_authenticate(user=user_global_access, token="token")
         core_headline: CoreHeadline = core_headline_example
         topic_name: str = core_headline.metric.metric_group.topic.name
         metric_name: str = core_headline.metric.name

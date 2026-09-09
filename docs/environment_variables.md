@@ -130,6 +130,36 @@ See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-se
 
 ---
 
+### CMS Page previews configuration
+
+Wagtail CMS supports page previews in a configured frontend. We use a headless CMS with a custom frontend renderer, so built-in Wagtail previews are disabled and replaced by our own preview flow. The following environment variables are supported:
+
+#### `FRONTEND_URL`
+
+Required for preview redirects to work. The backend builds preview redirects from this absolute frontend base URL and appends the fixed `/preview` path plus query parameters. Sonar code scanner prefers that we keep 'http' out of the codebase. Ensure that you have `export FRONTEND_URL='http://localhost:3000'` configured in your `.env` file when testing previews locally.
+
+The backend always appends (or overrides) the query params `slug`, `t`, and `page_id` in the final redirect URL. When Embargo Time is set, it also appends `et` (Unix epoch integer or `now`).
+
+Example generated redirect URL:
+- `http://localhost:3000/preview?slug=weather-health-alerts&t=<signed-token>&page_id=17&et=now`
+
+Note: preview draft fetches use a slug route (`/api/drafts/{slug}/`), while token validation enforces the signed `page_id` claim against the resolved page.
+
+Preview token signing salt is derived automatically from Django's `SECRET_KEY` as a 120-character opaque string. It is process-stable across workers that share the same application secret and is not configured through an environment variable.
+
+#### `PAGE_PREVIEWS_TOKEN_TTL_SECONDS`
+
+Preview token time-to-live (TTL) in seconds. If omitted, the backend default is 30 seconds.
+
+Example:
+- `PAGE_PREVIEWS_TOKEN_TTL_SECONDS=300`
+
+Local development override:
+- When running with `APIENV=LOCAL`, local settings default this to 86400 seconds (24 hours).
+- Setting `PAGE_PREVIEWS_TOKEN_TTL_SECONDS` in your local `.env` overrides both the 30-second default and the 86400-second local-development default.
+
+---
+
 ### Email configuration
 
 #### `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`

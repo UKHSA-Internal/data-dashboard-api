@@ -112,11 +112,7 @@ class TestAPITimeSeriesRequestSerializer:
         value_dynamically_set_on_dto = getattr(api_timeseries_dto, lookup_field)
         assert value_dynamically_set_on_dto == value_returned_from_query
 
-    @mock.patch.object(APITimeSeries.objects, "get_distinct_column_values_with_filters")
-    def test_get_queryset_delegates_call_to_the_api_timeseries_model_manager(
-        self,
-        spy_get_distinct_column_values_with_filters: mock.MagicMock,
-    ):
+    def test_get_queryset_delegates_call_to_the_api_timeseries_model_manager(self):
         """
         Given a request which contains kwargs from the URL parameters
         And a `lookup_field` also provided in the context of the serializer
@@ -127,20 +123,28 @@ class TestAPITimeSeriesRequestSerializer:
         fake_request_kwargs = {"theme": "infectious_disease"}
         fake_lookup_field = "theme"
         mocked_request = mock.Mock(parser_context={"kwargs": fake_request_kwargs})
+        api_time_series_manager_spy = mock.Mock()
         serializer = APITimeSeriesRequestSerializer(
-            context={"request": mocked_request, "lookup_field": fake_lookup_field}
+            context={
+                "request": mocked_request,
+                "lookup_field": fake_lookup_field,
+                "api_time_series_manager": api_time_series_manager_spy,
+            }
         )
 
         # When
         queryset = serializer.get_queryset()
 
         # Then
-        spy_get_distinct_column_values_with_filters.assert_called_once_with(
+        api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
             lookup_field=fake_lookup_field,
             restrict_to_public=True,
             **fake_request_kwargs,
         )
-        assert queryset == spy_get_distinct_column_values_with_filters.return_value
+        assert (
+            queryset
+            == api_time_series_manager_spy.get_distinct_column_values_with_filters.return_value
+        )
 
     def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_theme_lookup(
         self,

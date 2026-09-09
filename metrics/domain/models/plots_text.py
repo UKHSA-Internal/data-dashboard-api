@@ -20,6 +20,7 @@ from metrics.domain.models.plots import (
 
 READABLE_DATE_FORMAT = "%d %B %Y"
 TREND_CHART_TYPE = "line_single_simplified"
+DUAL_CATEGORY_CHART_TYPE = "stacked_bar"
 
 
 class PlotsText:
@@ -343,6 +344,8 @@ class PlotsText:
         match chart_type:
             case ChartTypes.bar.value:
                 return "bar"
+            case ChartTypes.stacked_bar.value:
+                return "stacked bar"
             case ChartTypes.line_multi_coloured.value:
                 return "line"
             case ChartTypes.line_single_simplified.value:
@@ -376,6 +379,9 @@ class PlotsText:
                 plot_description += f"showing a {trend_type} trend in the data. "
 
             return plot_description
+
+        if self._plot_is_dual_category_chart(plot_parameters=plot_parameters):
+            return f"This is a {line_colour} {plot_type} chart. "
 
         return f"This is a {line_colour} {line_type} {plot_type} plot. "
 
@@ -429,6 +435,10 @@ class PlotsText:
     @classmethod
     def _plot_is_simplified_chart(cls, *, plot_parameters: PlotParameters) -> bool:
         return plot_parameters.chart_type == TREND_CHART_TYPE
+
+    @classmethod
+    def _plot_is_dual_category_chart(cls, *, plot_parameters: PlotParameters) -> bool:
+        return plot_parameters.chart_type == DUAL_CATEGORY_CHART_TYPE
 
     @classmethod
     def _plot_is_headline_data(cls, *, plot_data: PlotGenerationData) -> bool:

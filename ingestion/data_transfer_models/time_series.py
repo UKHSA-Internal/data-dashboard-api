@@ -28,7 +28,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
         """Casts the inbound `embargo` to the London timezone
 
         Args:
-            embargo: The inbound embargo date
+            embargo: The inbound embargo time
                 datetime object
 
         Returns:

@@ -72,7 +72,7 @@ def test_custom_user_manager_cognito(
     )
 
     @staticmethod
-    def func(payload):
+    def func(payload, request_path=None):
         return USER_MODEL(username=payload["entraObjectId"])
 
     if cognito_user_manager:
@@ -233,7 +233,7 @@ def test_authenticate_invalid_entra(rf, entra_well_known_keys, jwk_private_key_t
         {
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
@@ -260,13 +260,13 @@ def test_custom_user_manager_entra(
             "iss": f"https://sts.windows.net/{settings.ENTRA_TENANT_ID}/",
             "aud": settings.ENTRA_AUDIENCE,
             "sub": "username",
-            "appid": settings.ENTRA_ALLOWED_APP_IDS[0],
+            "appid": "appid",
             "roles": ["application.read"],
         },
     )
 
     @staticmethod
-    def func(payload):
+    def func(payload, request_path=None):
         return USER_MODEL(username=payload["appid"])
 
     if entra_user_manager:
@@ -279,5 +279,5 @@ def test_custom_user_manager_entra(
     auth = backend.JSONWebTokenAuthentication()
     user, auth_token = auth.authenticate(request)
     assert user
-    assert user.username == "entraOID"
+    assert user.username == "appid"
     assert auth_token == token.encode("utf8")

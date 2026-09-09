@@ -43,6 +43,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Adenovirus",
                           "metric": "adenovirus_headline_positivityLatest",
                           "geography": "England",
@@ -66,6 +68,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "hMPV",
                           "metric": "hMPV_headline_positivityLatest",
                           "geography": "England",
@@ -89,6 +93,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Parainfluenza",
                           "metric": "parainfluenza_headline_positivityLatest",
                           "geography": "England",
@@ -112,6 +118,8 @@
                       {
                         "type": "percentage_number",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Rhinovirus",
                           "metric": "rhinovirus_headline_positivityLatest",
                           "geography": "England",
@@ -157,6 +165,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -178,6 +188,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -199,6 +211,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -220,6 +234,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -241,6 +257,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -262,6 +280,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -283,6 +303,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -304,6 +326,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_healthcare_admissionRateByWeek",
                           "geography": "England",
@@ -356,6 +380,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Adenovirus",
                           "metric": "adenovirus_testing_positivityByWeek",
                           "geography": "England",
@@ -399,6 +425,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "hMPV",
                           "metric": "hMPV_testing_positivityByWeek",
                           "geography": "England",
@@ -442,6 +470,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Parainfluenza",
                           "metric": "parainfluenza_testing_positivityByWeek",
                           "geography": "England",
@@ -485,6 +515,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "Rhinovirus",
                           "metric": "rhinovirus_testing_positivityByWeek",
                           "geography": "England",
@@ -528,6 +560,8 @@
                       {
                         "type": "plot",
                         "value": {
+                          "theme": "infectious_disease",
+                          "sub_theme": "respiratory",
                           "topic": "RSV",
                           "metric": "RSV_testing_positivityByWeek",
                           "geography": "England",

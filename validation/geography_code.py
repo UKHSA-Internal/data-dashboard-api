@@ -151,11 +151,10 @@ def _validate_nhs_trust_geography_code(*, geography_code: str) -> str:
     return geography_code
 
 
-def _validate_integrated_care_board_geography_code(
-    *, geography_code: str, allowable_length: int = 3
-) -> str:
-    if len(geography_code) != allowable_length:
-        error_message = f"An 'Integrated Care Board' geography type should be {allowable_length} characters long"
+def _validate_integrated_care_board_geography_code(*, geography_code: str) -> str:
+    allowable_integrated_care_board_code_lengths = (3, 5)
+    if len(geography_code) not in allowable_integrated_care_board_code_lengths:
+        error_message = f"An 'Integrated Care Board' geography type should be {allowable_integrated_care_board_code_lengths} characters long"
         raise ValueError(error_message)
 
     first_character = geography_code[0]
@@ -181,7 +180,6 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
     if len(geography_code) == large_code_allowance:
         return _validate_integrated_care_board_geography_code(
             geography_code=geography_code,
-            allowable_length=5,
         )
 
     first_character = geography_code[0]

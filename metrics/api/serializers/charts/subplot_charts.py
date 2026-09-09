@@ -197,6 +197,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
             subplot_parameters = subplot.pop("subplot_parameters")
             subplot["x_axis"] = chart_parameters["x_axis"]
             subplot["y_axis"] = chart_parameters["y_axis"]
+            subplot["request"] = request
 
             for plot in subplot["plots"]:
                 plot.update(
@@ -228,7 +229,3 @@ class SubplotChartRequestSerializer(serializers.Serializer):
             data_classification=data_classification,
             request=request,
         )
-
-
-class ChartPreviewQueryParamsSerializer(serializers.Serializer):
-    preview = serializers.BooleanField(required=False)
