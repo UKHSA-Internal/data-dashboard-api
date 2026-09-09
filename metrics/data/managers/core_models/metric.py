@@ -239,7 +239,7 @@ class MetricManager(models.Manager):
         return self.get_queryset().get_all_headline_names()
 
     def get_filtered_unique_names_related_to_parent_topic_id(
-        self, parent_topic_id: str, is_public: bool | None = None
+        self, parent_topic_id: str, *, is_public: bool | None = None
     ) -> MetricQuerySet:
         """Gets all available metrics with id and name fields.
 
