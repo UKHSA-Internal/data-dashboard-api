@@ -205,13 +205,8 @@ class BaseMetricsElementAdapter(StructBlockAdapter):
 
     @property
     def media(self):
-        structblock_media = super().media
-        return forms.Media(
-            js=structblock_media._js
-            + [
-                "js/metric_dropdown_manager.js",
-            ],
-            css=structblock_media._css,
+        return super().media + forms.Media(
+            js=["js/metric_dropdown_manager.js"],
         )
 
 
