@@ -131,6 +131,7 @@ class _BloodstreamInfectionTopic(Enum):
 
 class _GastrointestinalTopic(Enum):
     C_DIFFICILE = "C-difficile"
+    NOROVIRUS = "norovirus"
 
 
 class _AntimicrobialResistanceTopic(Enum):
