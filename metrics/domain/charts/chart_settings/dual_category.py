@@ -38,7 +38,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         legend_config = {
             "font": self._get_tick_font_config(),
             "orientation": "h",
-            "y": 1.0,
+            "y": -0.5,
             "x": 0.5,
             "xanchor": "center",
             "yanchor": "bottom",
