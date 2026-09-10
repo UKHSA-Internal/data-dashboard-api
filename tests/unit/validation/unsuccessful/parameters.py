@@ -91,6 +91,13 @@ INVALID_PARAMETERS = [
         "vaccinations",
     ),  # Invalid topic of `Hepatitis-C` instead of `Hepatitis-B`
     (
+        "infectious_disease",
+        "gastrointestinal",
+        "norovirus",
+        "norovirus_cases",  # Invalid metric
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "respiratory",
         "Scarlet-fever",
