@@ -225,7 +225,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 i.e. to filter for all record with values
                 between 0 -> 80 AND 90 -> 100,
                 this can be provided as `[(0, 80), (90, 100)]`.
-            permission_sets: The JWT permissions extracted from the Cognito token.
+            permission_sets: The JWT permissions extracted from the token.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -599,7 +599,7 @@ class CoreTimeSeriesManager(models.Manager):
                 i.e. to filter for all record with values
                 between 0 -> 80 AND 90 -> 100,
                 this can be provided as `[(0, 80), (90, 100)]`.
-            permission_sets: The JWT permissions extracted from the Cognito token.
+            permission_sets: The JWT permissions extracted from the token.
 
         Notes:
             If we have the following input `queryset`:

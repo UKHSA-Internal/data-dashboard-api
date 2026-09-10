@@ -357,6 +357,16 @@ Or redoc at `http://localhost:8000/api/redoc/`
 
 ---
 
+## Silk Profiling
+
+Python and SQL profiling with [django-silk] (https://pypi.org/project/django-silk/) can be enabled in the local dev environment by setting the env variable: `SILK_PROFILING_ENABLED=True`
+
+You'll need to run migrations the first time you enable silk, i.e `uhd django migrate` then `uhd server run-local`
+
+The profiler can then be accessed at <http://localhost:8000/silk>
+
+---
+
 ## Detailed documentation
 
 For more detailed technical documentation please refer to the `docs/` folder at the 

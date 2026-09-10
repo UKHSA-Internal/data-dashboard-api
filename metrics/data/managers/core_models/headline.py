@@ -6,15 +6,12 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
-from collections.abc import Iterable
 from typing import Optional, Self
 
 from django.db import models
 
+from common.auth.permissions import PermissionSetsType, check_chart_permissions_by_name
 from common.virtual_clock import get_embargo_time
-from metrics.api.permissions.fluent_permissions import (
-    validate_permissions_for_non_public,
-)
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -158,7 +155,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         age: str,
         geography_code: str = "",
     ) -> Self:
-        """Filters by the given parameters, inlcludes public and non-public data
+        """Filters by the given parameters, includes public and non-public data
 
         Args:
             topic: The name of the disease being queried.
@@ -333,7 +330,7 @@ class CoreHeadlineManager(models.Manager):
         age: str = "",
         theme: str = "",
         sub_theme: str = "",
-        rbac_permissions: Iterable["RBACPermission"] | None = None,
+        permission_sets: PermissionSetsType | None = None,
         **kwargs,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
@@ -370,9 +367,7 @@ class CoreHeadlineManager(models.Manager):
             sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
-            rbac_permissions: The RBAC permissions available
-                to the given request. This dictates whether the given
-                request is permitted access to non-public data or not.
+            permission_sets: The JWT permissions extracted from the token.
 
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
@@ -382,18 +377,15 @@ class CoreHeadlineManager(models.Manager):
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
-        rbac_permissions = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography=geography,
+        if permission_sets and check_chart_permissions_by_name(
+            permission_sets=permission_sets,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
+            topic_name=topic,
+            metric_name=metric,
             geography_type=geography_type,
-            rbac_permissions=rbac_permissions,
-        )
-
-        if has_access_to_non_public_data:
+            geography_name=geography,
+        ):
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(
                 topic=topic,
                 metric=metric,
@@ -441,7 +433,7 @@ class CoreHeadlineManager(models.Manager):
         age: str = "",
         theme: str = "",
         sub_theme: str = "",
-        rbac_permissions: Iterable["RBACPermission"] | None = None,
+        permission_sets: PermissionSetsType | None = None,
     ) -> "CoreHeadline":
         """Grabs by the latest record by the given `topic` and `metric`.
 
@@ -470,9 +462,7 @@ class CoreHeadlineManager(models.Manager):
             sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
-            rbac_permissions: The RBAC permissions available
-                to the given request. This dictates whether the given
-                request is permitted access to non-public data or not.
+            permission_sets: The JWT permissions extracted from the token.
 
         Returns:
             The individual metric_value number and its associated `period_end` date
@@ -481,18 +471,15 @@ class CoreHeadlineManager(models.Manager):
                 `(Decimal('6276.0000'), datetime.date(2023, 11, 1))`
 
         """
-        rbac_permissions = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography=geography,
+        if permission_sets and check_chart_permissions_by_name(
+            permission_sets=permission_sets,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
+            topic_name=topic,
+            metric_name=metric,
             geography_type=geography_type,
-            rbac_permissions=rbac_permissions,
-        )
-
-        if has_access_to_non_public_data:
+            geography_name=geography,
+        ):
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(
                 topic=topic,
                 metric=metric,
