@@ -19,6 +19,11 @@ And then you can safely bump `kaleido` and consequently `Python` itself.
 
 > Until then do not bump `kaleido` until the next major version has been properly tested in a live environment.
 
+> As of Plotly v7, Kaleido >v1 is now checked in the code and will not work if upgraded so we're officially stuck at
+> Plotly v6.x and Kaleido <v1 until this is resolved. This change was introduce in
+> [this commit](https://github.com/plotly/plotly.py/commit/5144879c514249e48c7619b1c29342389fad53c2)
+
+
 ### Maps API endpoint optimization
 
 The maps API endpoint was completed under the last major release (COVER) and this endpoint is hugely inefficient. 
