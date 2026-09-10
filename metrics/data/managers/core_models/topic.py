@@ -40,30 +40,48 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.filter(id=topic_id).values_list("name", flat=True).first()
 
-    def get_id_by_name(
-        self, theme_name: str, sub_theme_name: str, topic_name: str
-    ) -> tuple[int | None, int | None, int | None]:
+    def get_theme_sub_theme_topic_and_metric_id_by_name(
+        self,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        metric_name: str,
+    ) -> tuple[int | None, int | None, int | None, int | None]:
         """
-        Gets the theme, sub-theme and topic IDs matching the given names.
+        Gets the theme, sub-theme, topic and metric IDs matching the given names.
+
+        This resolves all 4 ids in a single query which also enforces that the
+        combination is internally consistent. The metric must belong to the topic,
+        which must belong to the given sub-theme and theme. An invalid combination
+        (e.g. "respiratory" paired with "MMR1") matches no row, so this returns
+        (None, None, None, None) and access is denied.
 
         Returns:
-            A tuple of (theme_id, sub_theme_id, topic_id) if found,
-            or (None, None, None) if not found.
+            A tuple of (theme_id, sub_theme_id, topic_id, metric_id) if the whole
+            combination exists, or (None, None, None, None) if it does not.
         """
-        record = self.filter(
-            sub_theme__theme__name=theme_name,
-            sub_theme__name=sub_theme_name,
-            name=topic_name,
-        ).first()
+        record = (
+            self.filter(
+                sub_theme__theme__name=theme_name,
+                sub_theme__name=sub_theme_name,
+                name=topic_name,
+                metric__name=metric_name,
+            )
+            .select_related("sub_theme__theme")
+            .annotate(matched_metric_id=models.F("metric__id"))
+            .first()
+        )
 
         if record:
             return (
                 int(record.sub_theme.theme_id),
                 int(record.sub_theme_id),
                 int(record.id),
+                int(record.matched_metric_id),
             )
 
         return (
+            None,
             None,
             None,
             None,
@@ -120,7 +138,7 @@ class TopicQuerySet(models.QuerySet):
 
 
 class TopicManager(models.Manager):
-    """Custom model manager class for the `Metric` model."""
+    """Custom model manager class for the `Topic` model."""
 
     def get_queryset(self) -> TopicQuerySet:
         return TopicQuerySet(model=self.model, using=self.db)
@@ -142,18 +160,25 @@ class TopicManager(models.Manager):
         """
         return self.get_queryset().get_name_by_id(topic_id)
 
-    def get_id_by_name(
-        self, theme_name: str, sub_theme_name: str, topic_name: str
-    ) -> tuple[int | None, int | None, int | None]:
+    def get_theme_sub_theme_topic_and_metric_id_by_name(
+        self,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        metric_name: str,
+    ) -> tuple[int | None, int | None, int | None, int | None]:
         """
-        Gets the theme, sub-theme and topic IDs matching the given names.
+        Gets the theme, sub-theme, topic and metric IDs matching the given names.
+
+        Resolves all 4 ids in a single query that also validates the
+        combination is consistent.
 
         Returns:
-            A tuple of (theme_id, sub_theme_id, topic_id) if found,
-            or (None, None, None) if not found.
+            A tuple of (theme_id, sub_theme_id, topic_id, metric_id) if the whole
+            combination exists, or (None, None, None, None) if it does not.
         """
-        return self.get_queryset().get_id_by_name(
-            theme_name, sub_theme_name, topic_name
+        return self.get_queryset().get_theme_sub_theme_topic_and_metric_id_by_name(
+            theme_name, sub_theme_name, topic_name, metric_name
         )
 
     def get_all_names(self) -> TopicQuerySet:

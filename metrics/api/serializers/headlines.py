@@ -20,6 +20,14 @@ from metrics.domain.models.headline import HeadlineParameters
 
 
 class HeadlinesQuerySerializer(serializers.Serializer):
+    theme = serializers.CharField(
+        required=True,
+        help_text=help_texts.THEME_FIELD,
+    )
+    sub_theme = serializers.CharField(
+        required=True,
+        help_text=help_texts.SUB_THEME_FIELD,
+    )
     topic = serializers.ChoiceField(
         choices=[],
         required=True,
@@ -34,12 +42,12 @@ class HeadlinesQuerySerializer(serializers.Serializer):
     )
     geography = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     stratum = serializers.ChoiceField(

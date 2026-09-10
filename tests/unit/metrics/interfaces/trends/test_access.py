@@ -15,6 +15,8 @@ class TestTrendsInterface:
     @property
     def example_trend_parameters(self) -> TrendsParameters:
         return TrendsParameters(
+            theme="infectious_disease",
+            sub_theme="respiratory",
             topic="COVID-19",
             metric="COVID-19_headline_ONSdeaths_7DayChange",
             percentage_metric="COVID-19_headline_ONSdeaths_7DayPercentChange",

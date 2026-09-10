@@ -12,25 +12,20 @@ from metrics.interfaces.headlines.access import HeadlinesInterface
 from tests.factories.common.auth.permissions import UserPermissionsFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
-MODULE_PATH = "metrics.interfaces.headlines.access"
-
 
 class TestHeadlinesInterface:
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_returns_non_public_record_for_matching_permission(
-        self, mocked_auth_enabled: mock.MagicMock
+        self,
     ):
         """
         Given public and non-public `CoreHeadline` records
         And an `RBACPermission` which gives access to the non-public portion of the data
-        And `AUTH_ENABLED` is set to True
         And `ENFORCE_PUBLIC_DATA_ONLY` is disabled
         When `get_latest_metric_value()` is called from the `HeadlinesInterface`
         Then the non-public record is returned
         """
         # Given
-        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )
@@ -50,6 +45,8 @@ class TestHeadlinesInterface:
         fake_request.user.permission_sets = permission_sets
 
         headline_parameters = HeadlineParameters(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
             topic=public_record.metric.topic.name,
             metric=public_record.metric.name,
             stratum=public_record.stratum.name,
@@ -74,19 +71,16 @@ class TestHeadlinesInterface:
         )
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_excludes_non_public_record_for_no_matching_permission(
-        self, mocked_auth_enabled: mock.MagicMock
+        self,
     ):
         """
         Given public and non-public `CoreHeadline` records
         And no `RBACPermission` which allows access to the non-public portion of this dataset
-        And `AUTH_ENABLED` is set to True
         When `get_latest_metric_value()` is called from the `HeadlinesInterface`
         Then the non-public record is excluded
         """
         # Given
-        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )
@@ -99,6 +93,8 @@ class TestHeadlinesInterface:
         fake_request.rbac_permissions = []
 
         headline_parameters = HeadlineParameters(
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
             topic=public_record.metric.topic.name,
             metric=public_record.metric.name,
             stratum=public_record.stratum.name,

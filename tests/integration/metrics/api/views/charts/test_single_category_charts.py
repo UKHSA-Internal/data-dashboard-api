@@ -17,8 +17,12 @@ class TestChartsView:
             "file_format": "png",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries.metric.metric_group.topic.name,
                     "metric": core_timeseries.metric.name,
+                    "geography": core_timeseries.geography.name,
+                    "geography_type": core_timeseries.geography.geography_type.name,
                     "chart_type": "bar",
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
@@ -152,8 +156,12 @@ class TestChartsView:
             "x_axis": "age",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": "COVID-19",
                     "metric": "COVID-19_deaths_ONSByDay",
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
@@ -203,8 +211,12 @@ class TestChartsView:
             "file_format": "svg",
             "plots": [
                 {
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                     "topic": core_timeseries_example[0].metric.topic.name,
                     "metric": core_timeseries_example[0].metric.name,
+                    "geography": "England",
+                    "geography_type": "Nation",
                     "chart_type": "bar",
                     "age": "non-existent-age",
                 }

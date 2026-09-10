@@ -59,39 +59,32 @@ class TestCheckPermissionsByName:
     def _patch_lookups(
         self,
         topic_result=None,
-        metric_result=None,
-        geography_type_result=None,
         geography_result=None,
     ):
-        """Return patches for all four DB manager methods."""
+        """Return patches for the two combined DB manager lookups."""
 
-        topic_result = topic_result or (self.THEME_ID, self.SUB_THEME_ID, self.TOPIC_ID)
-        metric_result = metric_result or self.METRIC_ID
-        geography_type_result = geography_type_result or self.GEOGRAPHY_TYPE_ID
-        geography_result = geography_result or self.GEOGRAPHY_ID
+        topic_result = topic_result or (
+            self.THEME_ID,
+            self.SUB_THEME_ID,
+            self.TOPIC_ID,
+            self.METRIC_ID,
+        )
+        geography_result = geography_result or (
+            self.GEOGRAPHY_TYPE_ID,
+            self.GEOGRAPHY_ID,
+        )
 
         stack = ExitStack()
         stack.enter_context(
             patch(
-                "metrics.data.managers.core_models.topic.TopicQuerySet.get_id_by_name",
+                "metrics.data.managers.core_models.topic.TopicQuerySet.get_theme_sub_theme_topic_and_metric_id_by_name",
                 return_value=topic_result,
             )
         )
         stack.enter_context(
             patch(
-                "metrics.data.managers.core_models.metric.MetricQuerySet.get_id_by_name",
-                return_value=metric_result,
-            )
-        )
-        stack.enter_context(
-            patch(
-                "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
-                return_value=geography_type_result,
-            )
-        )
-        stack.enter_context(
-            patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
+                "metrics.data.managers.core_models.geography.GeographyQuerySet"
+                ".get_geography_type_id_and_code_by_name",
                 return_value=geography_result,
             )
         )
@@ -99,93 +92,27 @@ class TestCheckPermissionsByName:
         return stack
 
     def test_returns_false_when_topic_lookup_fails(self):
-        with (
-            patch(
-                "metrics.data.managers.core_models.topic.TopicQuerySet.get_id_by_name",
-                return_value=(None, None, None),
-            ),
-            patch(
-                "metrics.data.managers.core_models.metric.MetricQuerySet.get_id_by_name",
-                return_value=self.METRIC_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
-                return_value=self.GEOGRAPHY_TYPE_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
-                return_value=self.GEOGRAPHY_ID,
-            ),
-        ):
+        with self._patch_lookups(topic_result=(None, None, None, None)):
             assert not self._check_permissions_by_name(
                 self._build_permission_sets([self._permissions_by_id()])
             )
 
     def test_returns_false_when_metric_lookup_fails(self):
-        with (
-            patch(
-                "metrics.data.managers.core_models.topic.TopicQuerySet.get_id_by_name",
-                return_value=(self.THEME_ID, self.SUB_THEME_ID, self.TOPIC_ID),
-            ),
-            patch(
-                "metrics.data.managers.core_models.metric.MetricQuerySet.get_id_by_name",
-                return_value=None,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
-                return_value=self.GEOGRAPHY_TYPE_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
-                return_value=self.GEOGRAPHY_ID,
-            ),
+        with self._patch_lookups(
+            topic_result=(self.THEME_ID, self.SUB_THEME_ID, self.TOPIC_ID, None)
         ):
             assert not self._check_permissions_by_name(
                 self._build_permission_sets([self._permissions_by_id()])
             )
 
     def test_returns_false_when_geography_type_lookup_fails(self):
-        with (
-            patch(
-                "metrics.data.managers.core_models.topic.TopicQuerySet.get_id_by_name",
-                return_value=(self.THEME_ID, self.SUB_THEME_ID, self.TOPIC_ID),
-            ),
-            patch(
-                "metrics.data.managers.core_models.metric.MetricQuerySet.get_id_by_name",
-                return_value=self.METRIC_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
-                return_value=None,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
-                return_value=self.GEOGRAPHY_ID,
-            ),
-        ):
+        with self._patch_lookups(geography_result=(None, self.GEOGRAPHY_ID)):
             assert not self._check_permissions_by_name(
                 self._build_permission_sets([self._permissions_by_id()])
             )
 
     def test_returns_false_when_geography_lookup_fails(self):
-        with (
-            patch(
-                "metrics.data.managers.core_models.topic.TopicQuerySet.get_id_by_name",
-                return_value=(self.THEME_ID, self.SUB_THEME_ID, self.TOPIC_ID),
-            ),
-            patch(
-                "metrics.data.managers.core_models.metric.MetricQuerySet.get_id_by_name",
-                return_value=self.METRIC_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography_type.GeographyTypeQuerySet.get_id_by_name",
-                return_value=self.GEOGRAPHY_TYPE_ID,
-            ),
-            patch(
-                "metrics.data.managers.core_models.geography.GeographyQuerySet.get_code_by_name",
-                return_value=None,
-            ),
-        ):
+        with self._patch_lookups(geography_result=(self.GEOGRAPHY_TYPE_ID, None)):
             assert not self._check_permissions_by_name(
                 self._build_permission_sets([self._permissions_by_id()])
             )

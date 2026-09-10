@@ -10,6 +10,14 @@ from metrics.data.models.core_models import Metric, Topic
 
 class PlotSerializer(serializers.Serializer):
     # Required fields
+    theme = serializers.CharField(
+        help_text=help_texts.THEME_FIELD,
+        required=True,
+    )
+    sub_theme = serializers.CharField(
+        help_text=help_texts.SUB_THEME_FIELD,
+        required=True,
+    )
     topic = serializers.ChoiceField(
         help_text=help_texts.TOPIC_FIELD,
         choices=[],
@@ -18,6 +26,14 @@ class PlotSerializer(serializers.Serializer):
     metric = serializers.ChoiceField(
         help_text=help_texts.METRIC_FIELD,
         choices=[],
+        required=True,
+    )
+    geography = serializers.CharField(
+        help_text=help_texts.GEOGRAPHY_FIELD,
+        required=True,
+    )
+    geography_type = serializers.CharField(
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
         required=True,
     )
     # Optional fields
@@ -30,20 +46,6 @@ class PlotSerializer(serializers.Serializer):
     )
     age = serializers.CharField(
         help_text=help_texts.AGE_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography_type = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
