@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from common.auth.permissions import filter_geographies_by_permission
 from metrics.api.serializers.geographies import (
     GEOGRAPHY_TYPE_RESULT,
     GeographiesForGeographyTypeSerializer,
@@ -49,6 +50,7 @@ class GeographiesViewDeprecated(APIView):
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
+        data = filter_geographies_by_permission(request=request, data=data)
 
         return Response(data)
 
@@ -85,6 +87,7 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
+            data = filter_geographies_by_permission(request=request, data=data)
 
         return Response(data)
 
