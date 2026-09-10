@@ -145,6 +145,8 @@ class TopicPage(UKHSAPage):
         APIField("is_public"),
         APIField("page_classification"),
         APIField("selected_topics"),
+        APIField("theme"),
+        APIField("sub_theme"),
     ]
 
     # Tabs to position at the top of the view
