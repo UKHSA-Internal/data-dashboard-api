@@ -3,6 +3,7 @@ import pytest
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
 from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
 from tests.conftest import fake_plot_data
+from metrics.domain.charts import colour_scheme
 
 
 @pytest.fixture()
@@ -39,7 +40,7 @@ class TestDualCategoryChartSettings:
             "legend": {
                 "font": chart_settings._get_tick_font_config(),
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
                 "yanchor": "bottom",
@@ -68,7 +69,7 @@ class TestDualCategoryChartSettings:
             "legend": {
                 "font": chart_settings._get_tick_font_config(),
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
                 "yanchor": "bottom",
@@ -98,7 +99,26 @@ class TestDualCategoryChartSettings:
             **chart_settings._get_base_chart_config(),
             **chart_settings._get_legend_config(),
             "barmode": "stack",
+            "annotations": [
+            {
+                "text": chart_settings._chart_generation_payload.y_axis_title,
+                "xref": "paper",
+                "yref": "paper",
+                "x": 0,
+                "y": 1.05,
+                "xanchor": "left",
+                "yanchor": "bottom",
+                "showarrow": False,
+                "font": {
+                    "family": "Arial",
+                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                    "size": 14,
+                },
+                "align": "left",
+            }
+        ],
         }
+        expected_config["margin"]["t"] = 30
 
         # Then
         assert stacked_bar_config == expected_config
