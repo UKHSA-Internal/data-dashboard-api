@@ -9,6 +9,7 @@ from public_api.version_02.views import (
     GeographyTypeListViewV2,
     MetricListViewV2,
     PublicAPIRootViewV2,
+    SearchView,
     SubThemeDetailViewV2,
     SubThemeListViewV2,
     ThemeDetailViewV2,
@@ -33,6 +34,9 @@ from public_api.views import (
 )
 from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
+TIMESERIES_PREFIX = "timeseries/"
+SEARCH_PREFIX = "search/"
+
 
 def construct_url_patterns_for_public_api(
     *,
@@ -48,8 +52,12 @@ def construct_url_patterns_for_public_api(
         set of versioned URLS.
     """
     urls = []
-    urls.extend(_construct_version_one_urls(prefix=prefix))
-    urls.extend(_construct_version_two_urls(prefix=prefix))
+    # Timeseries API
+    urls.extend(_construct_version_one_urls(prefix=prefix + TIMESERIES_PREFIX))
+    urls.extend(_construct_version_two_urls(prefix=prefix + TIMESERIES_PREFIX))
+
+    # Search API
+    urls.extend(_construct_search_urls(prefix=prefix + SEARCH_PREFIX))
 
     if MetricsPublicAPIInterface.is_auth_enabled():
         urls.append(
@@ -220,5 +228,27 @@ def _construct_version_two_urls(
                 {"get": "list"}, name=APITimeSeriesViewSet.name
             ),
             name="timeseries-list-v2",
+        ),
+    ]
+
+
+def _construct_search_urls(
+    *,
+    prefix: str,
+) -> list[resolvers.URLResolver]:
+    """Returns a list of URLResolvers for the public search API
+
+    Args:
+        prefix: The prefix to add to the start of the url paths
+
+    Returns:
+        List of `URLResolver` objects each representing a
+        set of versioned URLS.
+    """
+    return [
+        path(
+            f"{prefix}v1",
+            SearchView.as_view(),
+            name="search",
         ),
     ]

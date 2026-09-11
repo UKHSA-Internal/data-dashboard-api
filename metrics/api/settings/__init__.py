@@ -3,6 +3,8 @@ from .default import *
 match config.APIENV:
     case "LOCAL":
         from .local import *
+    case "TEST":
+        from .test import *
     case "STANDALONE":
         from .standalone import *
 
