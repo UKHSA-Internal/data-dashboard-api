@@ -7,6 +7,7 @@ from .common import FilterLinkedComponent
 
 COVER_CHART_DATE_PREFIX_DEFAULT_TEXT = "Last updated"
 
+
 class FilterLinkedTimeSeriesChartTemplate(FilterLinkedComponent):
     date_prefix = blocks.CharBlock(
         requried=True,
