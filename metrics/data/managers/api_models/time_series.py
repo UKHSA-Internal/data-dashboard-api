@@ -10,6 +10,8 @@ from typing import Self
 from django.db import models
 from django.db.models.functions.window import Rank
 
+from common.auth.filtering import filter_for_permissions
+from common.auth.permissions import PermissionSetsType
 from common.virtual_clock import get_embargo_time
 
 
@@ -21,7 +23,11 @@ class APITimeSeriesQuerySet(models.QuerySet):
         return ["age", "sex", "stratum", "date"]
 
     def get_distinct_column_values_with_filters(
-        self, *, lookup_field: str, restrict_to_public: bool, **kwargs
+        self,
+        *,
+        lookup_field: str,
+        permission_sets: PermissionSetsType | None = None,
+        **kwargs,
     ) -> "APITimeSeriesQuerySet":
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
@@ -39,8 +45,10 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(**kwargs)
-        if restrict_to_public:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         return queryset.values_list(lookup_field, flat=True).distinct()
 
@@ -90,7 +98,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         geography_type: str,
         geography: str,
         metric: str,
-        restrict_to_public: bool,
+        permission_sets: PermissionSetsType | None = None,
     ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
@@ -136,8 +144,10 @@ class APITimeSeriesQuerySet(models.QuerySet):
             geography=geography,
             metric=metric,
         )
-        if restrict_to_public:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
@@ -329,7 +339,11 @@ class APITimeSeriesManager(models.Manager):
         return APITimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_distinct_column_values_with_filters(
-        self, *, lookup_field: str, restrict_to_public: bool, **kwargs
+        self,
+        *,
+        lookup_field: str,
+        permission_sets: PermissionSetsType | None = None,
+        **kwargs,
     ) -> APITimeSeriesQuerySet:
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
@@ -347,7 +361,7 @@ class APITimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().get_distinct_column_values_with_filters(
-            lookup_field=lookup_field, restrict_to_public=restrict_to_public, **kwargs
+            lookup_field=lookup_field, permission_sets=permission_sets, **kwargs
         )
 
     def query_for_superseded_data(

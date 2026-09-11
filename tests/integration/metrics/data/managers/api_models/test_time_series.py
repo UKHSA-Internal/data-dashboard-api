@@ -210,7 +210,7 @@ class TestAPITimeSeriesQuerySet:
             geography_type=api_time_series.geography_type,
             geography=api_time_series.geography,
             metric=api_time_series.metric,
-            restrict_to_public=True,
+            permission_sets={},
         )
 
         # Then
@@ -271,7 +271,7 @@ class TestAPITimeSeriesQuerySet:
             geography_type=api_time_series.geography_type,
             geography=api_time_series.geography,
             metric=api_time_series.metric,
-            restrict_to_public=True,
+            permission_sets={},
         )
 
         # Then
@@ -330,7 +330,7 @@ class TestAPITimeSeriesQuerySet:
             geography_type=expected_current_records[0].geography_type,
             geography=expected_current_records[0].geography,
             metric=metric,
-            restrict_to_public=True,
+            permission_sets={},
         )
 
         # Then

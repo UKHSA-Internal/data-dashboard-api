@@ -9,6 +9,9 @@ from django.db import models
 from django.db.models.functions.window import Rank
 from django.utils import timezone
 
+from common.auth.filtering import filter_for_permissions
+from common.auth.permissions import PermissionSetsType
+
 
 class APIHeadlineQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `APIHeadlineManger`"""
@@ -177,7 +180,7 @@ class APIHeadlineQuerySet(models.QuerySet):
         geography_type: str,
         geography: str,
         metric: str,
-        restrict_to_public: bool,
+        permission_sets: PermissionSetsType | None = None,
     ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
@@ -223,8 +226,10 @@ class APIHeadlineQuerySet(models.QuerySet):
             geography=geography,
             metric=metric,
         )
-        if restrict_to_public:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
@@ -439,7 +444,11 @@ class APIHeadlineManager(models.Manager):
         superseded_records.delete()
 
     def get_distinct_column_values_with_filters(
-        self, *, lookup_field: str, restrict_to_public: bool, **kwargs
+        self,
+        *,
+        lookup_field: str,
+        permission_sets: PermissionSetsType | None = None,
+        **kwargs,
     ) -> "APIHeadlineQuerySet":
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
@@ -457,7 +466,9 @@ class APIHeadlineManager(models.Manager):
 
         """
         queryset = self.filter(**kwargs)
-        if restrict_to_public:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         return queryset.values_list(lookup_field, flat=True).distinct()
