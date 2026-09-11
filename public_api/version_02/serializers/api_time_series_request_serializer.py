@@ -83,10 +83,10 @@ class APITimeSeriesRequestSerializerv2(Serializer):
 
         """
         kwargs: dict[str, str] = self.get_formatted_kwargs_from_request()
+        request_user = getattr(self.context["request"], "user", None)
+        permission_sets = getattr(request_user, "permission_sets", {})
         return self.api_time_series_manager.get_distinct_column_values_with_filters(
-            lookup_field=self.lookup_field,
-            restrict_to_public=True,  # because we are not allowing non-public data through the public API
-            **kwargs
+            lookup_field=self.lookup_field, permission_sets=permission_sets, **kwargs
         )
 
     def build_timeseries_dto_slice(self) -> list[APITimeSeriesDTO]:

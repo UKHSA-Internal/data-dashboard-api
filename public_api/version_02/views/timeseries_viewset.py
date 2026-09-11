@@ -91,7 +91,8 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
+        request_user = getattr(self.request, "user", None)
+        permission_sets = getattr(request_user, "permission_sets", {})
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
             sub_theme=self.kwargs["sub_theme"],
@@ -99,5 +100,5 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
-            restrict_to_public=True,  # because we are not allowing non-public data through the public API
+            permission_sets=permission_sets,
         )
