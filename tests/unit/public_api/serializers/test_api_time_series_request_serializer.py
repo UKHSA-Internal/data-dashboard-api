@@ -122,7 +122,10 @@ class TestAPITimeSeriesRequestSerializer:
         # Given
         fake_request_kwargs = {"theme": "infectious_disease"}
         fake_lookup_field = "theme"
-        mocked_request = mock.Mock(parser_context={"kwargs": fake_request_kwargs})
+        mocked_request = mock.Mock(
+            parser_context={"kwargs": fake_request_kwargs},
+            user=mock.Mock(permission_sets={}),
+        )
         api_time_series_manager_spy = mock.Mock()
         serializer = APITimeSeriesRequestSerializer(
             context={
@@ -138,7 +141,7 @@ class TestAPITimeSeriesRequestSerializer:
         # Then
         api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
             lookup_field=fake_lookup_field,
-            restrict_to_public=True,
+            permission_sets={},
             **fake_request_kwargs,
         )
         assert (
