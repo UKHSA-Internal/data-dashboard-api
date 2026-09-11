@@ -74,3 +74,24 @@ class ChartSettings(ABC):
             return "%d %b<br>%Y"
 
         return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
+
+    def _get_y_axis_title_annotation_config(self) -> list[DICT_OF_STR_ONLY]:
+        """Add annotation to replace y axis title above the chart"""
+
+        if not self._chart_generation_payload.y_axis_title:
+            return []
+
+        return [
+            {
+                "text": self._chart_generation_payload.y_axis_title,
+                "xref": "paper",
+                "yref": "paper",
+                "x": 0,
+                "y": 1.05,
+                "xanchor": "left",
+                "yanchor": "bottom",
+                "showarrow": False,
+                "font": {**self._get_tick_font_config(), "size": 14},
+                "align": "left",
+            }
+        ]
