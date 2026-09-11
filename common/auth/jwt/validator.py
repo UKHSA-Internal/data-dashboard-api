@@ -66,6 +66,7 @@ class CognitoTokenValidator:
             "key": public_key,
             "issuer": self.pool_url,
             "algorithms": ["RS256"],
+            "options": {"verify_iat": False},
         }
 
         logger.debug("JWT - %s", params)
