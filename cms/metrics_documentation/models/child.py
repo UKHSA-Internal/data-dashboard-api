@@ -18,6 +18,7 @@ from cms.dashboard.models import DataClassificationLevels, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement
+from cms.metrics_interface import MetricsAPIInterface
 from cms.metrics_interface.field_choices_callables import (
     get_all_metric_names_and_ids,
 )
@@ -181,8 +182,10 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         if not display_name or "_" not in display_name:
             return ""
 
-        parts = display_name.split("_")
-        return parts[1] if len(parts) > 1 else ""
+        try:
+            return MetricsAPIInterface.get_metric_group_from_metric(metric=display_name)
+        except ValueError:
+            return ""
 
     def clean(self):
         super().clean()

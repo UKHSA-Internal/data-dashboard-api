@@ -153,8 +153,10 @@ class BaseMetricsElement(blocks.StructBlock):
             StructBlockValidationError on the metric if a group was not extractable
         """
         try:
-            return value["metric"].split("_")[1]
-        except IndexError as e:
+            return MetricsAPIInterface.get_metric_group_from_metric(
+                metric=value["metric"]
+            )
+        except (KeyError, TypeError, ValueError) as e:
             raise blocks.StructBlockValidationError(
                 block_errors={
                     "metric": ValidationError("Invalid metric, could not extract group")
