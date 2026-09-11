@@ -3,7 +3,28 @@ from operator import and_, or_
 
 from django.db.models import Q, QuerySet
 
-from common.auth.permissions import WILDCARD_ID_VALUE, PermissionRowType
+from common.auth.permissions import (
+    WILDCARD_ID_VALUE,
+    PermissionRowType,
+    PermissionSetsType,
+)
+
+
+def filter_for_permissions(
+    *,
+    queryset: QuerySet,
+    permission_sets: PermissionSetsType | None = None,
+) -> QuerySet:
+    if permission_sets:
+        if not permission_sets["summary"]["has_global_access"]:
+            queryset = filter_non_public_data(
+                queryset=queryset,
+                permission_sets=permission_sets["permission_sets"],
+            )
+    else:
+        queryset = queryset.filter(is_public=True)
+
+    return queryset
 
 
 def filter_non_public_data(

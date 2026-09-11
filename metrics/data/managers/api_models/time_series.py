@@ -10,7 +10,7 @@ from typing import Self
 from django.db import models
 from django.db.models.functions.window import Rank
 
-from common.auth.filtering import filter_non_public_data
+from common.auth.filtering import filter_for_permissions
 from common.auth.permissions import PermissionSetsType
 from common.virtual_clock import get_embargo_time
 
@@ -45,16 +45,10 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(**kwargs)
-        if permission_sets:
-            if permission_sets["summary"]["has_global_access"]:
-                pass
-            else:
-                queryset = filter_non_public_data(
-                    queryset=queryset,
-                    permission_sets=permission_sets["permission_sets"],
-                )
-        else:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         return queryset.values_list(lookup_field, flat=True).distinct()
 
@@ -150,16 +144,10 @@ class APITimeSeriesQuerySet(models.QuerySet):
             geography=geography,
             metric=metric,
         )
-        if permission_sets:
-            if permission_sets["summary"]["has_global_access"]:
-                pass
-            else:
-                queryset = filter_non_public_data(
-                    queryset=queryset,
-                    permission_sets=permission_sets["permission_sets"],
-                )
-        else:
-            queryset = queryset.filter(is_public=True)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
