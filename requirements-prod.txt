@@ -12,7 +12,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==50.0.0
 defusedxml==0.7.1
-distlib==0.4.0
+distlib==0.4.3
 django-cors-headers==4.8.0
 django-db-connection-pool==1.2.5
 django-filter==24.3
@@ -62,7 +62,7 @@ pyjwt==2.13.0
 pyparsing==3.3.2
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
-pytz==2026.2
+pytz==2026.3.post1
 Pygments==2.20.0
 PyYAML==6.0.3
 redis==8.0.0

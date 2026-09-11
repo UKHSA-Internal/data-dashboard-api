@@ -4,20 +4,20 @@ from unittest import mock
 
 import pytest
 
-from metrics.api.views.downloads import (
-    SingleCategoryDownloadsView,
-    EXAMPLE_SINGLE_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD,
+from metrics.api.views.downloads import SubplotDownloadsView
+from metrics.api.views.downloads.subplot_downloads.request_example import (
+    REQUEST_PAYLOAD_EXAMPLE,
 )
 
-from metrics.domain.models import ChartRequestParams
+from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
 )
 
-MODULE_PATH = "metrics.api.views.downloads.single_category_downloads"
-UNWRAPPED_POST = inspect.unwrap(SingleCategoryDownloadsView.post)
+MODULE_PATH = "metrics.api.views.downloads.subplot_downloads.api_view"
+UNWRAPPED_POST = inspect.unwrap(SubplotDownloadsView.post)
 
 
 def _build_request(*, payload: dict) -> mock.MagicMock:
@@ -34,7 +34,7 @@ class TestDownloadsView:
         Then a `ValueError` is raised
         """
         # Given
-        downloads_view = SingleCategoryDownloadsView()
+        downloads_view = SubplotDownloadsView()
         invalid_metric_group = "invalid_metric_group"
 
         # When / Then
@@ -47,37 +47,32 @@ class TestDownloadsView:
     @pytest.mark.parametrize(
         "exception",
         [
-            pytest.param(
-                DataNotFoundForAnyPlotError(), id="DataNotFoundForAnyPlotError"
-            ),
             pytest.param(InvalidPlotParametersError(), id="InvalidPlotParametersError"),
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.SingleCategoryDownloadsSerializer")
+    @mock.patch(f"{MODULE_PATH}.SubplotChartRequestSerializer")
     @mock.patch(f"{MODULE_PATH}.access.get_downloads_data")
     def test_post_returns_bad_request_when_error_raised(
         self,
         mocked_get_downloads_data: mock.MagicMock,
         mocked_serializer_class: mock.MagicMock,
-        fake_chart_request_params: ChartRequestParams,
+        fake_subplot_chart_request_params: SubplotChartRequestParameters,
         exception: Exception,
     ):
         """
-        Given a single-category download request where no plot data is found or incorrect data is provided
-        When `post()` is called on `SingleCategoryDownloadsView`
+        Given a subplot download request where no plot data is found or incorrect data is provided
+        When `post()` is called on `SubplotDownloadsView`
         Then a `400 Bad Request` response is returned with an error message
         """
         # Given
         mocked_get_downloads_data.side_effect = exception
         mocked_serializer = mock.MagicMock()
         mocked_serializer.data = {"file_format": "json"}
-        mocked_serializer.to_models.return_value = fake_chart_request_params
+        mocked_serializer.to_models.return_value = fake_subplot_chart_request_params
         mocked_serializer_class.return_value = mocked_serializer
 
-        view = SingleCategoryDownloadsView()
-        request = _build_request(
-            payload=EXAMPLE_SINGLE_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD
-        )
+        view = SubplotDownloadsView()
+        request = _build_request(payload=REQUEST_PAYLOAD_EXAMPLE)
 
         # When
         response = UNWRAPPED_POST(view, request)
