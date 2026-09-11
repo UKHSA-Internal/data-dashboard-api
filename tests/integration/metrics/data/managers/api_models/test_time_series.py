@@ -360,93 +360,93 @@ class TestAPITimeSeriesQuerySet:
         metric: str, first_date: str, second_date: str
     ) -> list[APITimeSeries]:
         current_0_to_4_record_first_date = APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.3,
             refresh_date="2024-02-01",
             date=first_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.31,
             refresh_date="2024-01-24",
             date=first_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.35,
             refresh_date="2024-01-18",
             date=first_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.37,
             refresh_date="2024-01-11",
             date=first_date,
         )
         current_5_to_14_record_first_date = APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="05-14",
+            metric=metric,
+            age="05-14",
             metric_value=0.07,
             refresh_date="2024-01-18",
             date=first_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="05-14",
+            metric=metric,
+            age="05-14",
             metric_value=0.08,
             refresh_date="2024-01-11",
             date=first_date,
         )
         current_55_to_64_record_first_date = APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="55-64",
+            metric=metric,
+            age="55-64",
             metric_value=0.16,
             refresh_date="2024-02-01",
             date=first_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="55-64",
+            metric=metric,
+            age="55-64",
             metric_value=0.17,
             refresh_date="2024-01-18",
             date=first_date,
         )
 
         current_0_to_4_record_second_date = APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.24,
             refresh_date="2024-02-01",
             date=second_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.13,
             refresh_date="2024-01-24",
             date=second_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="00-04",
+            metric=metric,
+            age="00-04",
             metric_value=0.11,
             refresh_date="2024-01-11",
             date=second_date,
         )
         current_5_to_14_record_second_date = APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="05-14",
+            metric=metric,
+            age="05-14",
             metric_value=0.09,
             refresh_date="2024-01-24",
             date=second_date,
         )
         APITimeSeriesFactory.create_record(
-            metric_name=metric,
-            age_name="05-14",
+            metric=metric,
+            age="05-14",
             metric_value=0.02,
             refresh_date="2024-01-11",
             date=second_date,
