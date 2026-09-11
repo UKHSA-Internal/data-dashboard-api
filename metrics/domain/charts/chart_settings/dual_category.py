@@ -24,7 +24,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         )
         if self._chart_generation_payload.y_axis_title:
             chart_config["margin"]["t"] = 30
-            
 
         return {**chart_config, **self._get_legend_config()}
 
