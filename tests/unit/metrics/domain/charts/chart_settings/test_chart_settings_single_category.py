@@ -93,8 +93,8 @@ class TestSingleCategoryChartSettings:
             "autotickangles": [0, 90],
             "title": {
                 "font": chart_settings._get_tick_font_config(),
-                "text": chart_settings._chart_generation_payload.x_axis_title
-            }
+                "text": chart_settings._chart_generation_payload.x_axis_title,
+            },
         }
         expected_x_axis_config = {
             **expected_x_axis_config,
@@ -242,7 +242,6 @@ class TestSingleCategoryChartSettings:
 
         assert common_chart_config["margin"]["t"] == 30
 
-
     def test_config_default_top_margin_when_y_axis_title_omitted(
         self, fake_plot_data: PlotGenerationData
     ):
@@ -264,7 +263,6 @@ class TestSingleCategoryChartSettings:
         common_chart_config = chart_settings.get_common_chart_config()
 
         assert common_chart_config["margin"]["t"] == 0
-
 
     def test_chart_settings_width(self, fake_plot_data: PlotGenerationData):
         """

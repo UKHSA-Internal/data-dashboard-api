@@ -100,23 +100,23 @@ class TestDualCategoryChartSettings:
             **chart_settings._get_legend_config(),
             "barmode": "stack",
             "annotations": [
-            {
-                "text": chart_settings._chart_generation_payload.y_axis_title,
-                "xref": "paper",
-                "yref": "paper",
-                "x": 0,
-                "y": 1.05,
-                "xanchor": "left",
-                "yanchor": "bottom",
-                "showarrow": False,
-                "font": {
-                    "family": "Arial",
-                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-                    "size": 14,
-                },
-                "align": "left",
-            }
-        ],
+                {
+                    "text": chart_settings._chart_generation_payload.y_axis_title,
+                    "xref": "paper",
+                    "yref": "paper",
+                    "x": 0,
+                    "y": 1.05,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "showarrow": False,
+                    "font": {
+                        "family": "Arial",
+                        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                        "size": 14,
+                    },
+                    "align": "left",
+                }
+            ],
         }
         expected_config["margin"]["t"] = 30
 

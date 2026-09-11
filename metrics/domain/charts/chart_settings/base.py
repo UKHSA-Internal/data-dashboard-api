@@ -76,7 +76,7 @@ class ChartSettings(ABC):
         return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
 
     def _get_y_axis_title_annotation_config(self) -> list[DICT_OF_STR_ONLY]:
-        """ Add annotation to replace y axis title above the chart """
+        """Add annotation to replace y axis title above the chart"""
 
         if not self._chart_generation_payload.y_axis_title:
             return []
