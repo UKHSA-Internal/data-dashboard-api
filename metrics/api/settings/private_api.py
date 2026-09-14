@@ -5,7 +5,10 @@ if AUTH_ENABLED:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.dummy.DummyCache",
-        }
+        },
+        "reserved": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        },
     }
 else:
     CACHES = {

@@ -84,6 +84,13 @@ VALID_PARAMETERS = [
         "cases",
     ),
     (
+        "infectious_disease",
+        "gastrointestinal",
+        "norovirus",
+        "norovirus_cases_count",
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "chemical_exposure",
         "Lead",
