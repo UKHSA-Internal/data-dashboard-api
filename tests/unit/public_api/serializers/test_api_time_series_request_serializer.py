@@ -2,13 +2,11 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.models.api_models import APITimeSeries
 from public_api.serializers.api_time_series_request_serializer import (
     NO_LOOKUP_FIELD_ERROR_MESSAGE,
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializer,
 )
-
 from tests.fakes.factories.metrics.api_time_series_factory import (
     FakeAPITimeSeriesFactory,
 )
@@ -59,7 +57,7 @@ class TestAPITimeSeriesRequestSerializer:
 
         # When / Then
         with pytest.raises(NotImplementedError, match=NO_LOOKUP_FIELD_ERROR_MESSAGE):
-            serializer.lookup_field
+            _ = serializer.lookup_field
 
     def test_get_kwargs_from_request(self):
         """
@@ -80,7 +78,7 @@ class TestAPITimeSeriesRequestSerializer:
         assert returned_kwargs_from_request == fake_request_kwargs
 
     @pytest.mark.parametrize(
-        "request_kwargs, value_returned_from_query, lookup_field",
+        ("request_kwargs, value_returned_from_query, lookup_field"),
         [({"theme": "infectious_disease"}, "infectious_disease", "theme")],
     )
     def test_build_timeseries_dto(
@@ -123,6 +121,7 @@ class TestAPITimeSeriesRequestSerializer:
         fake_request_kwargs = {"theme": "infectious_disease"}
         fake_lookup_field = "theme"
         mocked_request = mock.Mock(
+            auth="valid_jwt",
             parser_context={"kwargs": fake_request_kwargs},
             user=mock.Mock(permission_sets={}),
         )
@@ -147,6 +146,32 @@ class TestAPITimeSeriesRequestSerializer:
         assert (
             queryset
             == api_time_series_manager_spy.get_distinct_column_values_with_filters.return_value
+        )
+
+    def test_get_queryset_does_not_use_permissions_without_authentication(self):
+        permission_sets = {
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
+        }
+        mocked_request = mock.Mock(
+            auth=None,
+            user=mock.Mock(permission_sets=permission_sets),
+            parser_context={"kwargs": {}},
+        )
+        api_time_series_manager_spy = mock.Mock()
+        serializer = APITimeSeriesRequestSerializer(
+            context={
+                "request": mocked_request,
+                "lookup_field": "theme",
+                "api_time_series_manager": api_time_series_manager_spy,
+            }
+        )
+
+        serializer.get_queryset()
+
+        api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
+            lookup_field="theme",
+            permission_sets=None,
         )
 
     def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_theme_lookup(

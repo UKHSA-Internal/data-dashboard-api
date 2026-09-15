@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from rest_framework.serializers import Serializer
 
+from public_api.auth import get_permission_sets_for_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 
@@ -77,8 +78,7 @@ class APITimeSeriesRequestSerializer(Serializer):
 
         """
         kwargs: dict[str, str] = self.get_kwargs_from_request()
-        request_user = getattr(self.context["request"], "user", None)
-        permission_sets = getattr(request_user, "permission_sets", {})
+        permission_sets = get_permission_sets_for_request(self.context["request"])
         return self.api_time_series_manager.get_distinct_column_values_with_filters(
             lookup_field=self.lookup_field, permission_sets=permission_sets, **kwargs
         )
