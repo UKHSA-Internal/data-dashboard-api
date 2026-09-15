@@ -86,6 +86,8 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = self.api_model.objects.get_queryset()
+        request_user = getattr(self.request, "user", None)
+        permission_sets = getattr(request_user, "permission_sets", {})
 
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
@@ -94,5 +96,5 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
-            restrict_to_public=True,  # because we are not allowing non-public data through the public API
+            permission_sets=permission_sets,
         )

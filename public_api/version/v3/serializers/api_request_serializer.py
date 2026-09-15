@@ -57,9 +57,11 @@ class APIRequestSerializerv3(APITimeSeriesRequestSerializerv2):
 
         """
         request_kwargs = self.context["request"].parser_context["kwargs"]
+        request_user = getattr(self.context["request"], "user", None)
+        permission_sets = getattr(request_user, "permission_sets", {})
         return self.api_model.objects.get_distinct_column_values_with_filters(
             lookup_field=self.lookup_field,
-            restrict_to_public=True,  # because we are not allowing non-public data through the public API
+            permission_sets=permission_sets,
             **request_kwargs
         )
 
