@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
+from public_api.auth import get_permission_sets_for_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.serializers.timeseries_serializers import (
     APITimeSeriesListSerializerv2,
@@ -98,8 +99,7 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        request_user = getattr(self.request, "user", None)
-        permission_sets = getattr(request_user, "permission_sets", {})
+        permission_sets = get_permission_sets_for_request(self.request)
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
             sub_theme=self.kwargs["sub_theme"],
