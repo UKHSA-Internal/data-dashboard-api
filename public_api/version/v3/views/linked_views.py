@@ -1,20 +1,20 @@
-from public_api.version_02.serializers.linked_serializers import (
-    GeographyDetailSerializerv2,
-    GeographyListSerializerv2,
-    GeographyTypeDetailSerializerv2,
-    GeographyTypeListSerializerv2,
-    MetricListSerializerv2,
-    SubThemeDetailSerializerv2,
-    SubThemeListSerializerv2,
-    ThemeDetailSerializerv2,
-    ThemeListSerializerv2,
-    TopicDetailSerializerv2,
-    TopicListSerializerv2,
+from public_api.version.v3.serializers.linked_serializers import (
+    GeographyDetailSerializerv3,
+    GeographyListSerializerv3,
+    GeographyTypeDetailSerializerv3,
+    GeographyTypeListSerializerv3,
+    MetricListSerializerv3,
+    SubThemeDetailSerializerv3,
+    SubThemeListSerializerv3,
+    ThemeDetailSerializerv3,
+    ThemeListSerializerv3,
+    TopicDetailSerializerv3,
+    TopicListSerializerv3,
 )
-from public_api.version_02.views.base import BaseNestedAPITimeSeriesViewV2
+from public_api.version.v3.views.base import BaseNestedAPIViewV3
 
 
-class ThemeListViewV2(BaseNestedAPITimeSeriesViewV2):
+class ThemeListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available **themes** and hyperlinks to their corresponding detail view.
 
@@ -23,10 +23,10 @@ class ThemeListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "theme"
-    serializer_class = ThemeListSerializerv2
+    serializer_class = ThemeListSerializerv3
 
 
-class ThemeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
+class ThemeDetailViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a hyperlink to the next step in the data hierarchy.
 
@@ -35,10 +35,10 @@ class ThemeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "theme"
-    serializer_class = ThemeDetailSerializerv2
+    serializer_class = ThemeDetailSerializerv3
 
 
-class SubThemeListViewV2(BaseNestedAPITimeSeriesViewV2):
+class SubThemeListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available **sub_themes** and hyperlinks to their corresponding detail view.
 
@@ -49,10 +49,10 @@ class SubThemeListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "sub_theme"
-    serializer_class = SubThemeListSerializerv2
+    serializer_class = SubThemeListSerializerv3
 
 
-class SubThemeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
+class SubThemeDetailViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a hyperlink to the next step in the data hierarchy.
 
@@ -61,10 +61,10 @@ class SubThemeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "sub_theme"
-    serializer_class = SubThemeDetailSerializerv2
+    serializer_class = SubThemeDetailSerializerv3
 
 
-class TopicListViewV2(BaseNestedAPITimeSeriesViewV2):
+class TopicListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available **topics** and hyperlinks to their corresponding detail view.
 
@@ -75,10 +75,10 @@ class TopicListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "topic"
-    serializer_class = TopicListSerializerv2
+    serializer_class = TopicListSerializerv3
 
 
-class TopicDetailViewV2(BaseNestedAPITimeSeriesViewV2):
+class TopicDetailViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a hyperlink to the next step in the data hierarchy.
 
@@ -87,10 +87,10 @@ class TopicDetailViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "topic"
-    serializer_class = TopicDetailSerializerv2
+    serializer_class = TopicDetailSerializerv3
 
 
-class GeographyTypeListViewV2(BaseNestedAPITimeSeriesViewV2):
+class GeographyTypeListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available geography types and hyperlinks to their corresponding detail view.
 
@@ -102,10 +102,10 @@ class GeographyTypeListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "geography_type"
-    serializer_class = GeographyTypeListSerializerv2
+    serializer_class = GeographyTypeListSerializerv3
 
 
-class GeographyTypeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
+class GeographyTypeDetailViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a hyperlink to the next step in the data hierarchy.
 
@@ -115,10 +115,10 @@ class GeographyTypeDetailViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "geography_type"
-    serializer_class = GeographyTypeDetailSerializerv2
+    serializer_class = GeographyTypeDetailSerializerv3
 
 
-class GeographyListViewV2(BaseNestedAPITimeSeriesViewV2):
+class GeographyListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available geographies and hyperlinks to their corresponding detail view.
 
@@ -130,10 +130,10 @@ class GeographyListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "geography"
-    serializer_class = GeographyListSerializerv2
+    serializer_class = GeographyListSerializerv3
 
 
-class GeographyDetailViewV2(BaseNestedAPITimeSeriesViewV2):
+class GeographyDetailViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a hyperlink to the next step in the data hierarchy.
 
@@ -143,10 +143,10 @@ class GeographyDetailViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "geography"
-    serializer_class = GeographyDetailSerializerv2
+    serializer_class = GeographyDetailSerializerv3
 
 
-class MetricListViewV2(BaseNestedAPITimeSeriesViewV2):
+class MetricListViewV3(BaseNestedAPIViewV3):
     """
     This endpoint returns a list of all available metrics and hyperlinks to their corresponding detail view.
 
@@ -158,4 +158,4 @@ class MetricListViewV2(BaseNestedAPITimeSeriesViewV2):
 
     permission_classes = []
     lookup_field = "metric"
-    serializer_class = MetricListSerializerv2
+    serializer_class = MetricListSerializerv3
