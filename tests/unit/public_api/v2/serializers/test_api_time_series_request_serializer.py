@@ -105,7 +105,11 @@ class TestAPITimeSeriesRequestSerializerV2:
             }
         )
 
-        serializer.get_queryset()
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            serializer.get_queryset()
 
         api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
             lookup_field="theme",
