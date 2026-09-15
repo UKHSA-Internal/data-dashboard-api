@@ -3,6 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from public_api.auth import is_authenticated_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
@@ -17,7 +18,7 @@ def add_private_cache_control_header(
     *, request: Request, response: Response
 ) -> Response:
     """Prevent shared caching of responses made for authenticated consumers."""
-    if request.auth is not None:
+    if is_authenticated_request(request):
         response["Cache-Control"] = PRIVATE_CACHE_CONTROL
 
     return response
