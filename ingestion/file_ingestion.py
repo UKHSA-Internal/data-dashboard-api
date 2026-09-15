@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 import django
+from django.db import transaction
 
 # `django.setup()` is required prior any models being imported
 # This is because we spawn processes during ingestion
@@ -24,8 +25,13 @@ class FileIngestionFailedError(Exception):
         super().__init__(message)
 
 
+@transaction.atomic
 def data_ingester(*, data: INCOMING_DATA_TYPE, filename: str) -> None:
     """Consumes the data in the given `data` and populates the database
+
+    This is atomic on a per-file basis, we do not create partial data
+
+    https://ukhsa.atlassian.net/wiki/spaces/DPD/pages/626851960/ADR-007+File+Ingestion+exception+handling
 
     Args:
         data: The incoming source data to be ingested.
