@@ -78,7 +78,7 @@ class TestAPITimeSeriesRequestSerializer:
         assert returned_kwargs_from_request == fake_request_kwargs
 
     @pytest.mark.parametrize(
-        ("request_kwargs, value_returned_from_query, lookup_field"),
+        ("request_kwargs", "value_returned_from_query", "lookup_field"),
         [({"theme": "infectious_disease"}, "infectious_disease", "theme")],
     )
     def test_build_timeseries_dto(
@@ -135,7 +135,11 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        queryset = serializer.get_queryset()
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            queryset = serializer.get_queryset()
 
         # Then
         api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
@@ -167,7 +171,11 @@ class TestAPITimeSeriesRequestSerializer:
             }
         )
 
-        serializer.get_queryset()
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            serializer.get_queryset()
 
         api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
             lookup_field="theme",

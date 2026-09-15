@@ -12,7 +12,7 @@ class TestAPITimeSeriesViewSetPermissions:
     ):
         permission_sets = {
             "permission_sets": [],
-            "summary": {"has_golbal_access": True},
+            "summary": {"has_global_access": True},
         }
         queryset = mock_get_queryset.return_value
         view = APITimeSeriesViewSet()
@@ -29,7 +29,11 @@ class TestAPITimeSeriesViewSetPermissions:
             "metric": "metric",
         }
 
-        view.get_queryset()
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            view.get_queryset()
 
         queryset.filter_for_list_view.assert_called_once_with(
             theme="theme",
