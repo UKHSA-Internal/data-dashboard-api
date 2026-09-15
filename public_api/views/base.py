@@ -3,6 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from public_api.auth import is_authenticated_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
@@ -42,8 +43,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        is_valid_non_public_request = request.auth is not None
-        if is_valid_non_public_request:
+        if is_authenticated_request(request):
             response["Cache-Control"] = "private, no-cache"
 
         return response
