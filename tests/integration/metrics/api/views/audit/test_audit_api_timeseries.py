@@ -37,7 +37,7 @@ class TestAuditAPITimeSeriesViewSet:
             APITimeSeriesFactory.create_record(metric_value=1),
             APITimeSeriesFactory.create_record(metric_value=2),
             APITimeSeriesFactory.create_record(
-                metric_name=metric,
+                metric=metric,
                 metric_value=metric_value,
                 date=date,
             ),

@@ -33,6 +33,7 @@ def collect_all_metric_model_managers() -> tuple[models.Manager, ...]:
     """Collects all model managers associated with the metrics app"""
     return (
         MetricsAPIInterface.get_core_headline_manager(),
+        MetricsAPIInterface.get_api_headline_manager(),
         MetricsAPIInterface.get_core_timeseries_manager(),
         MetricsAPIInterface.get_api_timeseries_manager(),
         MetricsAPIInterface.get_metric_manager(),
@@ -63,6 +64,7 @@ def clear_metrics_tables() -> None:
             - Sex
             - Stratum
             - CoreHeadline
+            - APIHeadline
             - CoreTimeSeries
             - APITimeSeries
 
