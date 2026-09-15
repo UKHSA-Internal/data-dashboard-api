@@ -1,4 +1,4 @@
-from types import SimpleNamespace
+from unittest import mock
 
 from public_api.auth import (
     get_permission_sets_for_request,
@@ -12,9 +12,9 @@ PERMISSION_SETS = {
 
 
 def test_request_without_authenticated_credentials_has_no_permissions():
-    request = SimpleNamespace(
+    request = mock.Mock(
         auth=None,
-        user=SimpleNamespace(permission_sets=PERMISSION_SETS),
+        user=mock.Mock(permission_sets=PERMISSION_SETS),
     )
 
     assert not is_authenticated_request(request)
@@ -22,9 +22,9 @@ def test_request_without_authenticated_credentials_has_no_permissions():
 
 
 def test_authenticated_request_uses_its_users_permissions():
-    request = SimpleNamespace(
+    request = mock.Mock(
         auth="valid-jwt",
-        user=SimpleNamespace(permission_sets=PERMISSION_SETS),
+        user=mock.Mock(permission_sets=PERMISSION_SETS),
     )
 
     assert is_authenticated_request(request)
@@ -32,7 +32,7 @@ def test_authenticated_request_uses_its_users_permissions():
 
 
 def test_authenticated_request_without_user_permissions_has_no_permissions():
-    request = SimpleNamespace(auth="valid-jwt", user=SimpleNamespace())
+    request = mock.Mock(auth="valid-jwt", user=mock.Mock(permission_sets=None))
 
     assert is_authenticated_request(request)
     assert get_permission_sets_for_request(request) is None
