@@ -18,7 +18,15 @@ from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
 from metrics.data.models import RBACPermission
+from metrics.data.managers.core_models.geography import GeographyManager
+from common.auth.logging import log_user_permission_summary
 
+from common.auth.permissions import check_geography_permissions, _normalize_permission_id, check_theme_sub_theme_topic_permissions
+
+from cms.auth_content.auth_utils import is_auth_enabled
+from common.metrics_interface.interface import MetricsAPIInterface
+
+AUTH_ENABLED = is_auth_enabled()
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
 
@@ -475,7 +483,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
 
-    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
+    def get_available_geographies(self, *, topic: str, theme: str, sub_theme: str, request: None) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:
@@ -485,11 +493,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                         [Row(geography__name='England', geography__geography_type__name='Nation')]>`
 
         """
-        queryset = self.filter(metric__topic__name=topic)
-
         if is_public_data_only_enforced():
             queryset = queryset.filter(is_public=True)
             queryset = self._exclude_data_under_embargo(queryset=queryset)
+        else:
+            queryset = queryset.filter(theme__name=theme, sub_theme__name=sub_theme)
 
         return (
             queryset.values_list(
@@ -712,7 +720,7 @@ class CoreTimeSeriesManager(models.Manager):
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
-    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
+    def get_available_geographies(self, *, topic: str, theme: str, sub_theme: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:
@@ -722,7 +730,7 @@ class CoreTimeSeriesManager(models.Manager):
                         [Row(geography__name='England', geography__geography_type__name='Nation')]>`
 
         """
-        return self.get_queryset().get_available_geographies(topic=topic)
+        return self.get_queryset().get_available_geographies(topic=topic, theme=theme, sub_theme=sub_theme)
 
     def delete_superseded_data(
         self,
@@ -804,3 +812,113 @@ class CoreTimeSeriesManager(models.Manager):
         return self.get_queryset().find_latest_released_embargo_for_metrics(
             metrics=metrics
         )
+
+def filter_geographies_by_permission(
+    *, request, data: list[dict], theme: str, sub_theme: str, topic: str
+) -> list[dict]:
+    if not AUTH_ENABLED or request is None or request.auth is None:
+        return data
+
+    log_user_permission_summary(request.user)
+    has_global_access = request.user.permission_sets["summary"]["has_global_access"]
+    if has_global_access:
+        return data
+
+    permission_sets = request.user.permission_sets["permission_sets"]
+
+    topic_manager = MetricsAPIInterface.get_topic_manager()
+    geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
+    geography_manager = MetricsAPIInterface.get_geography_manager()
+
+    theme_id, sub_theme_id, topic_id = topic_manager.get_id_by_name(theme, sub_theme, topic)
+
+    filtered_data = []
+    for entry in data:
+        geography_type_name = entry["geography_type"]
+        geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
+
+        allowed_geographies = [
+            geography
+            for geography in entry["geographies"]
+            if _is_geography_permitted(
+                permission_sets=permission_sets,
+                geography_type_id=geography_type_id,
+                geography_type_name=geography_type_name,
+                geography_name=geography["name"],
+                geography_manager=geography_manager,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
+        ]
+
+        if allowed_geographies:
+            filtered_data.append({**entry, "geographies": allowed_geographies})
+
+    return filtered_data
+
+
+def _is_geography_permitted(
+    *,
+    permission_sets: list,
+    geography_type_id: int | None,
+    geography_type_name: str,
+    geography_name: str,
+    geography_manager: GeographyManager,
+    theme_id: str | None,
+    sub_theme_id: str | None,
+    topic_id: str | None,
+) -> bool:
+    geography_id = geography_manager.get_code_by_name(geography_name, geography_type_name)
+    if geography_type_id is None or geography_id is None:
+        return False
+    if theme_id is None or sub_theme_id is None or topic_id is None:
+        return False
+
+    geography_type_id = str(geography_type_id)
+    geography_id = str(geography_id)
+
+    for permission_set in permission_sets:
+        if not isinstance(permission_set, dict):
+            continue
+
+        permission_geography_type = _normalize_permission_id(
+            field_name="geography_type", permission_set=permission_set
+        )
+        if permission_geography_type is None:
+            continue
+
+        permission_geography_id = (
+            _normalize_permission_id(field_name="geography", permission_set=permission_set) or ""
+        )
+
+        if not check_geography_permissions(
+            permission_geography_type=permission_geography_type,
+            permission_geography_id=permission_geography_id,
+            geography_type=geography_type_id,
+            geography_id=geography_id,
+        ):
+            continue
+
+        permission_theme_id = _normalize_permission_id(field_name="theme", permission_set=permission_set)
+        if permission_theme_id is None:
+            continue
+
+        permission_sub_theme_id = (
+            _normalize_permission_id(field_name="sub_theme", permission_set=permission_set) or ""
+        )
+        permission_topic_id = (
+            _normalize_permission_id(field_name="topic", permission_set=permission_set) or ""
+        )
+
+        if check_theme_sub_theme_topic_permissions(
+            permission_theme_id=permission_theme_id,
+            permission_sub_theme_id=permission_sub_theme_id,
+            permission_topic_id=permission_topic_id,
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+        ):
+            return True
+
+    return False

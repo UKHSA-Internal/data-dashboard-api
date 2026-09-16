@@ -20,6 +20,8 @@ GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 class GeographiesForTopicSerializer(serializers.Serializer):
     topic = serializers.CharField()
+    theme = serializers.CharField(required=False, default="")
+    sub_theme = serializers.CharField(required=False, default="")
 
     def validate_topic(self, value):
         if not self.topic_manager.does_topic_exist(topic=value):
@@ -63,8 +65,10 @@ class GeographiesForTopicSerializer(serializers.Serializer):
 
         """
         topic: str = self.validated_data["topic"]
+        theme: str = self.validated_data["theme"]
+        sub_theme: str = self.validated_data["sub_theme"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(topic=topic)
+            self.core_time_series_manager.get_available_geographies(topic=topic, theme=theme, sub_theme=sub_theme)
         )
         return _serialize_queryset(queryset=queryset)
 
