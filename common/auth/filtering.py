@@ -23,7 +23,7 @@ def filter_for_permissions(
         based on permissions.
 
     Args:
-        queryset: the queryset to filter 
+        queryset: the queryset to filter
         permission_sets: the permission sets to filter on
 
     Returns: the altered queryset
