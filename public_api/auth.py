@@ -6,10 +6,7 @@ from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 def is_authenticated_request(request: Request) -> bool:
     """Return whether authenticated public API access is enabled for the request."""
-    return (
-        MetricsPublicAPIInterface.is_auth_enabled()
-        and request.auth
-    )
+    return MetricsPublicAPIInterface.is_auth_enabled() and request.auth
 
 
 def get_permission_sets_for_request(
