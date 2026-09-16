@@ -8,7 +8,7 @@ def is_authenticated_request(request: Request) -> bool:
     """Return whether authenticated public API access is enabled for the request."""
     return (
         MetricsPublicAPIInterface.is_auth_enabled()
-        and getattr(request, "auth", None) is not None
+        and request.auth
     )
 
 
@@ -19,5 +19,4 @@ def get_permission_sets_for_request(
     if not is_authenticated_request(request):
         return None
 
-    request_user = getattr(request, "user", None)
-    return getattr(request_user, "permission_sets", None)
+    return getattr(request.user, "permission_sets", None)

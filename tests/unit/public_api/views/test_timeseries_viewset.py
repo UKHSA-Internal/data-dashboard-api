@@ -10,6 +10,8 @@ class TestAPITimeSeriesViewSetPermissions:
     def test_request_without_authentication_does_not_use_user_permissions(
         self, mock_get_queryset: mock.MagicMock
     ):
+        # This isn't a scenario that could happen but tested anyway to prevent it
+        # from creeping in
         permission_sets = {
             "permission_sets": [],
             "summary": {"has_global_access": True},
