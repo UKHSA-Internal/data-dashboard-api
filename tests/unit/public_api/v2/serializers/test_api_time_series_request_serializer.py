@@ -87,6 +87,8 @@ class TestAPITimeSeriesRequestSerializerV2:
         assert returned_kwargs_from_request == expected_request_kwargs
 
     def test_get_queryset_does_not_use_permissions_without_authentication(self):
+        # This isn't a scenario that could happen but tested anyway to prevent it
+        # from creeping in
         permission_sets = {
             "permission_sets": [],
             "summary": {"has_global_access": True},
