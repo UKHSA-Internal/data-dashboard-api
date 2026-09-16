@@ -84,9 +84,9 @@ class TestFilterNonPublicData:
     @patch("common.auth.filtering._to_predicate")
     def test_filters_queryset_for_non_public(self, mock_to_filter):
         """
-        Given a mock queryset which is configured to use a fake non-public page model
-        When the non-public page queryset is filtered with fake permission sets
-        Then the queryset is filtered directly with the combined non-public filter
+        Given a mock queryset
+        When the non-public queryset is filtered with fake permission sets
+        Then the queryset is filtered with the combined non-public filter
         """
         # given
         queryset_out = MagicMock()

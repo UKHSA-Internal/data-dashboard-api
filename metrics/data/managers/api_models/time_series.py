@@ -33,9 +33,8 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
         Args:
             lookup_field: A column to query and retrieve unique values for.
-            restrict_to_public: Boolean switch to restrict the query
-                to only return public records.
-                If False, then non-public records will be included.
+            permission_sets: The JWT permissions extracted from the token
+                used to filter which non-public records will be included.
             **kwargs: The filters to apply to the query.
 
         Returns:
@@ -116,9 +115,8 @@ class APITimeSeriesQuerySet(models.QuerySet):
                 E.g. `England`
             metric: The name of the metric to filter for.
                 E.g. `COVID-19_deaths_ONSByDay`.
-            restrict_to_public: Boolean switch to restrict the query
-                to only return public records.
-                If False, then non-public records will be included.
+            permission_sets: The JWT permissions extracted from the token
+                used to filter which non-public records will be included.
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -349,9 +347,8 @@ class APITimeSeriesManager(models.Manager):
 
         Args:
             lookup_field: A column to query and retrieve unique values for.
-            restrict_to_public: Boolean switch to restrict the query
-                to only return public records.
-                If False, then non-public records will be included.
+            permission_sets: The JWT permissions extracted from the token
+                used to filter which non-public records will be included.
             **kwargs: The filters to apply to the query.
 
         Returns:

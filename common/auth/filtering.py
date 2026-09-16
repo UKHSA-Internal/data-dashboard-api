@@ -15,6 +15,19 @@ def filter_for_permissions(
     queryset: QuerySet,
     permission_sets: PermissionSetsType | None = None,
 ) -> QuerySet:
+    """
+    Filters the queryset if needed:
+    No permission_sets == filter to only return public data.
+    Permission_sets with global access == no filter / return all data.
+    Permission_sets with restricted access == filter non-public data
+        based on permissions.
+
+    Args:
+        queryset: the queryset to filter 
+        permission_sets: the permission sets to filter on
+
+    Returns: the altered queryset
+    """
     if permission_sets:
         if not permission_sets["summary"]["has_global_access"]:
             queryset = filter_non_public_data(
