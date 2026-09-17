@@ -401,7 +401,7 @@ class TestIngestion:
         second_headline_data["data"][0]["metric_value"] = second_metric_value
         second_headline_data["data"][0]["lower_confidence"] = second_metric_value - 1
         data_ingester(data=second_headline_data, filename=TEST_FILENAME)
-        assert CoreHeadline.objects.all().count() == 2
+        assert CoreHeadline.objects.all().count() == 1
 
         # When / Then
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
@@ -428,19 +428,16 @@ class TestIngestion:
         # The returned live value from the headlines API should be the latest one
         assert current_headline_from_api["value"] == third_metric_value
 
-        assert CoreHeadline.objects.all().count() == 2
+        assert CoreHeadline.objects.all().count() == 1
         all_headline_metric_values = CoreHeadline.objects.all().values_list(
             "metric_value", flat=True
         )
 
-        # The value associated with the stale record should have been deleted
+        # The values associated with the stale records should have been deleted
         assert first_metric_value not in all_headline_metric_values
+        assert second_metric_value not in all_headline_metric_values
 
-        # The live record and the 1 leftover stale record should be in the db.
-        # Because we clear stale records before ingestion,
-        # the leftover stale record would be deleted
-        # before the next hypothetical ingestion round
-        assert second_metric_value in all_headline_metric_values
+        # The updated value should be in the list
         assert third_metric_value in all_headline_metric_values
 
     @pytest.mark.django_db
@@ -453,7 +450,7 @@ class TestIngestion:
         Given 3 headline data points with sequential `refresh_dates`
         Which result in the 1st metric value being set in the final round
         When the files are uploaded via the `data_ingester()`
-        Then the stale record will be deleted throughout the process
+        Then the stale records will be deleted throughout the process
         """
         # The fixture comes bundled with 2 data points.
         # To keep things simple we get rid of the 2nd data point
@@ -491,8 +488,7 @@ class TestIngestion:
         data_ingester(data=second_headline_data, filename=TEST_FILENAME)
 
         # Then
-        # At this point the first metric value `123` isn't considered stale
-        assert CoreHeadline.objects.all().count() == 2
+        assert CoreHeadline.objects.all().count() == 1
 
         # Given
         third_refresh_date = datetime.datetime(
@@ -508,13 +504,15 @@ class TestIngestion:
         data_ingester(data=third_headline_data, filename=TEST_FILENAME)
 
         # Then
-        # At this point the first metric value `123` is now considered stale
-        assert CoreHeadline.objects.all().count() == 2
+        assert CoreHeadline.objects.all().count() == 1
         all_headline_metric_values = CoreHeadline.objects.all().values_list(
             "metric_value", "refresh_date"
         )
         assert (first_metric_value, third_refresh_date) in all_headline_metric_values
-        assert (second_metric_value, second_refresh_date) in all_headline_metric_values
+        assert (
+            second_metric_value,
+            second_refresh_date,
+        ) not in all_headline_metric_values
         assert (
             first_metric_value,
             first_refresh_date,
