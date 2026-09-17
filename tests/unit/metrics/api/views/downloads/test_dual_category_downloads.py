@@ -13,7 +13,10 @@ from metrics.domain.models.downloads.dual_category import (
     DualCategoryDownloadRequestParams,
 )
 from metrics.domain.models.plots import PlotParameters
-from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 
 MODULE_PATH = "metrics.api.views.downloads.dual_category_downloads"
 UNWRAPPED_POST = inspect.unwrap(DualCategoryDownloadsView.post)
@@ -127,21 +130,31 @@ class TestDualCategoryDownloadsView:
         )
         assert response is csv_response
 
+    @pytest.mark.parametrize(
+        "exception",
+        [
+            pytest.param(
+                DataNotFoundForAnyPlotError(), id="DataNotFoundForAnyPlotError"
+            ),
+            pytest.param(InvalidPlotParametersError(), id="InvalidPlotParametersError"),
+        ],
+    )
     @mock.patch(f"{MODULE_PATH}.DualCategoryDownloadSerializer")
     @mock.patch(f"{MODULE_PATH}.get_dual_category_downloads_data")
-    def test_post_returns_bad_request_when_no_data_found(
+    def test_post_returns_bad_request_when_error_raised(
         self,
         mocked_get_downloads_data: mock.MagicMock,
         mocked_serializer_class: mock.MagicMock,
         dual_category_download_request_params: DualCategoryDownloadRequestParams,
+        exception: Exception,
     ):
         """
-        Given a dual-category download request where no plot data is found
+        Given a dual-category download request where no plot data is found or incorrect data is provided
         When `post()` is called on `DualCategoryDownloadsView`
         Then a `400 Bad Request` response is returned with an error message
         """
         # Given
-        mocked_get_downloads_data.side_effect = DataNotFoundForAnyPlotError()
+        mocked_get_downloads_data.side_effect = exception
         mocked_serializer = mock.MagicMock()
         mocked_serializer.data = {"file_format": "json"}
         mocked_serializer.to_models.return_value = dual_category_download_request_params
