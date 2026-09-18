@@ -132,8 +132,6 @@ def create_subplots_data() -> list[Subplots]:
                 stratum="default",
                 date_from="2023-01-01",
                 date_to="2023-12-31",
-                geography="England",
-                geography_type="Nation",
                 x_axis="date",
                 y_axis="metric",
             )
