@@ -17,3 +17,11 @@ class MetricsAPIInterface:
     @staticmethod
     def get_geography_manager():
         return core_models.Geography.objects
+    
+    @staticmethod
+    def get_theme_manager():
+        return core_models.Theme.objects
+
+    @staticmethod
+    def get_sub_theme_manager():
+        return core_models.SubTheme.objects

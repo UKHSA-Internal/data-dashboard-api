@@ -217,7 +217,7 @@ class InternalAPIClient:
         headers = self._build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint_deprecated(self, *, topic: str) -> Response:
+    def hit_geographies_list_endpoint_deprecated(self, *, topic: str, theme: str, sub_theme: str) -> Response:
         """Sends a `GET` request to the list `geographies/v2` endpoint
 
         Returns:
@@ -235,9 +235,10 @@ class InternalAPIClient:
             `Response` from the `geographies/` endpoint
 
         """
-        self.hit_geographies_list_endpoint_deprecated(topic=topic)
+        self.hit_geographies_list_endpoint_deprecated(topic=topic, theme=theme, sub_theme=sub_theme)
         headers: dict[str, bool] = self._build_headers()
         query_params = {"topic": topic, "theme": theme, "sub_theme": sub_theme}
+        print(f"query_params: {query_params}")
         return self._client.get(
             path=self.geographies_endpoint_path,
             headers=headers,

@@ -135,6 +135,24 @@ class TopicQuerySet(models.QuerySet):
                     `<QuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self.all().values("id", "name").distinct()
+    
+    def get_id_by_name(
+            self, theme_name: str, sub_theme_name: str, topic_name: str
+        ) -> tuple[int | None, int | None, int | None]:
+            record = self.filter(
+                sub_theme__theme__name=theme_name,
+                sub_theme__name=sub_theme_name,
+                name=topic_name,
+            ).first()
+
+            if record:
+                return (
+                    int(record.sub_theme.theme_id),
+                    int(record.sub_theme_id),
+                    int(record.id),
+                )
+
+            return (None, None, None)
 
 
 class TopicManager(models.Manager):
@@ -246,3 +264,8 @@ class TopicManager(models.Manager):
                     `<TopicQuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'MMR1'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()
+    
+    def get_id_by_name(
+        self, theme_name: str, sub_theme_name: str, topic_name: str
+    ) -> tuple[int | None, int | None, int | None]:
+        return self.get_queryset().get_id_by_name(theme_name, sub_theme_name, topic_name)

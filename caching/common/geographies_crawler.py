@@ -101,7 +101,7 @@ class GeographiesAPICrawler:
         """
         selected_topic: str = page.selected_topics.pop()
         geography_type_data_models: list[GeographyTypeData] = (
-            self.hit_list_endpoint_for_topic(topic=selected_topic, theme=page.theme or "", sub_theme=page.sub_theme or "")
+            self.hit_list_endpoint_for_topic(topic=selected_topic, theme=page.theme_name or "", sub_theme=page.sub_theme_name or "")
         )
 
         logger.info("Retrieved geography combinations for `%s`", page.title)
