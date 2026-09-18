@@ -33,6 +33,8 @@ from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
 
+from metrics.data.models.core_models.supporting import SubTheme, Theme
+
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
@@ -117,7 +119,6 @@ class TopicPage(UKHSAPage):
         FieldPanel("related_links_layout"),
         InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
-
     # Search index configuration
     search_fields = UKHSAPage.search_fields + [index.SearchField("page_description")]
 
@@ -145,6 +146,8 @@ class TopicPage(UKHSAPage):
         APIField("is_public"),
         APIField("page_classification"),
         APIField("selected_topics"),
+        APIField("theme_name"),
+        APIField("sub_theme_name"),
     ]
 
     # Tabs to position at the top of the view
@@ -198,6 +201,18 @@ class TopicPage(UKHSAPage):
             sections=self.body.raw_data
         )
 
+    @property
+    def theme_name(self) -> str | None:
+        if not self.theme:
+            return None
+        return Theme.objects.get_name_by_id(int(self.theme))
+
+    @property
+    def sub_theme_name(self) -> str | None:
+        if not self.sub_theme:
+            return None
+        return SubTheme.objects.get_name_by_id(int(self.sub_theme))
+    
     def find_latest_released_embargo_for_metrics(
         self,
     ) -> list[datetime.datetime | None]:

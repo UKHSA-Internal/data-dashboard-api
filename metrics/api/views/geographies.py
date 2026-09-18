@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.data.managers.core_models.time_series import filter_geographies_by_permission
 from metrics.api.serializers.geographies import (
     GEOGRAPHY_TYPE_RESULT,
     GeographiesForGeographyTypeSerializer,
@@ -49,7 +50,14 @@ class GeographiesViewDeprecated(APIView):
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
-
+        data = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme=serializer.validated_data.get("theme", ""),
+            sub_theme=serializer.validated_data.get("sub_theme", ""),
+            topic=serializer.validated_data["topic"],
+        )
+        print(data)
         return Response(data)
 
 
@@ -81,11 +89,28 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
                 payload=payload
             )
+            data = filter_geographies_by_permission(
+                request=request,
+                data=data,
+                theme=payload.get("theme", ""),
+                sub_theme=payload.get("sub_theme", ""),
+                topic=payload["topic"],
+            )
         else:
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-
+            data = filter_geographies_by_permission(
+                request=request,
+                data=data,
+                theme=payload.get("theme", ""),
+                sub_theme=payload.get("sub_theme", ""),
+                topic="",
+            )
+        print(f"theme: {payload.get('theme', '')}")
+        print(f"sub_theme: {payload.get('sub_theme', '')}")
+        print(f"topic: {payload.get('topic', '')}")
+        print(data)
         return Response(data)
 
     @classmethod
