@@ -23,8 +23,6 @@ from metrics.domain.common.utils import (
 class TestChartPlotSerializer:
     optional_field_names = [
         "stratum",
-        "geography",
-        "geography_type",
         "sex",
         "label",
         "line_colour",

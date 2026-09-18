@@ -78,7 +78,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             filtered_time_series = [
                 x
                 for x in filtered_time_series
-                if x.geography.geography_type.name == geography
+                if x.geography.geography_type.name == geography_type
             ]
 
         if stratum:
