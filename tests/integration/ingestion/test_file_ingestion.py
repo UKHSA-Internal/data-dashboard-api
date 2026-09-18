@@ -6,7 +6,7 @@ import pytest
 
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils import type_hints
-from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.api_models import APIHeadline, APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from validation.is_public import (
     MISSING_IS_PUBLIC_FIELD_ERROR,
@@ -184,6 +184,65 @@ class TestDataIngester:
         assert (
             core_time_series.embargo.strftime("%Y-%m-%d %H:%M:%S")
             == data["time_series"][0]["embargo"]
+        )
+
+    @pytest.mark.django_db
+    def test_creates_api_headline_from_data(
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        """
+        Given incoming headline type data
+        When `data_ingester()` is called
+        Then `CoreHeadline` records are created with the correct values
+        """
+        # Given
+        data = example_headline_data
+        assert APIHeadline.objects.all().count() == 0
+
+        # When
+        data_ingester(data=data, filename=test_filename)
+
+        # Then
+        # Check that 2 `CoreHeadline` records are created per row of data
+        assert APIHeadline.objects.all().count() == len(example_headline_data["data"])
+        api_headline = APIHeadline.objects.first()
+
+        assert api_headline.theme == data["parent_theme"]
+        assert api_headline.sub_theme == data["child_theme"]
+        assert api_headline.topic == data["topic"]
+        assert api_headline.metric_group == data["metric_group"]
+        assert api_headline.metric == data["metric"]
+
+        assert api_headline.geography == data["geography"]
+        assert api_headline.geography_type == data["geography_type"]
+
+        assert api_headline.age == data["age"]
+        assert api_headline.stratum == data["stratum"]
+        assert api_headline.sex == data["sex"]
+        assert api_headline.refresh_date.strftime("%Y-%m-%d") == data["refresh_date"]
+
+        london_timezone = zoneinfo.ZoneInfo(key="Europe/London")
+        assert (
+            api_headline.period_start.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == data["data"][0]["period_start"]
+        )
+        assert (
+            api_headline.period_end.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == data["data"][0]["period_end"]
+        )
+        assert str(round(api_headline.metric_value, 1)) == str(
+            data["data"][0]["metric_value"]
+        )
+        # The embargo timestamp specifies the point in time up to the second
+        assert (
+            api_headline.embargo.strftime("%Y-%m-%d %H:%M:%S")
+            == data["data"][0]["embargo"]
         )
 
     @pytest.mark.django_db
