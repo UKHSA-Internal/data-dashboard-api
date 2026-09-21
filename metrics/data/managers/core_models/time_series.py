@@ -825,7 +825,6 @@ def filter_geographies_by_permission(
         return data
 
     permission_sets = request.user.permission_sets["permission_sets"]
-
     topic_manager = MetricsAPIInterface.get_topic_manager()
     geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
     geography_manager = MetricsAPIInterface.get_geography_manager()
@@ -839,30 +838,28 @@ def filter_geographies_by_permission(
         sub_theme_id = sub_theme_manager.get_id_by_name(sub_theme) if sub_theme else None
         topic_id = ""
 
-    filtered_data = []
-    for entry in data:
-        geography_type_name = entry["geography_type"]
-        geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
-
-        allowed_geographies = [
-            geography
-            for geography in entry["geographies"]
-            if _is_geography_permitted(
-                permission_sets=permission_sets,
-                geography_type_id=geography_type_id,
-                geography_type_name=geography_type_name,
-                geography_name=geography["name"],
-                geography_manager=geography_manager,
-                theme_id=theme_id,
-                sub_theme_id=sub_theme_id,
-                topic_id=topic_id,
-            )
-        ]
+        filtered_data = []
+        for entry in data:
+            geography_type_name = entry["geography_type"]
+            geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
+            allowed_geographies = [
+                geography
+                for geography in entry["geographies"]
+                if _is_geography_permitted(
+                    permission_sets=permission_sets,
+                    geography_type_id=geography_type_id,
+                    geography_type_name=geography_type_name,
+                    geography_name=geography["name"],
+                    geography_manager=geography_manager,
+                    theme_id=theme_id,
+                    sub_theme_id=sub_theme_id,
+                    topic_id=topic_id,
+                )
+            ]
 
         if allowed_geographies:
             filtered_data.append({**entry, "geographies": allowed_geographies})
 
-    print(f"[filter_geographies_by_permission] filtered_data={filtered_data}")
     return filtered_data
 
 
@@ -878,19 +875,35 @@ def _is_geography_permitted(
     topic_id: str | None,
 ) -> bool:
     geography_id = geography_manager.get_code_by_name(geography_name, geography_type_name)
-   
     if geography_type_id is None or geography_id is None:
         return False
-    if theme_id is None or sub_theme_id is None or topic_id is None:
+    if theme_id is None or sub_theme_id is None:
         return False
 
     geography_type_id = str(geography_type_id)
     geography_id = str(geography_id)
+    theme_id = str(theme_id) if theme_id else ""
+    sub_theme_id = str(sub_theme_id) if sub_theme_id else ""
+    topic_id = topic_id or ""
 
-    for permission_set in permission_sets:
-        if not isinstance(permission_set, dict):
-            continue
+    # Step 1: only permission_sets whose theme/sub_theme (and topic, if relevant)
+    # match the page we're rendering are "in scope" for this check at all.
+    relevant_permission_sets = [
+        permission_set
+        for permission_set in permission_sets
+        if isinstance(permission_set, dict)
+        and check_theme_sub_theme_topic_permissions(
+            permission_theme_id=_normalize_permission_id(field_name="theme", permission_set=permission_set) or "",
+            permission_sub_theme_id=_normalize_permission_id(field_name="sub_theme", permission_set=permission_set) or "",
+            permission_topic_id=_normalize_permission_id(field_name="topic", permission_set=permission_set) or "",
+            theme_id=theme_id,
+            sub_theme_id=sub_theme_id,
+            topic_id=topic_id,
+        )
+    ]
 
+    # Step 2: within only those in-scope permission_sets, check geography access.
+    for permission_set in relevant_permission_sets:
         permission_geography_type = _normalize_permission_id(
             field_name="geography_type", permission_set=permission_set
         )
@@ -901,48 +914,12 @@ def _is_geography_permitted(
             _normalize_permission_id(field_name="geography", permission_set=permission_set) or ""
         )
 
-        geography_match = check_geography_permissions(
+        if check_geography_permissions(
             permission_geography_type=permission_geography_type,
             permission_geography_id=permission_geography_id,
             geography_type=geography_type_id,
             geography_id=geography_id,
-        )
-        print(
-            f"[_is_geography_permitted] permission_set={permission_set} "
-            f"permission_geography_type={permission_geography_type} permission_geography_id={permission_geography_id!r} "
-            f"vs geography_type_id={geography_type_id} geography_id={geography_id} -> geography_match={geography_match}"
-        )
-        if not geography_match:
-            continue
-
-        permission_theme_id = _normalize_permission_id(field_name="theme", permission_set=permission_set)
-        if permission_theme_id is None:
-            print(f"[_is_geography_permitted] permission_set={permission_set} has no theme id -> skip")
-            continue
-
-        permission_sub_theme_id = (
-            _normalize_permission_id(field_name="sub_theme", permission_set=permission_set) or ""
-        )
-        permission_topic_id = (
-            _normalize_permission_id(field_name="topic", permission_set=permission_set) or ""
-        )
-
-        theme_match = check_theme_sub_theme_topic_permissions(
-            permission_theme_id=permission_theme_id,
-            permission_sub_theme_id=permission_sub_theme_id,
-            permission_topic_id=permission_topic_id,
-            theme_id=theme_id,
-            sub_theme_id=sub_theme_id,
-            topic_id=topic_id,
-        )
-        print(
-            # f"[_is_geography_permitted] permission_set={permission_set} "
-            # f"permission_theme_id={permission_theme_id} permission_sub_theme_id={permission_sub_theme_id!r} permission_topic_id={permission_topic_id!r} "
-            # f"vs theme_id={theme_id} sub_theme_id={sub_theme_id} topic_id={topic_id} -> theme_match={theme_match}"
-        )
-        if theme_match:
-            print(f"[_is_geography_permitted] geography_name={geography_name!r} -> ALLOWED via permission_set={permission_set}")
+        ):
             return True
 
-    print(f"[_is_geography_permitted] geography_name={geography_name!r} -> DENIED (no matching permission_set)")
     return False

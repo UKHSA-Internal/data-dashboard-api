@@ -61,7 +61,6 @@ class GeographiesAPICrawler:
         geography_type_data_models: list[GeographyTypeData] = (
             self._convert_to_geography_type_models(response_data=response.data)
         )
-        print(response)
         logger.info("Completed processing of geographies API for `%s` page", topic)
         return geography_type_data_models
 

@@ -57,7 +57,6 @@ class GeographiesViewDeprecated(APIView):
             sub_theme=serializer.validated_data.get("sub_theme", ""),
             topic=serializer.validated_data["topic"],
         )
-        print(data)
         return Response(data)
 
 
@@ -107,10 +106,6 @@ class GeographiesView(APIView):
                 sub_theme=payload.get("sub_theme", ""),
                 topic="",
             )
-        print(f"theme: {payload.get('theme', '')}")
-        print(f"sub_theme: {payload.get('sub_theme', '')}")
-        print(f"topic: {payload.get('topic', '')}")
-        print(data)
         return Response(data)
 
     @classmethod
