@@ -77,7 +77,7 @@ class SubThemeQuerySet(models.QuerySet):
         record = self.filter(name=sub_theme_name).first()
 
         if record:
-            return (int(record.id),)
+            return (int(record.id))
 
 
 

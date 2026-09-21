@@ -53,7 +53,7 @@ class ThemeQuerySet(models.QuerySet):
         record = self.filter(name=theme_name).first()
 
         if record:
-            return (int(record.id),)
+            return (int(record.id))
 
 
 

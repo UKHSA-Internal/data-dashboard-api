@@ -108,7 +108,6 @@ def create_respiratory_viruses_index_page(*, name: str, parent_page: Page):
 
 def create_cover_index_page(*, name: str, parent_page: Page) -> CompositePage:
     page_data = open_example_page_response(page_name=name)
-    print(f"page_data: {page_data}")
     page = _create_index_page(
         page_data=page_data,
         parent_page=parent_page,
