@@ -132,7 +132,7 @@ def check_chart_permissions(  # noqa: PLR0914
         if not isinstance(permission_set, dict):
             return False
 
-        permission_ids = _normalize_permission_ids(
+        permission_ids = normalize_permission_ids(
             "theme",
             "sub_theme",
             "topic",
@@ -210,19 +210,19 @@ def check_page_permissions(
 
         # Theme must be present, but other permission fields are
         # optional, as wildcard hierarchy allows early short-circuit
-        permission_theme_id = _normalize_permission_id(
+        permission_theme_id = normalize_permission_id(
             field_name="theme", permission_set=permission_set
         )
         if permission_theme_id is None:
             return False
         permission_sub_theme_id = (
-            _normalize_permission_id(
+            normalize_permission_id(
                 field_name="sub_theme", permission_set=permission_set
             )
             or ""
         )
         permission_topic_id = (
-            _normalize_permission_id(field_name="topic", permission_set=permission_set)
+            normalize_permission_id(field_name="topic", permission_set=permission_set)
             or ""
         )
 
@@ -326,7 +326,7 @@ def _normalize_resource_ids(*ids: int | str | None) -> tuple[str, ...] | None:
     return normalized_ids
 
 
-def _normalize_permission_ids(
+def normalize_permission_ids(
     *field_names: str,
     permission_set: PermissionRowType | dict,
 ) -> tuple[str, ...] | None:
