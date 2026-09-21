@@ -100,6 +100,9 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
         Returns:
             the topic name, or an empty string
         """
+        if not self.metric:
+            return ""
+
         topic_index = 0
         if self.metric.startswith("OFF-SENS_"):
             topic_index = 1
@@ -127,6 +130,9 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
         prefix. E.g. correctly find the metric group "cases" in: `OFF-SENS_COVID-19_cases_rateRollingMean` and
         `COVID-19_cases_rateRollingMean`.
         """
+        if not self.metric:
+            return ""
+
         group_index = 1
         if self.metric.startswith("OFF-SENS_"):
             group_index = 2

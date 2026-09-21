@@ -137,7 +137,7 @@ class TestMetricsDocumentationChildEntry:
         "metric",
         ["COVID-19casesrateRollingMean", "COVID-19_", "", None],
     )
-    def test_metric_group_returns_emptry_string_with_missing_values(self, metric: str):
+    def test_metric_group_returns_empty_string_with_missing_values(self, metric: str):
         """
         Given a blank `MetricsDocumentationChildEntryPage` model with a metric set
         Then the metric_group will return an empty string.
