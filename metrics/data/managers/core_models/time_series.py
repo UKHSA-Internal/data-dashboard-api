@@ -487,7 +487,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
     def get_available_geographies(
-        self, *, topic: str, theme: str, sub_theme: str, request: None
+        self, *, topic: str, theme: str, sub_theme: str
     ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
