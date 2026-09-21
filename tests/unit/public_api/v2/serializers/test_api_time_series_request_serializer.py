@@ -2,16 +2,11 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.models.api_models import APITimeSeries
 from public_api.version_02.serializers.api_time_series_request_serializer import (
     NO_LOOKUP_FIELD_ERROR_MESSAGE,
     APITimeSeriesDTO,
-)
-
-from public_api.version_02.serializers.api_time_series_request_serializer import (
     APITimeSeriesRequestSerializerv2,
 )
-
 from tests.fakes.factories.metrics.api_time_series_factory import (
     FakeAPITimeSeriesFactory,
 )
@@ -62,7 +57,7 @@ class TestAPITimeSeriesRequestSerializerV2:
 
         # When / Then
         with pytest.raises(NotImplementedError, match=NO_LOOKUP_FIELD_ERROR_MESSAGE):
-            serializer.lookup_field
+            _ = serializer.lookup_field
 
     def test_get_formatted_kwargs_from_request(self):
         """
@@ -90,6 +85,36 @@ class TestAPITimeSeriesRequestSerializerV2:
 
         # Then
         assert returned_kwargs_from_request == expected_request_kwargs
+
+    def test_get_queryset_does_not_use_permissions_without_authentication(self):
+        permission_sets = {
+            "permission_sets": [],
+            "summary": {"has_global_access": True},
+        }
+        mocked_request = mock.Mock(
+            auth=None,
+            user=mock.Mock(permission_sets=permission_sets),
+            parser_context={"kwargs": {}},
+        )
+        api_time_series_manager_spy = mock.Mock()
+        serializer = APITimeSeriesRequestSerializerv2(
+            context={
+                "request": mocked_request,
+                "lookup_field": "theme",
+                "api_time_series_manager": api_time_series_manager_spy,
+            }
+        )
+
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            serializer.get_queryset()
+
+        api_time_series_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
+            lookup_field="theme",
+            permission_sets=None,
+        )
 
     def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_topic_lookup(
         self,

@@ -20,6 +20,9 @@ RUN apt-get update \
         bash zsh coreutils libcap2 libtinfo6 gcc libpq-dev python3-dev \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
+# update the base pip while we're here
+RUN pip install -U pip
+
 # Copy the production-only dependencies into place.
 COPY requirements-prod.txt /code/requirements-prod.txt
 COPY requirements-prod-ingestion.txt /code/requirements-prod-ingestion.txt
@@ -48,7 +51,7 @@ COPY . /code
 #   The distroless base image is pinned to a specific digest for reproducible
 #   builds. When updating, refresh the digest via `docker pull` + `docker inspect`.
 ###############################################################################
-FROM gcr.io/distroless/cc-debian12@sha256:329e54034ce498f9c6b345044e8f530c6691f99e94a92446f68c0adf9baa8464 AS production
+FROM gcr.io/distroless/cc-debian12@sha256:e5d81ddde149641e2a9ba55be4545bc125c67de07508b03ba4c22e6eb0ded5aa AS production
 
 WORKDIR /code
 
