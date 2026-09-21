@@ -16,10 +16,10 @@ from cms.auth_content.auth_utils import is_auth_enabled
 from common.auth.logging import log_user_permission_summary
 from common.auth.permissions import (
     PermissionSetsType,
-    _normalize_permission_id,
     check_chart_permissions_by_name,
     check_geography_permissions,
     check_theme_sub_theme_topic_permissions,
+    normalize_permission_id,
 )
 from common.metrics_interface.interface import MetricsAPIInterface
 from common.virtual_clock import get_embargo_time
@@ -911,15 +911,15 @@ def _is_geography_permitted(
         for permission_set in permission_sets
         if isinstance(permission_set, dict)
         and check_theme_sub_theme_topic_permissions(
-            permission_theme_id=_normalize_permission_id(
+            permission_theme_id=normalize_permission_id(
                 field_name="theme", permission_set=permission_set
             )
             or "",
-            permission_sub_theme_id=_normalize_permission_id(
+            permission_sub_theme_id=normalize_permission_id(
                 field_name="sub_theme", permission_set=permission_set
             )
             or "",
-            permission_topic_id=_normalize_permission_id(
+            permission_topic_id=normalize_permission_id(
                 field_name="topic", permission_set=permission_set
             )
             or "",
@@ -931,14 +931,14 @@ def _is_geography_permitted(
 
     # Step 2: within only those in-scope permission_sets, check geography access.
     for permission_set in relevant_permission_sets:
-        permission_geography_type = _normalize_permission_id(
+        permission_geography_type = normalize_permission_id(
             field_name="geography_type", permission_set=permission_set
         )
         if permission_geography_type is None:
             continue
 
         permission_geography_id = (
-            _normalize_permission_id(
+            normalize_permission_id(
                 field_name="geography", permission_set=permission_set
             )
             or ""
