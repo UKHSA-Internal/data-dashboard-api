@@ -106,10 +106,7 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
         topic_index = 0
         if self.metric.startswith("OFF-SENS_"):
             topic_index = 1
-        try:
-            return self.metric.split("_")[topic_index]
-        except IndexError:
-            return ""
+        return self.metric.split("_")[topic_index]
 
     def get_topic_name(self) -> str:
         """

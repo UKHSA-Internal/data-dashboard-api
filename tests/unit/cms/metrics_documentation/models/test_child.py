@@ -116,6 +116,7 @@ class TestMetricsDocumentationChildEntry:
             ("COVID-19_headline_vaccines_autumn23Total", "headline"),
             ("COVID-19_vaccinations_autumn22_uptakeByDay", "vaccinations"),
             ("COVID-19_deaths_ONSByWeek", "deaths"),
+            ("OFF-SENS_COVID-19_cases_rateRollingMean", "cases"),
         ],
     )
     def test_metric_group_returns_expected_string(self, metric: str, metric_group: str):
@@ -151,3 +152,31 @@ class TestMetricsDocumentationChildEntry:
 
         # Then
         assert fake_metrics_documentation_child_entry_page.metric_group == ""
+
+    @pytest.mark.parametrize(
+        "metric, expected",
+        [
+            # empty string and None shouldn't really be possible, but make sure they are guarded for
+            ("", ""),
+            (None, ""),
+            # a normal metric name should work
+            ("COVID-19_cases_rateRollingMean", "COVID-19"),
+            # a non-public name should work
+            ("OFF-SENS_COVID-19_cases_rateRollingMean", "COVID-19"),
+            # this method doesn't assert the correctness of the metric
+            ("not-real", "not-real"),
+        ],
+    )
+    def test__extract_topic_from_metric(self, metric: str, expected: str):
+        # given
+        fake_metrics_documentation_child_entry_page = (
+            FakeMetricsDocumentationChildEntryFactory.build_page_from_template(
+                metric=metric
+            )
+        )
+
+        # when
+        topic = fake_metrics_documentation_child_entry_page._extract_topic_from_metric()
+
+        # then
+        assert topic == expected
