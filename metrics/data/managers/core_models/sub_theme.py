@@ -80,6 +80,7 @@ class SubThemeQuerySet(models.QuerySet):
 
         if record:
             return int(record.id)
+        return None
 
 
 class SubThemeManager(models.Manager):

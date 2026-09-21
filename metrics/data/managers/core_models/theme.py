@@ -56,6 +56,7 @@ class ThemeQuerySet(models.QuerySet):
 
         if record:
             return int(record.id)
+        return None
 
 
 class ThemeManager(models.Manager):
