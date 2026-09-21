@@ -21,11 +21,11 @@ class TestPlotParameters:
         "chart_type": "bar",
         "topic": "COVID-19",
         "metric": "COVID-19_deaths_ONSByDay",
+        "geography": "England",
+        "geography_type": "Nation",
     }
     optional_field_names = [
         "stratum",
-        "geography",
-        "geography_type",
         "sex",
         "age",
         "date_from",
@@ -125,6 +125,8 @@ class TestPlotParameters:
             ].value,
             "topic": fake_chart_plot_parameters.topic,
             "metric": fake_chart_plot_parameters.metric,
+            "theme": fake_chart_plot_parameters.theme,
+            "sub_theme": fake_chart_plot_parameters.sub_theme,
             "stratum": fake_chart_plot_parameters.stratum,
             "geography": fake_chart_plot_parameters.geography,
             "geography_type": fake_chart_plot_parameters.geography_type,
@@ -180,6 +182,8 @@ class TestPlotParameters:
             ],
             "topic": fake_chart_plot_parameters.topic,
             "metric": fake_chart_plot_parameters.metric,
+            "theme": fake_chart_plot_parameters.theme,
+            "sub_theme": fake_chart_plot_parameters.sub_theme,
             "stratum": fake_chart_plot_parameters.stratum,
             "geography": fake_chart_plot_parameters.geography,
             "geography_type": fake_chart_plot_parameters.geography_type,
@@ -258,6 +262,8 @@ class TestPlotParameters:
             topic=topic_name,
             metric=metric_name,
             chart_type="bar",
+            geography="England",
+            geography_type="Nation",
         )
 
         # Then
@@ -279,6 +285,8 @@ class TestPlotParameters:
             topic=topic_name,
             metric=metric_name,
             chart_type="bar",
+            geography="England",
+            geography_type="Nation",
             override_y_axis_choice_to_none=True,
         )
 

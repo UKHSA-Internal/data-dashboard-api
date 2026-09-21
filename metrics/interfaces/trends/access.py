@@ -1,6 +1,5 @@
 from django.db.models import Manager
 
-from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreHeadline, Topic
 from metrics.domain.models.trends import TrendsParameters
 from metrics.domain.trends.state import TREND_AS_DICT, Trend
@@ -66,14 +65,11 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
+
         main_metric_params = self.trend_parameters.to_dict_for_main_metric_query()
         percentage_metric_params = (
             self.trend_parameters.to_dict_for_percentage_metric_query()
         )
-
-        if auth.AUTH_ENABLED:
-            self._add_theme_info_to_params(params=main_metric_params)
-            self._add_theme_info_to_params(params=percentage_metric_params)
 
         core_headline_percentage_metric: CoreHeadline = self.get_latest_metric_value(
             params=percentage_metric_params
@@ -90,11 +86,6 @@ class TrendsInterface:
             percentage_metric_value=core_headline_percentage_metric.metric_value,
             percentage_metric_period_end=core_headline_percentage_metric.period_end,
         )
-
-    def _add_theme_info_to_params(self, *, params: dict) -> None:
-        topic = self.topic_manager.get_by_name(name=self.trend_parameters.topic_name)
-        params["theme"] = topic.sub_theme.theme.name
-        params["sub_theme"] = topic.sub_theme.name
 
 
 def generate_trend_numbers(
