@@ -31,7 +31,7 @@ class TestNonPublicPageAdminForm:
                 TOPIC_FIELD.name: MagicMock(),
             },
             # give sub-theme a value, but not topic
-            instance=MagicMock(**{SUB_THEME_FIELD.name: "4", TOPIC_FIELD.name: None}),
+            _get_dependent_field_value=MagicMock(side_effect=["4", None]),
             _get_field_choices=MagicMock(),
         )
 
