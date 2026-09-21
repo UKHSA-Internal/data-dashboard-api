@@ -20,5 +20,7 @@ COPY . ${LAMBDA_TASK_ROOT}
 ## Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR ${LAMBDA_TASK_ROOT}
 
+RUN rm -f /usr/local/bin/aws-lambda-rie
+
 # Runs the lambda entrypoint by default
 CMD ["ingestion.operations.lambda_entrypoint.handler"]
