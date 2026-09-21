@@ -169,7 +169,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
             healthcare_admission_rate_child_entry.slug
             == expected_title.lower().replace(" ", "-")
         )
-        assert healthcare_admission_rate_child_entry.topic == "RSV"
+        assert healthcare_admission_rate_child_entry.get_topic_name() == "RSV"
         assert healthcare_admission_rate_child_entry.title == expected_title
         assert (
             healthcare_admission_rate_child_entry.seo_title
