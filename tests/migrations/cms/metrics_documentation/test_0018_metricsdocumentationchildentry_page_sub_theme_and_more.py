@@ -80,6 +80,7 @@ class Test0018_metricsdocumentationchildentry_page_sub_theme_and_more(MigrationT
                 ),
                 Scenario(
                     is_public=True,
+                    # we can't convert the page classification back because it's change in place
                     page_classification="",
                     theme="",
                     sub_theme="",
@@ -107,6 +108,7 @@ class Test0018_metricsdocumentationchildentry_page_sub_theme_and_more(MigrationT
                 ),
                 Scenario(
                     is_public=True,
+                    # we can't convert the page classification back because it's change in place
                     page_classification="",
                     theme=None,
                     sub_theme=None,
@@ -134,10 +136,13 @@ class Test0018_metricsdocumentationchildentry_page_sub_theme_and_more(MigrationT
                 ),
                 Scenario(
                     is_public=True,
+                    # we can't convert the page classification back because it's change in place
                     page_classification="",
                     theme=None,
                     sub_theme=None,
                     topic="200",
+                    # don't convert the metric back - partly because we can't, it's an in place update like the page
+                    # classification, but also because it's not correct - the metric should always be a string
                     metric="COVID-19_headline_cases_7DayTotals",
                 ),
             ),
@@ -168,6 +173,118 @@ class Test0018_metricsdocumentationchildentry_page_sub_theme_and_more(MigrationT
                     metric="COVID-19_headline_cases_7DayTotals",
                 ),
             ),
+            # a non-public MDCE with a None topic (this shouldn't be possible but exist in prod...)
+            (
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic=None,
+                    metric="123",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic="3",
+                    metric="COVID-19_headline_cases_7DayTotals",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic=None,
+                    metric="COVID-19_headline_cases_7DayTotals",
+                ),
+            ),
+            # a non-public MDCE with a name in the topic field
+            (
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic="COVID-19",
+                    metric="COVID-19_headline_cases_7DayTotals",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    # gets converted to an ID
+                    topic="3",
+                    metric="COVID-19_headline_cases_7DayTotals",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    # gets put back to a name on rollback
+                    topic="COVID-19",
+                    metric="COVID-19_headline_cases_7DayTotals",
+                ),
+            ),
+            # a non-public MBCE with an invalid metric name (there's not really any way for this to happen)
+            (
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic="COVID-19",
+                    metric="not-a-real-metric",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    # the topic can't be updated using the metric so leave it be
+                    topic="COVID-19",
+                    metric="not-a-real-metric",
+                ),
+                Scenario(
+                    is_public=False,
+                    page_classification="official-sensitive",
+                    theme="1",
+                    sub_theme="2",
+                    topic="COVID-19",
+                    metric="not-a-real-metric",
+                ),
+            ),
+            # a public page with a metric ID in the metric field that doesn't exist
+            (
+                Scenario(
+                    is_public=True,
+                    page_classification="",
+                    theme="",
+                    sub_theme="",
+                    topic="",
+                    metric="21892",
+                ),
+                Scenario(
+                    is_public=True,
+                    page_classification="",
+                    theme="",
+                    sub_theme="",
+                    topic="",
+                    # stays the same, we can't do anything with it
+                    metric="21892",
+                ),
+                Scenario(
+                    is_public=True,
+                    page_classification="",
+                    theme="",
+                    sub_theme="",
+                    topic="",
+                    metric="21892",
+                ),
+            ),
         ],
     )
     def test_scenarios(
@@ -193,7 +310,7 @@ class Test0018_metricsdocumentationchildentry_page_sub_theme_and_more(MigrationT
             return_value={"123": "COVID-19_headline_cases_7DayTotals"}
         )
         get_metric_name_to_topic_id_mapping_mock = MagicMock(
-            return_value={"COVID-19_headline_cases_7DayTotals": "COVID-19"}
+            return_value={"COVID-19_headline_cases_7DayTotals": "3"}
         )
         monkeypatch.setattr(
             "cms.metrics_documentation.migrations."
