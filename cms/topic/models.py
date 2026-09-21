@@ -32,7 +32,6 @@ from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
-
 from metrics.data.models.core_models.supporting import SubTheme, Theme
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
@@ -212,7 +211,7 @@ class TopicPage(UKHSAPage):
         if not self.sub_theme:
             return None
         return SubTheme.objects.get_name_by_id(int(self.sub_theme))
-    
+
     def find_latest_released_embargo_for_metrics(
         self,
     ) -> list[datetime.datetime | None]:

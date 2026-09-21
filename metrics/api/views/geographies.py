@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
-from metrics.data.managers.core_models.time_series import filter_geographies_by_permission
 from metrics.api.serializers.geographies import (
     GEOGRAPHY_TYPE_RESULT,
     GeographiesForGeographyTypeSerializer,
@@ -17,6 +16,9 @@ from metrics.api.serializers.geographies import (
     GeographyChoicesResponseSerializer,
 )
 from metrics.api.views.permission_sets import PERMISSION_SETS_API_TAG
+from metrics.data.managers.core_models.time_series import (
+    filter_geographies_by_permission,
+)
 
 GEOGRAPHIES_API_TAG = "geographies"
 

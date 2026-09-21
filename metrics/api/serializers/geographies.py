@@ -68,7 +68,9 @@ class GeographiesForTopicSerializer(serializers.Serializer):
         theme: str = self.validated_data["theme"]
         sub_theme: str = self.validated_data["sub_theme"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(topic=topic, theme=theme, sub_theme=sub_theme)
+            self.core_time_series_manager.get_available_geographies(
+                topic=topic, theme=theme, sub_theme=sub_theme
+            )
         )
         return _serialize_queryset(queryset=queryset)
 
