@@ -27,6 +27,9 @@ def test_class_coverage():
     we don't miss any out of this test suite ensuring good coverage.
     """
     for cls in NonPublicCapablePage.__subclasses__():
+        # skip any mock classes which have been created prior to this test running
+        if cls.__module__.startswith("tests."):
+            continue
         assert cls in CLASSES_UNDER_TEST
 
 
