@@ -31,7 +31,7 @@ grimp==3.14
 gunicorn==26.2.0
 html5lib==1.1
 identify==2.6.19
-idna==3.18
+idna==3.19
 importlib-metadata==9.0.0
 inflection==0.5.1
 iniconfig==2.3.0
@@ -41,7 +41,7 @@ jsonschema==4.26.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.10.2
+Markdown==3.10.3
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
