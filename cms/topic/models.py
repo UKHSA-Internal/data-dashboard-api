@@ -169,12 +169,8 @@ class TopicPage(UKHSAPage):
         core_headline_manager = kwargs.pop(
             "core_headline_manager", DEFAULT_CORE_HEADLINE_MANGER
         )
-        theme_manager = kwargs.pop(
-            "theme_manager", DEFAULT_THEME_MANAGER
-        )
-        sub_theme_manager = kwargs.pop(
-            "sub_theme_manager", DEFAULT_SUB_THEME_MANAGER
-        )
+        theme_manager = kwargs.pop("theme_manager", DEFAULT_THEME_MANAGER)
+        sub_theme_manager = kwargs.pop("sub_theme_manager", DEFAULT_SUB_THEME_MANAGER)
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
