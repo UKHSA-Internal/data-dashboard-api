@@ -32,10 +32,11 @@ from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
-from metrics.data.models.core_models.supporting import SubTheme, Theme
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
+DEFAULT_THEME_MANAGER = MetricsAPIInterface().theme_manager
+DEFAULT_SUB_THEME_MANAGER = MetricsAPIInterface().sub_theme_manager
 
 
 class TopicPageAdminForm(WagtailAdminPageForm):
@@ -168,9 +169,17 @@ class TopicPage(UKHSAPage):
         core_headline_manager = kwargs.pop(
             "core_headline_manager", DEFAULT_CORE_HEADLINE_MANGER
         )
+        theme_manager = kwargs.pop(
+            "theme_manager", DEFAULT_THEME_MANAGER
+        )
+        sub_theme_manager = kwargs.pop(
+            "sub_theme_manager", DEFAULT_SUB_THEME_MANAGER
+        )
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
+        self._theme_manager = theme_manager
+        self._sub_theme_manager = sub_theme_manager
 
     @property
     def selected_topics(self) -> set[str]:
@@ -204,13 +213,13 @@ class TopicPage(UKHSAPage):
     def theme_name(self) -> str | None:
         if not self.theme:
             return None
-        return Theme.objects.get_name_by_id(int(self.theme))
+        return self._theme_manager.get_name_by_id(int(self.theme))
 
     @property
     def sub_theme_name(self) -> str | None:
         if not self.sub_theme:
             return None
-        return SubTheme.objects.get_name_by_id(int(self.sub_theme))
+        return self._sub_theme_manager.get_name_by_id(int(self.sub_theme))
 
     def find_latest_released_embargo_for_metrics(
         self,

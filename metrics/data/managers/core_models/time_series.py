@@ -4,6 +4,7 @@ This file contains the custom QuerySet and Manager classes associated with the `
 Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
+import os
 
 import datetime
 from collections.abc import Iterable
@@ -12,7 +13,7 @@ from typing import Self
 from django.db import models
 from django.db.models.query_utils import Q
 
-from cms.auth_content.auth_utils import is_auth_enabled
+# from metrics.api.settings.auth import is_auth_enabled
 from common.auth.logging import log_user_permission_summary
 from common.auth.permissions import (
     PermissionSetsType,
@@ -29,7 +30,7 @@ from metrics.api.permissions.fluent_permissions import (
 from metrics.data.managers.core_models.geography import GeographyManager
 from metrics.data.models import RBACPermission
 
-AUTH_ENABLED = is_auth_enabled()
+AUTH_ENABLED = str(os.environ.get("AUTH_ENABLED", "")).lower() in {"true", "1"}
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
 
 
