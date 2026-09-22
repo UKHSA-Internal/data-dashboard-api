@@ -5,7 +5,10 @@ from rest_framework import pagination, viewsets
 from public_api.auth import get_permission_sets_for_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.serializers.timeseries_serializers import APITimeSeriesListSerializer
-from public_api.views.base import PUBLIC_API_TAG
+from public_api.views.base import (
+    PUBLIC_API_TAG,
+    add_private_cache_control_header,
+)
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 365
@@ -87,6 +90,10 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "date",
         "in_reporting_delay_period",
     ]
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return add_private_cache_control_header(request=request, response=response)
 
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -11,6 +11,17 @@ from public_api.serializers.api_time_series_request_serializer import (
 )
 
 PUBLIC_API_TAG = "public-api"
+PRIVATE_CACHE_CONTROL = "private, no-cache"
+
+
+def add_private_cache_control_header(
+    *, request: Request, response: Response
+) -> Response:
+    """Prevent shared caching of responses made for authenticated consumers."""
+    if is_authenticated_request(request):
+        response["Cache-Control"] = PRIVATE_CACHE_CONTROL
+
+    return response
 
 
 class BaseNestedAPITimeSeriesView(GenericAPIView):
@@ -43,7 +54,4 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        if is_authenticated_request(request):
-            response["Cache-Control"] = "private, no-cache"
-
-        return response
+        return add_private_cache_control_header(request=request, response=response)
