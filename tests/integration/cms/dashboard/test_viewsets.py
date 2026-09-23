@@ -173,7 +173,7 @@ class TestCMSPagesAPIViewSetPermissions:
             slug="private-topic",
             is_public=False,
             theme="1",
-            sub_theme="test",
+            sub_theme="1",
             topic="test",
             page_classification="official_sensitive",
             seo_title="private-topic",

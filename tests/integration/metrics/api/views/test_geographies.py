@@ -256,8 +256,6 @@ class TestGeographiesView:
         # When
         query_params = {"geography_type": ltla}
         response: Response = client.get(path=self.path, query_params=query_params)
-        print("STATUS:", response.status_code)
-        print("BODY:", response.data)
         # Then
         # Geographies are returned in descending alphabetical order
         assert response.status_code == HTTPStatus.OK
