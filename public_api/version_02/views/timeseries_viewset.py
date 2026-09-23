@@ -2,11 +2,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
+from public_api.auth import get_permission_sets_for_request
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.serializers.timeseries_serializers import (
     APITimeSeriesListSerializerv2,
 )
-from public_api.version_02.views.base import PUBLIC_API_TAG
+from public_api.version_02.views.base import (
+    PUBLIC_API_TAG,
+    add_private_cache_control_header,
+)
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 365
@@ -89,9 +93,13 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
         "in_reporting_delay_period",
     ]
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return add_private_cache_control_header(request=request, response=response)
+
     def get_queryset(self):
         queryset = super().get_queryset()
-
+        permission_sets = get_permission_sets_for_request(self.request)
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
             sub_theme=self.kwargs["sub_theme"],
@@ -99,5 +107,5 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
-            restrict_to_public=True,  # because we are not allowing non-public data through the public API
+            permission_sets=permission_sets,
         )
