@@ -243,6 +243,7 @@ class InternalAPIClient:
             topic=topic, theme=theme, sub_theme=sub_theme
         )
         headers: dict[str, bool] = self._build_headers()
+        query_params = {"topic": topic, "theme": theme, "sub_theme": sub_theme}
         return self._client.get(
             path=self.geographies_endpoint_path,
             headers=headers,

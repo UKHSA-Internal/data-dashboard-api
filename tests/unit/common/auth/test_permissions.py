@@ -10,7 +10,6 @@ from common.auth.permissions import (
     check_page_permissions,
     PermissionSetsType,
     PermissionRowType,
-    filter_geographies_by_permission,
 )
 
 
