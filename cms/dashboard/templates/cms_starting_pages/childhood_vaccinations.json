@@ -759,5 +759,7 @@
   "enable_area_selector": false,
   "is_public": true,
   "page_classification": null,
-  "selected_topics": []
+  "selected_topics": [],
+  "theme": null,
+  "sub_theme": null
 }

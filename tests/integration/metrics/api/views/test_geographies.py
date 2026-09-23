@@ -140,6 +140,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Bexley",
             geography_code="E09000004",
+            theme_name="Infectious Disease",
+            sub_theme_name="Respiratory"
         )
         arun = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -147,6 +149,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Arun",
             geography_code="E07000224",
+            theme_name="Infectious Disease",
+            sub_theme_name="Respiratory"
         )
         hackney = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -154,6 +158,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Hackney",
             geography_code="E09000012",
+            theme_name="Infectious Disease",
+            sub_theme_name="Respiratory"
         )
         england = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -161,6 +167,8 @@ class TestGeographiesView:
             geography_type_name=nation,
             geography_name="England",
             geography_code="E92000001",
+            theme_name="Infectious Disease",
+            sub_theme_name="Respiratory"
         )
         CoreTimeSeriesFactory.create_record(
             metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
@@ -168,6 +176,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Leeds",
             geography_code="E08000035",
+            theme_name="Infectious Disease",
+            sub_theme_name="Respiratory"
         )
 
         # When
@@ -246,7 +256,8 @@ class TestGeographiesView:
         # When
         query_params = {"geography_type": ltla}
         response: Response = client.get(path=self.path, query_params=query_params)
-
+        print("STATUS:", response.status_code)
+        print("BODY:", response.data)
         # Then
         # Geographies are returned in descending alphabetical order
         assert response.status_code == HTTPStatus.OK
