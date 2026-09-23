@@ -119,7 +119,9 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     def exists(self) -> bool:
         return bool(self.time_series)
 
-    def get_available_geographies(self, topic: str, theme: str="", sub_theme: str="") -> models.QuerySet:   
+    def get_available_geographies(
+        self, topic: str, theme: str = "", sub_theme: str = ""
+    ) -> models.QuerySet:
         rows = [
             FakeRow(
                 geography__name=obj.geography.name,
