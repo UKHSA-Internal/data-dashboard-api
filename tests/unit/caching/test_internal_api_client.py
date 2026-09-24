@@ -359,14 +359,12 @@ class TestInternalAPIClient:
         """
         # Given
         topic = "COVID-19"
-        theme = "infectious_disease"
-        sub_theme = "respiratory"
         mocked_client = mock.Mock()
         internal_api_client = InternalAPIClient(client=mocked_client)
 
         # When
         response = internal_api_client.hit_geographies_list_endpoint(
-            topic=topic, theme=theme, sub_theme=sub_theme
+            topic=topic
         )
 
         # Then
