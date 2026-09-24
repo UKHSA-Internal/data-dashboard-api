@@ -54,16 +54,19 @@ def check_chart_permissions_by_name(
         return True
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
-    metric_manager = MetricsAPIInterface.get_metric_manager()
-    geography_type_manager = MetricsAPIInterface.get_geography_type_manager()
     geography_manager = MetricsAPIInterface.get_geography_manager()
 
-    theme_id, sub_theme_id, topic_id = topic_manager.get_id_by_name(
-        theme_name, sub_theme_name, topic_name
+    # Any inconsistent combination below resolves to None ids and is denied
+    theme_id, sub_theme_id, topic_id, metric_id = (
+        topic_manager.get_theme_sub_theme_topic_and_metric_id_by_name(
+            theme_name, sub_theme_name, topic_name, metric_name
+        )
     )
-    metric_id = metric_manager.get_id_by_name(metric_name)
-    geography_type_id = geography_type_manager.get_id_by_name(geography_type)
-    geography_id = geography_manager.get_code_by_name(geography_name, geography_type)
+    geography_type_id, geography_id = (
+        geography_manager.get_geography_type_id_and_code_by_name(
+            geography_name, geography_type
+        )
+    )
 
     # Sanity check, because front-end must always
     # send content for any of these 6 requests
@@ -129,7 +132,7 @@ def check_chart_permissions(  # noqa: PLR0914
         if not isinstance(permission_set, dict):
             return False
 
-        permission_ids = _normalize_permission_ids(
+        permission_ids = normalize_permission_ids(
             "theme",
             "sub_theme",
             "topic",
@@ -207,19 +210,19 @@ def check_page_permissions(
 
         # Theme must be present, but other permission fields are
         # optional, as wildcard hierarchy allows early short-circuit
-        permission_theme_id = _normalize_permission_id(
+        permission_theme_id = normalize_permission_id(
             field_name="theme", permission_set=permission_set
         )
         if permission_theme_id is None:
             return False
         permission_sub_theme_id = (
-            _normalize_permission_id(
+            normalize_permission_id(
                 field_name="sub_theme", permission_set=permission_set
             )
             or ""
         )
         permission_topic_id = (
-            _normalize_permission_id(field_name="topic", permission_set=permission_set)
+            normalize_permission_id(field_name="topic", permission_set=permission_set)
             or ""
         )
 
@@ -323,14 +326,14 @@ def _normalize_resource_ids(*ids: int | str | None) -> tuple[str, ...] | None:
     return normalized_ids
 
 
-def _normalize_permission_ids(
+def normalize_permission_ids(
     *field_names: str,
     permission_set: PermissionRowType | dict,
 ) -> tuple[str, ...] | None:
     """Extract and normalize permission ids as tuple of strings."""
 
     normalized_ids = tuple(
-        _normalize_permission_id(field_name=field_name, permission_set=permission_set)
+        normalize_permission_id(field_name=field_name, permission_set=permission_set)
         for field_name in field_names
     )
 
@@ -340,7 +343,7 @@ def _normalize_permission_ids(
     return normalized_ids
 
 
-def _normalize_permission_id(
+def normalize_permission_id(
     *, field_name: str, permission_set: PermissionRowType | dict
 ) -> str | None:
     """Extract and normalize the permission id from a permission row."""

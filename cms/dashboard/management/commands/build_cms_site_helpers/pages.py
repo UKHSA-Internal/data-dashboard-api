@@ -108,7 +108,6 @@ def create_respiratory_viruses_index_page(*, name: str, parent_page: Page):
 
 def create_cover_index_page(*, name: str, parent_page: Page) -> CompositePage:
     page_data = open_example_page_response(page_name=name)
-
     page = _create_index_page(
         page_data=page_data,
         parent_page=parent_page,
@@ -126,7 +125,6 @@ def create_cover_index_page(*, name: str, parent_page: Page) -> CompositePage:
 
 def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
     data = open_example_page_response(page_name=name)
-
     page = TopicPage(
         body=data["body"],
         title=data["title"],
@@ -135,7 +133,9 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
         is_public=data["is_public"],
-        page_classification=data["page_classification"]
+        page_classification=data["page_classification"],
+        theme=data["theme"],
+        sub_theme=data["sub_theme"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 

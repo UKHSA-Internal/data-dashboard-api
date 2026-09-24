@@ -247,6 +247,8 @@ class PageLink(StructBlock):
 
         data["is_authorised"] = True
         data["page_classification"] = page.page_classification
+        data["theme"] = page.theme
+        data["sub_theme"] = page.sub_theme
         return data
 
 

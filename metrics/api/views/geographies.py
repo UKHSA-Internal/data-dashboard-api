@@ -16,6 +16,9 @@ from metrics.api.serializers.geographies import (
     GeographyChoicesResponseSerializer,
 )
 from metrics.api.views.permission_sets import PERMISSION_SETS_API_TAG
+from metrics.data.managers.core_models.time_series import (
+    filter_geographies_by_permission,
+)
 
 GEOGRAPHIES_API_TAG = "geographies"
 
@@ -49,7 +52,13 @@ class GeographiesViewDeprecated(APIView):
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
-
+        data = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme=serializer.validated_data.get("theme", ""),
+            sub_theme=serializer.validated_data.get("sub_theme", ""),
+            topic=serializer.validated_data["topic"],
+        )
         return Response(data)
 
 
@@ -81,11 +90,24 @@ class GeographiesView(APIView):
             data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
                 payload=payload
             )
+            data = filter_geographies_by_permission(
+                request=request,
+                data=data,
+                theme=payload.get("theme", ""),
+                sub_theme=payload.get("sub_theme", ""),
+                topic=payload["topic"],
+            )
         else:
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-
+            data = filter_geographies_by_permission(
+                request=request,
+                data=data,
+                theme=payload.get("theme", ""),
+                sub_theme=payload.get("sub_theme", ""),
+                topic="",
+            )
         return Response(data)
 
     @classmethod

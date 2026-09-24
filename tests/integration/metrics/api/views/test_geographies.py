@@ -29,6 +29,8 @@ class TestGeographiesDeprecatedView:
         ltla = "Lower Tier Local Authority"
         nation = "Nation"
         topic = "COVID-19"
+        theme = "infectious_disease"
+        sub_theme = "respiratory"
 
         bexley = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -67,9 +69,10 @@ class TestGeographiesDeprecatedView:
         )
 
         # When
-        path = f"{self.path}/{topic}"
+        path = f"{self.path}/{topic}{sub_theme}{theme}"
         response: Response = client.get(path=path)
-
+        print("STATUS:", response.status_code)
+        print("BODY:", response.data)
         # Then
         # Geographies are returned in descending alphabetical order
         expected_results = [
@@ -110,6 +113,9 @@ class TestGeographiesDeprecatedView:
                 ],
             },
         ]
+        print("STATUS:", response.status_code)
+        print("BODY:", response.data)
+
         assert response.status_code == HTTPStatus.OK
         assert response.data == expected_results
 
@@ -140,6 +146,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Bexley",
             geography_code="E09000004",
+            theme_name="infectious_disease",
+            sub_theme_name="respiratory",
         )
         arun = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -147,6 +155,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Arun",
             geography_code="E07000224",
+            theme_name="infectious_disease",
+            sub_theme_name="respiratory",
         )
         hackney = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -154,6 +164,8 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Hackney",
             geography_code="E09000012",
+            theme_name="infectious_disease",
+            sub_theme_name="respiratory",
         )
         england = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -161,6 +173,8 @@ class TestGeographiesView:
             geography_type_name=nation,
             geography_name="England",
             geography_code="E92000001",
+            theme_name="infectious_disease",
+            sub_theme_name="respiratory",
         )
         CoreTimeSeriesFactory.create_record(
             metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
@@ -168,10 +182,12 @@ class TestGeographiesView:
             geography_type_name=ltla,
             geography_name="Leeds",
             geography_code="E08000035",
+            theme_name="infectious_disease",
+            sub_theme_name="respiratory",
         )
 
         # When
-        query_params = {"topic": topic}
+        query_params = {"topic": topic, "theme": "infectious_disease", "sub_theme": "respiratory"}
         response: Response = client.get(path=self.path, query_params=query_params)
 
         # Then
@@ -244,9 +260,8 @@ class TestGeographiesView:
         )
 
         # When
-        query_params = {"geography_type": ltla}
+        query_params = {"geography_type": ltla, "sub_theme": "respiratory", "theme": "infectious_disease"}
         response: Response = client.get(path=self.path, query_params=query_params)
-
         # Then
         # Geographies are returned in descending alphabetical order
         assert response.status_code == HTTPStatus.OK

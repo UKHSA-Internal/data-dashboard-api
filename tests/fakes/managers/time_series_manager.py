@@ -78,7 +78,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             filtered_time_series = [
                 x
                 for x in filtered_time_series
-                if x.geography.geography_type.name == geography
+                if x.geography.geography_type.name == geography_type
             ]
 
         if stratum:
@@ -119,7 +119,9 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     def exists(self) -> bool:
         return bool(self.time_series)
 
-    def get_available_geographies(self, topic: str) -> models.QuerySet:
+    def get_available_geographies(
+        self, topic: str, theme: str = "", sub_theme: str = ""
+    ) -> models.QuerySet:
         rows = [
             FakeRow(
                 geography__name=obj.geography.name,
