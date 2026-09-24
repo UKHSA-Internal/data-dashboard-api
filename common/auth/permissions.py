@@ -52,7 +52,7 @@ def check_chart_permissions_by_name(
         return True
 
     # import here to avoid circular dependency loop
-    from common.metrics_interface.interface import MetricsAPIInterface
+    from common.metrics_interface.interface import MetricsAPIInterface  # noqa: PLC0415
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
     metric_manager = MetricsAPIInterface.get_metric_manager()
