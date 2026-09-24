@@ -217,7 +217,9 @@ class InternalAPIClient:
         headers = self._build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint_deprecated(self, *, topic: str, theme: str, sub_theme: str) -> Response:
+    def hit_geographies_list_endpoint_deprecated(
+        self, *, topic: str, theme: str, sub_theme: str
+    ) -> Response:
         """Sends a `GET` request to the list `geographies/v2` endpoint
 
         Returns:
