@@ -109,9 +109,9 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
                     if page.is_public
                     or check_page_permissions(
                         permission_sets=user_permissions,
-                        theme_id=page.theme,
-                        sub_theme_id=page.sub_theme,
-                        topic_id=page.topic,
+                        theme_id=page.page_theme,
+                        sub_theme_id=page.page_sub_theme,
+                        topic_id=page.page_topic,
                     )
                 ]
 

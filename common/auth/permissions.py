@@ -1,7 +1,5 @@
 from typing import TypedDict
 
-from common.metrics_interface.interface import MetricsAPIInterface
-
 WILDCARD_ID_VALUE = "-1"
 
 """
@@ -52,6 +50,9 @@ def check_chart_permissions_by_name(
 
     if permission_sets.get("summary").get("has_global_access"):
         return True
+
+    # import here to avoid circular dependency loop
+    from common.metrics_interface.interface import MetricsAPIInterface  # noqa: PLC0415
 
     topic_manager = MetricsAPIInterface.get_topic_manager()
     metric_manager = MetricsAPIInterface.get_metric_manager()
