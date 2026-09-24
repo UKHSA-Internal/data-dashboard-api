@@ -231,7 +231,7 @@ class InternalAPIClient:
         return self._client.get(path=path, headers=headers, format="json")
 
     def hit_geographies_list_endpoint(
-        self, *, topic: str, theme: str, sub_theme: str
+        self, *, topic: str, theme: str | None = None, sub_theme: str | None = None
     ) -> Response:
         """Sends a `GET` request to the `geographies/v3` endpoint
 
