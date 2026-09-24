@@ -240,10 +240,14 @@ class InternalAPIClient:
 
         """
         self.hit_geographies_list_endpoint_deprecated(
-            topic=topic, theme=theme, sub_theme=sub_theme
+            topic=topic, theme=theme or "", sub_theme=sub_theme or ""
         )
         headers: dict[str, bool] = self._build_headers()
-        query_params = {"topic": topic, "theme": theme, "sub_theme": sub_theme}
+        query_params = {"topic": topic}
+        if theme:
+            query_params["theme"] = theme
+        if sub_theme:
+            query_params["sub_theme"] = sub_theme
         return self._client.get(
             path=self.geographies_endpoint_path,
             headers=headers,
