@@ -18,7 +18,8 @@ from cms.metrics_interface.field_choices_callables import (
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
 
-# TODO: For the 6th AC - is this just a validity check that we can add into to_predicate?
+# TODO: For the 6th AC - is this just a validity check that we can add into to_predicate? There are other places we check permissions...
+#       and they don't use the function, so would have to move that validity check out somewhere else too...
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,16 +60,16 @@ class PermissionSetForm(WagtailAdminPageForm):
             return [(WILDCARD_ID_VALUE, wildcard_label)]
         return [("", placeholder), (value, f"Loading... (ID: {value})")]
 
-    def clean(self):
-        """Validate that this permission set doesn't already exist"""
-        cleaned_data = super().clean()
+    # def clean(self):
+    #     """Validate that this permission set doesn't already exist"""
+    #     cleaned_data = super().clean()
 
-        theme = cleaned_data.get("theme")
-        sub_theme = cleaned_data.get("sub_theme")
-        topic = cleaned_data.get("topic")
-        metric = cleaned_data.get("metric")
-        geography_type = cleaned_data.get("geography_type")
-        geography = cleaned_data.get("geography")
+    #     theme = cleaned_data.get("theme")
+    #     sub_theme = cleaned_data.get("sub_theme")
+    #     topic = cleaned_data.get("topic")
+    #     metric = cleaned_data.get("metric")
+    #     geography_type = cleaned_data.get("geography_type")
+    #     geography = cleaned_data.get("geography")
 
         # Add errors like this, can do both sections and name separate
         # so all errors can be displayed at once
@@ -96,7 +97,7 @@ class PermissionSetForm(WagtailAdminPageForm):
         # elif not geography:
         #     raise ValidationError("Missing geography")
 
-        return cleaned_data
+        # return cleaned_data
 
     class Media:
         js = ["js/permission_set.js"]
