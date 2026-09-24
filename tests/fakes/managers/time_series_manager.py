@@ -56,6 +56,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         rbac_permissions: Iterable[FakeRBACPermission] | None = None,
         permission_sets: dict | None = None,
         metric_value_ranges: list[tuple] | None = None,
+        theme: str | None = None,
+        sub_theme: str | None = None,
         **kwargs,
     ) -> FakeQuerySet:
         date_from = _convert_string_to_date(date_string=date_from)
@@ -119,7 +121,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     def exists(self) -> bool:
         return bool(self.time_series)
 
-    def get_available_geographies(self, topic: str) -> models.QuerySet:
+    def get_available_geographies(self, topic: str, theme: str | None = None, sub_theme: str | None = None) -> models.QuerySet:
         rows = [
             FakeRow(
                 geography__name=obj.geography.name,

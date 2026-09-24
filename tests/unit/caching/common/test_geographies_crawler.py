@@ -137,7 +137,7 @@ class TestGeographiesAPICrawler:
         topic = "COVID-19"
         theme = "respiratory"
         sub_theme = "viral_infections"
-        mocked_page = mock.Mock(selected_topics={topic})
+        mocked_page = mock.Mock(selected_topics={topic}, theme_name=theme, sub_theme_name=sub_theme)
         geographies_api_crawler = GeographiesAPICrawler()
 
         # When
