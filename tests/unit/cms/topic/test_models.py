@@ -240,6 +240,8 @@ class TestTemplateCOVID19Page:
             "is_public",
             "page_classification",
             "selected_topics",
+            "theme_name",
+            "sub_theme_name",
         ],
     )
     def test_api_fields(self, expected_api_field: str):
