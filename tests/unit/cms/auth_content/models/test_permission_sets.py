@@ -30,7 +30,7 @@ class TestPermissionSetForm:
             ),
             patch(
                 "cms.auth_content.models.permission_sets._create_form_field",
-                side_effect=lambda field, wildcard: MagicMock(name=field["field_name"]),
+                side_effect=lambda field, wildcard, required, help_text: MagicMock(name=field["field_name"]),
             ),
         ):
             form = PermissionSetForm.__new__(PermissionSetForm)
@@ -175,6 +175,7 @@ class TestPermissionSetForm:
         form = self._make_form(queryset_exists=True)
         mock_query_filter.return_value = form._mock_qs
 
+        # TODO: It's not raised as part of the clean function any more - its in the model constraints instead
         with pytest.raises(ValidationError) as e:
             form.clean()
 
