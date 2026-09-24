@@ -549,7 +549,7 @@ class TestCoreTimeSeriesManager:
 
         # When
         available_geographies = CoreTimeSeries.objects.get_available_geographies(
-            topic=topic
+            topic=topic, sub_theme="respiratory", theme="infectious_disease"
         )
 
         # Then
