@@ -73,6 +73,15 @@ class SubThemeQuerySet(models.QuerySet):
         """
         return self.filter(theme_id=parent_theme_id).values("id", "name").distinct()
 
+    def get_id_by_name(
+        self, sub_theme_name: str
+    ) -> tuple[int | None, int | None, int | None]:
+        record = self.filter(name=sub_theme_name).first()
+
+        if record:
+            return int(record.id), int(record.theme_id), int(record.topic_id)
+        return None, None, None
+
 
 class SubThemeManager(models.Manager):
     """Custom model manager class for the `SubTheme` model."""
@@ -142,3 +151,7 @@ class SubThemeManager(models.Manager):
                     `<SubThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()
+
+    def get_id_by_name(self, sub_theme_name: str) -> int | None:
+        record = self.filter(name=sub_theme_name).first()
+        return int(record.id) if record else None

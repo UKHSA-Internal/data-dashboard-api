@@ -131,6 +131,8 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
+        APIField("theme"),
+        APIField("sub_theme"),
     ]
 
     # Tabs to position at the top of the view.
