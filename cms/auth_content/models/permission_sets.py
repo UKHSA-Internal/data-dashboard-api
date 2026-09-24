@@ -18,14 +18,14 @@ from cms.metrics_interface.field_choices_callables import (
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
 
-
+# TODO: For the 6th AC - is this just a validity check that we can add into to_predicate?
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
             self.fields[field["field_name"]] = _create_form_field(
-                field, WILDCARD_ID_VALUE
+                field, WILDCARD_ID_VALUE, True, help_texts.FIELD_REQUIRED
             )
 
         if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
@@ -70,23 +70,31 @@ class PermissionSetForm(WagtailAdminPageForm):
         geography_type = cleaned_data.get("geography_type")
         geography = cleaned_data.get("geography")
 
-        # Check if this combination already exists (excluding current instance when editing)
-        queryset = PermissionSet.objects.filter(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-        )
+        # Add errors like this, can do both sections and name separate
+        # so all errors can be displayed at once
+        # self.add_error()
 
-        if self.instance.pk:
-            queryset = queryset.exclude(pk=self.instance.pk)
+        # TODO: There's a thing about migrating/fixing existing invalid permissions sets
+        #       I think that should only be handling the empty values and treating those as no access?
 
-        if queryset.exists():
-            raise ValidationError(
-                message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set."
-            )
+        # Some of the stuff on the ticket - I think just comes down to
+        # lower permissions being overridden by having all higher
+        # e.g. if you have all themes, one specific metric
+        # that equates to just having everything
+
+        # TODO: With them marked as required I don't think this check is needed? Might even be able to remove this function entirely
+        # if not theme:
+        #     raise ValidationError("Missing theme")
+        # elif not sub_theme:
+        #     raise ValidationError({"sub_theme": "Please select a sub_theme for this permission set"})
+        # elif not topic:
+        #     raise ValidationError("Missing topic")
+        # elif not metric:
+        #     raise ValidationError("Missing metric")
+        # elif not geography_type:
+        #     raise ValidationError("Missing geography type")
+        # elif not geography:
+        #     raise ValidationError("Missing geography")
 
         return cleaned_data
 
@@ -131,6 +139,18 @@ class PermissionSet(models.Model):
         FieldPanel("geography"),
     ]
 
+    def field_combination_valid(self):
+        return not ((self.theme == "-1" and (self.sub_theme != "-1" or self.topic != "-1" or self.metric != "-1")) \
+                    or (self.sub_theme == "-1" and (self.topic != "-1" or self.metric != "-1")) \
+                    or (self.topic == "-1" and self.metric != "-1") \
+                    or (self.geography_type == "-1" and self.geography != "-1"))
+
+    def clean(self):
+        if not self.field_combination_valid():
+                # TODO: Proper error message
+                raise ValidationError("Invalid permission set - model clean")
+        return super().clean()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -143,6 +163,7 @@ class PermissionSet(models.Model):
                     "geography",
                 ],
                 name="unique_permission_set",
+                violation_error_message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set."
             ),
             models.UniqueConstraint(
                 fields=["display_name"],

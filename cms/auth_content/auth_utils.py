@@ -7,7 +7,7 @@ from cms.dynamic_content import help_texts
 
 
 def _create_form_field(
-    field: dict[str, str | Callable | None], wildcard_id_value=None
+    field: dict[str, str | Callable | None], wildcard_id_value=None, required=False, help_text=None
 ) -> forms.CharField:
     choices = [
         ("", field["field_choice_default"]),
@@ -20,10 +20,10 @@ def _create_form_field(
         choices += field["field_choice_callable"]()
 
     return forms.CharField(
-        required=False,
+        required=required,
         label=field["field_label"],
         widget=forms.Select(choices=choices),
-        help_text=help_texts.NON_PUBLIC_PAGE_REQUIRED,
+        help_text=help_text if help_text else help_texts.NON_PUBLIC_PAGE_REQUIRED,
     )
 
 
