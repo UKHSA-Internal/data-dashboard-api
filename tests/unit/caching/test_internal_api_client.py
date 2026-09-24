@@ -363,9 +363,7 @@ class TestInternalAPIClient:
         internal_api_client = InternalAPIClient(client=mocked_client)
 
         # When
-        response = internal_api_client.hit_geographies_list_endpoint(
-            topic=topic
-        )
+        response = internal_api_client.hit_geographies_list_endpoint(topic=topic)
 
         # Then
         assert response == internal_api_client._client.get.return_value
