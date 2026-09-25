@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from public_api.auth import get_permission_sets_for_request
 from public_api.version.v2.serializers.api_time_series_request_serializer import (
     APITimeSeriesRequestSerializerv2,
 )
@@ -59,7 +60,9 @@ class APIRequestSerializerv3(APITimeSeriesRequestSerializerv2):
         request_kwargs = self.get_formatted_kwargs_from_request()
         permission_sets = get_permission_sets_for_request(self.context["request"])
         return self.api_model.objects.get_distinct_column_values_with_filters(
-            lookup_field=self.lookup_field, **request_kwargs
+            lookup_field=self.lookup_field,
+            permission_sets=permission_sets,
+            **request_kwargs
         )
 
     def build_dto_slice(self) -> list[APIDTO]:

@@ -2,7 +2,10 @@ from unittest import mock
 
 import pytest
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7d2337db6 (CDD-3452: Add Public API v3 (headline) data filtering)
 from public_api.version.v3.views.base import BaseNestedAPIViewV3
 
 
@@ -30,7 +33,7 @@ class TestBaseNestedAPIViewV3:
 
         # When / Then
         with pytest.raises(NotImplementedError):
-            base_view.lookup_field
+            _ = base_view.lookup_field
 
     def test_raises_error_for_serializer_class_property(self):
         """
@@ -44,7 +47,7 @@ class TestBaseNestedAPIViewV3:
 
         # When / Then
         with pytest.raises(NotImplementedError):
-            base_view.serializer_class
+            _ = base_view.serializer_class
 
 
 class TestGetAddsPrivateHeaderForNonPublicRequests:
@@ -65,7 +68,7 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         Then the response contains Cache-Control: private, no-cache
         """
         # Given
-        mocked_request = mock.MagicMock()
+        mocked_request = mock.MagicMock(auth="valid_jwt")
 
         mocked_slice = [mock.MagicMock()]
         mock_request_serializer = mock.MagicMock()
@@ -82,7 +85,11 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         mock_response_class.return_value = mocked_response
 
         # When
-        response = base_view.get(mocked_request)
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            response = base_view.get(mocked_request)
 
         # Then
         mocked_response.__setitem__.assert_called_once_with(
@@ -125,7 +132,11 @@ class TestGetAddsPrivateHeaderForNonPublicRequests:
         mock_response_class.return_value = mocked_response
 
         # When
-        response = base_view.get(mocked_request)
+        with mock.patch(
+            "public_api.auth.MetricsPublicAPIInterface.is_auth_enabled",
+            return_value=True,
+        ):
+            response = base_view.get(mocked_request)
 
         # Then
         mocked_response.__setitem__.assert_not_called()

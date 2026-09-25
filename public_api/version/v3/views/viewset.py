@@ -82,6 +82,10 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return add_private_cache_control_header(request=request, response=response)
+
     def get_queryset(self):
         queryset = self.serializer_class.Meta.model.objects.get_queryset()
         permission_sets = get_permission_sets_for_request(self.request)
@@ -93,4 +97,5 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
+            permission_sets=permission_sets,
         )
