@@ -359,6 +359,8 @@ class TestInternalAPIClient:
         """
         # Given
         topic = "COVID-19"
+        theme = "infectious_disease"
+        sub_theme = "respiratory"
         mocked_client = mock.Mock()
         internal_api_client = InternalAPIClient(client=mocked_client)
 
@@ -374,9 +376,14 @@ class TestInternalAPIClient:
             headers=headers,
             format="json",
         )
+        query_params = {"topic": topic}
+        if theme:
+            query_params["theme"] = theme
+        if sub_theme:
+            query_params["sub_theme"] = sub_theme
         live_api_call = mock.call(
             path=expected_path,
-            query_params={"topic": topic},
+            query_params=query_params,
             headers=headers,
             format="json",
         )
