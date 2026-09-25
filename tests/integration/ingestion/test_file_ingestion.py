@@ -204,3 +204,33 @@ class TestDataIngester:
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_change_in_confidence_intervals_updates_headline(
+        self,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+        test_filename: str,
+    ):
+        """
+        Given incoming headline type data
+        When `data_ingester()` is called with updates to existing data
+        Then `CoreHeadline` records are deleted and recreated with the correct values
+        """
+        # Given
+        data = example_headline_data
+        # Make sure we've only got one headline to work with
+        data["data"].pop()
+        assert CoreHeadline.objects.all().count() == 0
+
+        # When
+        data_ingester(data=data, filename=test_filename)
+        new_lower_confidence = -1
+        new_upper_confidence = 100
+        data["data"][0]["lower_confidence"] = new_lower_confidence
+        data["data"][0]["upper_confidence"] = new_upper_confidence
+        data_ingester(data=data, filename=test_filename)
+
+        # Then
+        headline = CoreHeadline.objects.first()
+        assert headline.lower_confidence == new_lower_confidence
+        assert headline.upper_confidence == new_upper_confidence
