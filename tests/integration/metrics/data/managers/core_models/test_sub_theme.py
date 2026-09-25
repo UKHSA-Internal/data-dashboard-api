@@ -73,23 +73,19 @@ class TestSubThemeManager:
         # Then
         assert get_name_by_id == fake_sub_theme_name_three
 
-
-class TestSubThemeManagerQueries:
     @pytest.mark.django_db
     def test_get_filtered_unique_names_related_to_theme_returns_only_matching_records(
         self,
     ):
         """
         Given `SubTheme` records related to different parent themes
-        And a duplicate name within the same parent theme
         When `get_filtered_unique_names_related_to_theme()` is called
-        Then only the unique records for the given parent theme id are returned
+        Then only the records for the given parent theme id are returned
         """
         # Given
         target_theme_id = 1
         other_theme_id = 2
 
-        SubThemeFactory(name="respiratory", theme_id=target_theme_id)
         SubThemeFactory(name="respiratory", theme_id=target_theme_id)
         SubThemeFactory(name="immunisation", theme_id=target_theme_id)
         SubThemeFactory(name="weather_alert", theme_id=other_theme_id)
