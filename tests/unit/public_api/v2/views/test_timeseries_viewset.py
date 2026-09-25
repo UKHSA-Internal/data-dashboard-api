@@ -3,8 +3,8 @@ from unittest import mock
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from public_api.version_02.views.base import PRIVATE_CACHE_CONTROL
-from public_api.version_02.views.timeseries_viewset import APITimeSeriesViewSetV2
+from public_api.version.v2.views.base import PRIVATE_CACHE_CONTROL
+from public_api.version.v2.views.timeseries_viewset import APITimeSeriesViewSetV2
 
 
 class TestAPITimeSeriesViewSetV2CacheControl:
