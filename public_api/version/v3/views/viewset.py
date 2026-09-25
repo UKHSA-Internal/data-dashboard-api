@@ -2,10 +2,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
+from public_api.auth import get_permission_sets_for_request
 from public_api.version.v3.serializers.serializers import (
     APISerializerv3,
 )
-from public_api.version.v3.views.base import PUBLIC_API_TAG
+from public_api.version.v3.views.base import (
+    PUBLIC_API_TAG,
+    add_private_cache_control_header,
+)
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 365
@@ -84,8 +88,13 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
         super().__init__(*args, **kwargs)
         self.serializer_class.Meta.model = self.api_model
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return add_private_cache_control_header(request=request, response=response)
+
     def get_queryset(self):
         queryset = self.api_model.objects.get_queryset()
+        permission_sets = get_permission_sets_for_request(self.request)
 
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
@@ -94,4 +103,5 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
             geography_type=self.kwargs["geography_type"],
             geography=self.kwargs["geography"],
             metric=self.kwargs["metric"],
+            permission_sets=permission_sets,
         )
