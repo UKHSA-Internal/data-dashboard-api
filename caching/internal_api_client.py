@@ -237,9 +237,7 @@ class InternalAPIClient:
             `Response` from the `geographies/` endpoint
 
         """
-        self.hit_geographies_list_endpoint_deprecated(
-            topic=topic, theme=theme or "", sub_theme=sub_theme or ""
-        )
+        self.hit_geographies_list_endpoint_deprecated(topic=topic)
         headers: dict[str, bool] = self._build_headers()
         query_params = {"topic": topic}
         if theme:
