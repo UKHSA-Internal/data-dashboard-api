@@ -95,15 +95,14 @@ class TestGeographyManager:
 
         geography_manager = GeographyManager()
 
+        mock_queryset = mock.Mock()
+        mock_queryset.filter.return_value.first.return_value = mock_record
+
         # When
         with mock.patch.object(
             geography_manager,
             "select_related",
-            return_value=mock.Mock(
-                filter=mock.Mock(
-                    return_value=mock.Mock(first=mock.Mock(return_value=mock_record))
-                )
-            ),
+            return_value=mock_queryset,
         ):
             result = geography_manager.get_geography_type_id_and_code_by_name(
                 geography_name=fake_geography_name,
@@ -125,15 +124,14 @@ class TestGeographyManager:
 
         geography_manager = GeographyManager()
 
+        mock_queryset = mock.Mock()
+        mock_queryset.filter.return_value.first.return_value = None
+
         # When
         with mock.patch.object(
             geography_manager,
             "select_related",
-            return_value=mock.Mock(
-                filter=mock.Mock(
-                    return_value=mock.Mock(first=mock.Mock(return_value=None))
-                )
-            ),
+            return_value=mock_queryset,
         ):
             result = geography_manager.get_geography_type_id_and_code_by_name(
                 geography_name=fake_geography_name,
