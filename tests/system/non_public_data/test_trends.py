@@ -24,11 +24,13 @@ class TestNonPublicDataTrendsAPI:
     @classmethod
     def get_valid_payload(cls, core_main_headline, core_percentage_headline) -> dict:
         return {
+            "theme": core_main_headline.metric.topic.sub_theme.theme.name,
+            "sub_theme": core_main_headline.metric.topic.sub_theme.name,
             "topic": core_main_headline.metric.topic.name,
             "metric": core_main_headline.metric.name,
-            "percentage_metric": core_percentage_headline.metric.name,
             "geography": core_main_headline.geography.name,
             "geography_type": core_main_headline.geography.geography_type.name,
+            "percentage_metric": core_percentage_headline.metric.name,
             "age": core_main_headline.age.name,
             "sex": core_main_headline.sex,
             "stratum": core_main_headline.stratum.name,
