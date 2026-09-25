@@ -824,7 +824,7 @@ class TestFilterGeographiesByPermission:
         When `filter_geographies_by_permission()` is called without a `topic`
         Then only the permitted geographies are returned for every geography type
         And geography types with no permitted geographies are dropped
-        
+
         """
         # Given
         spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
