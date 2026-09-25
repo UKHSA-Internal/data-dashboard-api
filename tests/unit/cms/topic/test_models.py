@@ -694,3 +694,97 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
+
+
+class TestTopicPageThemeProperties:
+    def test_theme_name_returns_none_when_theme_is_not_set(self):
+        """
+        Given a `TopicPage` with no theme set
+        When the `theme_name` property is called
+        Then None is returned
+        """
+        # Given
+        spy_theme_manager = mock.Mock()
+        page = TopicPage(
+            theme_manager=spy_theme_manager,
+            content_type_id=1,
+        )
+        page.theme = None
+
+        # When
+        theme_name = page.theme_name
+
+        # Then
+        assert theme_name is None
+        spy_theme_manager.get_name_by_id.assert_not_called()
+
+    def test_theme_name_returns_name_when_theme_is_set(self):
+        """
+        Given a `TopicPage` with a theme set
+        When the `theme_name` property is called
+        Then the theme name is returned from the theme manager
+        """
+        # Given
+        fake_theme_id = 1
+        fake_theme_name = "Infectious Diseases"
+        spy_theme_manager = mock.Mock()
+        spy_theme_manager.get_name_by_id.return_value = fake_theme_name
+
+        page = TopicPage(
+            theme_manager=spy_theme_manager,
+            content_type_id=1,
+        )
+        page.theme = fake_theme_id
+
+        # When
+        theme_name = page.theme_name
+
+        # Then
+        assert theme_name == fake_theme_name
+        spy_theme_manager.get_name_by_id.assert_called_once_with(fake_theme_id)
+
+    def test_sub_theme_name_returns_none_when_sub_theme_is_not_set(self):
+        """
+        Given a `TopicPage` with no sub_theme set
+        When the `sub_theme_name` property is called
+        Then None is returned
+        """
+        # Given
+        spy_sub_theme_manager = mock.Mock()
+        page = TopicPage(
+            sub_theme_manager=spy_sub_theme_manager,
+            content_type_id=1,
+        )
+        page.sub_theme = None
+
+        # When
+        sub_theme_name = page.sub_theme_name
+
+        # Then
+        assert sub_theme_name is None
+        spy_sub_theme_manager.get_name_by_id.assert_not_called()
+
+    def test_sub_theme_name_returns_name_when_sub_theme_is_set(self):
+        """
+        Given a `TopicPage` with a sub_theme set
+        When the `sub_theme_name` property is called
+        Then the sub_theme name is returned from the sub_theme manager
+        """
+        # Given
+        fake_sub_theme_id = 3
+        fake_sub_theme_name = "Respiratory"
+        spy_sub_theme_manager = mock.Mock()
+        spy_sub_theme_manager.get_name_by_id.return_value = fake_sub_theme_name
+
+        page = TopicPage(
+            sub_theme_manager=spy_sub_theme_manager,
+            content_type_id=1,
+        )
+        page.sub_theme = fake_sub_theme_id
+
+        # When
+        sub_theme_name = page.sub_theme_name
+
+        # Then
+        assert sub_theme_name == fake_sub_theme_name
+        spy_sub_theme_manager.get_name_by_id.assert_called_once_with(fake_sub_theme_id)
