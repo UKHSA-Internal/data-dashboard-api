@@ -77,7 +77,10 @@ class TestGeographyManager:
         # Then
         spy_get_name_by_code.assert_called_with(fake_geography_code)
 
-    def test_get_geography_type_id_and_code_by_name_found(self):
+    @mock.patch.object(GeographyQuerySet, "get_geography_type_id_and_code_by_name")
+    def test_get_geography_type_id_and_code_by_name_found(
+        self, spy_get_geography_type_id_and_code_by_name: mock.MagicMock
+    ):
         """
         Given a geography name and geography type name that exist
         When `get_geography_type_id_and_code_by_name` is called,
@@ -88,31 +91,29 @@ class TestGeographyManager:
         fake_geography_type_name = "Nation"
         fake_geography_type_id = 1
         fake_geography_code = "E92000001"
-
-        mock_record = mock.Mock()
-        mock_record.geography_type_id = fake_geography_type_id
-        mock_record.geography_code = fake_geography_code
-
+        expected_result = (fake_geography_type_id, fake_geography_code)
+ 
+        spy_get_geography_type_id_and_code_by_name.return_value = expected_result
+ 
         geography_manager = GeographyManager()
-
-        mock_queryset = mock.Mock()
-        mock_queryset.filter.return_value.first.return_value = mock_record
-
+ 
         # When
-        with mock.patch.object(
-            geography_manager,
-            "select_related",
-            return_value=mock_queryset,
-        ):
-            result = geography_manager.get_geography_type_id_and_code_by_name(
-                geography_name=fake_geography_name,
-                geography_type_name=fake_geography_type_name,
-            )
-
+        result = geography_manager.get_geography_type_id_and_code_by_name(
+            geography_name=fake_geography_name,
+            geography_type_name=fake_geography_type_name,
+        )
+ 
         # Then
-        assert result == (fake_geography_type_id, fake_geography_code)
-
-    def test_get_geography_type_id_and_code_by_name_not_found(self):
+        assert result == expected_result
+        spy_get_geography_type_id_and_code_by_name.assert_called_with(
+            geography_name=fake_geography_name,
+            geography_type_name=fake_geography_type_name,
+        )
+ 
+    @mock.patch.object(GeographyQuerySet, "get_geography_type_id_and_code_by_name")
+    def test_get_geography_type_id_and_code_by_name_not_found(
+        self, spy_get_geography_type_id_and_code_by_name: mock.MagicMock
+    ):
         """
         Given a geography name and geography type name that do not exist
         When `get_geography_type_id_and_code_by_name` is called,
@@ -121,22 +122,21 @@ class TestGeographyManager:
         # Given
         fake_geography_name = "NonexistentCountry"
         fake_geography_type_name = "NonexistentType"
-
+        expected_result = (None, None)
+ 
+        spy_get_geography_type_id_and_code_by_name.return_value = expected_result
+ 
         geography_manager = GeographyManager()
-
-        mock_queryset = mock.Mock()
-        mock_queryset.filter.return_value.first.return_value = None
-
+ 
         # When
-        with mock.patch.object(
-            geography_manager,
-            "select_related",
-            return_value=mock_queryset,
-        ):
-            result = geography_manager.get_geography_type_id_and_code_by_name(
-                geography_name=fake_geography_name,
-                geography_type_name=fake_geography_type_name,
-            )
-
+        result = geography_manager.get_geography_type_id_and_code_by_name(
+            geography_name=fake_geography_name,
+            geography_type_name=fake_geography_type_name,
+        )
+ 
         # Then
-        assert result == (None, None)
+        assert result == expected_result
+        spy_get_geography_type_id_and_code_by_name.assert_called_with(
+            geography_name=fake_geography_name,
+            geography_type_name=fake_geography_type_name,
+        )
