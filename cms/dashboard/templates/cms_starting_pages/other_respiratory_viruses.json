@@ -618,6 +618,6 @@
     "Parainfluenza",
     "RSV"
   ],
-  "theme": null,
-  "sub_theme": null
+  "theme": "infectious_disease",
+  "sub_theme": "respiratory"
 }

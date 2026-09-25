@@ -13,7 +13,6 @@ from typing import Self
 from django.db import models
 from django.db.models.query_utils import Q
 
-from common.auth.logging import log_user_permission_summary
 from common.auth.permissions import (
     PermissionSetsType,
     check_chart_permissions_by_name,
@@ -26,7 +25,6 @@ from common.virtual_clock import get_embargo_time
 from metrics.api.permissions.fluent_permissions import (
     is_public_data_only_enforced,
 )
-from metrics.data.managers.core_models.geography import GeographyManager
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -830,7 +828,6 @@ def filter_geographies_by_permission(
     if not AUTH_ENABLED or request is None or request.auth is None:
         return data
 
-    log_user_permission_summary(request.user)
     has_global_access = request.user.permission_sets["summary"]["has_global_access"]
     if has_global_access:
         return data
@@ -859,15 +856,16 @@ def filter_geographies_by_permission(
             geography_type_id = geography_type_manager.get_id_by_name(
                 geography_type_name
             )
+
             allowed_geographies = [
                 geography
                 for geography in entry["geographies"]
                 if _is_geography_permitted(
+                    geography_id=geography_manager.get_code_by_name(
+                        geography["name"], geography_type_name
+                    ),
                     permission_sets=permission_sets,
                     geography_type_id=geography_type_id,
-                    geography_type_name=geography_type_name,
-                    geography_name=geography["name"],
-                    geography_manager=geography_manager,
                     theme_id=theme_id,
                     sub_theme_id=sub_theme_id,
                     topic_id=topic_id,
@@ -882,18 +880,14 @@ def filter_geographies_by_permission(
 
 def _is_geography_permitted(
     *,
+    geography_id: str | None,
     permission_sets: list,
     geography_type_id: int | None,
-    geography_type_name: str,
-    geography_name: str,
-    geography_manager: GeographyManager,
     theme_id: str | None,
     sub_theme_id: str | None,
     topic_id: str | None,
 ) -> bool:
-    geography_id = geography_manager.get_code_by_name(
-        geography_name, geography_type_name
-    )
+
     if geography_type_id is None or geography_id is None:
         return False
     if theme_id is None or sub_theme_id is None:
@@ -932,10 +926,10 @@ def _is_geography_permitted(
 
     # Step 2: within only those in-scope permission_sets, check geography access.
     for permission_set in relevant_permission_sets:
-        permission_geography_type = normalize_permission_id(
+        permission_geography_type_id = normalize_permission_id(
             field_name="geography_type", permission_set=permission_set
         )
-        if permission_geography_type is None:
+        if permission_geography_type_id is None:
             continue
 
         permission_geography_id = (
@@ -946,7 +940,7 @@ def _is_geography_permitted(
         )
 
         if check_geography_permissions(
-            permission_geography_type=permission_geography_type,
+            permission_geography_type=permission_geography_type_id,
             permission_geography_id=permission_geography_id,
             geography_type=geography_type_id,
             geography_id=geography_id,

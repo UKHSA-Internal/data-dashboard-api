@@ -760,6 +760,6 @@
   "is_public": true,
   "page_classification": null,
   "selected_topics": [],
-  "theme": null,
-  "sub_theme": null
+  "theme": "respiratory",
+  "sub_theme": "childhood_vaccines"
 }

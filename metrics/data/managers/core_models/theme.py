@@ -49,15 +49,6 @@ class ThemeQuerySet(models.QuerySet):
         """
         return self.all().values("id", "name")
 
-    def get_id_by_name(
-        self, theme_name: str
-    ) -> tuple[int | None, int | None, int | None]:
-        record = self.filter(name=theme_name).first()
-
-        if record:
-            return int(record.id), int(record.theme_id), int(record.topic_id)
-        return None, None, None
-
 
 class ThemeManager(models.Manager):
     """Custom model manager class for the `Theme` model."""

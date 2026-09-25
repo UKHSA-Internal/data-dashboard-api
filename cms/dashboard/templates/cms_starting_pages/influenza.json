@@ -545,6 +545,6 @@
   "is_public": true,
   "page_classification": null,
   "selected_topics": ["Influenza"],
-  "theme": null,
-  "sub_theme": null
+  "theme": "infectious_disease",
+  "sub_theme": "respiratory"
 }
