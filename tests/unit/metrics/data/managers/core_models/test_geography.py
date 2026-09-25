@@ -76,3 +76,69 @@ class TestGeographyManager:
 
         # Then
         spy_get_name_by_code.assert_called_with(fake_geography_code)
+
+    def test_get_geography_type_id_and_code_by_name_found(self):
+        """
+        Given a geography name and geography type name that exist
+        When `get_geography_type_id_and_code_by_name` is called,
+        Then it returns the geography_type_id and geography_code.
+        """
+        # Given
+        fake_geography_name = "England"
+        fake_geography_type_name = "Nation"
+        fake_geography_type_id = 1
+        fake_geography_code = "E92000001"
+
+        mock_record = mock.Mock()
+        mock_record.geography_type_id = fake_geography_type_id
+        mock_record.geography_code = fake_geography_code
+
+        geography_manager = GeographyManager()
+
+        # When
+        with mock.patch.object(
+            geography_manager,
+            "select_related",
+            return_value=mock.Mock(
+                filter=mock.Mock(
+                    return_value=mock.Mock(first=mock.Mock(return_value=mock_record))
+                )
+            ),
+        ):
+            result = geography_manager.get_geography_type_id_and_code_by_name(
+                geography_name=fake_geography_name,
+                geography_type_name=fake_geography_type_name,
+            )
+
+        # Then
+        assert result == (fake_geography_type_id, fake_geography_code)
+
+    def test_get_geography_type_id_and_code_by_name_not_found(self):
+        """
+        Given a geography name and geography type name that do not exist
+        When `get_geography_type_id_and_code_by_name` is called,
+        Then it returns (None, None).
+        """
+        # Given
+        fake_geography_name = "NonexistentCountry"
+        fake_geography_type_name = "NonexistentType"
+
+        geography_manager = GeographyManager()
+
+        # When
+        with mock.patch.object(
+            geography_manager,
+            "select_related",
+            return_value=mock.Mock(
+                filter=mock.Mock(
+                    return_value=mock.Mock(first=mock.Mock(return_value=None))
+                )
+            ),
+        ):
+            result = geography_manager.get_geography_type_id_and_code_by_name(
+                geography_name=fake_geography_name,
+                geography_type_name=fake_geography_type_name,
+            )
+
+        # Then
+        assert result == (None, None)
