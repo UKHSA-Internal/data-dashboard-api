@@ -106,8 +106,8 @@ class TestGeographyManager:
         # Then
         assert result == expected_result
         spy_get_geography_type_id_and_code_by_name.assert_called_with(
-            geography_name=fake_geography_name,
-            geography_type_name=fake_geography_type_name,
+            fake_geography_name,
+            fake_geography_type_name,
         )
 
     @mock.patch.object(GeographyQuerySet, "get_geography_type_id_and_code_by_name")
@@ -137,6 +137,6 @@ class TestGeographyManager:
         # Then
         assert result == expected_result
         spy_get_geography_type_id_and_code_by_name.assert_called_with(
-            geography_name=fake_geography_name,
-            geography_type_name=fake_geography_type_name,
+            fake_geography_name,
+            fake_geography_type_name,
         )
