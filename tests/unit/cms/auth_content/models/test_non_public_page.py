@@ -174,9 +174,11 @@ class TestNonPublicPage:
 class TestGetNonPublicPageTypes:
 
     def test_list_contains_expected_pages(self):
+        """
+        Checks that get_non_public_page_types() returns all the NonPublicCapablePage types we expect. If you add a new
+        subclass, it should be added here.
+        """
         pages = get_non_public_page_types()
         assert TopicPage in pages
         assert MetricsDocumentationChildEntry in pages
-
-        real_pages = [page for page in pages if not page.__module__.startswith("test")]
-        assert len(real_pages) == 2
+        assert len(pages) == 2
