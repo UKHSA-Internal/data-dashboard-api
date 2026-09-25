@@ -6,7 +6,10 @@ from django.core.exceptions import ValidationError
 from cms.auth_content.models.non_public_page import (
     NonPublicCapablePage,
     DataClassificationLevels,
+    get_non_public_page_types,
 )
+from cms.metrics_documentation.models import MetricsDocumentationChildEntry
+from cms.topic.models import TopicPage
 
 
 def create_non_public_page(*args, **kwargs) -> NonPublicCapablePage:
@@ -166,3 +169,16 @@ class TestNonPublicPage:
         with pytest.raises(ValidationError) as e:
             page._validate_non_public_page()
         assert "Please select a topic for this non-public page" in str(e.value)
+
+
+class TestGetNonPublicPageTypes:
+
+    def test_list_contains_expected_pages(self):
+        """
+        Checks that get_non_public_page_types() returns all the NonPublicCapablePage types we expect. If you add a new
+        subclass, it should be added here.
+        """
+        pages = get_non_public_page_types()
+        assert TopicPage in pages
+        assert MetricsDocumentationChildEntry in pages
+        assert len(pages) == 2

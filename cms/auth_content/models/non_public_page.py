@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.api import APIField
+from wagtail.models import get_page_models
+from wagtail.search import index
 
 from cms.dynamic_content import help_texts
 
@@ -71,6 +73,15 @@ class NonPublicCapablePage(models.Model):
         ),
     ]
 
+    # provide a default list of search fields to use if they want
+    search_fields = [
+        index.FilterField("is_public"),
+        index.FilterField("page_classification"),
+        index.FilterField("page_theme"),
+        index.FilterField("page_sub_theme"),
+        index.FilterField("page_topic"),
+    ]
+
     # provide a default set of fields which should be exposed through the api in subclasses
     api_fields = [
         APIField("is_public"),
@@ -116,3 +127,22 @@ class NonPublicCapablePage(models.Model):
             raise ValidationError(
                 {"page_topic": "Please select a topic for this non-public page"}
             )
+
+
+def get_non_public_page_types() -> list[type[NonPublicCapablePage]]:
+    """
+    Returns the model classes currently capable of being non-public pages. This list is dynamically generated using
+    reflection and only contains concrete models.
+
+    To confirm this list is correct there is a unit test which asserts the right pages are in this list.
+
+    Returns:
+        A list of classes
+    """
+    return [
+        page_model
+        for page_model in get_page_models()
+        if issubclass(page_model, NonPublicCapablePage)
+        and not page_model._meta.abstract  # noqa: SLF001
+        and not page_model._meta.proxy  # noqa: SLF001
+    ]

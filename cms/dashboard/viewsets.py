@@ -1,5 +1,4 @@
 import logging
-from itertools import chain
 from typing import override
 
 from django.conf import settings
@@ -11,11 +10,12 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
 from cms.auth_content.auth_utils import is_auth_enabled
+from cms.auth_content.page_filtering import (
+    filter_non_public_pages,
+    filter_public_pages,
+)
 from cms.dashboard.serializers import ListablePageSerializer
-from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
-from cms.topic.models import TopicPage
 from common.auth.logging import log_user_permission_summary
-from common.auth.permissions import check_page_permissions
 from common.page_previews import (
     get_cms_auth_bearer_token,
     get_cms_auth_payload,
@@ -63,68 +63,18 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
         req = self.request
 
         if not AUTH_ENABLED or req.auth is None:
-            public_topic_page_ids = TopicPage.objects.filter(
-                is_public=True,
-                page_ptr__in=queryset,
-            ).values_list("page_ptr_id", flat=True)
-
-            public_metrics_doc_child_page_ids = (
-                MetricsDocumentationChildEntry.objects.filter(
-                    is_public=True,
-                    page_ptr__in=queryset,
-                ).values_list("page_ptr_id", flat=True)
-            )
-
-            always_public_page_ids = queryset.not_type(
-                TopicPage, MetricsDocumentationChildEntry
-            ).values_list("id", flat=True)
-
-            allowed_page_ids = [
-                *public_topic_page_ids,
-                *public_metrics_doc_child_page_ids,
-                *always_public_page_ids,
-            ]
-
-            filtered_queryset = queryset.filter(id__in=allowed_page_ids)
-
+            filtered_queryset = filter_public_pages(queryset=queryset)
         else:
             log_user_permission_summary(req.user)
-
             has_global_access = req.user.permission_sets["summary"]["has_global_access"]
 
             if has_global_access:
                 filtered_queryset = queryset
             else:
                 user_permissions = req.user.permission_sets["permission_sets"]
-                pages_to_check = chain(
-                    ((page.id, page.topicpage) for page in queryset.type(TopicPage)),
-                    (
-                        (page.id, page.metricsdocumentationchildentry)
-                        for page in queryset.type(MetricsDocumentationChildEntry)
-                    ),
+                filtered_queryset = filter_non_public_pages(
+                    queryset=queryset, permission_sets=user_permissions
                 )
-                permitted_page_ids = [
-                    page_id
-                    for page_id, page in pages_to_check
-                    if page.is_public
-                    or check_page_permissions(
-                        permission_sets=user_permissions,
-                        theme_id=page.page_theme,
-                        sub_theme_id=page.page_sub_theme,
-                        topic_id=page.page_topic,
-                    )
-                ]
-
-                always_public_page_ids = queryset.not_type(
-                    TopicPage, MetricsDocumentationChildEntry
-                ).values_list("id", flat=True)
-
-                allowed_page_ids = [
-                    *permitted_page_ids,
-                    *always_public_page_ids,
-                ]
-
-                filtered_queryset = queryset.filter(id__in=allowed_page_ids)
 
         return filtered_queryset.specific()
 

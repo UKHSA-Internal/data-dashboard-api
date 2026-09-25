@@ -11,29 +11,17 @@ from cms.auth_content.forms.non_public_page import (
 from cms.auth_content.models.non_public_page import (
     NonPublicCapablePage,
     DataClassificationLevels,
+    get_non_public_page_types,
 )
-from cms.topic.models import TopicPage
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
 
-CLASSES_UNDER_TEST = {
-    TopicPage: {},
+# some classes require extra required fields beyond the base NonPublicCapablePage fields
+EXTRA_FIELDS = {
     MetricsDocumentationChildEntry: {"metric": "a-metric-name"},
 }
 
 
-def test_class_coverage():
-    """
-    Tests that our set of CLASSES_UNDER_TEST cover all the subclasses of the NonPublicCapablePage class. This ensures
-    we don't miss any out of this test suite ensuring good coverage.
-    """
-    for cls in NonPublicCapablePage.__subclasses__():
-        # skip any mock classes which have been created prior to this test running
-        if cls.__module__.startswith("tests."):
-            continue
-        assert cls in CLASSES_UNDER_TEST
-
-
-@pytest.mark.parametrize("non_public_subclass", CLASSES_UNDER_TEST)
+@pytest.mark.parametrize("non_public_subclass", get_non_public_page_types())
 class TestNonPublicPageAdminForm:
 
     @pytest.mark.django_db
@@ -96,7 +84,7 @@ class TestNonPublicPageAdminForm:
             page_topic="7",
         )
         # add any extra required fields specific to this subclass
-        for field, value in CLASSES_UNDER_TEST[non_public_subclass].items():
+        for field, value in EXTRA_FIELDS.get(non_public_subclass, {}).items():
             setattr(page, field, value)
 
         # save it
