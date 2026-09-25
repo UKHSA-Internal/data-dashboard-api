@@ -105,7 +105,6 @@ class TestGeographyManager:
             return_value=mock_queryset,
         ):
             result = geography_manager.get_geography_type_id_and_code_by_name(
-                geography_manager,
                 geography_name=fake_geography_name,
                 geography_type_name=fake_geography_type_name,
             )
@@ -135,7 +134,6 @@ class TestGeographyManager:
             return_value=mock_queryset,
         ):
             result = geography_manager.get_geography_type_id_and_code_by_name(
-                geography_manager,
                 geography_name=fake_geography_name,
                 geography_type_name=fake_geography_type_name,
             )
