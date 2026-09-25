@@ -143,6 +143,6 @@ def get_non_public_page_types() -> list[type[NonPublicCapablePage]]:
         page_model
         for page_model in get_page_models()
         if issubclass(page_model, NonPublicCapablePage)
-        and not page_model._meta.abstract # noqa: SLF001
-        and not page_model._meta.proxy # noqa: SLF001
+        and not page_model._meta.abstract  # noqa: SLF001
+        and not page_model._meta.proxy  # noqa: SLF001
     ]
