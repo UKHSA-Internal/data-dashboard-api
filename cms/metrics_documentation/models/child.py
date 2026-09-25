@@ -1,7 +1,6 @@
 from django import forms
 from django.db import models
 from modelcluster.fields import ParentalKey
-from rest_framework import serializers
 from wagtail.admin.panels import (
     FieldPanel,
     ObjectList,
@@ -65,10 +64,7 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
-        APIField(
-            "topic",
-            serializer=serializers.CharField(source="get_topic_name", read_only=True),
-        ),
+        APIField("topic"),
         APIField("metric_group"),
     ]
 
@@ -108,7 +104,8 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
             topic_index = 1
         return self.metric.split("_")[topic_index]
 
-    def get_topic_name(self) -> str:
+    @property
+    def topic(self) -> str:
         """
         Used for the API field `topic`. This uses the topic extracted from the metric name and then matches that back
         to the actual topics from the database so that we get the right casing.
