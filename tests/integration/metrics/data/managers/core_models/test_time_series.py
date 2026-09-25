@@ -5,11 +5,16 @@ from unittest import mock
 import pytest
 from django.utils import timezone
 
-from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
+from metrics.data.managers.core_models.time_series import (
+    CoreTimeSeriesQuerySet,
+    _is_geography_permitted,
+    filter_geographies_by_permission,
+)
 from metrics.data.models.core_models import CoreTimeSeries
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
+MODULE_PATH = "metrics.data.managers.core_models.time_series"
 
 
 class TestCoreTimeSeriesQuerySet:
@@ -684,3 +689,386 @@ class TestCoreTimeSeriesManager:
         assert second_in_range_record in core_time_series_queryset
         assert third_in_range_record in core_time_series_queryset
         assert out_of_range_record not in core_time_series_queryset
+
+
+class TestFilterGeographiesByPermission:
+    @pytest.fixture(autouse=True)
+    def _enable_auth(self):
+        with mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True):
+            yield
+
+    @staticmethod
+    def _build_request(*, permission_sets=None, has_global_access=False):
+        request = mock.Mock()
+        request.auth = "fake-token"
+        request.user.permission_sets = {
+            "permission_sets": permission_sets or [],
+            "summary": {"has_global_access": has_global_access},
+        }
+        return request
+
+    @staticmethod
+    def _build_data() -> list[dict]:
+        return [
+            {
+                "geography_type": "Nation",
+                "geographies": [{"name": "England"}, {"name": "Scotland"}],
+            },
+            {
+                "geography_type": "Lower Tier Local Authority",
+                "geographies": [{"name": "Hackney"}],
+            },
+        ]
+
+    @staticmethod
+    def _stub_geography_codes(spy_metrics_api_interface: mock.MagicMock) -> None:
+        """Makes `geography_manager.get_code_by_name(name, ...)` return a
+        distinct fake code per geography name, so downstream mocks/assertions
+        can tell which geography a given `_is_geography_permitted` call is for.
+        """
+        codes_by_name = {
+            "England": "CODE-ENGLAND",
+            "Scotland": "CODE-SCOTLAND",
+            "Hackney": "CODE-HACKNEY",
+        }
+        spy_metrics_api_interface.get_geography_manager.return_value.get_code_by_name.side_effect = lambda name, geography_type_name: codes_by_name[
+            name
+        ]
+
+    def test_returns_data_unchanged_when_auth_is_disabled(self):
+        """
+        Given `AUTH_ENABLED` is False
+        When `filter_geographies_by_permission()` is called
+        Then the data is returned untouched
+        """
+        # Given
+        data = self._build_data()
+        request = self._build_request()
+
+        # When
+        with mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False):
+            filtered = filter_geographies_by_permission(
+                request=request,
+                data=data,
+                theme="infectious_disease",
+                sub_theme="respiratory",
+                topic="",
+            )
+
+        # Then
+        assert filtered == data
+
+    @pytest.mark.parametrize("missing", ["request", "auth"])
+    def test_returns_data_unchanged_for_unauthenticated_requests(self, missing: str):
+        """
+        Given a missing request or a request with no `auth`
+        When `filter_geographies_by_permission()` is called
+        Then the data is returned untouched
+        """
+        # Given
+        data = self._build_data()
+        request = None
+        if missing == "auth":
+            request = self._build_request()
+            request.auth = None
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="",
+        )
+
+        # Then
+        assert filtered == data
+
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_returns_data_unchanged_for_global_access(
+        self, spy_metrics_api_interface: mock.MagicMock
+    ):
+        """
+        Given a user with global access
+        When `filter_geographies_by_permission()` is called
+        Then the data is returned untouched
+        And no id lookups are performed
+        """
+        # Given
+        data = self._build_data()
+        request = self._build_request(has_global_access=True)
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="",
+        )
+
+        # Then
+        assert filtered == data
+        spy_metrics_api_interface.get_topic_manager.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_filters_geographies_for_each_geography_type_without_topic(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+    ):
+        """
+        Given a user without global access
+        And data containing multiple geography types
+        When `filter_geographies_by_permission()` is called without a `topic`
+        Then only the permitted geographies are returned for every geography type
+        And geography types with no permitted geographies are dropped
+
+        """
+        # Given
+        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
+            1
+        )
+        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = (
+            2
+        )
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            4
+        )
+        self._stub_geography_codes(spy_metrics_api_interface)
+        spy_is_geography_permitted.side_effect = (
+            lambda **kwargs: kwargs["geography_id"] == "CODE-ENGLAND"
+        )
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=self._build_data(),
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="",
+        )
+
+        # Then
+        assert filtered == [
+            {"geography_type": "Nation", "geographies": [{"name": "England"}]}
+        ]
+
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_keeps_all_permitted_geography_types(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+    ):
+        """
+        Given a user who is permitted to see every geography
+        When `filter_geographies_by_permission()` is called
+        Then every geography type is retained in the output
+        """
+        # Given
+        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
+            1
+        )
+        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = (
+            2
+        )
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            4
+        )
+        self._stub_geography_codes(spy_metrics_api_interface)
+        spy_is_geography_permitted.return_value = True
+        data = self._build_data()
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="",
+        )
+
+        # Then
+        assert filtered == data
+
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_resolves_ids_from_topic_when_topic_provided(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+    ):
+        """
+        Given a `topic` is provided
+        When `filter_geographies_by_permission()` is called
+        Then the theme, sub theme and topic ids are resolved via the topic manager
+        And these ids are passed through to the permission check
+        """
+        # Given
+        spy_topic_manager = spy_metrics_api_interface.get_topic_manager.return_value
+        spy_topic_manager.get_id_by_name.return_value = (1, 2, 3)
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            4
+        )
+        self._stub_geography_codes(spy_metrics_api_interface)
+        spy_is_geography_permitted.return_value = True
+        data = [{"geography_type": "Nation", "geographies": [{"name": "England"}]}]
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="COVID-19",
+        )
+
+        # Then
+        spy_topic_manager.get_id_by_name.assert_called_once_with(
+            "infectious_disease", "respiratory", "COVID-19"
+        )
+        _, kwargs = spy_is_geography_permitted.call_args
+        assert kwargs["theme_id"] == 1
+        assert kwargs["sub_theme_id"] == 2
+        assert kwargs["topic_id"] == 3
+        assert kwargs["geography_id"] == "CODE-ENGLAND"
+        assert filtered == data
+
+
+class TestIsGeographyPermitted:
+    THEME_ID = 1
+    SUB_THEME_ID = 2
+    TOPIC_ID = 3
+    GEOGRAPHY_TYPE_ID = 4
+    GEOGRAPHY_ID = "E92000001"
+
+    @classmethod
+    def _build_permission_set(cls, **overrides) -> dict:
+        ids = {
+            "theme": str(cls.THEME_ID),
+            "sub_theme": str(cls.SUB_THEME_ID),
+            "topic": str(cls.TOPIC_ID),
+            "geography_type": str(cls.GEOGRAPHY_TYPE_ID),
+            "geography": cls.GEOGRAPHY_ID,
+        }
+        ids.update(overrides)
+        return {field: {"id": value} for field, value in ids.items()}
+
+    @classmethod
+    def _call(cls, *, permission_sets: list, **overrides):
+        kwargs = {
+            "permission_sets": permission_sets,
+            "geography_type_id": cls.GEOGRAPHY_TYPE_ID,
+            "geography_id": cls.GEOGRAPHY_ID,
+            "theme_id": cls.THEME_ID,
+            "sub_theme_id": cls.SUB_THEME_ID,
+            "topic_id": cls.TOPIC_ID,
+        }
+        kwargs.update(overrides)
+        return _is_geography_permitted(**kwargs)
+
+    def test_returns_true_when_permission_set_matches(self):
+        """
+        Given a permission set matching the theme, sub theme, topic and geography
+        When `_is_geography_permitted()` is called
+        Then True is returned
+        """
+        # Given
+        permission_sets = [self._build_permission_set()]
+
+        # When / Then
+        assert self._call(permission_sets=permission_sets) is True
+
+    def test_returns_false_when_there_are_no_permission_sets(self):
+        """
+        Given no permission sets
+        When `_is_geography_permitted()` is called
+        Then False is returned
+        """
+        assert self._call(permission_sets=[]) is False
+
+    @pytest.mark.parametrize(
+        "mismatched_field",
+        ["theme", "sub_theme", "topic", "geography_type", "geography"],
+    )
+    def test_returns_false_when_a_permission_field_does_not_match(
+        self, mismatched_field: str
+    ):
+        """
+        Given a permission set where 1 of the fields does not match the request
+        When `_is_geography_permitted()` is called
+        Then False is returned
+        """
+        # Given
+        permission_sets = [self._build_permission_set(**{mismatched_field: "999999"})]
+
+        # When / Then
+        assert self._call(permission_sets=permission_sets) is False
+
+    def test_returns_true_when_any_one_permission_set_matches(self):
+        """
+        Given a non-matching permission set and a matching one
+        When `_is_geography_permitted()` is called
+        Then True is returned
+        """
+        # Given
+        permission_sets = [
+            self._build_permission_set(geography="999999"),
+            self._build_permission_set(),
+        ]
+
+        # When / Then
+        assert self._call(permission_sets=permission_sets) is True
+
+    def test_ignores_permission_sets_which_are_not_dicts(self):
+        """
+        Given a malformed permission set alongside a matching one
+        When `_is_geography_permitted()` is called
+        Then the malformed entry is skipped and True is returned
+        """
+        # Given
+        permission_sets = ["not-a-dict", None, self._build_permission_set()]
+
+        # When / Then
+        assert self._call(permission_sets=permission_sets) is True
+
+    def test_ignores_permission_sets_without_a_geography_type(self):
+        """
+        Given a permission set which has no geography type
+        When `_is_geography_permitted()` is called
+        Then False is returned
+        """
+        # Given
+        permission_set = self._build_permission_set()
+        del permission_set["geography_type"]
+
+        # When / Then
+        assert self._call(permission_sets=[permission_set]) is False
+
+    @pytest.mark.parametrize(
+        "overrides",
+        [
+            {"geography_type_id": None},
+            {"geography_id": None},
+            {"theme_id": None},
+            {"sub_theme_id": None},
+        ],
+    )
+    def test_returns_false_when_a_required_id_is_missing(self, overrides: dict):
+        """
+        Given a matching permission set
+        But a required geography type, geography, theme or sub theme id
+            is missing (e.g. could not be resolved upstream)
+        When `_is_geography_permitted()` is called
+        Then False is returned
+        """
+        # Given
+        permission_sets = [self._build_permission_set()]
+
+        # When / Then
+        assert self._call(permission_sets=permission_sets, **overrides) is False

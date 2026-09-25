@@ -1031,5 +1031,7 @@
   "enable_area_selector": false,
   "is_public": true,
   "page_classification": null,
-  "selected_topics": ["COVID-19"]
+  "selected_topics": ["COVID-19"],
+  "theme": null,
+  "sub_theme": null
 }

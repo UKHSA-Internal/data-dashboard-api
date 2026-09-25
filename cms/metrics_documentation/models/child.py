@@ -65,6 +65,8 @@ class MetricsDocumentationChildEntry(UKHSAPage, NonPublicCapablePage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
+        APIField("theme"),
+        APIField("sub_theme"),
         APIField(
             "topic",
             serializer=serializers.CharField(source="get_topic_name", read_only=True),

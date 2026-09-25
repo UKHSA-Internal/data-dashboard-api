@@ -40,6 +40,8 @@ def core_headline_example(request) -> CoreHeadline:
         period_start="2023-01-01",
         period_end="2023-01-07",
         is_public=request.param["is_public"],
+        theme="respiratory",
+        sub_theme="infectious_disease",
     )
 
 

@@ -208,19 +208,19 @@ def check_page_permissions(
 
         # Theme must be present, but other permission fields are
         # optional, as wildcard hierarchy allows early short-circuit
-        permission_theme_id = _normalize_permission_id(
+        permission_theme_id = normalize_permission_id(
             field_name="theme", permission_set=permission_set
         )
         if permission_theme_id is None:
             return False
         permission_sub_theme_id = (
-            _normalize_permission_id(
+            normalize_permission_id(
                 field_name="sub_theme", permission_set=permission_set
             )
             or ""
         )
         permission_topic_id = (
-            _normalize_permission_id(field_name="topic", permission_set=permission_set)
+            normalize_permission_id(field_name="topic", permission_set=permission_set)
             or ""
         )
 
@@ -331,7 +331,7 @@ def _normalize_permission_ids(
     """Extract and normalize permission ids as tuple of strings."""
 
     normalized_ids = tuple(
-        _normalize_permission_id(field_name=field_name, permission_set=permission_set)
+        normalize_permission_id(field_name=field_name, permission_set=permission_set)
         for field_name in field_names
     )
 
@@ -341,7 +341,7 @@ def _normalize_permission_ids(
     return normalized_ids
 
 
-def _normalize_permission_id(
+def normalize_permission_id(
     *, field_name: str, permission_set: PermissionRowType | dict
 ) -> str | None:
     """Extract and normalize the permission id from a permission row."""
