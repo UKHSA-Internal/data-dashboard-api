@@ -95,12 +95,6 @@ class SingleCategoryChartSettings(ChartSettings):
             "rangemode": "tozero",
         }
 
-        if self._chart_generation_payload.y_axis_title:
-            base_y_axis_config["title"] = {
-                "text": self._chart_generation_payload.y_axis_title,
-                "font": tick_font,
-            }
-
         y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
 
         base_y_axis_config["tick0"] = y_min_value
@@ -160,14 +154,16 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickformat": None,
         }
 
-    def _get_legend_top_centre_config(self):
+    def _get_legend_bottom_centre_config(self):
+        has_x_axis_title = bool(self._chart_generation_payload.x_axis_title)
+
         legend_config = {
             "font": self._get_tick_font_config(),
             "orientation": "h",
-            "y": 1.0,
+            "y": -0.5 if has_x_axis_title else -0.3,
             "x": 0.5,
             "xanchor": "center",
-            "yanchor": "bottom",
+            "yanchor": "top",
         }
 
         if legend_title := self._chart_generation_payload.legend_title:
@@ -400,14 +396,24 @@ class SingleCategoryChartSettings(ChartSettings):
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
+        chart_config.setdefault("annotations", []).extend(
+            self._get_y_axis_title_annotation_config()
+        )
+        if self._chart_generation_payload.y_axis_title:
+            chart_config["margin"]["t"] = 30
 
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_bottom_centre_config()}
 
     def get_common_chart_config(self):
         chart_config = self._get_base_chart_config()
+        chart_config.setdefault("annotations", []).extend(
+            self._get_y_axis_title_annotation_config()
+        )
+        if self._chart_generation_payload.y_axis_title:
+            chart_config["margin"]["t"] = 30
 
         chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_bottom_centre_config()}
 
 
 def get_number_of_days_and_months(

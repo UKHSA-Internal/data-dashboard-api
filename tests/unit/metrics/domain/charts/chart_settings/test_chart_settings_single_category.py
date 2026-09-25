@@ -183,10 +183,6 @@ class TestSingleCategoryChartSettings:
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings._get_tick_font_config(),
             "tick0": 0,
-            "title": {
-                "font": chart_settings._get_tick_font_config(),
-                "text": chart_settings._chart_generation_payload.y_axis_title,
-            },
         }
         assert y_axis_config == expected_y_axis_config
 
@@ -231,6 +227,42 @@ class TestSingleCategoryChartSettings:
             "showlegend": True,
         }
         assert base_chart_config == expected_base_chart_config
+
+    def test_config_sets_top_margin_when_y_axis_title_provided(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
+        """
+        Given an instance of `SingleCategoryChartSettings` with a y_axis_title
+        When `get_common_chart_config()` is called
+        Then the top margin is increased to make room for the title annotation
+        """
+        chart_settings = fake_chart_settings
+
+        common_chart_config = chart_settings.get_common_chart_config()
+
+        assert common_chart_config["margin"]["t"] == 30
+
+    def test_config_default_top_margin_when_y_axis_title_omitted(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        """
+        Given an instance of `SingleCategoryChartSettings` without a y_axis_title
+        When `get_common_chart_config()` is called
+        Then the top margin is left at the base config default
+        """
+
+        payload = ChartGenerationPayload(
+            chart_width=930,
+            chart_height=220,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
+        )
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
+
+        common_chart_config = chart_settings.get_common_chart_config()
+
+        assert common_chart_config["margin"]["t"] == 0
 
     def test_chart_settings_width(self, fake_plot_data: PlotGenerationData):
         """
@@ -723,43 +755,43 @@ class TestSingleCategoryChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_legend_top_centre_config(
+    def test_get_legend_bottom_centre_config(
         self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
-        When `_get_legend_top_centre_config()` is called
+        When `_get_legend_bottom_centre_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+        legend_bottom_centre_config = chart_settings._get_legend_bottom_centre_config()
 
         # Then
-        expected_legend_top_centre_config = {
+        expected_legend_bottom_centre_config = {
             "legend": {
                 "font": {
                     "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
                     "family": "Arial",
                 },
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
             },
         }
-        assert legend_top_centre_config == expected_legend_top_centre_config
+        assert legend_bottom_centre_config == expected_legend_bottom_centre_config
 
-    def test_get_legend_top_centre_config_includes_legend_title_when_provided(
+    def test_get_legend_bottom_centre_config_includes_legend_title_when_provided(
         self, fake_chart_settings: ChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
             which includes a legend title
-        When `_get_legend_top_centre_config()` is called
+        When `_get_legend_bottom_centre_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
@@ -768,10 +800,10 @@ class TestSingleCategoryChartSettings:
         chart_settings._chart_generation_payload.legend_title = legend_title
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+        legend_bottom_centre_config = chart_settings._get_legend_bottom_centre_config()
 
         # Then
-        expected_legend_top_centre_config = {
+        expected_legend_bottom_centre_config = {
             "legend": {
                 "title": f"<b>{legend_title}</b>",
                 "font": {
@@ -779,13 +811,13 @@ class TestSingleCategoryChartSettings:
                     "family": "Arial",
                 },
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
             },
         }
-        assert legend_top_centre_config == expected_legend_top_centre_config
+        assert legend_bottom_centre_config == expected_legend_bottom_centre_config
 
     def test_get_line_multi_coloured_chart_config(
         self,
@@ -807,9 +839,28 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_line_multi_coloured_chart_config = {
             **chart_settings._get_base_chart_config(),
-            **chart_settings._get_legend_top_centre_config(),
+            **chart_settings._get_legend_bottom_centre_config(),
             "showlegend": True,
+            "annotations": [
+                {
+                    "text": chart_settings._chart_generation_payload.y_axis_title,
+                    "xref": "paper",
+                    "yref": "paper",
+                    "x": 0,
+                    "y": 1.05,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "showarrow": False,
+                    "font": {
+                        "family": "Arial",
+                        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                        "size": 14,
+                    },
+                    "align": "left",
+                }
+            ],
         }
+        expected_line_multi_coloured_chart_config["margin"]["t"] = 30
 
         assert (
             line_multi_coloured_chart_config
