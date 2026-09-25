@@ -850,27 +850,25 @@ def filter_geographies_by_permission(
         )
         topic_id = ""
 
-        filtered_data = []
-        for entry in data:
-            geography_type_name = entry["geography_type"]
-            geography_type_id = geography_type_manager.get_id_by_name(
-                geography_type_name
-            )
+    filtered_data = []
+    for entry in data:
+        geography_type_name = entry["geography_type"]
+        geography_type_id = geography_type_manager.get_id_by_name(geography_type_name)
 
-            allowed_geographies = [
-                geography
-                for geography in entry["geographies"]
-                if _is_geography_permitted(
-                    geography_id=geography_manager.get_code_by_name(
-                        geography["name"], geography_type_name
-                    ),
-                    permission_sets=permission_sets,
-                    geography_type_id=geography_type_id,
-                    theme_id=theme_id,
-                    sub_theme_id=sub_theme_id,
-                    topic_id=topic_id,
-                )
-            ]
+        allowed_geographies = [
+            geography
+            for geography in entry["geographies"]
+            if _is_geography_permitted(
+                geography_id=geography_manager.get_code_by_name(
+                    geography["name"], geography_type_name
+                ),
+                permission_sets=permission_sets,
+                geography_type_id=geography_type_id,
+                theme_id=theme_id,
+                sub_theme_id=sub_theme_id,
+                topic_id=topic_id,
+            )
+        ]
 
         if allowed_geographies:
             filtered_data.append({**entry, "geographies": allowed_geographies})
@@ -897,7 +895,7 @@ def _is_geography_permitted(
     geography_id = str(geography_id)
     theme_id = str(theme_id) if theme_id else ""
     sub_theme_id = str(sub_theme_id) if sub_theme_id else ""
-    topic_id = topic_id or ""
+    topic_id = str(topic_id) if topic_id else ""
 
     # Step 1: only permission_sets whose theme/sub_theme (and topic, if relevant)
     # match the page we're rendering are "in scope" for this check at all.
