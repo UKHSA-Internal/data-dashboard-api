@@ -3,12 +3,24 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from public_api.auth import is_authenticated_request
 from public_api.version.v3.serializers.api_request_serializer import (
     APIDTO,
     APIRequestSerializerv3,
 )
 
 PUBLIC_API_TAG = "public-api-v3"
+PRIVATE_CACHE_CONTROL = "private, no-cache"
+
+
+def add_private_cache_control_header(
+    *, request: Request, response: Response
+) -> Response:
+    """Prevent shared caching of responses made for authenticated consumers."""
+    if is_authenticated_request(request):
+        response["Cache-Control"] = PRIVATE_CACHE_CONTROL
+
+    return response
 
 
 class BaseNestedAPIViewV3(GenericAPIView):
@@ -42,8 +54,4 @@ class BaseNestedAPIViewV3(GenericAPIView):
         serializer = self.get_serializer(dto_slice, many=True)
         response = Response(data=serializer.data)
 
-        is_valid_non_public_request = request.auth is not None
-        if is_valid_non_public_request:
-            response["Cache-Control"] = "private, no-cache"
-
-        return response
+        return add_private_cache_control_header(request=request, response=response)
