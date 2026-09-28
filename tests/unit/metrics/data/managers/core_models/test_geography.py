@@ -180,6 +180,7 @@ class TestGeographyManager:
             geography_type__name=fake_geography_type_name,
         )
 
+
 @pytest.mark.django_db
 class TestGeographyManagerDatabaseQueries:
     @pytest.fixture
