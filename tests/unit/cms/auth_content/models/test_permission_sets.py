@@ -29,8 +29,10 @@ class TestPermissionSetForm:
                 self.MOCK_PERMISSION_SET_FIELDS,
             ),
             patch(
-                "cms.auth_content.models.permission_sets._create_form_field",
-                side_effect=lambda field, wildcard, required, help_text: MagicMock(name=field["field_name"]),
+                "cms.auth_content.models.permission_sets._create_required_form_field",
+                side_effect=lambda field, wildcard, help_text: MagicMock(
+                    name=field["field_name"]
+                ),
             ),
         ):
             form = PermissionSetForm.__new__(PermissionSetForm)
@@ -210,22 +212,22 @@ class TestPermissionSet:
             ("1", "2", "3", "4", "-1", "1"),
         ],
     )
-    def test_clean_invalid_permission_set(self, theme, sub_theme, topic, metric, geography_type, geography):
+    def test_clean_invalid_permission_set(
+        self, theme, sub_theme, topic, metric, geography_type, geography
+    ):
         permission_set = PermissionSet(
-                    theme=theme,
-                    sub_theme=sub_theme,
-                    topic=topic,
-                    metric=metric,
-                    geography_type=geography_type,
-                    geography=geography)
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
+        )
 
         with pytest.raises(ValidationError) as e:
             permission_set.clean()
 
-        assert (
-            "Invalid permission set"
-            in str(e.value)
-        )
+        assert "Invalid permission set" in str(e.value)
 
     @pytest.mark.parametrize(
         "theme,sub_theme,topic,metric,geography_type,geography",
@@ -239,14 +241,17 @@ class TestPermissionSet:
             ("1", "2", "3", "4", "-1", "-1"),
         ],
     )
-    def test_field_combination_valid_valid_cases(self, theme, sub_theme, topic, metric, geography_type, geography):
+    def test_field_combination_valid_valid_cases(
+        self, theme, sub_theme, topic, metric, geography_type, geography
+    ):
         permission_set = PermissionSet(
             theme=theme,
             sub_theme=sub_theme,
             topic=topic,
             metric=metric,
             geography_type=geography_type,
-            geography=geography)
+            geography=geography,
+        )
 
         valid = permission_set.field_combination_valid()
 
@@ -264,14 +269,17 @@ class TestPermissionSet:
             ("1", "2", "3", "4", "-1", "1"),
         ],
     )
-    def test_field_combination_valid_invalid_cases(self, theme, sub_theme, topic, metric, geography_type, geography):
+    def test_field_combination_valid_invalid_cases(
+        self, theme, sub_theme, topic, metric, geography_type, geography
+    ):
         permission_set = PermissionSet(
             theme=theme,
             sub_theme=sub_theme,
             topic=topic,
             metric=metric,
             geography_type=geography_type,
-            geography=geography)
+            geography=geography,
+        )
 
         valid = permission_set.field_combination_valid()
 

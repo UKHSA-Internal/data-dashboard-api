@@ -5,8 +5,8 @@ This module provides functionality to build a minimal permission hierarchy
 from a user's permission sets by removing subsumed (redundant) permissions.
 """
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Any
 
 from django.db.models import QuerySet
@@ -265,12 +265,13 @@ def build_permission_hierarchy(permission_sets: QuerySet) -> dict[str, Any]:
 
     def get_normalized_perms(perm):
         if not perm.field_combination_valid():
-            logger.warning(f"Permission Set - {perm.id}: Invalid permissions")
+            invalid_permission_set_warning = (
+                f"Permission Set - {perm.id}: Invalid permissions"
+            )
+            logger.warning(invalid_permission_set_warning)
         return NormalizedPermission.from_permission_set(perm)
-    
-    normalized_perms = [
-        get_normalized_perms(perm) for perm in permission_sets
-    ]
+
+    normalized_perms = [get_normalized_perms(perm) for perm in permission_sets]
 
     deduplicated = _remove_subsumed_permissions(normalized_perms)
 

@@ -5,7 +5,10 @@ from django.db import models
 from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
-from cms.auth_content.auth_utils import _create_form_field
+from cms.auth_content.auth_utils import (
+    _create_required_form_field,
+    _wildcard_chain_valid,
+)
 from cms.auth_content.constants import PERMISSION_SET_FIELDS
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
@@ -24,8 +27,8 @@ class PermissionSetForm(WagtailAdminPageForm):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(
-                field, WILDCARD_ID_VALUE, True, help_texts.PERMISSION_SET_FIELD_REQUIRED
+            self.fields[field["field_name"]] = _create_required_form_field(
+                field, WILDCARD_ID_VALUE, help_texts.PERMISSION_SET_FIELD_REQUIRED
             )
 
         if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
@@ -100,27 +103,15 @@ class PermissionSet(models.Model):
         FieldPanel("geography"),
     ]
 
-    def _wildcard_chain_valid(self, *values):
-        """
-        Given values ordered from most general to most specific,
-        once one is a wildcard (-1), all that follow must be too.
-        """
-        hit_wildcard = False
-        for value in values:
-            if hit_wildcard and value != "-1":
-                return False
-            hit_wildcard = hit_wildcard or value == "-1"
-        return True
-
     def field_combination_valid(self):
-        return (
-            self._wildcard_chain_valid(self.theme, self.sub_theme, self.topic, self.metric)
-            and self._wildcard_chain_valid(self.geography_type, self.geography)
-        )
+        return _wildcard_chain_valid(
+            self.theme, self.sub_theme, self.topic, self.metric
+        ) and _wildcard_chain_valid(self.geography_type, self.geography)
 
     def clean(self):
         if not self.field_combination_valid():
-            raise ValidationError("Invalid permission set")
+            invalid_permission_set_message = "Invalid permission set"
+            raise ValidationError(invalid_permission_set_message)
         return super().clean()
 
     class Meta:
@@ -135,7 +126,7 @@ class PermissionSet(models.Model):
                     "geography",
                 ],
                 name="unique_permission_set",
-                violation_error_message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set."
+                violation_error_message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set.",
             ),
             models.UniqueConstraint(
                 fields=["display_name"],

@@ -1,8 +1,8 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from django import forms
 
-from cms.auth_content.auth_utils import _create_form_field
+from cms.auth_content.auth_utils import _create_form_field, _create_required_form_field
 
 
 class TestCreateFormField:
@@ -101,3 +101,32 @@ class TestCreateFormField:
 
         with pytest.raises(KeyError):
             _create_form_field(field_data)
+
+
+class TestCreateRequiredFormField:
+    @patch("cms.auth_content.auth_utils._create_form_field")
+    def test_calls_create_form_field(self, mock_create_form_field):
+        field_data = {
+            "field_choice_default": "Select an option",
+            "field_choice_wildcard": None,
+            "field_choice_callable": None,
+            "field_label": "My Label",
+        }
+        wildcard_val = "-1"
+
+        _create_required_form_field(field_data, wildcard_val)
+
+        mock_create_form_field.assert_called_once_with(field_data, wildcard_val, None)
+
+    def test_sets_required_true(self):
+        field_data = {
+            "field_choice_default": "Select an option",
+            "field_choice_wildcard": None,
+            "field_choice_callable": None,
+            "field_label": "My Label",
+        }
+        wildcard_val = "-1"
+
+        result = _create_required_form_field(field_data, wildcard_val)
+
+        assert result.required == True

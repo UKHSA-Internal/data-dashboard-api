@@ -908,7 +908,7 @@ class TestGetDeduplicatedPermissions:
     def test_invalid_permissions_logged(self, caplog):
         caplog.set_level(logging.WARNING)
         from cms.auth_content.models.users import User
-        
+
         user = User.objects.create(user_id=uuid4())
         perm1 = PermissionSetFactory.create_permission_set(
             theme="-1",
@@ -932,9 +932,8 @@ class TestGetDeduplicatedPermissions:
 
         assert len(caplog.records) == 1
         assert caplog.records[0].levelname == "WARNING"
-        assert caplog.records[0].message == (
-            "Permission Set - 1: Invalid permissions"
-        )
+        assert caplog.records[0].message == ("Permission Set - 1: Invalid permissions")
+
 
 class TestGetChoiceLabel:
     """Test suite for _get_choice_label static method."""
