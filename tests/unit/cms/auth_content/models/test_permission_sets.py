@@ -184,6 +184,26 @@ class TestPermissionSetForm:
 
 
 class TestPermissionSet:
+    INVALID_PERMISSION_SET_COMBINATIONS = [
+        ("-1", "1", "-1", "-1", "-1", "-1"),
+        ("-1", "-1", "1", "-1", "-1", "-1"),
+        ("-1", "-1", "-1", "1", "-1", "-1"),
+        ("1", "-1", "1", "-1", "-1", "-1"),
+        ("1", "-1", "-1", "1", "-1", "-1"),
+        ("1", "2", "-1", "1", "-1", "-1"),
+        ("1", "2", "3", "4", "-1", "1"),
+    ]
+
+    VALID_PERMISSION_SET_COMBINATIONS = [
+        ("-1", "-1", "-1", "-1", "-1", "-1"),
+        ("1", "2", "3", "4", "1", "2"),
+        ("1", "-1", "-1", "-1", "-1", "-1"),
+        ("1", "2", "-1", "-1", "-1", "-1"),
+        ("1", "2", "3", "-1", "-1", "-1"),
+        ("1", "2", "3", "4", "1", "-1"),
+        ("1", "2", "3", "4", "-1", "-1"),
+    ]
+
     def test_get_choice_label(self):
         """
         Given a blank `PermissionSet`
@@ -202,15 +222,7 @@ class TestPermissionSet:
 
     @pytest.mark.parametrize(
         "theme,sub_theme,topic,metric,geography_type,geography",
-        [
-            ("-1", "1", "-1", "-1", "-1", "-1"),
-            ("-1", "-1", "1", "-1", "-1", "-1"),
-            ("-1", "-1", "-1", "1", "-1", "-1"),
-            ("1", "-1", "1", "-1", "-1", "-1"),
-            ("1", "-1", "-1", "1", "-1", "-1"),
-            ("1", "2", "-1", "1", "-1", "-1"),
-            ("1", "2", "3", "4", "-1", "1"),
-        ],
+        INVALID_PERMISSION_SET_COMBINATIONS,
     )
     def test_clean_invalid_permission_set(
         self, theme, sub_theme, topic, metric, geography_type, geography
@@ -231,15 +243,7 @@ class TestPermissionSet:
 
     @pytest.mark.parametrize(
         "theme,sub_theme,topic,metric,geography_type,geography",
-        [
-            ("-1", "-1", "-1", "-1", "-1", "-1"),
-            ("1", "2", "3", "4", "1", "2"),
-            ("1", "-1", "-1", "-1", "-1", "-1"),
-            ("1", "2", "-1", "-1", "-1", "-1"),
-            ("1", "2", "3", "-1", "-1", "-1"),
-            ("1", "2", "3", "4", "1", "-1"),
-            ("1", "2", "3", "4", "-1", "-1"),
-        ],
+        VALID_PERMISSION_SET_COMBINATIONS,
     )
     def test_field_combination_valid_valid_cases(
         self, theme, sub_theme, topic, metric, geography_type, geography
@@ -259,15 +263,7 @@ class TestPermissionSet:
 
     @pytest.mark.parametrize(
         "theme,sub_theme,topic,metric,geography_type,geography",
-        [
-            ("-1", "1", "-1", "-1", "-1", "-1"),
-            ("-1", "-1", "1", "-1", "-1", "-1"),
-            ("-1", "-1", "-1", "1", "-1", "-1"),
-            ("1", "-1", "1", "-1", "-1", "-1"),
-            ("1", "-1", "-1", "1", "-1", "-1"),
-            ("1", "2", "-1", "1", "-1", "-1"),
-            ("1", "2", "3", "4", "-1", "1"),
-        ],
+        INVALID_PERMISSION_SET_COMBINATIONS,
     )
     def test_field_combination_valid_invalid_cases(
         self, theme, sub_theme, topic, metric, geography_type, geography
