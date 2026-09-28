@@ -139,5 +139,5 @@ INVALID_PARAMETERS = [
         "mpox",
         "mpox_headline_countTotal",
         "cases",
-    ), # Invalid child theme
+    ),  # Invalid child theme
 ]
