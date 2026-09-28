@@ -24,6 +24,8 @@ class TestNonPublicDataHeadlinesAPI:
     @classmethod
     def get_valid_payload(cls, core_headline) -> dict:
         return {
+            "theme": core_headline.metric.topic.sub_theme.theme.name,
+            "sub_theme": core_headline.metric.topic.sub_theme.name,
             "topic": core_headline.metric.topic.name,
             "metric": core_headline.metric.name,
             "geography": core_headline.geography.name,
