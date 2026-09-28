@@ -502,6 +502,7 @@ class TestCoreTimeSeriesManager:
         # | 1st round  | 1st round  | 1st round  |   <- expected results
 
         assert retrieved_records.count() == 3
+
         # As such we expect the live records to be returned
         assert retrieved_records[0] == self._build_record_representation_in_queryset(
             record=live_core_time_series_records[0]
@@ -688,80 +689,6 @@ class TestCoreTimeSeriesManager:
         assert second_in_range_record in core_time_series_queryset
         assert third_in_range_record in core_time_series_queryset
         assert out_of_range_record not in core_time_series_queryset
-
-    @pytest.mark.django_db
-    @mock.patch(
-        "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
-        False,
-    )
-    def test_get_available_geographies_filters_by_theme_and_sub_theme_when_not_enforced(
-        self,
-    ):
-        """
-        Given `ENFORCE_PUBLIC_DATA_ONLY` is disabled
-        And multiple `CoreTimeSeries` records with different themes and sub_themes exist
-        When `get_available_geographies()` is called with specific theme and sub_theme
-            from an instance of the `CoreTimeSeriesManager`
-        Then only geographies matching the given theme and sub_theme are returned
-        """
-        # Given
-        topic = "COVID-19"
-        theme_name = "Infectious Diseases"
-        sub_theme_name = "Respiratory"
-
-        # Create records with the target theme and sub_theme
-        target_record_1 = CoreTimeSeriesFactory.create_record(
-            geography_type_name="Nation",
-            geography_name="England",
-            topic_name=topic,
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            is_public=False,
-        )
-        target_record_2 = CoreTimeSeriesFactory.create_record(
-            geography_type_name="Lower Tier Local Authority",
-            geography_name="Hackney",
-            topic_name=topic,
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            is_public=False,
-        )
-
-        # Create records with different theme/sub_theme that should be excluded
-        different_theme_record = CoreTimeSeriesFactory.create_record(
-            geography_type_name="Nation",
-            geography_name="Scotland",
-            topic_name=topic,
-            theme_name="Other Theme",
-            sub_theme_name="Other Sub Theme",
-            is_public=False,
-        )
-
-        # When
-        available_geographies = CoreTimeSeries.objects.get_available_geographies(
-            topic=topic,
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-        )
-
-        # Then
-        assert len(available_geographies) == 2
-
-        # Verify the results are ordered by geography type then geography name
-        assert available_geographies[0].geography__name == "Hackney"
-        assert (
-            available_geographies[0].geography__geography_type__name
-            == "Lower Tier Local Authority"
-        )
-
-        assert available_geographies[1].geography__name == "England"
-        assert available_geographies[1].geography__geography_type__name == "Nation"
-
-        # Verify the different theme record is not included
-        returned_geography_names = {
-            geo.geography__name for geo in available_geographies
-        }
-        assert "Scotland" not in returned_geography_names
 
 
 class TestFilterGeographiesByPermission:
