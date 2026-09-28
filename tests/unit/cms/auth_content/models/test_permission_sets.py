@@ -164,27 +164,6 @@ class TestPermissionSetForm:
         assert result == [("-1", "wildcard")]
 
     @patch("cms.auth_content.models.permission_sets.PermissionSet.objects.filter")
-    def test_validation_error_raised_if_queryset_duplicated(
-        self, mock_query_filter: MagicMock
-    ):
-        """
-        Given a form is created with an existing queryset match
-        When `clean` is called
-        Then a `ValidationError` is raised
-        """
-        form = self._make_form(queryset_exists=True)
-        mock_query_filter.return_value = form._mock_qs
-
-        # TODO: It's not raised as part of the clean function any more - its in the model constraints instead
-        with pytest.raises(ValidationError) as e:
-            form.clean()
-
-        assert (
-            "A permission set with this exact combination already exists. Please modify your selection to create a unique permission set."
-            in str(e.value)
-        )
-
-    @patch("cms.auth_content.models.permission_sets.PermissionSet.objects.filter")
     def test_returns_cleaned_data_when_no_duplicate_exists(
         self, mock_query_filter: MagicMock
     ):
@@ -218,3 +197,82 @@ class TestPermissionSet:
 
         # Then
         assert result == test_value
+
+    @pytest.mark.parametrize(
+        "theme,sub_theme,topic,metric,geography_type,geography",
+        [
+            ("-1", "1", "-1", "-1", "-1", "-1"),
+            ("-1", "-1", "1", "-1", "-1", "-1"),
+            ("-1", "-1", "-1", "1", "-1", "-1"),
+            ("1", "-1", "1", "-1", "-1", "-1"),
+            ("1", "-1", "-1", "1", "-1", "-1"),
+            ("1", "2", "-1", "1", "-1", "-1"),
+            ("1", "2", "3", "4", "-1", "1"),
+        ],
+    )
+    def test_clean_invalid_permission_set(self, theme, sub_theme, topic, metric, geography_type, geography):
+        permission_set = PermissionSet(
+                    theme=theme,
+                    sub_theme=sub_theme,
+                    topic=topic,
+                    metric=metric,
+                    geography_type=geography_type,
+                    geography=geography)
+
+        with pytest.raises(ValidationError) as e:
+            permission_set.clean()
+
+        assert (
+            "Invalid permission set"
+            in str(e.value)
+        )
+
+    @pytest.mark.parametrize(
+        "theme,sub_theme,topic,metric,geography_type,geography",
+        [
+            ("-1", "-1", "-1", "-1", "-1", "-1"),
+            ("1", "2", "3", "4", "1", "2"),
+            ("1", "-1", "-1", "-1", "-1", "-1"),
+            ("1", "2", "-1", "-1", "-1", "-1"),
+            ("1", "2", "3", "-1", "-1", "-1"),
+            ("1", "2", "3", "4", "1", "-1"),
+            ("1", "2", "3", "4", "-1", "-1"),
+        ],
+    )
+    def test_field_combination_valid_valid_cases(self, theme, sub_theme, topic, metric, geography_type, geography):
+        permission_set = PermissionSet(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography)
+
+        valid = permission_set.field_combination_valid()
+
+        assert valid == True
+
+    @pytest.mark.parametrize(
+        "theme,sub_theme,topic,metric,geography_type,geography",
+        [
+            ("-1", "1", "-1", "-1", "-1", "-1"),
+            ("-1", "-1", "1", "-1", "-1", "-1"),
+            ("-1", "-1", "-1", "1", "-1", "-1"),
+            ("1", "-1", "1", "-1", "-1", "-1"),
+            ("1", "-1", "-1", "1", "-1", "-1"),
+            ("1", "2", "-1", "1", "-1", "-1"),
+            ("1", "2", "3", "4", "-1", "1"),
+        ],
+    )
+    def test_field_combination_valid_invalid_cases(self, theme, sub_theme, topic, metric, geography_type, geography):
+        permission_set = PermissionSet(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography)
+
+        valid = permission_set.field_combination_valid()
+
+        assert valid == False

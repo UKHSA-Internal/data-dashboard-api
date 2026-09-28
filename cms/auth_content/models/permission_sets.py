@@ -18,15 +18,14 @@ from cms.metrics_interface.field_choices_callables import (
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
 
-# TODO: For the 6th AC - is this just a validity check that we can add into to_predicate? There are other places we check permissions...
-#       and they don't use the function, so would have to move that validity check out somewhere else too...
+
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
             self.fields[field["field_name"]] = _create_form_field(
-                field, WILDCARD_ID_VALUE, True, help_texts.FIELD_REQUIRED
+                field, WILDCARD_ID_VALUE, True, help_texts.PERMISSION_SET_FIELD_REQUIRED
             )
 
         if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
@@ -59,45 +58,6 @@ class PermissionSetForm(WagtailAdminPageForm):
         if value == WILDCARD_ID_VALUE:
             return [(WILDCARD_ID_VALUE, wildcard_label)]
         return [("", placeholder), (value, f"Loading... (ID: {value})")]
-
-    # def clean(self):
-    #     """Validate that this permission set doesn't already exist"""
-    #     cleaned_data = super().clean()
-
-    #     theme = cleaned_data.get("theme")
-    #     sub_theme = cleaned_data.get("sub_theme")
-    #     topic = cleaned_data.get("topic")
-    #     metric = cleaned_data.get("metric")
-    #     geography_type = cleaned_data.get("geography_type")
-    #     geography = cleaned_data.get("geography")
-
-        # Add errors like this, can do both sections and name separate
-        # so all errors can be displayed at once
-        # self.add_error()
-
-        # TODO: There's a thing about migrating/fixing existing invalid permissions sets
-        #       I think that should only be handling the empty values and treating those as no access?
-
-        # Some of the stuff on the ticket - I think just comes down to
-        # lower permissions being overridden by having all higher
-        # e.g. if you have all themes, one specific metric
-        # that equates to just having everything
-
-        # TODO: With them marked as required I don't think this check is needed? Might even be able to remove this function entirely
-        # if not theme:
-        #     raise ValidationError("Missing theme")
-        # elif not sub_theme:
-        #     raise ValidationError({"sub_theme": "Please select a sub_theme for this permission set"})
-        # elif not topic:
-        #     raise ValidationError("Missing topic")
-        # elif not metric:
-        #     raise ValidationError("Missing metric")
-        # elif not geography_type:
-        #     raise ValidationError("Missing geography type")
-        # elif not geography:
-        #     raise ValidationError("Missing geography")
-
-        # return cleaned_data
 
     class Media:
         js = ["js/permission_set.js"]
@@ -140,16 +100,27 @@ class PermissionSet(models.Model):
         FieldPanel("geography"),
     ]
 
+    def _wildcard_chain_valid(self, *values):
+        """
+        Given values ordered from most general to most specific,
+        once one is a wildcard (-1), all that follow must be too.
+        """
+        hit_wildcard = False
+        for value in values:
+            if hit_wildcard and value != "-1":
+                return False
+            hit_wildcard = hit_wildcard or value == "-1"
+        return True
+
     def field_combination_valid(self):
-        return not ((self.theme == "-1" and (self.sub_theme != "-1" or self.topic != "-1" or self.metric != "-1")) \
-                    or (self.sub_theme == "-1" and (self.topic != "-1" or self.metric != "-1")) \
-                    or (self.topic == "-1" and self.metric != "-1") \
-                    or (self.geography_type == "-1" and self.geography != "-1"))
+        return (
+            self._wildcard_chain_valid(self.theme, self.sub_theme, self.topic, self.metric)
+            and self._wildcard_chain_valid(self.geography_type, self.geography)
+        )
 
     def clean(self):
         if not self.field_combination_valid():
-                # TODO: Proper error message
-                raise ValidationError("Invalid permission set - model clean")
+            raise ValidationError("Invalid permission set")
         return super().clean()
 
     class Meta:
