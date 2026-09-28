@@ -485,8 +485,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(metric__topic__name=topic)
-        queryset = queryset.filter(is_public=is_public)
         queryset = self._exclude_data_under_embargo(queryset=queryset)
+
+        # return only geographies associated with public data if is_public is True, otherwise return all geographies
+        if is_public:
+            queryset = queryset.filter(is_public=True)
 
         return (
             queryset.values_list(
