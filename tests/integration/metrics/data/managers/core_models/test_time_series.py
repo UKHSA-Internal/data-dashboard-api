@@ -510,60 +510,59 @@ class TestCoreTimeSeriesManager:
         )
 
     @pytest.mark.django_db
-    @mock.patch(
-        "metrics.api.settings.auth.ENFORCE_PUBLIC_DATA_ONLY",
-        True,
-    )
-    def test_get_available_geographies(self):
+    @pytest.mark.parametrize("is_public, expected", [
+        (True, [
+            # The order is important, we expect the results to be ordered by geography type
+            ("Nation", "England"),
+            ("Nation", "Scotland"),
+        ]),
+        (False, [
+            # The order is important, we expect the results to be ordered by geography type
+            ("Lower Tier Local Authority", "Birmingham"),
+            ("Nation", "England"),
+            ("Nation", "Scotland"),
+        ]),
+    ])
+    def test_get_available_geographies(self, is_public: bool, expected: list[tuple[str, str]]):
         """
-        Given a `topic` and a number of public and non-public `CoreTimeSeries` records
-        When `get_available_geographies()` is called
-            from an instance of the `CoreTimeSeriesManager`
-        Then only public geographies for the topic are returned
+        Given a topic and a number of public and non-public `CoreTimeSeries` records
+        When `get_available_geographies()` is called from an instance of the `CoreTimeSeriesManager`
+        Then both the correct geographies for the topic are returned
         """
         # Given
-        topic = "COVID-19"
         CoreTimeSeriesFactory.create_record(
-            geography_type_name="Lower Tier Local Authority",
-            geography_name="Hackney",
-            topic_name=topic,
+            geography_type_name="Nation",
+            geography_name="Scotland",
+            topic_name="Influenza",
+            metric_name="influenza_testing_positivityByWeek",
+            is_public=True,
         )
         CoreTimeSeriesFactory.create_record(
             geography_type_name="Nation",
             geography_name="England",
-            topic_name=topic,
+            topic_name="Influenza",
+            metric_name="influenza_testing_positivityByWeek",
+            is_public=True,
         )
-        CoreTimeSeriesFactory.create_record(
-            geography_type_name="Nation",
-            geography_name="Scotland",
-            topic_name=topic,
-            is_public=False,
-        )
-
         CoreTimeSeriesFactory.create_record(
             geography_type_name="Lower Tier Local Authority",
             geography_name="Birmingham",
             topic_name="Influenza",
-            metric_name="influenza_testing_positivityByWeek",
+            metric_name="OFF-SENS_influenza_testing_positivityByWeek",
+            is_public=False,
         )
 
         # When
         available_geographies = CoreTimeSeries.objects.get_available_geographies(
-            topic=topic
+            topic="Influenza",
+            is_public=is_public,
         )
 
         # Then
-        assert len(available_geographies) == 2
-
-        # The order is important, we expect the results to be ordered by geography type
-        assert available_geographies[0].geography__name == "Hackney"
-        assert (
-            available_geographies[0].geography__geography_type__name
-            == "Lower Tier Local Authority"
-        )
-
-        assert available_geographies[1].geography__name == "England"
-        assert available_geographies[1].geography__geography_type__name == "Nation"
+        assert len(available_geographies) == len(expected)
+        for row, (expected_type, expected_name) in zip(available_geographies, expected):
+            assert row.geography__geography_type__name == expected_type
+            assert row.geography__name == expected_name
 
     @pytest.mark.django_db
     @mock.patch(
