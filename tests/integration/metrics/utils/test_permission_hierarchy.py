@@ -2,6 +2,7 @@
 
 from uuid import uuid4
 
+import logging
 import pytest
 
 from metrics.utils.permission_hierarchy import (
@@ -903,6 +904,37 @@ class TestGetDeduplicatedPermissions:
         hierarchy = result["permission_sets"]
         assert hierarchy[0]["theme"]["id"] == "-1"
 
+    @pytest.mark.django_db
+    def test_invalid_permissions_logged(self, caplog):
+        caplog.set_level(logging.WARNING)
+        from cms.auth_content.models.users import User
+        
+        user = User.objects.create(user_id=uuid4())
+        perm1 = PermissionSetFactory.create_permission_set(
+            theme="-1",
+            sub_theme="-1",
+            topic="-1",
+            metric="1",
+            geography_type="1",
+            geography="E92000001",
+        )
+        perm2 = PermissionSetFactory.create_permission_set(
+            theme="2",
+            sub_theme="-1",
+            topic="-1",
+            metric="-1",
+            geography_type="1",
+            geography="E92000001",
+        )
+        user.permission_sets.set([perm1, perm2])
+
+        build_permission_hierarchy(user.permission_sets.all())
+
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelname == "WARNING"
+        assert caplog.records[0].message == (
+            "Permission Set - 1: Invalid permissions"
+        )
 
 class TestGetChoiceLabel:
     """Test suite for _get_choice_label static method."""

@@ -6,6 +6,7 @@ from a user's permission sets by removing subsumed (redundant) permissions.
 """
 
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 from django.db.models import QuerySet
@@ -19,6 +20,8 @@ from metrics.data.models.core_models.supporting import (
     Theme,
     Topic,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -259,8 +262,14 @@ def build_permission_hierarchy(permission_sets: QuerySet) -> dict[str, Any]:
         1
     """
     # Convert all permission sets to normalized form
+
+    def get_normalized_perms(perm):
+        if not perm.field_combination_valid():
+            logger.warning(f"Permission Set - {perm.id}: Invalid permissions")
+        return NormalizedPermission.from_permission_set(perm)
+    
     normalized_perms = [
-        NormalizedPermission.from_permission_set(perm) for perm in permission_sets
+        get_normalized_perms(perm) for perm in permission_sets
     ]
 
     deduplicated = _remove_subsumed_permissions(normalized_perms)
