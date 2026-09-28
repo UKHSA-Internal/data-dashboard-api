@@ -31,6 +31,8 @@ def _plot(
             x_axis=x_axis,
             y_axis=ChartAxisFields.metric.name,
             sex="f" if label == "Females" else "m",
+            geography="England",
+            geography_type="Nation",
         ),
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,

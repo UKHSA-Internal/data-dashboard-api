@@ -7,8 +7,6 @@ from metrics.api.serializers.plots import PlotSerializer
 class TestPlotSerializer:
     optional_field_names = [
         "stratum",
-        "geography",
-        "geography_type",
         "sex",
         "age",
     ]

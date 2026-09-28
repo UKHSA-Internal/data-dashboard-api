@@ -33,6 +33,8 @@ def _build_request(*, permission_sets=None) -> Request:
 def _build_models(request: Request) -> tuple:
     return (
         HeadlineParameters(
+            theme="infectious_disease",
+            sub_theme="respiratory",
             topic="COVID-19",
             metric="COVID-19_metric",
             geography="England",
@@ -77,6 +79,8 @@ def _build_models(request: Request) -> tuple:
                     chart_type="bar",
                     topic="COVID-19",
                     metric="COVID-19_metric",
+                    geography="England",
+                    geography_type="Nation",
                 )
             ],
             request=request,

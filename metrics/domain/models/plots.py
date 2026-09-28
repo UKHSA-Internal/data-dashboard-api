@@ -20,11 +20,13 @@ class PlotParameters(BaseModel):
     """Holds all the request information / parameters for an individual plot on a chart."""
 
     chart_type: str = ""
+    theme: str = ""
+    sub_theme: str = ""
     topic: str
     metric: str
+    geography: str
+    geography_type: str
     stratum: str | None = ""
-    geography: str | None = ""
-    geography_type: str | None = ""
     sex: str | None = ""
     age: str | None = ""
     date_from: str | None = ""
@@ -40,8 +42,6 @@ class PlotParameters(BaseModel):
     use_smooth_lines: bool = True
     use_markers: bool = False
     metric_value_ranges: Iterable[tuple[Decimal, Decimal]] | None = None
-    theme: str = ""
-    sub_theme: str = ""
 
     @property
     def metric_group(self) -> str:
@@ -103,6 +103,8 @@ class PlotParameters(BaseModel):
             ],
             "metric": self.metric or "",
             "topic": self.topic or "",
+            "theme": self.theme or "",
+            "sub_theme": self.sub_theme or "",
             "stratum": self.stratum or "",
             "geography": self.geography or "",
             "geography_type": self.geography_type or "",
