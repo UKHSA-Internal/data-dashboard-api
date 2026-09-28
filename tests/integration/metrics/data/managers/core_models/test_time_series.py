@@ -510,20 +510,31 @@ class TestCoreTimeSeriesManager:
         )
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("is_public, expected", [
-        (True, [
-            # The order is important, we expect the results to be ordered by geography type
-            ("Nation", "England"),
-            ("Nation", "Scotland"),
-        ]),
-        (False, [
-            # The order is important, we expect the results to be ordered by geography type
-            ("Lower Tier Local Authority", "Birmingham"),
-            ("Nation", "England"),
-            ("Nation", "Scotland"),
-        ]),
-    ])
-    def test_get_available_geographies(self, is_public: bool, expected: list[tuple[str, str]]):
+    @pytest.mark.parametrize(
+        "is_public, expected",
+        [
+            (
+                True,
+                [
+                    # The order is important, we expect the results to be ordered by geography type
+                    ("Nation", "England"),
+                    ("Nation", "Scotland"),
+                ],
+            ),
+            (
+                False,
+                [
+                    # The order is important, we expect the results to be ordered by geography type
+                    ("Lower Tier Local Authority", "Birmingham"),
+                    ("Nation", "England"),
+                    ("Nation", "Scotland"),
+                ],
+            ),
+        ],
+    )
+    def test_get_available_geographies(
+        self, is_public: bool, expected: list[tuple[str, str]]
+    ):
         """
         Given a topic and a number of public and non-public `CoreTimeSeries` records
         When `get_available_geographies()` is called from an instance of the `CoreTimeSeriesManager`
