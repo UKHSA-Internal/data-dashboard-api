@@ -502,7 +502,6 @@ class TestCoreTimeSeriesManager:
         # | 1st round  | 1st round  | 1st round  |   <- expected results
 
         assert retrieved_records.count() == 3
-
         # As such we expect the live records to be returned
         assert retrieved_records[0] == self._build_record_representation_in_queryset(
             record=live_core_time_series_records[0]
