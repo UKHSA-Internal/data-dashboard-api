@@ -133,4 +133,11 @@ INVALID_PARAMETERS = [
         "antibiotics_consumption_awareAccess",
         "cases",
     ),  # Invalid metric group
+    (
+        "infectious_disease",
+        "respiratory",
+        "mpox",
+        "mpox_headline_countTotal",
+        "cases",
+    ), # Invalid child theme
 ]
