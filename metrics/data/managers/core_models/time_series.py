@@ -22,9 +22,6 @@ from common.auth.permissions import (
 )
 from common.metrics_interface.interface import MetricsAPIInterface
 from common.virtual_clock import get_embargo_time
-from metrics.api.permissions.fluent_permissions import (
-    is_public_data_only_enforced,
-)
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -485,7 +482,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
     def get_available_geographies(
-        self, *, topic: str, theme: str = "", sub_theme: str = ""
+        self, *, topic: str, is_public: bool = True, theme: str = "", sub_theme: str = ""
     ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
@@ -497,8 +494,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(metric__topic__name=topic)
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
 
-        if is_public_data_only_enforced():
+        # return only geographies associated with public data if is_public is True, otherwise return all geographies
+        if is_public:
             queryset = queryset.filter(is_public=True)
             queryset = self._exclude_data_under_embargo(queryset=queryset)
         else:
@@ -506,6 +505,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 metric__topic__sub_theme__name=sub_theme,
                 metric__topic__sub_theme__theme__name=theme,
             )
+
         return (
             queryset.values_list(
                 "geography__name",
@@ -728,7 +728,7 @@ class CoreTimeSeriesManager(models.Manager):
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_available_geographies(
-        self, *, topic: str, theme: str = "", sub_theme: str = ""
+        self, *, topic: str, is_public: bool = True, theme: str = "", sub_theme: str = ""
     ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
@@ -740,7 +740,7 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().get_available_geographies(
-            topic=topic, theme=theme, sub_theme=sub_theme
+            topic=topic, is_public=is_public, theme=theme, sub_theme=sub_theme
         )
 
     def delete_superseded_data(

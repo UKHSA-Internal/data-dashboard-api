@@ -87,6 +87,7 @@ class GeographiesView(APIView):
         payload = request_serializer.data
 
         if "topic" in payload:
+            payload["is_public"] = request.auth is None
             data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
                 payload=payload
             )
