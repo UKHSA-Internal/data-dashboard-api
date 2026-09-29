@@ -20,6 +20,7 @@ GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 class GeographiesForTopicSerializer(serializers.Serializer):
     topic = serializers.CharField()
+    is_public = serializers.BooleanField(required=False, default=True)
 
     def validate_topic(self, value):
         if not self.topic_manager.does_topic_exist(topic=value):
@@ -63,8 +64,11 @@ class GeographiesForTopicSerializer(serializers.Serializer):
 
         """
         topic: str = self.validated_data["topic"]
+        is_public: bool = self.validated_data["is_public"]
         queryset: CoreTimeSeriesQuerySet = (
-            self.core_time_series_manager.get_available_geographies(topic=topic)
+            self.core_time_series_manager.get_available_geographies(
+                topic=topic, is_public=is_public
+            )
         )
         return _serialize_queryset(queryset=queryset)
 
