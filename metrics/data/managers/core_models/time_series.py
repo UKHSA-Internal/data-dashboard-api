@@ -482,7 +482,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
     def get_available_geographies(
-        self, *, topic: str, is_public: bool = True, theme: str = "", sub_theme: str = ""
+        self,
+        *,
+        topic: str,
+        is_public: bool = True,
+        theme: str = "",
+        sub_theme: str = "",
     ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
@@ -728,7 +733,12 @@ class CoreTimeSeriesManager(models.Manager):
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_available_geographies(
-        self, *, topic: str, is_public: bool = True, theme: str = "", sub_theme: str = ""
+        self,
+        *,
+        topic: str,
+        is_public: bool = True,
+        theme: str = "",
+        sub_theme: str = "",
     ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
