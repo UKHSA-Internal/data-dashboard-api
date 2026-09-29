@@ -1164,7 +1164,6 @@ class TestCoreTimeSeriesGetAvailableGeographies:
         # IMPORTANT: Must pass is_public=False when records are non-public!
         available_geographies = CoreTimeSeries.objects.get_available_geographies(
             topic=topic,
-            is_public=False,
             theme=theme_name,
             sub_theme=sub_theme_name,
         )
