@@ -510,7 +510,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 metric__topic__sub_theme__name=sub_theme,
                 metric__topic__sub_theme__theme__name=theme,
             )
-
         return (
             queryset.values_list(
                 "geography__name",
