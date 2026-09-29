@@ -3,6 +3,7 @@ from django.db import models
 
 import pytest
 
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version.v3.serializers.api_request_serializer import (
     NO_LOOKUP_FIELD_ERROR_MESSAGE,
     APIRequestSerializerv3,
@@ -57,30 +58,48 @@ class TestAPITimeSeriesRequestSerializerV3:
         with pytest.raises(NotImplementedError, match=NO_LOOKUP_FIELD_ERROR_MESSAGE):
             _ = serializer.lookup_field
 
-    def test_get_formatted_kwargs_from_request(self):
+    @pytest.mark.parametrize(
+        "api_model",
+        [
+            MetricsPublicAPIInterface.get_api_timeseries_model(),
+            MetricsPublicAPIInterface.get_api_headline_model(),
+        ],
+    )
+    def test_get_formatted_kwargs_from_request(self, api_model: models.Model):
         """
         Given a request which contains kwargs from the URL parameters
         When `get_formatted_kwargs_from_request()` is called from an instance of the `APITimeSeriesRequestSerializer`
         Then the kwargs from the request URL parameters are returned and any + symbols replaced with spaces.
         """
-        # Given
-        fake_request_kwargs = {
-            "theme": "infectious_disease",
-            "geography_type": "Government+Office+Region",
-        }
-        fake_parser_context = {"kwargs": fake_request_kwargs}
-        mocked_request = mock.Mock(parser_context=fake_parser_context)
-        serializer = APIRequestSerializerv3(context={"request": mocked_request})
+        with mock.patch.object(api_model, "objects") as api_manager_spy:
 
-        # When
-        expected_request_kwargs = {
-            "theme": "infectious_disease",
-            "geography_type": "Government Office Region",
-        }
-        returned_kwargs_from_request = serializer.get_formatted_kwargs_from_request()
+            # Given
+            fake_request_kwargs = {
+                "theme": "infectious_disease",
+                "geography_type": "Government+Office+Region",
+            }
+            fake_parser_context = {
+                "kwargs": fake_request_kwargs,
+            }
+            mocked_request = mock.Mock(parser_context=fake_parser_context)
+            serializer = APIRequestSerializerv3(
+                context={
+                    "request": mocked_request,
+                    "lookup_field": "theme",
+                    "api_model": api_model,
+                }
+            )
 
-        # Then
-        assert returned_kwargs_from_request == expected_request_kwargs
+            # When
+            serializer.get_queryset()
+
+            # Then
+            api_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
+                lookup_field="theme",
+                theme="infectious_disease",
+                permission_sets=None,
+                geography_type="Government Office Region",
+            )
 
     @pytest.mark.parametrize(
         "api_model",

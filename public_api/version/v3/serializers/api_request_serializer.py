@@ -57,7 +57,7 @@ class APIRequestSerializerv3(APITimeSeriesRequestSerializerv2):
                 `<APIQuerySet ['infectious_disease']>`
 
         """
-        request_kwargs = self.context["request"].parser_context["kwargs"]
+        request_kwargs = self.get_formatted_kwargs_from_request()
         permission_sets = get_permission_sets_for_request(self.context["request"])
         return self.api_model.objects.get_distinct_column_values_with_filters(
             lookup_field=self.lookup_field,
