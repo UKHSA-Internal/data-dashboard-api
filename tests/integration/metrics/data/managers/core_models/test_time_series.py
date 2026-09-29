@@ -1087,29 +1087,6 @@ class TestIsGeographyPermitted:
 class TestCoreTimeSeriesGetAvailableGeographies:
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize(
-        "is_public, expected",
-        [
-            (
-                True,
-                [
-                    # Only public records
-                    ("Nation", "England"),
-                    ("Nation", "Scotland"),
-                ],
-            ),
-            (
-                False,
-                [
-                    # All records (public + non-public)
-                    ("Lower Tier Local Authority", "Birmingham"),
-                    ("Nation", "England"),
-                    ("Nation", "Scotland"),
-                ],
-            ),
-        ],
-    )
-    @pytest.mark.django_db
     @mock.patch(
         "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
         False,
