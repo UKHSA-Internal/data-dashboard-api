@@ -1,6 +1,4 @@
-import pytest
 from unittest import mock
-
 import pytest
 
 from public_api.version.v3.views.base import BaseNestedAPIViewV3
