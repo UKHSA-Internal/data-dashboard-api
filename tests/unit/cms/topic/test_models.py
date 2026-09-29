@@ -768,9 +768,9 @@ class TestTopicPageThemeProperties:
             content_type_id=1,
         )
         page.sub_theme = fake_sub_theme_name
- 
+
         # When
         sub_theme_name = page.sub_theme_name
- 
+
         # Then
         assert sub_theme_name == fake_sub_theme_name
