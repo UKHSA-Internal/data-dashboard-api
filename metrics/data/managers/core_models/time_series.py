@@ -502,7 +502,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset = queryset.filter(is_public=True)
             queryset = self._exclude_data_under_embargo(queryset=queryset)
         else:
-            queryset = queryset.filter(theme__name=theme, sub_theme__name=sub_theme)
+            queryset = queryset.filter(
+                metric__topic__sub_theme__name=sub_theme,
+                metric__topic__sub_theme__theme__name=theme,
+            )
         return (
             queryset.values_list(
                 "geography__name",

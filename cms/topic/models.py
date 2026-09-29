@@ -147,13 +147,13 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
     def theme_name(self) -> str | None:
         if not self.theme:
             return None
-        return self._theme_manager.get_name_by_id(int(self.theme))
+        return self.theme
 
     @property
     def sub_theme_name(self) -> str | None:
         if not self.sub_theme:
             return None
-        return self._sub_theme_manager.get_name_by_id(int(self.sub_theme))
+        return self.sub_theme
 
     def find_latest_released_embargo_for_metrics(
         self,
