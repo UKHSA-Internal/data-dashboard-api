@@ -505,7 +505,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         if is_public:
             queryset = queryset.filter(is_public=True)
             queryset = self._exclude_data_under_embargo(queryset=queryset)
-        else:
+        elif theme and sub_theme:
             queryset = queryset.filter(
                 metric__topic__sub_theme__name=sub_theme,
                 metric__topic__sub_theme__theme__name=theme,

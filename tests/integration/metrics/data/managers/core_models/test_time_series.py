@@ -1087,6 +1087,72 @@ class TestIsGeographyPermitted:
 class TestCoreTimeSeriesGetAvailableGeographies:
 
     @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "is_public, expected",
+        [
+            (
+                True,
+                [
+                    # Only public records
+                    ("Nation", "England"),
+                    ("Nation", "Scotland"),
+                ],
+            ),
+            (
+                False,
+                [
+                    # All records (public + non-public)
+                    ("Lower Tier Local Authority", "Birmingham"),
+                    ("Nation", "England"),
+                    ("Nation", "Scotland"),
+                ],
+            ),
+        ],
+    )
+    def test_get_available_geographies(
+        self, is_public: bool, expected: list[tuple[str, str]]
+    ):
+        """
+        Given a topic and a number of public and non-public `CoreTimeSeries` records
+        When `get_available_geographies()` is called with is_public parameter
+        Then the correct geographies for the topic are returned based on is_public flag
+        """
+        # Given
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="Scotland",
+            topic_name="Influenza",
+            metric_name="influenza_testing_positivityByWeek",
+            is_public=True,
+        )
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="England",
+            topic_name="Influenza",
+            metric_name="influenza_testing_positivityByWeek",
+            is_public=True,
+        )
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Lower Tier Local Authority",
+            geography_name="Birmingham",
+            topic_name="Influenza",
+            metric_name="OFF-SENS_influenza_testing_positivityByWeek",
+            is_public=False,
+        )
+
+        # When
+        available_geographies = CoreTimeSeries.objects.get_available_geographies(
+            topic="Influenza",
+            is_public=is_public,
+        )
+
+        # Then
+        assert len(available_geographies) == len(expected)
+        for row, (expected_type, expected_name) in zip(available_geographies, expected):
+            assert row.geography__geography_type__name == expected_type
+            assert row.geography__name == expected_name
+
+    @pytest.mark.django_db
     @mock.patch(
         "metrics.api.permissions.fluent_permissions.auth.ENFORCE_PUBLIC_DATA_ONLY",
         False,
@@ -1138,8 +1204,10 @@ class TestCoreTimeSeriesGetAvailableGeographies:
         )
 
         # When
+        # IMPORTANT: Must pass is_public=False when records are non-public!
         available_geographies = CoreTimeSeries.objects.get_available_geographies(
             topic=topic,
+            is_public=False,
             theme=theme_name,
             sub_theme=sub_theme_name,
         )
