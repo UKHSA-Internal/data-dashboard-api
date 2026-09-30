@@ -1,7 +1,10 @@
 from django.db import models
 from django.urls import path, resolvers
 
-from public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.version.v3.serializers.serializers import (
+    APITimeSeriesListSerializerv3,
+    APIHeadlineListSerializerv3,
+)
 from public_api.version.v3.views import (
     GeographyDetailViewV3,
     GeographyListViewV3,
@@ -20,64 +23,84 @@ from public_api.version.v3.views.viewset import APIViewSetV3
 
 
 def _construct_urls(
-    *, prefix: str, url_prefix: str, api_model: models.Model
+    *, prefix: str, url_prefix: str, serializer_class: serializers.ModelSerializer
 ) -> list[resolvers.URLResolver]:
     return [
         path(
             f"{prefix}/themes/",
-            ThemeListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            ThemeListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-theme-list-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>",
-            ThemeDetailViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            ThemeDetailViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-theme-detail-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/",
-            SubThemeListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            SubThemeListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-sub_theme-list-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>",
-            SubThemeDetailViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            SubThemeDetailViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-sub_theme-detail-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics",
-            TopicListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            TopicListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-topic-list-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
-            TopicDetailViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            TopicDetailViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-topic-detail-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
-            GeographyTypeListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            GeographyTypeListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-geography_type-list-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
             GeographyTypeDetailViewV3.as_view(
-                api_model=api_model, url_prefix=url_prefix
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
             ),
             name=f"{url_prefix}-geography_type-detail-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies",
-            GeographyListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            GeographyListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-geography-list-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
-            GeographyDetailViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            GeographyDetailViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-geography-detail-v3",
         ),
         path(
             f"{prefix}/themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
-            MetricListViewV3.as_view(api_model=api_model, url_prefix=url_prefix),
+            MetricListViewV3.as_view(
+                api_model=serializer_class.Meta.model, url_prefix=url_prefix
+            ),
             name=f"{url_prefix}-metric-list-v3",
         ),
         path(
@@ -85,7 +108,7 @@ def _construct_urls(
             APIViewSetV3.as_view(
                 {"get": "list"},
                 name=APIViewSetV3.name,
-                api_model=api_model,
+                serializer_class=serializer_class,
             ),
             name=f"{url_prefix}-metric-detail-v3",
         ),
@@ -117,11 +140,11 @@ def construct_version_three_urls(
         + _construct_urls(
             prefix=f"{prefix}/timeseries",
             url_prefix="timeseries",
-            api_model=MetricsPublicAPIInterface.get_api_timeseries_model(),
+            serializer_class=APITimeSeriesListSerializerv3,
         )
         + _construct_urls(
             prefix=f"{prefix}/headline",
             url_prefix="headline",
-            api_model=MetricsPublicAPIInterface.get_api_headline_model(),
+            serializer_class=APIHeadlineListSerializerv3,
         )
     )
