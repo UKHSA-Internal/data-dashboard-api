@@ -3,9 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
 from public_api.auth import get_permission_sets_for_request
-from public_api.version.v3.serializers.serializers import (
-    APISerializerv3,
-)
+
 from public_api.version.v3.views.base import (
     PUBLIC_API_TAG,
     add_private_cache_control_header,
@@ -72,10 +70,8 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
 
     """
 
-    api_model = None
     permission_classes = []
     name = "API Slice"
-    serializer_class = APISerializerv3
     pagination_class = APIPaginationv3
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
@@ -86,14 +82,13 @@ class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.serializer_class.Meta.model = self.api_model
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
         return add_private_cache_control_header(request=request, response=response)
 
     def get_queryset(self):
-        queryset = self.api_model.objects.get_queryset()
+        queryset = self.serializer_class.Meta.model.objects.get_queryset()
         permission_sets = get_permission_sets_for_request(self.request)
 
         return queryset.filter_for_list_view(
