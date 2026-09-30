@@ -10,6 +10,8 @@ from metrics.data.models.api_models import APIHeadline, APITimeSeries
 from tests.factories.metrics.api_models.headline import APIHeadlineFactory
 from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
 
+DEFAULT_PAGE_SIZE = 5
+
 
 class TestPublicAPIV3:
     @property
@@ -339,9 +341,15 @@ class TestPublicAPIV3:
                 day=i + 1,
             )
 
-        for data_type, date_field in [
-            ("timeseries", "date"),
-            ("headline", "period_start"),
+        for data_type, bonus_fields in [
+            (
+                "timeseries",
+                ["date", "year", "month", "epiweek", "in_reporting_delay_period"],
+            ),
+            (
+                "headline",
+                ["period_start", "period_end", "upper_confidence", "lower_confidence"],
+            ),
         ]:
             # When
             target_url = (
@@ -367,11 +375,11 @@ class TestPublicAPIV3:
             assert response_data["previous"] is None
 
             # Check that by default, the page size is returned as 5
-            assert len(response_data["results"]) == 5
+            assert len(response_data["results"]) == DEFAULT_PAGE_SIZE
 
-            # Check that the results match the expected records
-            # which were to be filtered for
-
+            # Check that the results match the expected records which were to
+            # be filtered for and in the correct order using the array index as
+            # a canary for metric_value
             for metric_value, result in enumerate(response_data["results"]):
                 assert result["theme"] == theme
                 assert result["sub_theme"] == sub_theme
@@ -381,9 +389,11 @@ class TestPublicAPIV3:
                 assert result["topic"] == topic
                 assert result["metric"] == metric
                 assert result["metric_group"] == metric_group
-                assert float(result["metric_value"]) == float(metric_value)
+                assert result["metric_value"] == metric_value
                 assert result["sex"] == sex
                 assert result["age"] == age
+            for field_name in bonus_fields:
+                assert field_name in result
 
     @pytest.mark.django_db
     def test_returns_correct_data_at_final_view_with_query_parameters(self):
