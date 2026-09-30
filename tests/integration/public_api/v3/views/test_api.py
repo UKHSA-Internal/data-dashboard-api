@@ -29,8 +29,9 @@ class TestPublicAPIV3:
         **kwargs,
     ) -> APITimeSeries:
         day = kwargs.pop("day", 1)
+        metric_value = kwargs.pop("metric_value", 123)
         return APITimeSeriesFactory.create_record(
-            metric_value=123,
+            metric_value=metric_value,
             epiweek=1,
             year=2023,
             date=datetime.date(year=2023, month=1, day=day),
@@ -189,7 +190,6 @@ class TestPublicAPIV3:
                 response: Response = client.get(target_url)
 
                 assert response.status_code == HTTPStatus.OK
-                print(f"AIDAN: response was {response.text}")
                 response_data: list[dict] = response.json()
 
                 # Then
@@ -240,7 +240,8 @@ class TestPublicAPIV3:
         expected_matching_count: int = 7
 
         # Records to be filtered for
-        for i in range(expected_matching_count):
+        # Create them in reverse date order so we can check that the API ordering works
+        for i in reversed(range(expected_matching_count)):
             self._setup_api_time_series(
                 theme=theme,
                 sub_theme=sub_theme,
@@ -250,6 +251,7 @@ class TestPublicAPIV3:
                 geography_code=geography_code,
                 metric_group=metric_group,
                 metric=metric,
+                metric_value=i,
                 sex=sex,
                 age=age,
                 day=i + 1,
@@ -265,12 +267,48 @@ class TestPublicAPIV3:
                 geography_code=geography_code,
                 metric_group=metric_group,
                 metric=metric,
+                metric_value=i,
                 sex=sex,
                 age=age,
                 day=i + 1,
             )
 
         # Records to be filtered out
+        # This is an older record for one of the first seven
+        self._setup_api_time_series(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            geography_type=geography_type,
+            geography=geography,
+            geography_code=geography_code,
+            metric_group=metric_group,
+            metric=metric,
+            metric_value=-1,
+            sex=sex,
+            age=age,
+            refresh_date=datetime.datetime.fromisoformat("2022-01-01"),
+            day=1,
+            in_reporting_delay_period=in_reporting_delay_period,
+        )
+
+        self._setup_api_headline(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            geography_type=geography_type,
+            geography=geography,
+            geography_code=geography_code,
+            metric_group=metric_group,
+            metric=metric,
+            metric_value=-1,
+            sex=sex,
+            age=age,
+            refresh_date=datetime.datetime.fromisoformat("2022-01-01"),
+            day=1,
+        )
+
+        # These are for another metric
         for i in range(7, 17):
             self._setup_api_time_series(
                 theme=theme,
@@ -281,6 +319,7 @@ class TestPublicAPIV3:
                 geography_code=geography_code,
                 metric_group=metric_group,
                 metric=other_metric,
+                metric_value=i,
                 sex=sex,
                 age=age,
                 day=i + 1,
@@ -300,7 +339,10 @@ class TestPublicAPIV3:
                 day=i + 1,
             )
 
-        for data_type in ["timeseries", "headline"]:
+        for data_type, date_field in [
+            ("timeseries", "date"),
+            ("headline", "period_start"),
+        ]:
             # When
             target_url = (
                 f"{self.target_domain}"
@@ -317,7 +359,6 @@ class TestPublicAPIV3:
             # Then
             # Check that the filtering has been applied correctly
             # And that only the requested records are returned
-            print(f"AIDAN: response was {response.text}")
             response_data: list[dict] = response.json()
             assert response_data["count"] == expected_matching_count
 
@@ -330,15 +371,17 @@ class TestPublicAPIV3:
 
             # Check that the results match the expected records
             # which were to be filtered for
-            for result in response_data["results"]:
+
+            for metric_value, result in enumerate(response_data["results"]):
                 assert result["theme"] == theme
                 assert result["sub_theme"] == sub_theme
                 assert result["geography_type"] == geography_type
                 assert result["geography"] == geography
                 assert result["geography_code"] == geography_code
-                assert result["topic"] == topic != other_topic
-                assert result["metric"] == metric != other_metric
+                assert result["topic"] == topic
+                assert result["metric"] == metric
                 assert result["metric_group"] == metric_group
+                assert float(result["metric_value"]) == float(metric_value)
                 assert result["sex"] == sex
                 assert result["age"] == age
 
@@ -468,8 +511,8 @@ class TestPublicAPIV3:
                 assert result["geography"] == geography
                 assert result["topic"] == topic
                 assert result["metric"] == metric
-                assert result["sex"] == sex != other_sex
-                assert result["age"] == age != other_age
+                assert result["sex"] == sex
+                assert result["age"] == age
 
     @pytest.mark.django_db
     def test_root_view(self):
