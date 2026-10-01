@@ -1,4 +1,5 @@
 import logging
+import os
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
@@ -11,6 +12,13 @@ from metrics.utils.permission_hierarchy import build_permission_hierarchy
 
 logger = logging.getLogger(__name__)
 audit_logger = logging.getLogger("audit")
+
+# specifies whether to always pull an authenticated user's permission sets from the database on each authenticated
+# request with a token, even if the permission sets are available in the token. This functionality mirrors how the API
+# authenticated requests work, and help when running the backend API locally but connected to a dev Cognito user pool.
+AUTH_USE_FRESH_PERMISSION_SETS = (
+    os.environ.get("AUTH_USE_FRESH_PERMISSION_SETS", "").lower() == "true"
+)
 
 
 def get_user_permission_set(user_id: str):
@@ -33,12 +41,12 @@ class CognitoManager(BaseUserManager):
         """
         try:
             username = jwt_payload["entraObjectId"]
-            # Check if the JWT already includes permissionSets
-            # Use if found, if not grab user permissions from the database
-            if "permissionSets" in jwt_payload and jwt_payload["permissionSets"] != []:
-                permission_sets = jwt_payload["permissionSets"]
-            else:
+            # if the permission sets are not in the JWT, or we want to always use fresh copies, grab them from the
+            # database, otherwise, use the ones in the JWT
+            if AUTH_USE_FRESH_PERMISSION_SETS or not jwt_payload.get("permissionSets"):
                 permission_sets = get_user_permission_set(username)
+            else:
+                permission_sets = jwt_payload["permissionSets"]
         except KeyError:
             logger.debug(
                 "Error getting entraObjectId and/or permissionSets field(s)"
