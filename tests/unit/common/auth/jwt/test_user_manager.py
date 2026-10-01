@@ -65,6 +65,32 @@ def test_get_or_create_for_cognito_returns_with_empty_permission_sets(mock_get_p
     mock_get_perms.assert_called_once_with(jwt_payload["entraObjectId"])
 
 
+@patch("common.auth.jwt.user_manager.get_user_permission_set")
+def test_get_or_create_for_cognito_returns_database_permissions_when_env_var_set(
+    mock_get_perms,
+):
+    """
+    Given AUTH_USE_FRESH_PERMISSION_SETS is set to true
+    When CognitoManager.get_or_create is called
+    Then the JWT payload's permission sets are ignored and the mock database's ones are used
+    """
+    # given
+    mock_perm_sets = ["Permission_3", "Permission_4", "Permission_5"]
+    mock_get_perms.return_value = mock_perm_sets
+
+    # when
+    with patch("common.auth.jwt.user_manager.AUTH_USE_FRESH_PERMISSION_SETS", True):
+        user = CognitoManager.get_or_create(
+            jwt_payload={
+                "entraObjectId": "test-username",
+                "permissionSets": ["Permission_1", "Permission_2"],
+            }
+        )
+
+    # then
+    assert user.permission_sets == mock_perm_sets
+
+
 @patch("cms.auth_content.models.api_application.APIApplication.objects.filter")
 @patch("common.auth.jwt.user_manager.get_application_permission_set")
 def test_get_or_create_for_entra_returns_with_permission_sets_lookup(
