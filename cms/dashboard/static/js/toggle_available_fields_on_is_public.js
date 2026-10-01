@@ -16,14 +16,12 @@
       theme: theme,
       subTheme: subTheme, 
       topic: topic,
-      // metric: metric,
     }
 
     if (isPublicCheckbox.checked) {
       Object.values(fields).forEach(disableField)
       clearDropdown(fields.subTheme, "Select theme first")
       clearDropdown(fields.topic, "Select sub-theme first")
-      // clearDropdown(fields.metric, "Select topic first")
       restoreMetricOptions()
       fields.theme.value = ""
     } else {
@@ -62,7 +60,7 @@
     try {
       const queryString =
         "is_public" in queryParams
-          ? `?is_public=${queryParams.is_public}`
+          ? `?is_public=${String(queryParams.is_public)}`
           : ""
 
       const url = `/api/data-hierarchy/${endpoint}/${dataItemId}${queryString}`

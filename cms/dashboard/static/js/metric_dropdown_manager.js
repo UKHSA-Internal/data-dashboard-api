@@ -80,7 +80,7 @@ class MetricForm {
             let url = `/api/data-hierarchy/${endpoint}/${dataItemId}`;
 
             if ("is_public" in queryParams) {
-                url += `?is_public=${queryParams.is_public}`;
+                url += `?is_public=${String(queryParams.is_public)}`;
             }
 
             const response = await fetch(url);
@@ -134,7 +134,7 @@ class MetricForm {
         );
     }
 
-    render(block) {
+    async render(block) {
         const rootNode = block.container[0];
 
         this.setupFields(rootNode);
@@ -143,7 +143,7 @@ class MetricForm {
             return;
         }
 
-        this.loadMetrics();
+        await this.loadMetrics();
 
         this.setupEvents();
     }
