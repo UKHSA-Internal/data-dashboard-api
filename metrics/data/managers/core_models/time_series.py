@@ -862,6 +862,8 @@ def filter_geographies_by_permission(
         )
         topic_id = ""
 
+    if (theme and theme_id is None) or (sub_theme and sub_theme_id is None):
+        return []
     filtered_data = []
     for entry in data:
         geography_type_name = entry["geography_type"]
@@ -899,8 +901,6 @@ def _is_geography_permitted(
 ) -> bool:
 
     if geography_type_id is None or geography_id is None:
-        return False
-    if theme_id is None or sub_theme_id is None:
         return False
 
     geography_type_id = str(geography_type_id)
