@@ -126,7 +126,6 @@ class PermissionSet(models.Model):
                     "geography",
                 ],
                 name="unique_permission_set",
-                violation_error_message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set.",
             ),
             models.UniqueConstraint(
                 fields=["display_name"],
@@ -134,6 +133,28 @@ class PermissionSet(models.Model):
                 name="unique_non_null_display_name",
             ),
         ]
+
+    def validate_constraints(self, exclude=None):
+        try:
+            super().validate_constraints(exclude=exclude)
+        except ValidationError as exc:
+            dupe = (
+                type(self)
+                .objects.filter(
+                    theme=self.theme,
+                    sub_theme=self.sub_theme,
+                    topic=self.topic,
+                    metric=self.metric,
+                    geography_type=self.geography_type,
+                    geography=self.geography,
+                )
+                .exclude(pk=self.pk)
+                .first()
+            )
+            if dupe:
+                duplicate_message = f"A matching permission set already exists: {dupe.display_name or dupe.name}."
+                raise ValidationError(duplicate_message) from exc
+            raise
 
     def save(self, *args, **kwargs):
         """Generate the display name before saving"""
