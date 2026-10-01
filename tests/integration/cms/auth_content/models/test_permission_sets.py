@@ -29,8 +29,9 @@ class TestPermissionSet:
         with pytest.raises(ValidationError) as e:
             permission_set.full_clean()
 
-        assert f"A matching permission set already exists: {original.display_name}" in str(
-            e.value
+        assert (
+            f"A matching permission set already exists: {original.display_name}"
+            in str(e.value)
         )
 
     @pytest.mark.django_db
