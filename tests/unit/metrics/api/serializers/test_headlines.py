@@ -52,8 +52,12 @@ class TestHeadlinesQuerySerializer:
         fake_topic = fake_metric.metric_group.topic
 
         data: cls.DATA_PAYLOAD_HINT = {
+            "theme": fake_topic.sub_theme.theme.name,
+            "sub_theme": fake_topic.sub_theme.name,
             "topic": fake_topic.name,
             "metric": fake_metric.name,
+            "geography": "England",
+            "geography_type": "Nation",
         }
 
         return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
@@ -71,11 +75,20 @@ class TestHeadlinesQuerySerializer:
             topic_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
+        fake_geography = mock.Mock()
+        fake_geography.name = "England"
+        fake_geography_type = mock.Mock()
+        fake_geography_type.name = "Nation"
+
         serializer = HeadlinesQuerySerializer(
             data=data_payload,
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": FakeGeographyManager([fake_geography]),
+                "geography_type_manager": FakeGeographyTypeManager(
+                    [fake_geography_type]
+                ),
             },
         )
 

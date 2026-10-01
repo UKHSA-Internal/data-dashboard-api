@@ -29,8 +29,15 @@ class CognitoTokenValidator:
 
     @cached_property
     def _json_web_keys(self):
-        response = requests.get(self.pool_url + "/.well-known/jwks.json", timeout=10)
-        response.raise_for_status()
+        try:
+            response = requests.get(
+                self.pool_url + "/.well-known/jwks.json", timeout=10
+            )
+            response.raise_for_status()
+        except (requests.HTTPError, requests.exceptions.ConnectionError) as exc:
+            msg = "Unable to validate this token"
+            raise TokenError(msg) from exc
+
         json_data = response.json()
         return {item["kid"]: json.dumps(item) for item in json_data["keys"]}
 
@@ -40,16 +47,21 @@ class CognitoTokenValidator:
         except jwt.DecodeError as exc:
             raise TokenError(str(exc)) from exc
 
+        try:
+            kid = headers["kid"]
+        except KeyError as exc:
+            raise TokenError(str(exc)) from exc
+
         if getattr(settings, "COGNITO_PUBLIC_KEYS_CACHING_ENABLED", False):
-            cache_key = "cognito_jwt:{}".format(headers["kid"])
+            cache_key = f"cognito_jwt:{kid}"
             jwk_data = cache.get(cache_key)
 
             if not jwk_data:
-                jwk_data = self._json_web_keys.get(headers["kid"])
+                jwk_data = self._json_web_keys.get(kid)
                 timeout = getattr(settings, "COGNITO_PUBLIC_KEYS_CACHING_TIMEOUT", 300)
                 cache.set(cache_key, jwk_data, timeout=timeout)
         else:
-            jwk_data = self._json_web_keys.get(headers["kid"])
+            jwk_data = self._json_web_keys.get(kid)
 
         if jwk_data:
             return RSAAlgorithm.from_jwk(jwk_data)
@@ -100,8 +112,13 @@ class EntraTokenValidator:
 
     @cached_property
     def _json_web_keys(self):
-        response = requests.get(self.jwks_url, timeout=10)
-        response.raise_for_status()
+        try:
+            response = requests.get(self.jwks_url, timeout=10)
+            response.raise_for_status()
+        except (requests.HTTPError, requests.exceptions.ConnectionError) as exc:
+            msg = "Unable to validate this token"
+            raise TokenError(msg) from exc
+
         json_data = response.json()
         return {item["kid"]: json.dumps(item) for item in json_data["keys"]}
 
@@ -111,16 +128,21 @@ class EntraTokenValidator:
         except jwt.DecodeError as exc:
             raise TokenError(str(exc)) from exc
 
+        try:
+            kid = headers["kid"]
+        except KeyError as exc:
+            raise TokenError(str(exc)) from exc
+
         if getattr(settings, "ENTRA_PUBLIC_KEYS_CACHING_ENABLED", False):
-            cache_key = "entra_jwt:{}".format(headers["kid"])
+            cache_key = f"entra_jwt:{kid}"
             jwk_data = cache.get(cache_key)
 
             if not jwk_data:
-                jwk_data = self._json_web_keys.get(headers["kid"])
+                jwk_data = self._json_web_keys.get(kid)
                 timeout = getattr(settings, "ENTRA_PUBLIC_KEYS_CACHING_TIMEOUT", 300)
                 cache.set(cache_key, jwk_data, timeout=timeout)
         else:
-            jwk_data = self._json_web_keys.get(headers["kid"])
+            jwk_data = self._json_web_keys.get(kid)
 
         if jwk_data:
             return RSAAlgorithm.from_jwk(jwk_data)

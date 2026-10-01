@@ -35,6 +35,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                             {
                                                 "type": "plot",
                                                 "value": {
+                                                    "theme": "infectious_disease",
+                                                    "sub_theme": "respiratory",
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_cases_countRollingMean",
                                                     "geography": "England",
@@ -65,6 +67,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                             {
                                                 "type": "plot",
                                                 "value": {
+                                                    "theme": "infectious_disease",
+                                                    "sub_theme": "respiratory",
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                                                     "geography": "England",
@@ -95,6 +99,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                             {
                                                 "type": "plot",
                                                 "value": {
+                                                    "theme": "infectious_disease",
+                                                    "sub_theme": "respiratory",
                                                     "topic": "RSV",
                                                     "metric": "RSV_testing_positivityByWeek",
                                                     "geography": "England",
