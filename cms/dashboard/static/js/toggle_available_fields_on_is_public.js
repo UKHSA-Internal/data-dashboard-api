@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
   "use strict"
   let theme, subTheme, topic, metric, isPublicCheckbox;
   let originalMetricOptions;
@@ -14,7 +14,7 @@
         'select[name="page_classification"]',
       ),
       theme: theme,
-      subTheme: subTheme, 
+      subTheme: subTheme,
       topic: topic,
     }
 
@@ -29,16 +29,16 @@
         clearDropdown(metric, "Select topic first")
       }
       Object.values(fields).forEach(enableField)
-      fields.classification.value="official_sensitive"
+      fields.classification.value = "official_sensitive"
     }
   }
 
   function restoreMetricOptions() {
     clearDropdown(metric, "----------")
     originalMetricOptions.forEach(option => {
-        if (option.text !== "Select topic first") {
-          metric.appendChild(option.cloneNode(true));
-        }
+      if (option.text !== "Select topic first") {
+        metric.appendChild(option.cloneNode(true));
+      }
     });
   }
 
@@ -59,8 +59,8 @@
   async function fetchChoices(endpoint, dataItemId, queryParams = {}) {
     try {
       const queryString =
-        "is_public" in queryParams
-          ? `?is_public=${String(queryParams.is_public)}`
+        typeof queryParams.is_public === "boolean"
+          ? `?is_public=${queryParams.is_public}`
           : ""
 
       const url = `/api/data-hierarchy/${endpoint}/${dataItemId}${queryString}`

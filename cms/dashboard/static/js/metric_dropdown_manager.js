@@ -1,5 +1,5 @@
 class BaseMetricsElementBlockDefinition extends globalThis.wagtailStreamField.blocks.StructBlockDefinition {
-    render(placeholder, prefix, initialState, initialError) {
+    async render(placeholder, prefix, initialState, initialError) {
         const block = super.render(
             placeholder,
             prefix,
@@ -8,7 +8,7 @@ class BaseMetricsElementBlockDefinition extends globalThis.wagtailStreamField.bl
         );
 
         const metricForm = new MetricForm();
-        metricForm.render(block);
+        await metricForm.render(block);
         return block;
     }
 }
@@ -77,13 +77,13 @@ class MetricForm {
 
     async fetchChoices(endpoint, dataItemId, queryParams = {}) {
         try {
-            let url = `/api/data-hierarchy/${endpoint}/${dataItemId}`;
+            const queryString =
+                typeof queryParams.is_public === "boolean"
+                    ? `?is_public=${queryParams.is_public}`
+                    : ""
 
-            if ("is_public" in queryParams) {
-                url += `?is_public=${String(queryParams.is_public)}`;
-            }
-
-            const response = await fetch(url);
+            const url = `/api/data-hierarchy/${endpoint}/${dataItemId}${queryString}`
+            const response = await fetch(url)
 
             if (!response.ok) {
                 console.error(`Failed to fetch ${endpoint}`);
