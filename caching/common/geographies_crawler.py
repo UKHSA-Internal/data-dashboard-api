@@ -36,7 +36,9 @@ class GeographiesAPICrawler:
     def __init__(self, *, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
-    def hit_list_endpoint_for_topic(self, *, topic: str) -> list[GeographyTypeData]:
+    def hit_list_endpoint_for_topic(
+        self, *, topic: str, theme: str, sub_theme: str
+    ) -> list[GeographyTypeData]:
         """Hits the endpoint for the given `topic` to fetch the associated available geographies
 
         Returns:
@@ -55,7 +57,7 @@ class GeographiesAPICrawler:
 
         """
         response: Response = self._internal_api_client.hit_geographies_list_endpoint(
-            topic=topic
+            topic=topic, theme=theme, sub_theme=sub_theme
         )
         geography_type_data_models: list[GeographyTypeData] = (
             self._convert_to_geography_type_models(response_data=response.data)
@@ -100,7 +102,11 @@ class GeographiesAPICrawler:
         """
         selected_topic: str = page.selected_topics.pop()
         geography_type_data_models: list[GeographyTypeData] = (
-            self.hit_list_endpoint_for_topic(topic=selected_topic)
+            self.hit_list_endpoint_for_topic(
+                topic=selected_topic,
+                theme=page.theme_name or "",
+                sub_theme=page.sub_theme_name or "",
+            )
         )
 
         logger.info("Retrieved geography combinations for `%s`", page.title)

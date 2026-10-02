@@ -2,6 +2,7 @@ import pytest
 
 from metrics.data.models.core_models.supporting import SubTheme
 from tests.factories.metrics.sub_theme import SubThemeFactory
+from tests.factories.metrics.theme import ThemeFactory
 
 
 class TestSubThemeManager:
@@ -72,3 +73,95 @@ class TestSubThemeManager:
 
         # Then
         assert get_name_by_id == fake_sub_theme_name_three
+
+    @pytest.mark.django_db
+    def test_get_filtered_unique_names_related_to_theme_returns_only_matching_records(
+        self,
+    ):
+        """
+        Given `SubTheme` records related to different parent themes
+        When `get_filtered_unique_names_related_to_theme()` is called
+        Then only the records for the given parent theme id are returned
+        """
+        # Given
+        target_theme = ThemeFactory(name="infectious_disease")
+        other_theme = ThemeFactory(name="extreme_event")
+
+        SubThemeFactory(name="respiratory", theme=target_theme)
+        SubThemeFactory(name="immunisation", theme=target_theme)
+        SubThemeFactory(name="weather_alert", theme=other_theme)
+
+        # When
+        filtered_sub_themes = (
+            SubTheme.objects.get_filtered_unique_names_related_to_theme(
+                parent_theme_id=target_theme.id
+            )
+        )
+
+        # Then
+        returned_names = {record["name"] for record in filtered_sub_themes}
+        assert returned_names == {"respiratory", "immunisation"}
+        assert filtered_sub_themes.count() == 2
+
+    @pytest.mark.django_db
+    def test_get_filtered_unique_names_related_to_theme_returns_empty_for_unrelated_theme(
+        self,
+    ):
+        """
+        Given `SubTheme` records related to a different parent theme
+        When `get_filtered_unique_names_related_to_theme()` is called
+            with a parent theme id that has no associated records
+        Then an empty queryset is returned
+        """
+        # Given
+        theme = ThemeFactory(name="infectious_disease")
+        SubThemeFactory(name="respiratory", theme=theme)
+
+        unrelated_theme = ThemeFactory(
+            name="extreme_event"
+        )  # exists, but has no sub-themes
+
+        # When
+        filtered_sub_themes = (
+            SubTheme.objects.get_filtered_unique_names_related_to_theme(
+                parent_theme_id=unrelated_theme.id
+            )
+        )
+
+        # Then
+        assert filtered_sub_themes.count() == 0
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_id_for_existing_sub_theme(self):
+        """
+        Given an existing `SubTheme` record
+        When `get_id_by_name()` is called
+            from an instance of `SubThemeManager`
+        Then the id of the matching record is returned
+        """
+        # Given
+        sub_theme_name = "respiratory"
+        sub_theme = SubThemeFactory(name=sub_theme_name)
+
+        # When
+        retrieved_id = SubTheme.objects.get_id_by_name(sub_theme_name)
+
+        # Then
+        assert retrieved_id == sub_theme.id
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_none_when_sub_theme_does_not_exist(self):
+        """
+        Given no matching `SubTheme` record
+        When `get_id_by_name()` is called
+            from an instance of `SubThemeManager`
+        Then None is returned
+        """
+        # Given
+        SubThemeFactory(name="respiratory")
+
+        # When
+        retrieved_id = SubTheme.objects.get_id_by_name("non_existent_sub_theme")
+
+        # Then
+        assert retrieved_id is None

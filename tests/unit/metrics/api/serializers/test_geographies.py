@@ -81,7 +81,11 @@ class TestGeographiesSerializer:
                 "core_time_series_manager": fake_core_time_series_manager,
                 "topic_manager": fake_topic_manager,
             },
-            data={"topic": "COVID-19"},
+            data={
+                "topic": "COVID-19",
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
+            },
         )
 
         # When

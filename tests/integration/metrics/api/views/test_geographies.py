@@ -133,6 +133,8 @@ class TestGeographiesView:
         ltla = "Lower Tier Local Authority"
         nation = "Nation"
         topic = "COVID-19"
+        theme = "infectious_disease"
+        sub_theme = "respiratory"
 
         bexley = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -171,7 +173,7 @@ class TestGeographiesView:
         )
 
         # When
-        query_params = {"topic": topic}
+        query_params = {"topic": topic, "theme": theme, "sub_theme": sub_theme}
         response: Response = client.get(path=self.path, query_params=query_params)
 
         # Then
