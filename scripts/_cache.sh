@@ -9,6 +9,7 @@ function _cache_help() {
     echo
     echo "  flush-redis                     - flush and re-fill the redis (private api) cache"
     echo "  flush-redis-reserved-namespace  - blue-green update the reserved namespace in the redis (private api) cache"
+    echo "  flush-search                    - flush and re-build the wagtail search index"
 
     return 0
 }
@@ -20,6 +21,7 @@ function _cache() {
     case $verb in
         "flush-redis") _cache_flush_redis $args ;;
         "flush-redis-reserved-namespace") _cache_flush_redis_reserved_namespace $args ;;
+        "flush-search") _flush_search $args ;;
 
         *) _cache_help ;;
     esac
@@ -33,4 +35,9 @@ function _cache_flush_redis() {
 function _cache_flush_redis_reserved_namespace() {
     uhd venv activate
     python manage.py hydrate_private_api_cache_reserved_namespace
+}
+
+function _flush_search() {
+    uhd venv activate
+    python manage.py wagtail_update_index
 }
