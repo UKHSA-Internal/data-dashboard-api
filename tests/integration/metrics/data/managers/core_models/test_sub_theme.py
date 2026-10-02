@@ -2,6 +2,7 @@ import pytest
 
 from metrics.data.models.core_models.supporting import SubTheme
 from tests.factories.metrics.sub_theme import SubThemeFactory
+from tests.factories.metrics.theme import ThemeFactory
 
 
 class TestSubThemeManager:
@@ -83,17 +84,17 @@ class TestSubThemeManager:
         Then only the records for the given parent theme id are returned
         """
         # Given
-        target_theme_id = 1
-        other_theme_id = 2
+        target_theme = ThemeFactory(name="infectious_disease")
+        other_theme = ThemeFactory(name="extreme_event")
 
-        SubThemeFactory(name="respiratory", theme_id=target_theme_id)
-        SubThemeFactory(name="immunisation", theme_id=target_theme_id)
-        SubThemeFactory(name="weather_alert", theme_id=other_theme_id)
+        SubThemeFactory(name="respiratory", theme=target_theme)
+        SubThemeFactory(name="immunisation", theme=target_theme)
+        SubThemeFactory(name="weather_alert", theme=other_theme)
 
         # When
         filtered_sub_themes = (
             SubTheme.objects.get_filtered_unique_names_related_to_theme(
-                parent_theme_id=target_theme_id
+                parent_theme_id=target_theme.id
             )
         )
 
@@ -113,12 +114,17 @@ class TestSubThemeManager:
         Then an empty queryset is returned
         """
         # Given
-        SubThemeFactory(name="respiratory", theme_id=1)
+        theme = ThemeFactory(name="infectious_disease")
+        SubThemeFactory(name="respiratory", theme=theme)
+
+        unrelated_theme = ThemeFactory(
+            name="extreme_event"
+        )  # exists, but has no sub-themes
 
         # When
         filtered_sub_themes = (
             SubTheme.objects.get_filtered_unique_names_related_to_theme(
-                parent_theme_id=999
+                parent_theme_id=unrelated_theme.id
             )
         )
 

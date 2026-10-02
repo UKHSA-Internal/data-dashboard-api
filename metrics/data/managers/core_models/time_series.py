@@ -864,6 +864,7 @@ def filter_geographies_by_permission(
 
     if (theme and theme_id is None) or (sub_theme and sub_theme_id is None):
         return []
+
     filtered_data = []
     for entry in data:
         geography_type_name = entry["geography_type"]
