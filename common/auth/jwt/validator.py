@@ -68,7 +68,7 @@ class CognitoTokenValidator:
         return None
 
     def validate(self, token):
-        public_key = self._get_public_key(token)
+        public_key = "local_key" if settings.DEBUG else self._get_public_key(token)
         if not public_key:
             msg = "No key found for this token"
             raise TokenError(msg)
@@ -78,7 +78,16 @@ class CognitoTokenValidator:
             "key": public_key,
             "issuer": self.pool_url,
             "algorithms": ["RS256"],
+            "verify_iat": False,
+            "verify_nbf": False,
         }
+
+        if settings.DEBUG:
+            logger.warning("Not checking JWT expiry in local dev")
+            params["verify_exp"] = False  # Allow expired token for local dev
+            params["options"] = {
+                "verify_signature": False  # Allow any token for local dev
+            }
 
         logger.debug("JWT - %s", params)
         token_payload = jwt.decode(
@@ -97,6 +106,12 @@ class CognitoTokenValidator:
             jwt.DecodeError,
         ) as exc:
             raise TokenError(str(exc)) from exc
+        if settings.DEBUG:
+            logger.warning(
+                "Not using permissionSets from token in local dev - add them in your local CMS for user %s",
+                jwt_data["entraObjectId"],
+            )
+            jwt_data["permissionSets"] = []  # Force local permissionSet lookup in dev
         return jwt_data
 
 
@@ -160,7 +175,16 @@ class EntraTokenValidator:
             "issuer": self.expected_issuer,
             "audience": self.audience,
             "algorithms": ["RS256"],
+            "verify_iat": False,
+            "verify_nbf": False,
         }
+
+        if settings.DEBUG:
+            logger.warning("Not checking JWT expiry in local dev")
+            params["verify_exp"] = False  # Allow expired token for local dev
+            params["options"] = {
+                "verify_signature": False  # Allow any token for local dev
+            }
 
         try:
             payload = jwt.decode(**params)
