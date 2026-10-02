@@ -9,6 +9,7 @@ from rest_framework.request import Request
 from rest_framework.test import APIClient
 from wagtail.models import Page
 
+from cms.acknowledgement.models import AcknowledgementPage
 from cms.common.models import CommonPage
 from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
@@ -128,6 +129,21 @@ def create_regression_search_pages():
     home.add_child(instance=standard_page)
     standard_page = set_last_published_at(page=standard_page)
 
+    acknowledgement_page = AcknowledgementPage(
+        title="Regression Search Acknowledgement",
+        slug="regression-search-acknowledgement",
+        body="test",
+        i_agree_checkbox="I agree",
+        terms_of_service_link_text="Terms of service",
+        terms_of_service_link="https://example.com/terms",
+        terms_of_service_error="Please accept the terms of service",
+        disagree_button="I do not agree",
+        agree_button="I agree",
+        seo_title="regression-search-acknowledgement",
+    )
+    home.add_child(instance=acknowledgement_page)
+    acknowledgement_page = set_last_published_at(page=acknowledgement_page)
+
     return {
         "public_topic": public_topic,
         "private_topic": private_topic,
@@ -135,6 +151,7 @@ def create_regression_search_pages():
         "private_metrics": private_metrics,
         "private_metrics_two": private_metrics_two,
         "standard_page": standard_page,
+        "acknowledgement_page": acknowledgement_page,
     }
 
 
@@ -223,12 +240,27 @@ class TestCMSPagesAPIViewSetPermissions:
         )
         home.add_child(instance=standard_page)
 
+        acknowledgement_page = AcknowledgementPage(
+            title="Acknowledgement",
+            slug="acknowledgement",
+            body="test",
+            i_agree_checkbox="I agree",
+            terms_of_service_link_text="Terms of service",
+            terms_of_service_link="https://example.com/terms",
+            terms_of_service_error="Please accept the terms of service",
+            disagree_button="I do not agree",
+            agree_button="I agree",
+            seo_title="acknowledgement",
+        )
+        home.add_child(instance=acknowledgement_page)
+
         return {
             "public_topic": public_topic,
             "private_topic": private_topic,
             "public_metrics": public_metrics,
             "private_metrics": private_metrics,
             "standard_page": standard_page,
+            "acknowledgement_page": acknowledgement_page,
         }
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
@@ -259,6 +291,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Public Topic" in titles
         assert "Public Metric" in titles
         assert "Standard" in titles
+        assert "Acknowledgement" not in titles
         assert "Private Topic" not in titles
         assert "Private Metric" not in titles
         assert "Private Metric 2" not in titles
@@ -297,6 +330,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Public Topic" in titles
         assert "Public Metric" in titles
         assert "Standard" in titles
+        assert "Acknowledgement" in titles
         assert "Private Topic" in titles
         assert "Private Metric" in titles
         assert "Private Metric 2" in titles
@@ -334,6 +368,7 @@ class TestCMSPagesAPIViewSetPermissions:
         titles = [p.title for p in result]
         assert "Private Topic" in titles
         assert "Private Metric 2" in titles
+        assert "Acknowledgement" in titles
         assert "Private Metric" not in titles
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", False)
@@ -364,6 +399,7 @@ class TestCMSPagesAPIViewSetPermissions:
         assert "Public Topic" in titles
         assert "Public Metric" in titles
         assert "Standard" in titles
+        assert "Acknowledgement" not in titles
         assert "Private Topic" not in titles
         assert "Private Metric" not in titles
         assert "Private Metric 2" not in titles
@@ -407,6 +443,7 @@ class TestCMSPagesAPI:
         assert "Regression Search Public Metric" in titles
         assert "Regression Search Standard" in titles
 
+        assert "Regression Search Acknowledgement" not in titles
         assert "Regression Search Private Topic" not in titles
         assert "Regression Search Private Metric" not in titles
         assert "Regression Search Private Metric 2" not in titles
@@ -444,6 +481,7 @@ class TestCMSPagesAPI:
         assert "Regression Search Public Topic" in titles
         assert "Regression Search Public Metric" in titles
         assert "Regression Search Standard" in titles
+        assert "Regression Search Acknowledgement" in titles
 
         assert "Regression Search Private Topic" in titles
         assert "Regression Search Private Metric" not in titles
@@ -509,6 +547,25 @@ class TestCMSPagesAPIDetail:
         assert response.status_code == HTTPStatus.NOT_FOUND
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
+    def test_anonymous_detail_returns_not_found_for_acknowledgement_page(
+        self, setup_pages
+    ):
+        """
+        Given an unathenticated request is made when auth is enabled
+        When the detail `GET /api/pages/{id}/` endpoint is hit for the acknowledgement page
+        Then an HTTP 404 NOT FOUND response is returned
+        """
+        # Given
+        page = setup_pages["acknowledgement_page"]
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path=self._get_detail_path(page=page), format="json")
+
+        # Then
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     def test_global_access_user_detail_returns_private_page(self, setup_pages):
         """
         Given an unathenticated user with global access
@@ -530,6 +587,31 @@ class TestCMSPagesAPIDetail:
         # Then
         assert response.status_code == HTTPStatus.OK
         assert response.data["title"] == "Regression Search Private Metric"
+
+    @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
+    def test_authenticated_user_detail_returns_acknowledgement_page(self, setup_pages):
+        """
+        Given an athenticated user
+        When the detail `GET /api/pages/{id}/` endpoint is hit for the acknowledgement page
+        Then an HTTP 200 OK response is returned with the page
+        """
+        # Given
+        page = setup_pages["acknowledgement_page"]
+        mock_user = mock.MagicMock()
+        mock_user.username = "restricted-user"
+        mock_user.permission_sets = MockPermissionSets(
+            [{"theme": {"id": "1"}, "sub_theme": {"id": "-1"}}], has_global_access=False
+        )
+
+        api_client = APIClient()
+        api_client.force_authenticate(user=mock_user, token="token")
+
+        # When
+        response = api_client.get(path=self._get_detail_path(page=page), format="json")
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
+        assert response.data["title"] == "Regression Search Acknowledgement"
 
     @mock.patch("cms.dashboard.viewsets.AUTH_ENABLED", True)
     @pytest.mark.parametrize(

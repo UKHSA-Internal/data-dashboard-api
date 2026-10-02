@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
+from cms.acknowledgement.models import AcknowledgementPage
 from cms.auth_content.auth_utils import is_auth_enabled
 from cms.dashboard.serializers import ListablePageSerializer
 from cms.metrics_documentation.models.child import MetricsDocumentationChildEntry
@@ -76,7 +77,7 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
             )
 
             always_public_page_ids = queryset.not_type(
-                TopicPage, MetricsDocumentationChildEntry
+                TopicPage, MetricsDocumentationChildEntry, AcknowledgementPage
             ).values_list("id", flat=True)
 
             allowed_page_ids = [
