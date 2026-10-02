@@ -1193,8 +1193,12 @@ def managers():
     with mock.patch(f"{MODULE_PATH}.MetricsAPIInterface") as spy_interface:
         spy_interface.get_theme_manager.return_value.get_id_by_name.return_value = 1
         spy_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = 2
-        spy_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = 3
-        spy_interface.get_geography_manager.return_value.get_code_by_name.return_value = "E92000001"
+        spy_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            3
+        )
+        spy_interface.get_geography_manager.return_value.get_code_by_name.return_value = (
+            "E92000001"
+        )
         yield spy_interface
 
 
