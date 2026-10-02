@@ -570,19 +570,7 @@ class CoreHeadlineManager(models.Manager):
                     sex=sex,
                 )
             )
-        # Note that we cannot slice / limit the above queryset.
-        # This is because we will later call `delete()` on this queryset.
-        # Which cannot be done since `OFFSET` and `DELETE` clauses are not allowed.
-        # Since we always expect the number of resulting records to be fairly small.
-        # We can pay the penalty of making the extra db call.
-        try:
-            live_headline_id: int = queryset.first().id
-        except AttributeError:
-            # Thrown when the queryset was empty
-            # And `first()` returned `None`
-            return queryset
-
-        return queryset.exclude(id=live_headline_id)
+        return queryset
 
     def get_latest_headlines_for_geography_codes(
         self,
