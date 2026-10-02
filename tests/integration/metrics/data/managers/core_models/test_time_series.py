@@ -1106,6 +1106,37 @@ class TestCoreTimeSeriesGetAvailableGeographies:
         theme_name = "Infectious Diseases"
         sub_theme_name = "Respiratory"
 
+        # Create records with the target theme and sub_theme
+        target_record_1 = CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="England",
+            topic_name=topic,
+            metric_name="COVID-19_metric_1",
+            theme_name=theme_name,
+            sub_theme_name=sub_theme_name,
+            is_public=False,
+        )
+        target_record_2 = CoreTimeSeriesFactory.create_record(
+            geography_type_name="Lower Tier Local Authority",
+            geography_name="Hackney",
+            topic_name=topic,
+            metric_name="COVID-19_metric_2",
+            theme_name=theme_name,
+            sub_theme_name=sub_theme_name,
+            is_public=False,
+        )
+
+        # Create records with different theme/sub_theme that should be excluded
+        different_theme_record = CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="Scotland",
+            topic_name=topic,
+            metric_name="COVID-19_metric_3",
+            theme_name="Other Theme",
+            sub_theme_name="Other Sub Theme",
+            is_public=False,
+        )
+
         # When
         # IMPORTANT: Must pass is_public=False when records are non-public!
         available_geographies = CoreTimeSeries.objects.get_available_geographies(
@@ -1162,12 +1193,8 @@ def managers():
     with mock.patch(f"{MODULE_PATH}.MetricsAPIInterface") as spy_interface:
         spy_interface.get_theme_manager.return_value.get_id_by_name.return_value = 1
         spy_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = 2
-        spy_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
-            3
-        )
-        spy_interface.get_geography_manager.return_value.get_code_by_name.return_value = (
-            "E92000001"
-        )
+        spy_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = 3
+        spy_interface.get_geography_manager.return_value.get_code_by_name.return_value = "E92000001"
         yield spy_interface
 
 
