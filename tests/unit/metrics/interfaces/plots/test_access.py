@@ -631,6 +631,7 @@ class TestPlotsInterface:
         Then those `theme` and `sub_theme` values are passed straight through to
             the core model manager (i.e. they are no longer derived from the topic)
         """
+
         # Given
         spy_core_headline_manager = mock.Mock()
         fake_metric = FakeMetricFactory.build_example_metric()
