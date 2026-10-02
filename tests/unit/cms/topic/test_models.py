@@ -14,6 +14,16 @@ from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from wagtail.search.index import SearchField
 
 
+@pytest.fixture
+def mock_metric_choice_boundary():
+    """Keep template structure tests independent of database-backed choices."""
+    with mock.patch(
+        "cms.metrics_interface.field_choices_callables.MetricsAPIInterface",
+        autospec=True,
+    ):
+        yield
+
+
 class TestTopicPage:
     @pytest.mark.parametrize(
         "expected_search_field",
@@ -46,6 +56,7 @@ class TestTemplateCOVID19Page:
     def covid_19(self) -> str:
         return "COVID-19"
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_sections_in_body_are_correct_order(self):
         """
         Given a `TopicPage` created with a template for the `covid-19` page
@@ -93,6 +104,7 @@ class TestTemplateCOVID19Page:
         assert vaccinations_section.block_type == "section"
         assert vaccinations_section.value["heading"] == "Vaccinations"
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_cases_section_chart_card(self):
         """
         Given a `TopicPage` created with a template for the `covid-19` page
@@ -422,6 +434,7 @@ class TestTemplateInfluenzaPage:
 
         return chart_card_value["chart"]
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_first_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
         """
         Given a `TopicPage` created with a template for the `influenza` page
@@ -455,6 +468,7 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_0_4_years_value["line_type"] == ChartLineTypes.SOLID.name
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_second_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
         """
         Given a `TopicPage` created with a template for the `influenza` page
@@ -488,6 +502,7 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_5_14_years_value["line_type"] == ChartLineTypes.SOLID.name
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_third_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
         """
         Given a `TopicPage` created with a template for the `influenza` page
@@ -522,6 +537,7 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_15_44_years_value["line_type"] == ChartLineTypes.SOLID.name
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_fourth_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
         """
         Given a `TopicPage` created with a template for the `influenza` page
@@ -556,6 +572,7 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_45_64_years_value["line_type"] == ChartLineTypes.SOLID.name
 
+    @pytest.mark.usefixtures("mock_metric_choice_boundary")
     def test_fifth_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
         """
         Given a `TopicPage` created with a template for the `influenza` page
