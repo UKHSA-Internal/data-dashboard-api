@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.base import ChartSettings
+from metrics.domain.charts.constants import FULL_WIDTH_CHART_X_AXIS_NTICKS, COMPACT_CHART_X_AXIS_NTICKS
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.charts.utils import (
     return_formatted_max_y_axis_value,
@@ -52,11 +53,12 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickson": "boundaries",
             "type": "date",
             "tickcolor": "rgba(0,0,0,0)",
-            "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
             "autotickangles": [0, 90],
             "mirror": True,
+            "tickmode": "auto",
+            "nticks": COMPACT_CHART_X_AXIS_NTICKS,
         }
 
         if self._chart_generation_payload.x_axis_title:
@@ -301,12 +303,9 @@ class SingleCategoryChartSettings(ChartSettings):
 
         return {
             "type": "date",
-            "tick0": tick0,
-            "dtick": dtick,
+            "autorange": True,
             "tickformat": self._get_date_tick_format(weekly=weekly),
-            "range": self.get_x_axis_range(
-                min_date=tick0, max_date=max_date, interval=dtick
-            ),
+            "range": [tick0, max_date],
         }
 
     def _build_line_single_simplified_y_axis_value_params(

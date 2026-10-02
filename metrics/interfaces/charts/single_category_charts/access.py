@@ -407,6 +407,7 @@ class ChartsInterface:
             "chart": self.encode_figure(figure=chart_output.figure),
             "alt_text": chart_output.description,
             "figure": chart_output.interactive_chart_figure_output,
+            "figure_config": chart_output.chart_figure_config_output
         }
 
 

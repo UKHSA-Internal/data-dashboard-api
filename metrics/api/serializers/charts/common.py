@@ -124,3 +124,4 @@ class EncodedChartResponseSerializer(serializers.Serializer):
     chart = serializers.CharField(help_text=help_texts.ENCODED_CHARTS_RESPONSE)
     alt_text = serializers.CharField(help_text=help_texts.CHARTS_ALT_TEXT)
     figure = serializers.DictField(help_text=help_texts.CHARTS_FIGURE_OUTPUT)
+    figure_config = serializers.DictField(help_text="Configuration for response chart behavior")

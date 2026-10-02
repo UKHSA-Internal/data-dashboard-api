@@ -8,6 +8,11 @@ from metrics.domain.common.utils import (
 )
 from metrics.interfaces.data_classification.access import DataClassification
 
+from metrics.domain.charts.constants import (
+    FULL_WIDTH_CHART_X_AXIS_NTICKS,
+    COMPACT_CHART_X_AXIS_NTICKS,
+)
+
 HEX_COLOUR_BLACK = "#0b0c0c"
 WATERMARK_FONT_COLOUR = "rgba(0, 0, 0, 0.25)"
 WATERMARK_OPACITY = 0.58
@@ -60,8 +65,37 @@ class ChartOutput:
         return self.figure.to_dict()
 
     @property
+    def chart_figure_config_output(self) -> dict:
+        """Creates a dict containing configuration options for responsive charts.
+            It provides `Figure.layout` changes that can be applied by the front-end
+            based on view port and chart width. E.g reduced number of x-axis tick marks
+            for mobile / half width charts.
+
+        Returns:
+            dict: containing a series of layout properties with alternate config for
+            different viewport widths.
+            Eg. "xaxis_compact": { "nticks": 13 }
+        """
+        return {
+            "xaxis_full": self._generate_x_axis_fullwidth_config(self),
+            "xaxis_compact": self._generate_x_axis_compact_config(self),
+        }
+
+    @property
     def _interactive_charts_font_css_var(self):
         return "var(--font-primary), arial, sans-serif"
+
+    @staticmethod
+    def _generate_x_axis_compact_config(self) -> dict:
+        return {
+            "nticks": 5,
+        }
+
+    @staticmethod
+    def _generate_x_axis_fullwidth_config(self) -> dict:
+        return {
+            "nticks": 13,
+        }
 
     def _add_settings_for_interactive_charts(self):
         self._unset_width()
