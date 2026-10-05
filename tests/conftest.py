@@ -381,6 +381,7 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
         "topic": "COVID-19",
         "metric_group": "cases",
         "metric": "COVID-19_cases_countRollingMean",
+        "is_public": True,
         "geography_type": "Nation",
         "geography": "England",
         "geography_code": "E92000001",
