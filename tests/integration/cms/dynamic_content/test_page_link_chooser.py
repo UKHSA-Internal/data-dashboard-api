@@ -28,10 +28,8 @@ class TestPageChooser:
             path="abc",
             depth=1,
             title="abc",
-            theme="test",
-            sub_theme="test",
-            topic=1,
             live=True,
+            is_public=True,
             seo_title="ABC",
         )
         page_link_chooser = PageLinkChooserBlock(page_type="topic.TopicPage")

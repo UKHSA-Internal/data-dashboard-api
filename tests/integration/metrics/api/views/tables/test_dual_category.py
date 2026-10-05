@@ -29,8 +29,12 @@ class TestDualCategoryTablesView:
         client = APIClient()
         core_timeseries: CoreTimeSeries = core_timeseries_example[0]
         latest_timeseries: CoreTimeSeries = core_timeseries_example[-1]
+        theme: str = core_timeseries.metric.metric_group.topic.sub_theme.theme.name
+        sub_theme: str = core_timeseries.metric.metric_group.topic.sub_theme.name
         topic: str = core_timeseries.metric.metric_group.topic.name
         metric: str = core_timeseries.metric.name
+        geography: str = core_timeseries.geography.name
+        geography_type: str = core_timeseries.geography.geography_type.name
 
         valid_payload = {
             "x_axis": "date",
@@ -40,6 +44,10 @@ class TestDualCategoryTablesView:
                 "date_to": datetime.date.today(),
                 "metric": metric,
                 "topic": topic,
+                "sub_theme": sub_theme,
+                "theme": theme,
+                "geography": geography,
+                "geography_type": geography_type,
             },
             "secondary_category": "age",
             "segments": [
@@ -78,15 +86,23 @@ class TestDualCategoryTablesView:
         """
         # Given
         client = APIClient()
+        theme: str = (
+            core_headline_example.metric.metric_group.topic.sub_theme.theme.name
+        )
+        sub_theme: str = core_headline_example.metric.metric_group.topic.sub_theme.name
         if not core_headline_example.is_public:
             client.force_authenticate(user=user_global_access, token="token")
 
         topic: str = core_headline_example.metric.metric_group.topic.name
         metric: str = core_headline_example.metric.name
+        geography: str = core_headline_example.geography.name
+        geography_type: str = core_headline_example.geography.geography_type.name
 
         CoreHeadlineFactory.create_record(
             metric_value=123.0000,
             metric=metric,
+            theme=theme,
+            sub_theme=sub_theme,
             topic=topic,
             geography="England",
             geography_type="Nation",
@@ -110,6 +126,10 @@ class TestDualCategoryTablesView:
                 "date_to": datetime.date.today(),
                 "metric": metric,
                 "topic": topic,
+                "sub_theme": sub_theme,
+                "theme": theme,
+                "geography": geography,
+                "geography_type": geography_type,
             },
             "secondary_category": "sex",
             "segments": [

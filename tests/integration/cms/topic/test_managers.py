@@ -16,22 +16,18 @@ class TestTopicPageManager:
         """
         # Given
         live_page = TopicPage.objects.create(
+            is_public=True,
             path="abc",
             depth=1,
             title="abc",
-            theme="test",
-            topic=1,
-            sub_theme="test",
             live=True,
             seo_title="ABC",
         )
         unpublished_page = TopicPage.objects.create(
+            is_public=True,
             path="def",
             depth=1,
             title="def",
-            theme="test2",
-            topic=2,
-            sub_theme="test2",
             live=False,
             seo_title="DEF",
         )

@@ -85,7 +85,7 @@ class MigrationTests:
         """Migrates the project state to the node associated with the `current_migration_name`"""
         self.migrate_to_node(node=self.current_node)
 
-    def get_model(self, name: str) -> models.base.ModelBase:
+    def get_model(self, name: str, app: str | None = None) -> models.base.ModelBase:
         """Returns the model associated with the `name` at the current project state
 
         Args:
@@ -96,6 +96,6 @@ class MigrationTests:
             A class representing a snapshot of the model at the current project state
 
         """
-        return self.application_registry.get_model(
-            app_label=self.current_django_app, model_name=name
-        )
+        if app is None:
+            app = self.current_django_app
+        return self.application_registry.get_model(app_label=app, model_name=name)
