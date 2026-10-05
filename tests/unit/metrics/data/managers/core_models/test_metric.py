@@ -73,7 +73,7 @@ class TestMetricQuerySet(unittest.TestCase):
 
         # Then
         spy_filter.assert_any_call(topic_id=1)
-        filtered_queryset.filter.assert_called_once_with(name__startswith="OFF-SENS")
+        filtered_queryset.filter.assert_called_once_with(is_public=False)
 
     def test_get_filtered_unique_names_related_to_parent_topic_id_excludes_off_sens_when_public(
         self,
@@ -105,4 +105,4 @@ class TestMetricQuerySet(unittest.TestCase):
 
         # Then
         spy_filter.assert_any_call(topic_id=1)
-        filtered_queryset.exclude.assert_called_once_with(name__startswith="OFF-SENS")
+        filtered_queryset.filter.assert_called_once_with(is_public=True)
