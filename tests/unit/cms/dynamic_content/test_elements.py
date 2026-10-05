@@ -29,7 +29,7 @@ class TestValidateMetricGroup:
         """
         # given
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value={"metric": metric})
+        value = StructValue(block, [("metric", metric)])
 
         # when
         group = BaseMetricsElement._validate_metric_group(value=value)
@@ -45,7 +45,7 @@ class TestValidateMetricGroup:
         """
         # given
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value={"metric": "not-a-valid-value"})
+        value = StructValue(block, [("metric", "not-a-valid-value")])
 
         # when
         with pytest.raises(StructBlockValidationError) as exc_info:
@@ -72,11 +72,12 @@ class TestValidateGeographyCode:
         # given
         mocked_get_geography_code_for_geography.return_value = "E92000001"
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(
-            value={
-                "geography": "England",
-                "geography_type": "Nation",
-            }
+        value = StructValue(
+            block,
+            [
+                ("geography", "England"),
+                ("geography_type", "Nation"),
+            ],
         )
 
         # when
@@ -97,11 +98,12 @@ class TestValidateGeographyCode:
         # given
         mocked_get_geography_code_for_geography.side_effect = ObjectDoesNotExist()
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(
-            value={
-                "geography": "England",
-                "geography_type": "Lower Tier Local Authority",
-            }
+        value = StructValue(
+            block,
+            [
+                ("geography", "England"),
+                ("geography_type", "Lower Tier Local Authority"),
+            ],
         )
 
         # when
@@ -159,9 +161,10 @@ class TestBaseMetricsElementClean:
         # underlying IncomingBaseDataModel correctly handles additional parameters it
         # isn't expecting (e.g. the body field value in this example)
         block = HeadlineNumberComponent()
-        value: StructValue = block.to_python(
+        value = StructValue(
+            block,
             # add the necessary additional field value the HeadlineNumberComponent needs
-            value={**self.valid_payload, "body": "Test body"}
+            [*self.valid_payload.items(), ("body", "Test body")],
         )
         mocked_super_clean.return_value = value
 
@@ -198,7 +201,7 @@ class TestBaseMetricsElementClean:
         # given
         mocked_get_geography_code_for_geography.return_value = "E92000001"
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value=self.valid_payload)
+        value = StructValue(block, list(self.valid_payload.items()))
         mocked_super_clean.return_value = value
 
         # when
@@ -238,7 +241,7 @@ class TestBaseMetricsElementClean:
             "age": "not-an-age",
         }
         block = BaseMetricsElement()
-        value: StructValue = block.to_python(value=invalid_payload)
+        value = StructValue(block, list(invalid_payload.items()))
         mocked_super_clean.return_value = value
 
         # when
