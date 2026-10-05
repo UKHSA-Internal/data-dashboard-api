@@ -57,7 +57,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
             name=metric_group, topic_id=topic.id
         )
         metric, _ = Metric.objects.get_or_create(
-            name=metric, topic_id=topic.id, metric_group_id=metric_group.id
+            name=metric, topic_id=topic.id, metric_group_id=metric_group.id, is_public=is_public
         )
 
         geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)

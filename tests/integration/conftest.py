@@ -106,6 +106,7 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         name="COVID-19_deaths_ONSByDay",
         metric_group=metric_group,
         topic=topic,
+        is_public=True
     )
     geography_type = GeographyType.objects.create(name="Nation")
     geography = Geography.objects.create(

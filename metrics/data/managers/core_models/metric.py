@@ -122,9 +122,11 @@ class MetricQuerySet(models.QuerySet):
         """
         queryset = self.filter(topic_id=parent_topic_id)
         if is_public is True:
-            queryset = queryset.exclude(name__startswith="OFF-SENS")
+            # queryset = queryset.exclude(name__startswith="OFF-SENS")
+            queryset = queryset.filter(is_public=True)
         elif is_public is False:
-            queryset = queryset.filter(name__startswith="OFF-SENS")
+            # queryset = queryset.filter(name__startswith="OFF-SENS")
+            queryset = queryset.filter(is_public=False)
 
         return queryset.values("id", "name").distinct()
 
