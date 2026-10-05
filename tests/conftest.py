@@ -342,6 +342,7 @@ def example_headline_data() -> dict[str, str | list[dict[str, str | float]]]:
         "topic": "RSV",
         "metric_group": "headline",
         "metric": "RSV_headline_positivityLatest",
+        "is_public": True,
         "geography_type": "Nation",
         "geography": "England",
         "geography_code": "E92000001",

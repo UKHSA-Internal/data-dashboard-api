@@ -134,6 +134,7 @@ class InboundHeadlineSpecificFields(BaseModel):
 
 class HeadlineDTO(IncomingBaseDataModel):
     data: list[InboundHeadlineSpecificFields]
+    is_public: bool
 
 
 def _build_headline_dto(
@@ -157,6 +158,7 @@ def _build_headline_dto(
         stratum=source_data["stratum"],
         refresh_date=source_data["refresh_date"],
         data=enriched_specific_fields,
+        is_public=source_data["is_public"],
     )
 
 
