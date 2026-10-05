@@ -56,9 +56,13 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         metric_group, _ = MetricGroup.objects.get_or_create(
             name=metric_group, topic_id=topic.id
         )
-        metric, _ = Metric.objects.get_or_create(
-            name=metric, topic_id=topic.id, metric_group_id=metric_group.id, is_public=is_public
-        )
+        db_metric = Metric.objects.filter(
+            name=metric, topic_id=topic.id, metric_group_id=metric_group.id
+        ).first()
+        if not db_metric:
+            db_metric = Metric.objects.create(
+                name=metric, topic_id=topic.id, metric_group_id=metric_group.id, is_public=is_public
+            )
 
         geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)
         geography, _ = Geography.objects.get_or_create(
@@ -73,7 +77,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         )
 
         return cls.create(
-            metric=metric,
+            metric=db_metric,
             geography=geography,
             stratum=stratum,
             age=age,
