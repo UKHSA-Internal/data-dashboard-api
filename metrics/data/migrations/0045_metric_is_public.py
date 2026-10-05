@@ -12,9 +12,7 @@ def populate_metric_is_public(apps, schema_editor):
     """
     metric = apps.get_model("data", "Metric")
 
-    metric.objects.filter(name__startswith="OFF-SENS").update(
-        is_public=False
-    )
+    metric.objects.filter(name__startswith="OFF-SENS").update(is_public=False)
 
 
 class Migration(migrations.Migration):
