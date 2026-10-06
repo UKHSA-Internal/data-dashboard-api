@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -31,6 +32,13 @@ class BaseNestedAPIViewV3(GenericAPIView):
             "url_prefix": self.url_prefix,
         }
         return APIRequestSerializerv3(context=serializer_context)
+
+    def get_queryset(self):
+        if getattr(self, "api_model", None) is None:
+            error_msg = f"{type(self).__name__} must set api_model"
+            raise ImproperlyConfigured(error_msg)
+
+        return self.api_model.objects.all()
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:

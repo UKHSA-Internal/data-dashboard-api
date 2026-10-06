@@ -1,6 +1,12 @@
 import pytest
 from unittest import mock
 
+from django.core.exceptions import ImproperlyConfigured
+
+from metrics.data.models.api_models import APITimeSeries, APIHeadline
+from public_api.version.v3.serializers.api_request_serializer import (
+    APIRequestSerializerv3,
+)
 from public_api.version.v3.views.base import BaseNestedAPIViewV3
 
 
@@ -43,6 +49,47 @@ class TestBaseNestedAPIViewV3:
         # When / Then
         with pytest.raises(NotImplementedError):
             base_view.serializer_class
+
+    @pytest.mark.parametrize(
+        "model, serializer",
+        [
+            (APIHeadline, APIRequestSerializerv3),
+            (APITimeSeries, APIRequestSerializerv3),
+        ],
+    )
+    def test_resolves_the_correct_api_model(
+        self,
+        model,
+        serializer,
+    ):
+        """f
+        Given an instance of the `BaseNestedAPIViewV3`
+        When the `api_model` property is set and `get_queryset()` is called
+        Then the expected API model's queryset is returned.
+        """
+        base_view = BaseNestedAPIViewV3()
+        base_view.api_model = model
+
+        assert base_view.get_queryset().model is model
+
+    def test_raises_error_for_get_queryset_not_implemented(self):
+        """
+        Given an instance of the `BaseNestedAPITimeSeriesView`
+        When the `get_queryset` method is called and the `api_model` property has not been set
+        Then a `ImproperlyConfigured` exception is raised.
+        """
+        # Given
+        base_view = BaseNestedAPIViewV3()
+        base_view.api_model = None
+
+        # Mock the final serializer
+        mock_data_serializer = mock.MagicMock()
+        mock_data_serializer.data = {"foo": "bar"}
+
+        base_view.get_serializer = mock.MagicMock(return_value=mock_data_serializer)
+
+        with pytest.raises(ImproperlyConfigured):
+            base_view.get_queryset()
 
 
 class TestGetAddsPrivateHeaderForNonPublicRequests:
