@@ -65,7 +65,7 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
 
         if not AUTH_ENABLED or req.auth is None:
             filtered_queryset = filter_public_pages(
-                 queryset=queryset.not_type(AcknowledgementPage)
+                queryset=queryset.not_type(AcknowledgementPage)
             )
         else:
             log_user_permission_summary(req.user)
