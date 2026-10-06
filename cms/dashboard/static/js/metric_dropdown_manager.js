@@ -57,7 +57,7 @@ class MetricForm {
 
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
-        defaultOption.textContent = "* All metrics";
+        defaultOption.textContent = "--------";
 
         this.metricField.appendChild(defaultOption);
 
