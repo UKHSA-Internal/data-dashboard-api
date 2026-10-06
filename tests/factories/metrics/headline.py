@@ -61,7 +61,10 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         ).first()
         if not db_metric:
             db_metric = Metric.objects.create(
-                name=metric, topic_id=topic.id, metric_group_id=metric_group.id, is_public=is_public
+                name=metric,
+                topic_id=topic.id,
+                metric_group_id=metric_group.id,
+                is_public=is_public,
             )
 
         geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)

@@ -54,9 +54,7 @@ class CoreTimeSeriesFactory(factory.django.DjangoModelFactory):
         topic, _ = Topic.objects.get_or_create(
             name=topic_name, sub_theme_id=sub_theme.id
         )
-        metric = Metric.objects.filter(
-            name=metric_name, topic_id=topic.id
-        ).first()
+        metric = Metric.objects.filter(name=metric_name, topic_id=topic.id).first()
         if not metric:
             metric = Metric.objects.create(
                 name=metric_name, topic_id=topic.id, is_public=is_public
