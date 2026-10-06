@@ -43,6 +43,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 class TimeSeriesDTO(IncomingBaseDataModel):
     metric_frequency: str
     time_series: list[InboundTimeSeriesSpecificFields]
+    is_public: bool
 
     @field_validator("metric_frequency")
     @classmethod
@@ -90,6 +91,7 @@ def _build_time_series_dto(
         topic=source_data["topic"],
         metric_group=source_data["metric_group"],
         metric=source_data["metric"],
+        is_public=source_data["is_public"],
         metric_frequency=source_data["metric_frequency"],
         geography_type=source_data["geography_type"],
         geography=source_data["geography"],

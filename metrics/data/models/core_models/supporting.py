@@ -90,6 +90,7 @@ class Metric(models.Model):
     metric_group = models.ForeignKey(
         to=MetricGroup, on_delete=models.SET_NULL, null=True
     )
+    is_public = models.BooleanField(default=True, null=False)
 
     objects = MetricManager()
 

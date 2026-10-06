@@ -262,6 +262,7 @@ class TestConsumer:
             "stratum": "default",
             "metric_frequency": "weekly",
             "refresh_date": "2024-07-16 08:00:00",
+            "is_public": False,
             "time_series": [
                 {
                     "epiweek": 25,

@@ -242,6 +242,7 @@ class TestConsumerGetOrCreateMethods:
             name=example_headline_data["metric"],
             topic_id=mocked_topic.id,
             metric_group_id=mocked_metric_group.id,
+            is_public=True,
         )
 
     def test_get_or_create_stratum(
