@@ -1,5 +1,6 @@
 import zoneinfo
 from copy import deepcopy
+from dataclasses import dataclass
 from unittest import mock
 
 import pytest
@@ -13,6 +14,17 @@ from validation.is_public import (
 )
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
+
+
+@dataclass
+class ConfidenceIntervalScenario:
+    """
+    Simple helper class to define confidence interval test scenarios.
+    """
+
+    upper: float | None
+    lower: float | None
+    value: float
 
 
 class TestDataIngester:
@@ -204,3 +216,209 @@ class TestDataIngester:
 
         assert CoreTimeSeries.objects.count() == 0
         assert APITimeSeries.objects.count() == 0
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "first, second, expected_count",
+        [
+            # both stay the same
+            (
+                ConfidenceIntervalScenario(None, None, 500),
+                ConfidenceIntervalScenario(None, None, 500),
+                # these headline records are identical but nulls are treated as unique by the constraint so we don't
+                # expect an update
+                2,
+            ),
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(600, 400, 500),
+                # these headline records are identical so we don't expect an update
+                1,
+            ),
+            # both are set
+            (
+                ConfidenceIntervalScenario(None, None, 500),
+                ConfidenceIntervalScenario(600, 400, 500),
+                2,
+            ),
+            # both are removed
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(None, None, 500),
+                2,
+            ),
+            # both are changed
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(700, 300, 500),
+                2,
+            ),
+            # lower is changed
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(600, 300, 500),
+                2,
+            ),
+            # upper is changed
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(700, 400, 500),
+                2,
+            ),
+            # upper and lower stay the same but metric changes
+            (
+                ConfidenceIntervalScenario(None, None, 500),
+                ConfidenceIntervalScenario(None, None, 501),
+                2,
+            ),
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(600, 400, 501),
+                2,
+            ),
+            # everything change
+            (
+                ConfidenceIntervalScenario(600, 400, 500),
+                ConfidenceIntervalScenario(700, 300, 501),
+                2,
+            ),
+        ],
+    )
+    def test_change_in_confidence_intervals_updates_headline(
+        self,
+        first: ConfidenceIntervalScenario,
+        second: ConfidenceIntervalScenario,
+        expected_count: int,
+        test_filename: str,
+    ):
+        """
+        Given some ingest headline data without confidence intervals
+        When `data_ingester` is called with updates to existing data
+        Then the correct `CoreHeadline` records are created / not created
+        """
+        # given a headline metric
+        data_v1 = {
+            "parent_theme": "extreme_event",
+            "child_theme": "mortality-report",
+            "topic": "Heat-mortality",
+            "metric_group": "headline",
+            "metric": "heat-mortality_headline_total",
+            "geography_type": "UKHSA Region",
+            "geography": "London",
+            "geography_code": "E45000001",
+            "age": "all",
+            "sex": "all",
+            "stratum": "Overall",
+            "data": [
+                {
+                    "period_start": "2025-01-01",
+                    "period_end": "2025-05-31",
+                    "upper_confidence": first.upper,
+                    "lower_confidence": first.lower,
+                    "metric_value": first.value,
+                    "embargo": None,
+                    "is_public": True,
+                }
+            ],
+            "refresh_date": "2026-06-15 12:19:37",
+        }
+
+        # data_2 is the same record but with potentially updated metric/upper/lower values
+        data_v2 = deepcopy(data_v1)
+        data_v2["data"][0]["upper_confidence"] = second.upper
+        data_v2["data"][0]["lower_confidence"] = second.lower
+        data_v2["data"][0]["metric_value"] = second.value
+
+        # when we ingest the first version of the data
+        data_ingester(data=data_v1, filename=test_filename)
+        # then there should be one headline row
+        assert CoreHeadline.objects.count() == 1
+        assert CoreHeadline.objects.first().upper_confidence == first.upper
+        assert CoreHeadline.objects.first().lower_confidence == first.lower
+        assert CoreHeadline.objects.first().metric_value == first.value
+
+        # when we then update that version with the new version
+        data_ingester(data=data_v2, filename=test_filename)
+        # then
+        assert CoreHeadline.objects.count() == expected_count
+        assert CoreHeadline.objects.first().upper_confidence == first.upper
+        assert CoreHeadline.objects.first().lower_confidence == first.lower
+        assert CoreHeadline.objects.first().metric_value == first.value
+        if expected_count == 2:
+            assert CoreHeadline.objects.last().upper_confidence == second.upper
+            assert CoreHeadline.objects.last().lower_confidence == second.lower
+            assert CoreHeadline.objects.last().metric_value == second.value
+
+    @pytest.mark.django_db
+    def test_no_change_in_confidence_intervals_is_cleaned_up(
+        self,
+        test_filename: str,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+    ):
+        """
+        Given a headline metric with null confidence intervals
+        When the metric is ingested three times in a row without any changes other than the refresh date
+        Then two records remain after the three ingestions have happened
+        """
+        # given a headline metric
+        data = example_headline_data
+        # fiddle with it, we only want 1 metric and we want to explicitely set the confidence intervals to null
+        del data["data"][1]
+        data["data"][0]["upper_confidence"] = None
+        data["data"][0]["lower_confidence"] = None
+
+        # when we ingest the metric once
+        data_ingester(data=data, filename=test_filename)
+        # then we expect 1 headline row
+        assert CoreHeadline.objects.count() == 1
+
+        # when we push the refresh date out by 1 day and ingest again
+        data["refresh_date"] = "2023-11-10"
+        data_ingester(data=data, filename=test_filename)
+        # then we expect 2, the original above and the "new" headline row. This is because the confidence interval null
+        # values are treated as unique by the unique constraint and therefore this is seen as a different metric
+        assert CoreHeadline.objects.count() == 2
+        assert CoreHeadline.objects.first().refresh_date.day == 9
+        assert CoreHeadline.objects.last().refresh_date.day == 10
+
+        # when we push the refresh date out by another day and ingest again
+        data["refresh_date"] = "2023-11-11"
+        data_ingester(data=data, filename=test_filename)
+        # then there shouldn't be another record, only two again. The one we previous one we ingested and the one we
+        # just ingested.
+        assert CoreHeadline.objects.count() == 2
+        assert CoreHeadline.objects.first().refresh_date.day == 10
+        assert CoreHeadline.objects.last().refresh_date.day == 11
+
+    @pytest.mark.django_db
+    def test_no_change_in_confidence_intervals_is_cleaned_up_even_when_refresh_dates_are_the_same(
+        self,
+        test_filename: str,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
+    ):
+        """
+        Given a headline metric with null confidence intervals
+        When the metric is ingested three times in a row without any changes (even the refresh date is the same)
+        Then two records remain after the three ingestions have happened
+        """
+        # given a headline metric
+        data = example_headline_data
+        # fiddle with it, we only want 1 metric and we want to explicitly set the confidence intervals to null
+        del data["data"][1]
+        data["data"][0]["upper_confidence"] = None
+        data["data"][0]["lower_confidence"] = None
+
+        # when we ingest the metric once
+        data_ingester(data=data, filename=test_filename)
+        # then we expect 1 headline row
+        assert CoreHeadline.objects.count() == 1
+
+        # when we ingest it again
+        data_ingester(data=data, filename=test_filename)
+        # then we expect 2
+        assert CoreHeadline.objects.count() == 2
+
+        # when we ingest it again
+        data_ingester(data=data, filename=test_filename)
+        # then we expect 2
+        assert CoreHeadline.objects.count() == 2
