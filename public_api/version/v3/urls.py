@@ -1,9 +1,9 @@
-from django.db import models
 from django.urls import path, resolvers
+from rest_framework import serializers
 
 from public_api.version.v3.serializers.serializers import (
-    APITimeSeriesListSerializerv3,
     APIHeadlineListSerializerv3,
+    APITimeSeriesListSerializerv3,
 )
 from public_api.version.v3.views import (
     GeographyDetailViewV3,
@@ -24,7 +24,7 @@ from public_api.version.v3.views.viewset import APIViewSetV3
 
 def _construct_urls(
     *, prefix: str, url_prefix: str, serializer_class: serializers.ModelSerializer
-) -> list[resolvers.URLResolver]:
+) -> list[resolvers.URLPattern]:
     return [
         path(
             f"{prefix}/themes/",
@@ -118,7 +118,7 @@ def _construct_urls(
 def construct_version_three_urls(
     *,
     prefix: str,
-) -> list[resolvers.URLResolver]:
+) -> list[resolvers.URLPattern]:
     """Returns a list of URLResolvers for the public_api version 2
 
     Args:

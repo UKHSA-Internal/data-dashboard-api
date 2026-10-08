@@ -3,7 +3,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
 from public_api.auth import get_permission_sets_for_request
-
 from public_api.version.v3.views.base import (
     PUBLIC_API_TAG,
     add_private_cache_control_header,
