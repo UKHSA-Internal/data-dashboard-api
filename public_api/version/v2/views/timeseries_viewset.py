@@ -97,15 +97,28 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
         response = super().list(request, *args, **kwargs)
         return add_private_cache_control_header(request=request, response=response)
 
+    def get_formatted_kwargs_from_request(self):
+        """Formats the `kwargs` used for querying for the list view
+            This ensures that any `+` symbols are replace with spaces
+            before making the query.
+
+        Returns:
+            Dict[str, str]: The formatted kwargs.
+            Examples:
+                `{"theme": "infectious_disease", "geography_type": "Government Office Region}
+        """
+        return {key: " ".join(value.split("+")) for key, value in self.kwargs.items()}
+
     def get_queryset(self):
         queryset = super().get_queryset()
+        kwargs = self.get_formatted_kwargs_from_request()
         permission_sets = get_permission_sets_for_request(self.request)
         return queryset.filter_for_list_view(
-            theme=self.kwargs["theme"],
-            sub_theme=self.kwargs["sub_theme"],
-            topic=self.kwargs["topic"],
-            geography_type=self.kwargs["geography_type"],
-            geography=self.kwargs["geography"],
-            metric=self.kwargs["metric"],
+            theme=kwargs["theme"],
+            sub_theme=kwargs["sub_theme"],
+            topic=kwargs["topic"],
+            geography_type=kwargs["geography_type"],
+            geography=kwargs["geography"],
+            metric=kwargs["metric"],
             permission_sets=permission_sets,
         )
