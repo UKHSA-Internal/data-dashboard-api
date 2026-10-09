@@ -3,5 +3,6 @@ from .single_category_charts import (
     ChartPlotsListSerializer,
     ChartsResponseSerializer,
     EncodedChartsRequestSerializer,
+    EncodedSingleCatergoryChartResponseSerializer,
     ChartsSerializer,
 )
