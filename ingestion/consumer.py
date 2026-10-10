@@ -418,6 +418,7 @@ class Consumer:
                 upper_confidence=headline_data.upper_confidence,
                 metric_value=headline_data.metric_value,
                 lower_confidence=headline_data.lower_confidence,
+                force_write=headline_data.force_write,
                 is_public=headline_data.is_public,
             )
             for headline_data in self.dto.data

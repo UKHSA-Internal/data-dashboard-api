@@ -34,6 +34,7 @@ class TestBuildModelMethods:
                 "period_end": "2023-10-07",
                 "metric_value": 123,
                 "is_public": True,
+                "force_write": True,
             }
         ]
 
@@ -79,6 +80,10 @@ class TestBuildModelMethods:
         assert (
             built_core_headline_instance.metric_value
             == fake_data["data"][0]["metric_value"]
+        )
+        assert (
+            built_core_headline_instance.force_write
+            == fake_data["data"][0]["force_write"]
         )
         assert (
             built_core_headline_instance.is_public == fake_data["data"][0]["is_public"]
