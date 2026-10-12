@@ -2,6 +2,8 @@ from metrics.domain.models.common import BaseRequestParams
 
 
 class HeadlineParameters(BaseRequestParams):
+    theme: str
+    sub_theme: str
     topic: str
     metric: str
     stratum: str
@@ -11,6 +13,14 @@ class HeadlineParameters(BaseRequestParams):
     age: str
     is_public: bool | None = True
     data_classification: str | None = None
+
+    @property
+    def theme_name(self) -> str:
+        return self.theme
+
+    @property
+    def sub_theme_name(self) -> str:
+        return self.sub_theme
 
     @property
     def topic_name(self) -> str:
@@ -52,6 +62,8 @@ class HeadlineParameters(BaseRequestParams):
 
         """
         return {
+            "theme": self.theme_name,
+            "sub_theme": self.sub_theme_name,
             "topic": self.topic_name,
             "metric": self.metric_name,
             "geography": self.geography_name,

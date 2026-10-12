@@ -418,6 +418,8 @@ class TestExtractMetricGroup:
                 ("COVID-19_deaths_ONSRegByWeek", "deaths"),
                 ("COVID-19_healthcare_occupiedBedsRollingMean", "healthcare"),
                 ("COVID-19_vaccinations_autumn23_uptakeByDay", "vaccinations"),
+                ("OFF-SENS_influenza_headline_positivityLatest", "headline"),
+                ("OFF-SENS_MMR1_coverage_coverageByYear", "coverage"),
             ]
         ),
     )

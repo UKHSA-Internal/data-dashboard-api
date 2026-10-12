@@ -8,7 +8,7 @@ from validation.enums import GeographyType
 
 @pytest.mark.parametrize("invalid_input_parameters", INVALID_PARAMETERS)
 def test_raises_error_with_invalid_parameters(
-    invalid_input_parameters: tuple[str, str, str, str],
+    invalid_input_parameters: tuple[str, str, str, str, str],
 ):
     """
     Given an invalid set of parameters

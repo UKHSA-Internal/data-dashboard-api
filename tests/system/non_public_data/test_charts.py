@@ -25,13 +25,15 @@ class TestNonPublicDataChartsAPI:
             "file_format": "svg",
             "plots": [
                 {
-                    "metric": core_time_series.metric.name,
+                    "theme": core_time_series.metric.topic.sub_theme.theme.name,
+                    "sub_theme": core_time_series.metric.topic.sub_theme.name,
                     "topic": core_time_series.metric.topic.name,
+                    "metric": core_time_series.metric.name,
+                    "geography": core_time_series.geography.name,
+                    "geography_type": core_time_series.geography.geography_type.name,
                     "stratum": core_time_series.stratum.name,
                     "age": core_time_series.age.name,
                     "sex": core_time_series.sex,
-                    "geography": core_time_series.geography.name,
-                    "geography_type": core_time_series.geography.geography_type.name,
                     "date_from": "2000-01-01",
                     "date_to": "2025-12-31",
                     "chart_type": "bar",

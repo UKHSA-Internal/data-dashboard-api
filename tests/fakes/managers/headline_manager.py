@@ -19,6 +19,8 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         *,
         topic: str,
         metric: str,
+        theme: str = "",
+        sub_theme: str = "",
         geography: str | None = None,
         geography_type: str | None = None,
         geography_code: str | None = None,

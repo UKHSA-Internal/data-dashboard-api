@@ -31,6 +31,8 @@ class TestHeadlinesView:
         if not core_headline_example.is_public:
             client.force_authenticate(user=user_global_access, token="token")
         payload = {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
             "topic": core_headline_example.metric.topic.name,
             "metric": core_headline_example.metric.name,
             "geography": core_headline_example.geography.name,
@@ -79,6 +81,8 @@ class TestHeadlinesView:
         response: Response = client.get(
             path=self.path,
             data={
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
                 "topic": incorrect_topic_name,
                 "metric": core_headline_example.metric.name,
                 "geography": core_headline_example.geography.name,

@@ -14,9 +14,6 @@ from django.db.models.query_utils import Q
 
 from common.auth.permissions import PermissionSetsType, check_chart_permissions_by_name
 from common.virtual_clock import get_embargo_time
-from metrics.api.permissions.fluent_permissions import (
-    is_public_data_only_enforced,
-)
 from metrics.data.models import RBACPermission
 
 ALLOWABLE_METRIC_VALUE_RANGE_TYPE = tuple[str | float | int, str | float | int]
@@ -475,7 +472,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
 
-    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
+    def get_available_geographies(
+        self, *, topic: str, is_public: bool = True
+    ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:
@@ -486,10 +485,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(metric__topic__name=topic)
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
 
-        if is_public_data_only_enforced():
+        # return only geographies associated with public data if is_public is True, otherwise return all geographies
+        if is_public:
             queryset = queryset.filter(is_public=True)
-            queryset = self._exclude_data_under_embargo(queryset=queryset)
 
         return (
             queryset.values_list(
@@ -712,7 +712,9 @@ class CoreTimeSeriesManager(models.Manager):
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
-    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
+    def get_available_geographies(
+        self, *, topic: str, is_public: bool = True
+    ) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:
@@ -722,7 +724,9 @@ class CoreTimeSeriesManager(models.Manager):
                         [Row(geography__name='England', geography__geography_type__name='Nation')]>`
 
         """
-        return self.get_queryset().get_available_geographies(topic=topic)
+        return self.get_queryset().get_available_geographies(
+            topic=topic, is_public=is_public
+        )
 
     def delete_superseded_data(
         self,

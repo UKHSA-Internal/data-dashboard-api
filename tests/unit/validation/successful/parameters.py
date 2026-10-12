@@ -209,4 +209,11 @@ VALID_PARAMETERS = [
         "antibiotics_consumption_awareAccess",
         "consumption",
     ),
+    (
+        "infectious_disease",
+        "contact",
+        "mpox",
+        "mpox_cases_countByMonth",
+        "cases",
+    ),
 ]

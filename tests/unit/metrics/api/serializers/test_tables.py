@@ -15,8 +15,6 @@ from metrics.domain.models import PlotParameters, ChartRequestParams
 class TestTablePlotSerializer:
     optional_field_names = [
         "stratum",
-        "geography",
-        "geography_type",
         "sex",
         "label",
         "x_axis",

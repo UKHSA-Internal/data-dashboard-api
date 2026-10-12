@@ -7,7 +7,7 @@ from validation.enums import GeographyType
 
 @pytest.mark.parametrize("valid_input_parameters", VALID_PARAMETERS)
 def test_passes_validation_with_valid_parameters(
-    valid_input_parameters: tuple[str, str, str, str],
+    valid_input_parameters: tuple[str, str, str, str, str],
 ):
     """
     Given a valid set of parameters
