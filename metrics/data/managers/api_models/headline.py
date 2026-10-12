@@ -182,7 +182,7 @@ class APIHeadlineQuerySet(models.QuerySet):
         metric: str,
         permission_sets: PermissionSetsType | None = None,
     ) -> Self:
-        """Filters by the given fields to provide a slice of the timeseries data as per the fields.
+        """Filters by the given fields to provide headline data as per the fields.
 
         Args:
             theme: The name of the root theme being queried for.
@@ -204,12 +204,12 @@ class APIHeadlineQuerySet(models.QuerySet):
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
                 Examples:
-                    `<APITimeSeriesQuerySet [
-                        <APITimeSeries:
-                            APITimeSeries for 2023-03-08,
-                                              metric 'COVID-19_deaths_ONSByDay',
-                                              stratum 'default',
-                                              value: 2364.0
+                    `<APIHeadlineQuerySet [
+                        <APIHeadline:
+                            APIHeadline,
+                                  metric 'COVID-19_headline_ONSdeaths_7DayTotals',
+                                  stratum 'default',
+                                  value: 2364.0
                             >,
                             ...
                         ]
@@ -263,7 +263,7 @@ class APIHeadlineQuerySet(models.QuerySet):
 
         Returns:
             A new filtered queryset containing
-            only the latest records for each date
+            only the latest records for each refresh_date
 
         """
         # Filter the queryset to get records with a ranking of 1.
@@ -448,7 +448,7 @@ class APIHeadlineManager(models.Manager):
         lookup_field: str,
         permission_sets: PermissionSetsType | None = None,
         **kwargs,
-    ) -> "APIHeadlineQuerySet":
+    ) -> APIHeadlineQuerySet:
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
         Args:
@@ -458,9 +458,9 @@ class APIHeadlineManager(models.Manager):
             **kwargs: The filters to apply to the query.
 
         Returns:
-            APITimeSeriesQuerySet: The unique column values as a queryset.
+            APIHeadlineQuerySet: The unique column values as a queryset.
             Examples:
-                `<APITimeSeriesQuerySet ['infectious_disease']>`
+                `<APIHeadlineQuerySet ['infectious_disease']>`
 
         """
         queryset = self.filter(**kwargs)
