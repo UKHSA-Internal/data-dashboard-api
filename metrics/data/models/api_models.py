@@ -157,6 +157,8 @@ class APIHeadline(models.Model):
                     "sub_theme",
                     "theme",
                     "topic",
+                    "lower_confidence",
+                    "upper_confidence",
                 ),
                 name="The `APIHeadline` record should be unique if `force_write` is False",
                 condition=Q(force_write=False),
