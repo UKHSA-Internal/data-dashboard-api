@@ -1,6 +1,7 @@
 import pytest
 
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
+from metrics.domain.charts.chart_settings.single_category import COMPACT_X_AXIS_NTICKS
 from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
 from tests.conftest import fake_plot_data
 
@@ -20,6 +21,15 @@ def fake_dual_category_chart_settings(
 
 
 class TestDualCategoryChartSettings:
+    def test_x_axis_uses_responsive_tick_limit(
+        self, fake_dual_category_chart_settings: DualCategoryChartSettings
+    ):
+        x_axis_config = fake_dual_category_chart_settings._get_x_axis_config()
+
+        assert x_axis_config["nticks"] == COMPACT_X_AXIS_NTICKS
+        assert x_axis_config["ticklabeloverflow"] == "allow"
+        assert x_axis_config["automargin"] is True
+
     def test_get_legend_config(
         self, fake_dual_category_chart_settings: DualCategoryChartSettings
     ):

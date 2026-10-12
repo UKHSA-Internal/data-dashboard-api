@@ -4,6 +4,9 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
+from metrics.domain.charts.chart_settings.single_category import (
+    COMPACT_X_AXIS_NTICKS
+)
 from metrics.domain.charts.common_charts.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.models.plots import (
@@ -141,14 +144,15 @@ class TestBarCharts:
         assert x_axis.ticks == "outside"
         assert x_axis.tickson == "boundaries"
 
-        # The `M1` dtick setting ensures x values within the same month do not show repeated months:
-        # ___Sep___Oct___Nov___  as opposed to _Sep_Sep_Oct_Oct_Oct_Nov_Nov_
-        assert x_axis.dtick == "M1"
+        assert x_axis.dtick is None
+        assert x_axis.autorange is True
+        assert x_axis.range is None
+        assert x_axis.nticks is COMPACT_X_AXIS_NTICKS
 
         # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
         assert x_axis.type == "date"
         # The chart width is narrow, so the tick labels will use a newline to break the month and year text
-        assert x_axis.tickformat == "%b<br>%Y"
+        assert x_axis.tickformatstops[1].value == "%b<br>%Y"
 
         # ---Y Axis checks---
         y_axis = figure.layout.yaxis
@@ -393,3 +397,4 @@ class TestBarCharts:
         # The x-axis type and ticks should be the default
         assert x_axis.type == "-"
         assert x_axis.tickformat is None
+        assert x_axis.nticks == COMPACT_X_AXIS_NTICKS

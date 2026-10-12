@@ -17,7 +17,6 @@ from metrics.api.serializers.charts import (
     EncodedChartsRequestSerializer,
     EncodedSingleCatergoryChartResponseSerializer,
 )
-# from metrics.api.serializers.charts.common import EncodedChartResponseSerializer
 from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts.single_category_charts import access
 from metrics.interfaces.plots.access import (

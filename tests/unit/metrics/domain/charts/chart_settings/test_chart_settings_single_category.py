@@ -89,6 +89,8 @@ class TestSingleCategoryChartSettings:
             "type": "date",
             "tickfont": chart_settings._get_tick_font_config(),
             "autotickangles": [0, 90],
+            "ticklabeloverflow": "allow",
+            "automargin": True,
             "nticks": COMPACT_X_AXIS_NTICKS,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
@@ -143,6 +145,8 @@ class TestSingleCategoryChartSettings:
             "tickformat": None,
             "tickfont": chart_settings._get_tick_font_config(),
             "autotickangles": [0, 90],
+            "ticklabeloverflow": "allow",
+            "automargin": True,
             "nticks": COMPACT_X_AXIS_NTICKS,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
