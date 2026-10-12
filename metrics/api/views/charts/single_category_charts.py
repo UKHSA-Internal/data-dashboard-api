@@ -226,7 +226,6 @@ class EncodedChartsView(APIView):
     @extend_schema(
         request=EncodedChartsRequestSerializer,
         responses={
-            # HTTPStatus.OK.value: EncodedChartResponseSerializer
             HTTPStatus.OK.value: EncodedSingleCatergoryChartResponseSerializer
         },
         tags=[CHARTS_API_TAG],
@@ -392,7 +391,6 @@ class EncodedChartsView(APIView):
                 chart_request_params=chart_request_params,
             )
 
-            # serializer = EncodedChartResponseSerializer(data=response)
             serializer = EncodedSingleCatergoryChartResponseSerializer(data=response)
             serializer.is_valid(raise_exception=True)
 

@@ -190,7 +190,7 @@ class SingleCategoryChartSettings(ChartSettings):
             {
                 "dtickrange": [None, "M1"],
                 "value": self._get_date_tick_format(weekly=True),
-            }
+            },
         ]
 
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:

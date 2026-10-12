@@ -3,9 +3,7 @@ from typing import Any
 
 import plotly.graph_objects
 
-from metrics.domain.charts.chart_settings.single_category import (
-    COMPACT_X_AXIS_NTICKS
-)
+from metrics.domain.charts.chart_settings.single_category import COMPACT_X_AXIS_NTICKS
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.common_charts import generation
 from metrics.domain.models import (

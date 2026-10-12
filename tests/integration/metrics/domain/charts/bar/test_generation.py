@@ -4,9 +4,7 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
-from metrics.domain.charts.chart_settings.single_category import (
-    COMPACT_X_AXIS_NTICKS
-)
+from metrics.domain.charts.chart_settings.single_category import COMPACT_X_AXIS_NTICKS
 from metrics.domain.charts.common_charts.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.models.plots import (
