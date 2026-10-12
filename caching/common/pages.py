@@ -40,7 +40,7 @@ def collect_all_pages(
 
     """
     pages = []
-    pages += topic_page_manager.get_live_pages()
+    pages += topic_page_manager.get_live_public_pages()
     pages += common_page_manager.get_live_pages()
     pages += whats_new_parent_page_manager.get_live_pages()
     pages += whats_new_child_entry_manager.get_live_pages()

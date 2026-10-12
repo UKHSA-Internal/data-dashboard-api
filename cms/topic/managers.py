@@ -23,6 +23,17 @@ class TopicPageQuerySet(PageQuerySet):
         """
         return self.filter(live=True)
 
+    def get_live_public_pages(self) -> models.QuerySet:
+        """
+        Gets the all currently live public pages. Non-public pages are excluded from the resulting queryset.
+
+        Returns:
+            QuerySet: A queryset of the public live pages:
+                Examples:
+                    `<TopicPageQuerySet [<TopicPage: COVID-19>, <TopicPage: Influenza>, ...]>`
+        """
+        return self.get_live_pages().filter(is_public=True)
+
 
 class TopicPageManager(PageManager):
     """Custom model manager class for the `TopicPage` model."""
@@ -39,3 +50,14 @@ class TopicPageManager(PageManager):
                     `<TopicPageQuerySet [<TopicPage: COVID-19>, <TopicPage: Influenza>, ...]>`
         """
         return self.get_queryset().get_live_pages()
+
+    def get_live_public_pages(self) -> models.QuerySet:
+        """
+        Gets the all currently live public pages. Non-public pages are excluded from the resulting queryset.
+
+        Returns:
+            QuerySet: A queryset of the public live pages:
+                Examples:
+                    `<TopicPageQuerySet [<TopicPage: COVID-19>, <TopicPage: Influenza>, ...]>`
+        """
+        return self.get_queryset().get_live_public_pages()
