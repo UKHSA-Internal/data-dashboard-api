@@ -26,6 +26,8 @@ class TestCoreHeadline:
             metric_value=123,
             period_end=period_end_date,
             refresh_date=original_refresh_date,
+            upper_confidence=200,
+            lower_confidence=100,
         )
 
         # When / Then
@@ -35,6 +37,8 @@ class TestCoreHeadline:
                 metric_value=123,
                 period_end=period_end_date,
                 refresh_date=subsequent_refresh_date,
+                upper_confidence=200,
+                lower_confidence=100,
             )
 
             # Check that there is only 1 'version' of that data
@@ -46,6 +50,39 @@ class TestCoreHeadline:
                 == original_record.original_refresh_date
                 != subsequent_refresh_date
             )
+
+    @pytest.mark.django_db
+    def test_models_are_not_unique_for_updated_refresh_dates_with_no_change_when_confidence_intervals_are_null(
+        self,
+    ):
+        """
+        Given an existing `CoreHeadline` record with null confidence intervals
+        When another record is attempted to be created with a new `refresh_date` only and null confidence intervals
+        Then a new row is created
+        """
+        # Given
+        period_end_date = datetime.date.today()
+        original_refresh_date = datetime.datetime(year=2023, month=10, day=19)
+        CoreHeadlineFactory.create_record(
+            metric_value=123,
+            period_end=period_end_date,
+            refresh_date=original_refresh_date,
+            upper_confidence=None,
+            lower_confidence=None,
+        )
+
+        # When / Then
+        subsequent_refresh_date = datetime.datetime(year=2023, month=10, day=26)
+        CoreHeadlineFactory.create_record(
+            metric_value=123,
+            period_end=period_end_date,
+            refresh_date=subsequent_refresh_date,
+            upper_confidence=None,
+            lower_confidence=None,
+        )
+
+        # Check that there are 2 'versions' of that data
+        assert CoreHeadline.objects.count() == 2
 
     @pytest.mark.django_db
     def test_models_allows_new_record_with_new_metric_value_and_refresh_date(self):

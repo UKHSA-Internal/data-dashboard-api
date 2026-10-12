@@ -79,6 +79,8 @@ class CoreHeadline(models.Model):
                     "period_start",
                     "period_end",
                     "metric_value",
+                    "upper_confidence",
+                    "lower_confidence",
                 ),
                 name="The `CoreHeadline` record should be unique if `force_write` is False",
                 condition=Q(force_write=False),
