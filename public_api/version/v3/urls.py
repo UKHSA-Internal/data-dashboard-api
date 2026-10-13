@@ -121,6 +121,17 @@ def construct_version_three_urls(
 ) -> list[resolvers.URLPattern]:
     """Returns a list of URLResolvers for the public_api version 2
 
+    Notes:
+        `DEFAULT_PUBLIC_API_PREFIX` is swapped out for an empty string on
+        deployed instances of the public_api. This Constant is only used for
+        local development.
+
+        Due to the removal of `timeseries/` as a default part of the prefix
+        in V3 now that `headline` has been integrated.
+        There is an override included below to leave V1 and V2 as they
+        are for now. This override will be removed when V2 is deprecated.
+        see: `metrics/api/urls_contruction` LN 105 for reference.
+
     Args:
         prefix: The prefix to add to the start of the url paths
 
@@ -129,21 +140,24 @@ def construct_version_three_urls(
         set of versioned URLS.
     """
 
+    # Temporary fix for the public_url prefix until v2 is deprecated - see Notes: in docstring
+    prefix = "api/public/" if prefix == "api/public/timeseries/" else prefix
+
     return (
         [
             path(
-                f"{prefix}/",
+                f"{prefix}v3/",
                 PublicAPIRootViewV3.as_view(),
                 name="public-api-v3",
             ),
         ]
         + _construct_urls(
-            prefix=f"{prefix}/timeseries",
+            prefix=f"{prefix}v3/timeseries",
             url_prefix="timeseries",
             serializer_class=APITimeSeriesListSerializerv3,
         )
         + _construct_urls(
-            prefix=f"{prefix}/headline",
+            prefix=f"{prefix}v3/headline",
             url_prefix="headline",
             serializer_class=APIHeadlineListSerializerv3,
         )

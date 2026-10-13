@@ -16,7 +16,7 @@ DEFAULT_PAGE_SIZE = 5
 class TestPublicAPIV3:
     @property
     def path(self) -> str:
-        return "/api/public/v3"
+        return "/api/public/v3/"
 
     @property
     def target_domain(self) -> str:
@@ -180,9 +180,9 @@ class TestPublicAPIV3:
                     metric=metric,
                 )
             )
-            path = f"{self.path}/{type}"
+            path = f"{self.path}{type}/"
             # This gets reset at the bottom of the loop to get the next item
-            target_url = f"{self.target_domain}{path}/themes/"
+            target_url = f"{self.target_domain}{path}themes/"
             for (
                 metadata_field,
                 link_field,
@@ -206,7 +206,7 @@ class TestPublicAPIV3:
                 link_field_from_response: str = response_data[0][link_field]
                 assert (
                     link_field_from_response
-                    == f"{self.api_base_path}/{expected_link_field_value}"
+                    == f"{self.api_base_path}{expected_link_field_value}"
                 )
 
                 # Point the next request to the link field provided by the previous response
@@ -354,7 +354,7 @@ class TestPublicAPIV3:
             # When
             target_url = (
                 f"{self.target_domain}"
-                f"{self.path}/{data_type}/themes/"
+                f"{self.path}{data_type}/themes/"
                 f"{theme}/sub_themes/"
                 f"{sub_theme}/topics/"
                 f"{topic}/geography_types/"
@@ -488,7 +488,7 @@ class TestPublicAPIV3:
             # When
             target_url = (
                 f"{self.target_domain}"
-                f"{self.path}/{data_type}/themes/"
+                f"{self.path}{data_type}/themes/"
                 f"{theme}/sub_themes/"
                 f"{sub_theme}/topics/"
                 f"{topic}/geography_types/"
@@ -533,7 +533,7 @@ class TestPublicAPIV3:
         """
         # Given
         client = RequestsClient()
-        target_url = self.api_base_path + "/"
+        target_url = self.api_base_path
 
         # When
         response: Response = client.get(target_url)
@@ -542,8 +542,8 @@ class TestPublicAPIV3:
         assert response.status_code == 200
         expected_response = {
             "links": {
-                "headline/themes": f"{self.api_base_path}/headline/themes/",
-                "timeseries/themes": f"{self.api_base_path}/timeseries/themes/",
+                "headline/themes": f"{self.api_base_path}headline/themes/",
+                "timeseries/themes": f"{self.api_base_path}timeseries/themes/",
             }
         }
         assert response.json() == expected_response
