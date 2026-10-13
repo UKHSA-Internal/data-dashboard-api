@@ -299,23 +299,3 @@ class SingleCategoryChartSettings(ChartSettings):
 
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_top_centre_config()}
-
-
-def get_number_of_days_and_months(
-    min_date: datetime.date, max_date: datetime.date
-) -> list[int]:
-    """Takes two datetime.date objects and returns the number of days and months in the time frame.
-
-    Args:
-        min_date: represents the earliest date in the time series, this is the first day of the
-            earliest month. Eg: '2025-01-27' will have a `min_date` of '2025-01-01'
-        max_date: The last day in the time series Eg '2025-01-15' will be '2025-01-15'
-
-    Returns:
-        A list of 2 integers representing the number of days and months between the two dates provided.
-    """
-    number_of_days = (max_date - min_date).days
-    number_of_months = (max_date.year - min_date.year) * 12 + (
-        max_date.month - min_date.month
-    )
-    return [number_of_days, number_of_months]

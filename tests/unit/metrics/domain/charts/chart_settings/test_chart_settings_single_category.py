@@ -536,6 +536,36 @@ class TestSingleCategoryChartSettings:
         assert expected_y_axis_params == returned_y_axis_params
 
     @mock.patch.object(
+        SingleCategoryChartSettings, 
+        "_build_line_single_simplified_y_axis_value_params"
+    )
+    def test_build_line_simplified_axis_params(
+        self,
+        mock_build_y_axis_params: mock.MagicMock,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """The simplified axis parameters use the first and last plot values."""
+        first_date = datetime.date(2023, 1, 1)
+        last_date = datetime.date(2023, 10, 30)
+        fake_chart_settings.plots_data[0].x_axis_values = [first_date, last_date]
+        mock_build_y_axis_params.return_value = {
+            "y_axis_tick_values": [0, 10],
+            "y_axis_tick_text": ["0", "10"],
+            "range": [0, 10],
+        }
+
+        axis_params = fake_chart_settings._build_line_single_simplified_axis_params()
+
+        assert axis_params == {
+            "x_axis_tick_values": [first_date, last_date],
+            "x_axis_tick_text": ["Jan, 2023", "Oct, 2023"],
+            "y_axis_tick_values": [0, 10],
+            "y_axis_tick_text": ["0", "10"],
+            "range": [0, 10],
+            "rangemode": "tozero",
+        }
+
+    @mock.patch.object(
         SingleCategoryChartSettings, "_build_line_single_simplified_axis_params"
     )
     def test_get_line_single_simplified_chart_config(
