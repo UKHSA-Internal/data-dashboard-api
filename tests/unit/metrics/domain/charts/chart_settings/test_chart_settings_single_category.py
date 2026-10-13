@@ -536,8 +536,7 @@ class TestSingleCategoryChartSettings:
         assert expected_y_axis_params == returned_y_axis_params
 
     @mock.patch.object(
-        SingleCategoryChartSettings, 
-        "_build_line_single_simplified_y_axis_value_params"
+        SingleCategoryChartSettings, "_build_line_single_simplified_y_axis_value_params"
     )
     def test_build_line_simplified_axis_params(
         self,
