@@ -3,29 +3,25 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
 from public_api.auth import get_permission_sets_for_request
-from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.version_02.serializers.timeseries_serializers import (
-    APITimeSeriesListSerializerv2,
-)
-from public_api.version_02.views.base import (
+
+from public_api.version.v3.views.base import (
     PUBLIC_API_TAG,
-    add_private_cache_control_header,
 )
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 365
 
 
-class APITimeSeriesPaginationv2(pagination.PageNumberPagination):
+class APIPaginationv3(pagination.PageNumberPagination):
     page_size = DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE
     max_page_size = MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE
     page_size_query_param = "page_size"
 
 
 @extend_schema(tags=[PUBLIC_API_TAG])
-class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
+class APIViewSetV3(viewsets.ReadOnlyModelViewSet):
     """
-    This endpoint will provide the full timeseries of a slice of data.
+    This endpoint will provide the slice of data
 
     There are a set of mandatory URL parameters and optional query parameters:
 
@@ -74,32 +70,26 @@ class APITimeSeriesViewSetV2(viewsets.ReadOnlyModelViewSet):
     """
 
     permission_classes = []
-    name = "API Time Series Slice"
-    queryset = (
-        MetricsPublicAPIInterface.get_api_timeseries_model()
-        .objects.all()
-        .order_by("date")
-    )
-    serializer_class = APITimeSeriesListSerializerv2
-    pagination_class = APITimeSeriesPaginationv2
+    name = "API Slice"
+    pagination_class = APIPaginationv3
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "stratum",
         "sex",
         "age",
-        "year",
-        "epiweek",
-        "date",
-        "in_reporting_delay_period",
     ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
         return add_private_cache_control_header(request=request, response=response)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = self.serializer_class.Meta.model.objects.get_queryset()
         permission_sets = get_permission_sets_for_request(self.request)
+
         return queryset.filter_for_list_view(
             theme=self.kwargs["theme"],
             sub_theme=self.kwargs["sub_theme"],
