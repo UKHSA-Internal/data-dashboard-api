@@ -4,6 +4,8 @@ This is a [Django](https://www.djangoproject.com/)
 and [Wagtail](https://docs.wagtail.org/en/stable/getting_started/index.html) project. 
 The REST API is served via [Django-Rest-Framework](https://www.django-rest-framework.org/)
 
+testin testing 123
+
 ## Prerequisites
 
 Before proceeding with the initial configuration you will require `postgresql` to be installed
