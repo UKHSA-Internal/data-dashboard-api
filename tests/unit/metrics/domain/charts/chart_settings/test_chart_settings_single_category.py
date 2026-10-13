@@ -704,6 +704,30 @@ class TestSingleCategoryChartSettings:
             == expected_line_multi_coloured_chart_config
         )
 
+    def test_get_common_chart_config(
+        self,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """
+        Given an insatnce of `SinglecategoryChartSettings`
+        When `get_common_chart_config()` is called
+        Then the base chart configuration includes grouped bars and the shared legend
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        common_chart_config = chart_settings.get_common_chart_config()
+
+        # Then
+        expected_common_chart_config = {
+            **chart_settings._get_base_chart_config(),
+            **chart_settings._get_legend_top_centre_config(),
+            "barmode": "group",
+        }
+
+        assert common_chart_config == expected_common_chart_config
+
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
