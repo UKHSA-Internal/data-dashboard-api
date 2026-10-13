@@ -35,9 +35,9 @@ def construct_url_patterns_for_public_api(
         set of versioned URLS.
     """
     urls = []
-    urls.extend(_construct_version_one_urls(prefix=f"{prefix}/timeseries/"))
-    urls.extend(construct_version_two_urls(prefix=f"{prefix}/timeseries/"))
-    urls.extend(construct_version_three_urls(prefix=f"{prefix}/v3"))
+    urls.extend(_construct_version_one_urls(prefix=f"{prefix}"))
+    urls.extend(construct_version_two_urls(prefix=f"{prefix}"))
+    urls.extend(construct_version_three_urls(prefix=f"{prefix}"))
 
     if MetricsPublicAPIInterface.is_auth_enabled():
         urls.append(

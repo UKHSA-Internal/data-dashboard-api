@@ -102,7 +102,7 @@ def construct_cms_admin_urlpatterns(
     ]
 
 
-DEFAULT_PUBLIC_API_PREFIX = "api/public"
+DEFAULT_PUBLIC_API_PREFIX = "api/public/timeseries/"
 
 
 def construct_public_api_urlpatterns(
