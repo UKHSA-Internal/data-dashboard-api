@@ -16,7 +16,10 @@ from public_api.version_02.views import (
     TopicDetailViewV2,
     TopicListViewV2,
 )
-from public_api.version_02.views.timeseries_viewset import APITimeSeriesViewSetV2
+from public_api.version_02.views.timeseries_viewset import (
+    APITimeSeriesViewSetV2,
+    APITimeSeriesViewSetV3,
+)
 from public_api.views import (
     GeographyDetailView,
     GeographyListView,
@@ -50,6 +53,7 @@ def construct_url_patterns_for_public_api(
     urls = []
     urls.extend(_construct_version_one_urls(prefix=prefix))
     urls.extend(_construct_version_two_urls(prefix=prefix))
+    urls.extend(_construct_version_three_urls(prefix=prefix))
 
     if MetricsPublicAPIInterface.is_auth_enabled():
         urls.append(
@@ -220,5 +224,30 @@ def _construct_version_two_urls(
                 {"get": "list"}, name=APITimeSeriesViewSet.name
             ),
             name="timeseries-list-v2",
+        ),
+    ]
+
+
+def _construct_version_three_urls(
+    *,
+    prefix: str,
+) -> list[resolvers.URLResolver]:
+    """Returns a list of URLResolvers for the public_api version 3
+
+    Args:
+        prefix: The prefix to add to the start of the url paths
+
+    Returns:
+        List of `URLResolver` objects each representing a
+        set of versioned URLS.
+    """
+
+    return [
+        path(
+            f"{prefix}v3/themes/<str:theme>",
+            APITimeSeriesViewSetV3.as_view(
+                {"get": "list"}, name=APITimeSeriesViewSetV3.name
+            ),
+            name="timeseries-list-v3",
         ),
     ]
