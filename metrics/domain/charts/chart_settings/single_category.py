@@ -19,6 +19,14 @@ FULL_WIDTH_X_AXIS_NTICKS = 13
 COMPACT_X_AXIS_NTICKS = 5
 
 
+def get_x_axis_figure_config() -> dict[str, dict[str, int]]:
+    """Return the responsive x-axis settings used by interactive charts."""
+    return {
+        "xaxis_full": {"nticks": FULL_WIDTH_X_AXIS_NTICKS},
+        "xaxis_compact": {"nticks": COMPACT_X_AXIS_NTICKS},
+    }
+
+
 class SingleCategoryChartSettings(ChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
         super().__init__(chart_generation_payload=chart_generation_payload)

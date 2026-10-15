@@ -8,6 +8,7 @@ from metrics.api.serializers import help_texts, plots
 from metrics.api.serializers.charts.common import (
     BaseChartsSerializer,
     EncodedChartResponseSerializer,
+    FigureConfigSerializer,
 )
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -75,7 +76,6 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
 
 
 class ChartsSerializer(BaseChartsSerializer):
-
     plots = ChartPlotsListSerializer()
 
     def to_models(self, request: Request) -> ChartRequestParams:
@@ -123,14 +123,5 @@ class EncodedChartsRequestSerializer(ChartsSerializer):
     )
 
 
-class XAxisFigureCongigSerializer(serializers.Serializer):
-    nticks = serializers.IntegerField()
-
-
-class FigureConfigserializer(serializers.Serializer):
-    xaxis_full = XAxisFigureCongigSerializer()
-    xaxis_compact = XAxisFigureCongigSerializer()
-
-
 class EncodedSingleCatergoryChartResponseSerializer(EncodedChartResponseSerializer):
-    figure_config = FigureConfigserializer()
+    figure_config = FigureConfigSerializer()

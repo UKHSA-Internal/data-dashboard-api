@@ -12,15 +12,15 @@ from rest_framework.views import APIView
 import config
 from caching.private_api.decorators import cache_response
 from metrics.api.enums import AppMode
-from metrics.api.serializers.charts import (
-    ChartsResponseSerializer,
-)
 from metrics.api.serializers.charts.common import (
     ChartPreviewQueryParamsSerializer,
-    EncodedChartResponseSerializer,
 )
 from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
+    EncodedDualCategoryChartResponseSerializer,
+)
+from metrics.domain.charts.chart_settings.single_category import (
+    get_x_axis_figure_config,
 )
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.charts.dual_category_charts import (
@@ -93,7 +93,9 @@ class DualCategoryChartsView(APIView):
 
     @extend_schema(
         request=DualCategoryChartSerializer,
-        responses={HTTPStatus.OK.value: ChartsResponseSerializer},
+        responses={
+            HTTPStatus.OK.value: EncodedDualCategoryChartResponseSerializer
+        },
         tags=[CHARTS_API_TAG],
         examples=[
             OpenApiExample(
@@ -188,7 +190,9 @@ class DualCategoryChartsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        serializer = EncodedChartResponseSerializer(data=chart_result.output())
+        response_data = chart_result.output()
+        response_data["figure_config"] = get_x_axis_figure_config()
+        serializer = EncodedDualCategoryChartResponseSerializer(data=response_data)
         serializer.is_valid(raise_exception=True)
 
         return Response(data=serializer.data)

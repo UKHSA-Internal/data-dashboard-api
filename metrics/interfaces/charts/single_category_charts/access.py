@@ -12,8 +12,7 @@ from metrics.domain.charts import (
     line_single_simplified,
 )
 from metrics.domain.charts.chart_settings.single_category import (
-    COMPACT_X_AXIS_NTICKS,
-    FULL_WIDTH_X_AXIS_NTICKS,
+    get_x_axis_figure_config,
 )
 from metrics.domain.common.utils import (
     ChartTypes,
@@ -415,10 +414,7 @@ class ChartsInterface:
             "figure": chart_output.interactive_chart_figure_output,
         }
 
-        encoded_chart["figure_config"] = {
-            "xaxis_full": {"nticks": FULL_WIDTH_X_AXIS_NTICKS},
-            "xaxis_compact": {"nticks": COMPACT_X_AXIS_NTICKS},
-        }
+        encoded_chart["figure_config"] = get_x_axis_figure_config()
 
         return encoded_chart
 
