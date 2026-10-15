@@ -93,9 +93,7 @@ class DualCategoryChartsView(APIView):
 
     @extend_schema(
         request=DualCategoryChartSerializer,
-        responses={
-            HTTPStatus.OK.value: EncodedDualCategoryChartResponseSerializer
-        },
+        responses={HTTPStatus.OK.value: EncodedDualCategoryChartResponseSerializer},
         tags=[CHARTS_API_TAG],
         examples=[
             OpenApiExample(

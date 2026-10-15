@@ -40,9 +40,7 @@ class TestEncodedDualCategoryChartResponseSerializer:
         }
 
     def test_validates_responsive_figure_config(self):
-        serializer = EncodedDualCategoryChartResponseSerializer(
-            data=self.valid_payload
-        )
+        serializer = EncodedDualCategoryChartResponseSerializer(data=self.valid_payload)
 
         assert serializer.is_valid(raise_exception=True)
         assert (
