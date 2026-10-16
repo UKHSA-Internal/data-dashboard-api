@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
   "use strict"
   let theme, subTheme, topic, metric, isPublicCheckbox;
   let originalMetricOptions;
@@ -14,16 +14,14 @@
         'select[name="page_classification"]',
       ),
       theme: theme,
-      subTheme: subTheme, 
+      subTheme: subTheme,
       topic: topic,
-      // metric: metric,
     }
 
     if (isPublicCheckbox.checked) {
       Object.values(fields).forEach(disableField)
       clearDropdown(fields.subTheme, "Select theme first")
       clearDropdown(fields.topic, "Select sub-theme first")
-      // clearDropdown(fields.metric, "Select topic first")
       restoreMetricOptions()
       fields.theme.value = ""
     } else {
@@ -31,16 +29,16 @@
         clearDropdown(metric, "Select topic first")
       }
       Object.values(fields).forEach(enableField)
-      fields.classification.value="official_sensitive"
+      fields.classification.value = "official_sensitive"
     }
   }
 
   function restoreMetricOptions() {
     clearDropdown(metric, "----------")
     originalMetricOptions.forEach(option => {
-        if (option.text !== "Select topic first") {
-          metric.appendChild(option.cloneNode(true));
-        }
+      if (option.text !== "Select topic first") {
+        metric.appendChild(option.cloneNode(true));
+      }
     });
   }
 
@@ -58,9 +56,14 @@
    * @param {string} dataItemId - The ID value to pass
    * @returns {Promise<Array>} Array of choices [[id, name], ...]
    */
-  async function fetchChoices(endpoint, dataItemId) {
+  async function fetchChoices(endpoint, dataItemId, queryParams = {}) {
     try {
-      const url = `/api/data-hierarchy/${endpoint}/${dataItemId}`
+      const queryString =
+        typeof queryParams.is_public === "boolean"
+          ? `?is_public=${queryParams.is_public}`
+          : ""
+
+      const url = `/api/data-hierarchy/${endpoint}/${dataItemId}${queryString}`
       const response = await fetch(url)
 
       if (!response.ok) {

@@ -39,6 +39,15 @@ def _build_id_name_tuple_choices(
         Examples:
             [(1, "infectious_disease"), (2, "respiratory"), ...]
     """
+    # results = []
+    # for choice in choices:
+    #     print('Choice:', choice)
+    #     results.append((str(choice["id"]), choice["name"]))
+
+    #     # backwards compatability
+    #     results.append((choice["name"], choice["name"]))
+    
+    # return results
     return [(str(choice["id"]), choice["name"]) for choice in choices]
 
 
@@ -455,7 +464,6 @@ def get_all_topic_names_and_ids() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [(1, "6-in-1"), ...]
     """
     metrics_interface = MetricsAPIInterface()
-
     return _build_id_name_tuple_choices(
         choices=metrics_interface.get_all_topic_names_and_ids()
     )
