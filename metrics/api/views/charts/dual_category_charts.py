@@ -19,9 +19,6 @@ from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
     EncodedDualCategoryChartResponseSerializer,
 )
-from metrics.domain.charts.chart_settings.single_category import (
-    get_x_axis_figure_config,
-)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
@@ -188,9 +185,9 @@ class DualCategoryChartsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        response_data = chart_result.output()
-        response_data["figure_config"] = get_x_axis_figure_config()
-        serializer = EncodedDualCategoryChartResponseSerializer(data=response_data)
+        serializer = EncodedDualCategoryChartResponseSerializer(
+            data=chart_result.output()
+        )
         serializer.is_valid(raise_exception=True)
 
         return Response(data=serializer.data)

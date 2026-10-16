@@ -7,8 +7,7 @@ from rest_framework.request import Request
 from metrics.api.serializers import help_texts, plots
 from metrics.api.serializers.charts.common import (
     BaseChartsSerializer,
-    EncodedChartResponseSerializer,
-    FigureConfigSerializer,
+    EncodedResponsiveChartResponseSerializer,
 )
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -123,5 +122,6 @@ class EncodedChartsRequestSerializer(ChartsSerializer):
     )
 
 
-class EncodedSingleCategoryChartResponseSerializer(EncodedChartResponseSerializer):
-    figure_config = FigureConfigSerializer()
+class EncodedSingleCategoryChartResponseSerializer(
+    EncodedResponsiveChartResponseSerializer
+):...
