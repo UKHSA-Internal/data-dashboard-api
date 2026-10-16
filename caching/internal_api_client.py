@@ -228,7 +228,9 @@ class InternalAPIClient:
         headers: dict[str, bool] = self._build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint(self, *, topic: str) -> Response:
+    def hit_geographies_list_endpoint(
+        self, *, topic: str, theme: str | None = None, sub_theme: str | None = None
+    ) -> Response:
         """Sends a `GET` request to the `geographies/v3` endpoint
 
         Returns:
@@ -238,6 +240,10 @@ class InternalAPIClient:
         self.hit_geographies_list_endpoint_deprecated(topic=topic)
         headers: dict[str, bool] = self._build_headers()
         query_params = {"topic": topic}
+        if theme:
+            query_params["theme"] = theme
+        if sub_theme:
+            query_params["sub_theme"] = sub_theme
         return self._client.get(
             path=self.geographies_endpoint_path,
             headers=headers,
