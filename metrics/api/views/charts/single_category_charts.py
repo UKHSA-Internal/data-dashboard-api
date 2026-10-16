@@ -15,7 +15,7 @@ from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
     EncodedChartsRequestSerializer,
-    EncodedSingleCatergoryChartResponseSerializer,
+    EncodedSingleCategoryChartResponseSerializer,
 )
 from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts.single_category_charts import access
@@ -225,7 +225,7 @@ class EncodedChartsView(APIView):
     @classmethod
     @extend_schema(
         request=EncodedChartsRequestSerializer,
-        responses={HTTPStatus.OK.value: EncodedSingleCatergoryChartResponseSerializer},
+        responses={HTTPStatus.OK.value: EncodedSingleCategoryChartResponseSerializer},
         tags=[CHARTS_API_TAG],
         examples=[
             OpenApiExample(
@@ -389,7 +389,7 @@ class EncodedChartsView(APIView):
                 chart_request_params=chart_request_params,
             )
 
-            serializer = EncodedSingleCatergoryChartResponseSerializer(data=response)
+            serializer = EncodedSingleCategoryChartResponseSerializer(data=response)
             serializer.is_valid(raise_exception=True)
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:

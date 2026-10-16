@@ -123,5 +123,5 @@ class EncodedChartsRequestSerializer(ChartsSerializer):
     )
 
 
-class EncodedSingleCatergoryChartResponseSerializer(EncodedChartResponseSerializer):
+class EncodedSingleCategoryChartResponseSerializer(EncodedChartResponseSerializer):
     figure_config = FigureConfigSerializer()

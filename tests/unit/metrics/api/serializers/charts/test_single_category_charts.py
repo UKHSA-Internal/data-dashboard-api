@@ -6,7 +6,7 @@ from metrics.api.serializers.charts import (
     ChartPlotSerializer,
     ChartsSerializer,
     EncodedChartsRequestSerializer,
-    EncodedSingleCatergoryChartResponseSerializer,
+    EncodedSingleCategoryChartResponseSerializer,
 )
 from metrics.domain.charts import colour_scheme
 
@@ -802,7 +802,7 @@ class TestEncodingSingleCategoryChartResponseSerializer:
                 "xaxis_compact": {"nticks": 5},
             },
         }
-        serializer = EncodedSingleCatergoryChartResponseSerializer(data=payload)
+        serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)
 
         assert serializer.is_valid(raise_exception=True)
         assert serializer.validated_data["figure_config"] == payload["figure_config"]
@@ -814,7 +814,7 @@ class TestEncodingSingleCategoryChartResponseSerializer:
             "alt_text": "Chart description",
             "figure": {},
         }
-        serializer = EncodedSingleCatergoryChartResponseSerializer(data=payload)
+        serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)
 
         assert not serializer.is_valid()
         assert "figure_config" in serializer.errors
