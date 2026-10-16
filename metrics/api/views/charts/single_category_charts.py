@@ -267,9 +267,27 @@ class EncodedChartsView(APIView):
                             "xaxis": {"title": "Date"},
                             "yaxis": {"title": "Cases"},
                         },
-                        "figure_config": {
-                            "xaxis_full": {"nticks": 13},
-                            "xaxis_compact": {"nticks": 5},
+                    },
+                    "figure_config": {
+                        "full": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 13}},
+                        },
+                        "compact": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 5}},
                         },
                     },
                 },

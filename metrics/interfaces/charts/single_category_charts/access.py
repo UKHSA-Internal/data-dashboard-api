@@ -11,9 +11,7 @@ from metrics.domain.charts import (
     common_charts,
     line_single_simplified,
 )
-from metrics.domain.charts.chart_settings.single_category import (
-    get_x_axis_figure_config,
-)
+from metrics.domain.charts.figure_config import build_figure_config
 from metrics.domain.common.utils import (
     ChartTypes,
     extract_metric_group_from_metric,
@@ -64,6 +62,14 @@ class ChartsInterface:
     @property
     def is_headline_data(self) -> bool:
         return self.chart_request_params.plots[0].is_headline_data
+
+    @property
+    def supports_compact_rotation(self) -> bool:
+        """Return whether the compact chart may be rotated safely."""
+        return self.is_headline_data and all (
+            plot.chart_type == ChartTypes.bar.value
+            for plot in self.chart_request_params.plots
+        )
 
     @property
     def _is_common_chart_type(self) -> bool:
@@ -407,17 +413,17 @@ class ChartsInterface:
              "figure_config": Config to support client side display
 
         """
-        encoded_chart = {
+        interactive_figure = chart_output.interactive_chart_figure_output
+        return {
             "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=chart_output.figure),
             "alt_text": chart_output.description,
-            "figure": chart_output.interactive_chart_figure_output,
+            "figure": interactive_figure,
+            "figure_config": build_figure_config(
+                figure=interactive_figure,
+                rotate_compact=self.supports_compact_rotation,
+            ),
         }
-
-        if chart_output.figure.layout.xaxis.nticks is not None:
-            encoded_chart["figure_config"] = get_x_axis_figure_config()
-
-        return encoded_chart
 
 
 def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes:

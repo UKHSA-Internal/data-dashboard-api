@@ -4,8 +4,7 @@ from rest_framework.request import Request
 from metrics.api.serializers import help_texts
 from metrics.api.serializers.charts.common import (
     BaseChartsSerializer,
-    EncodedChartResponseSerializer,
-    FigureConfigSerializer,
+    EncodedResponsiveChartResponseSerializer,
 )
 from metrics.api.serializers.dual_category.common import (
     validate_dual_category_fields,
@@ -151,5 +150,6 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         )
 
 
-class EncodedDualCategoryChartResponseSerializer(EncodedChartResponseSerializer):
-    figure_config = FigureConfigSerializer(required=False)
+class EncodedDualCategoryChartResponseSerializer(
+    EncodedResponsiveChartResponseSerializer
+):...

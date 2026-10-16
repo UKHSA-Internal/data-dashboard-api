@@ -19,9 +19,6 @@ from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
     EncodedDualCategoryChartResponseSerializer,
 )
-from metrics.domain.charts.chart_settings.single_category import (
-    get_x_axis_figure_config,
-)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
@@ -185,14 +182,13 @@ class DualCategoryChartsView(APIView):
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+                status=HTTPStatus.BAD_REQUEST,
+                data={"error_message": str(error)}
             )
 
-        response_data = chart_result.output()
-        x_axis_config = response_data["figure"].get("layout", {}).get("xaxis", {})
-        if x_axis_config.get("nticks") is not None:
-            response_data["figure_config"] = get_x_axis_figure_config()
-        serializer = EncodedDualCategoryChartResponseSerializer(data=response_data)
+        serializer = EncodedDualCategoryChartResponseSerializer(
+            data=chart_result.output()
+        )
         serializer.is_valid(raise_exception=True)
 
         return Response(data=serializer.data)

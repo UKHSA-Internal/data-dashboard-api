@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass
 import plotly
 from scour import scour
 
+from metrics.domain.charts.figure_config import build_figure_config
 from metrics.interfaces.charts.common.chart_output import ChartOutput
 
 
@@ -15,9 +16,13 @@ class ChartResult:
     chart: str
     alt_text: str
     figure: dict
+    figure_config: dict | None = None
 
     def output(self) -> dict:
-        return asdict(self)
+        output = asdict(self)
+        if output["figure_config"] is None:
+            output["figure_config"] = build_figure_config(figure=self.figure)
+        return output
 
 
 def generate_encoded_chart(
@@ -52,6 +57,12 @@ def generate_encoded_chart(
     """
     charts_interface = interface(chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
+    interactive_figure = chart_output.interactive_chart_figure_output
+    supports_compact_rotation = getattr(
+        charts_interface, "supports_compact_rotation", False
+    )
+    if not isinstance(supports_compact_rotation, bool):
+        supports_compact_rotation = False
 
     return ChartResult(
         last_updated=charts_interface.last_updated,
@@ -59,7 +70,11 @@ def generate_encoded_chart(
             figure=chart_output.figure, file_format=chart_request_params.file_format
         ),
         alt_text=chart_output.description,
-        figure=chart_output.interactive_chart_figure_output,
+        figure=interactive_figure,
+        figure_config=build_figure_config(
+            figure=interactive_figure,
+            rotate_compact=supports_compact_rotation,
+        ),
     )
 
 

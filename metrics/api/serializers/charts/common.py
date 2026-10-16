@@ -126,10 +126,17 @@ class EncodedChartResponseSerializer(serializers.Serializer):
     figure = serializers.DictField(help_text=help_texts.CHARTS_FIGURE_OUTPUT)
 
 
-class XAxisFigureConfigSerializer(serializers.Serializer):
-    nticks = serializers.IntegerField()
+class FigureModeConfigSerializer(serializers.Serializer):
+    """Plotly overrides applied for responsive charts"""
+
+    data = serializers.ListField(child=serializers.DictField())
+    layout = serializers.DictField()
 
 
 class FigureConfigSerializer(serializers.Serializer):
-    xaxis_full = XAxisFigureConfigSerializer()
-    xaxis_compact = XAxisFigureConfigSerializer()
+    full = FigureModeConfigSerializer()
+    compact = FigureModeConfigSerializer()
+
+
+class EncodedResponsiveChartResponseSerializer(EncodedChartResponseSerializer):
+    figure_config = FigureConfigSerializer()
