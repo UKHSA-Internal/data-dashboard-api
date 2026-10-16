@@ -158,3 +158,7 @@ class TestDualCategoryChartsViewSuccessHandling:
         assert isinstance(response, Response)
         assert response.status_code == HTTPStatus.OK
         assert response.data["chart"] == "encoded-svg"
+        assert response.data["figure_config"] == {
+            "xaxis_full": {"nticks": 13},
+            "xaxis_compact": {"nticks": 5},
+        }
