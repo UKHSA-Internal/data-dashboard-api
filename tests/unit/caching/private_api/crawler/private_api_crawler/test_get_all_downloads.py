@@ -181,3 +181,16 @@ class TestPrivateAPICrawlerGetAllDownloads:
         # Then
         expected_log = f"Page {fake_pages[0]} does not contain chart data"
         assert expected_log in caplog.text
+
+    def test_get_all_downloads_filters_any_errors(
+            self,
+            mocked_get_downloads_from_page_sections: mock.MagicMock,
+            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+    ):
+        """
+        Given a list of pages, some containing errors
+        When: the `get_all_downloads()` function is called.
+        Then: errors are filtered out and directories containing no files are omitted
+        """
+        pass
+

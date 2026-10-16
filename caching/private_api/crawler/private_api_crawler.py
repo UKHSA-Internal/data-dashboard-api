@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 from typing import Self
@@ -360,16 +361,24 @@ class PrivateAPICrawler:
 
         for page in pages:
             try:
-                downloads.append(
-                    {
-                        "directory_name": self.create_directory_name_for_downloads(
-                            file_name=page.title
-                        ),
-                        "downloads": self.get_downloads_from_page_sections(
-                            sections=page.body.raw_data, file_format=file_format
-                        ),
-                    }
+
+                download = self.get_downloads_from_page_sections(
+                    sections=page.body.raw_data, file_format=file_format
                 )
+                filtered_downloads = [
+                    item for item in download
+                    if 'error_message' not in json.loads(item['content'].decode('utf-8'))
+                ]
+
+                if len(filtered_downloads) > 0:
+                    downloads.append(
+                        {
+                            "directory_name": self.create_directory_name_for_downloads(
+                                file_name=page.title
+                            ),
+                            "downloads": filtered_downloads,
+                        }
+                    )
             except AttributeError:
                 logger.info("Page %s does not contain chart data", page)
                 continue
