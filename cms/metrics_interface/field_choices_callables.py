@@ -39,6 +39,15 @@ def _build_id_name_tuple_choices(
         Examples:
             [(1, "infectious_disease"), (2, "respiratory"), ...]
     """
+    # results = []
+    # for choice in choices:
+    #     print('Choice:', choice)
+    #     results.append((str(choice["id"]), choice["name"]))
+
+    #     # backwards compatability
+    #     results.append((choice["name"], choice["name"]))
+    
+    # return results
     return [(str(choice["id"]), choice["name"]) for choice in choices]
 
 

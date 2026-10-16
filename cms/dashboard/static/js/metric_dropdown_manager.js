@@ -1,5 +1,8 @@
+console.log("metric_dropdown_manager loaded");
+
 class BaseMetricsElementBlockDefinition extends globalThis.wagtailStreamField.blocks.StructBlockDefinition {
     async render(placeholder, prefix, initialState, initialError) {
+        console.log("initialState", initialState);
         const block = super.render(
             placeholder,
             prefix,
@@ -7,13 +10,25 @@ class BaseMetricsElementBlockDefinition extends globalThis.wagtailStreamField.bl
             initialError,
         );
 
-        const metricForm = new MetricForm();
+        const metricForm = new MetricForm(initialState);
         await metricForm.render(block);
+        console.log(
+            "topic value before submit",
+            this.topicField.value,
+        );
+
+        console.log(
+            "metric value before submit",
+            this.metricField.value,
+        );
         return block;
     }
 }
 
 class MetricForm {
+    constructor(initialState) {
+        this.initialState = initialState;
+    }
     topicField = null;
     metricField = null;
     isPublicField = null;
@@ -38,7 +53,33 @@ class MetricForm {
         if (!this.metricField) {
             console.error("Metric field not found");
         }
+        this.savedMetricValue = this.metricField?.value;
+        this.savedTopicValue = this.topicField?.value;
+        const savedTopic = this.initialState?.topic?.[0];
+    
+        if (savedTopic) {
+            const matchingOption = [...this.topicField.options].find(
+                option =>
+                    option.text === savedTopic ||
+                    option.value === savedTopic,
+            );
+    
+            if (matchingOption) {
+                this.topicField.value = matchingOption.value;
+            }
+        }
+
+        const savedMetric = this.initialState?.metric?.[0];
+
+        const matchingChoice = choices.find(
+            ([id, name]) => name === savedMetric
+        );
+
+        if (matchingChoice) {
+            this.metricField.value = matchingChoice[0];
+        }
     }
+
 
     clearMetricDropdown(message = "Select topic first") {
         this.metricField.innerHTML = "";
@@ -51,14 +92,16 @@ class MetricForm {
     }
 
     populateMetricDropdown(choices) {
-        const currentValue = this.metricField.value;
+        console.log("savedMetric", this.initialState?.metric?.[0]);
+        console.log("current metric value", this.metricField.value);
+        console.log("choices", choices);
+        const savedMetric = this.initialState?.metric?.[0];
 
         this.metricField.innerHTML = "";
 
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.textContent = "--------";
-
         this.metricField.appendChild(defaultOption);
 
         choices.forEach(([value, label]) => {
@@ -67,7 +110,10 @@ class MetricForm {
             option.value = value;
             option.textContent = label;
 
-            if (value === currentValue) {
+            if (
+                value === savedMetric ||
+                label === savedMetric
+            ) {
                 option.selected = true;
             }
 
@@ -100,13 +146,38 @@ class MetricForm {
     }
 
     async loadMetrics() {
-        const topicValue = this.topicField?.value;
+        console.log(
+            "topic options",
+            [...this.topicField.options].map(option => ({
+                value: option.value,
+                text: option.text,
+                selected: option.selected,
+            })),
+        );
+        let topicValue = this.topicField?.value;
+        console.log("topicValue before", topicValue);
 
+        
         if (!topicValue) {
             this.clearMetricDropdown("Select topic first");
             return;
         }
+        // convert topic name to id here?
 
+        if (topicValue && Number.isNaN(Number(topicValue))) {
+            const matchingIdOption = [...this.topicField.options].find(
+                option =>
+                    option.text === topicValue &&
+                    !Number.isNaN(Number(option.value)),
+            );
+
+            if (matchingIdOption) {
+                topicValue = matchingIdOption.value;
+            }
+        }
+
+        console.log("topicValue after conversion", topicValue);
+        
         const choices = await this.fetchChoices(
             "metrics",
             topicValue,
@@ -139,14 +210,25 @@ class MetricForm {
 
         this.setupFields(rootNode);
 
-        if (!this.topicField || !this.metricField) {
-            return;
+        const savedTopic = this.topicField.value;
+
+        if (
+            savedTopic &&
+            Number.isNaN(Number(savedTopic))
+        ) {
+            const matchingOption = [...this.topicField.options].find(
+                option => option.text === savedTopic,
+            );
+
+            if (matchingOption) {
+                this.topicField.value = matchingOption.value;
+            }
         }
 
         await this.loadMetrics();
-
         this.setupEvents();
     }
+
 }
 
 globalThis.telepath.register(
