@@ -192,4 +192,5 @@ class TestPrivateAPICrawlerGetAllDownloads:
         When: the `get_all_downloads()` function is called.
         Then: errors are filtered out and directories containing no files are omitted
         """
+        pass
 
