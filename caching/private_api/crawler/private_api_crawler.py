@@ -273,9 +273,9 @@ class PrivateAPICrawler:
                     chart_block=chart_card_content, file_format=file_format
                 )
             )
-            # if not "error_message" in str(response.content):
-            # if response.status_code == HTTPStatus.OK:
-            downloads.append({"name": filename, "content": response.content})
+            # this avoids error content being added to the downloads
+            if response.status_code == HTTPStatus.OK:
+                downloads.append({"name": filename, "content": response.content})
 
         return downloads
 
