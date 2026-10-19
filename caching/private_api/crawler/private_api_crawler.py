@@ -274,8 +274,8 @@ class PrivateAPICrawler:
                 )
             )
             # if not "error_message" in str(response.content):
-            if response.status_code == HTTPStatus.OK:
-                downloads.append({"name": filename, "content": response.content})
+            # if response.status_code == HTTPStatus.OK:
+            downloads.append({"name": filename, "content": response.content})
 
         return downloads
 

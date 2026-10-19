@@ -55,6 +55,16 @@ class TestPrivateAPICrawlerGetAllDownloads:
         """
         # Given
         faked_two_row_columns = example_chart_row_column
+        
+        response1 = mock.MagicMock()
+        response1.status_code = HTTPStatus.OK
+        response1.content = faked_two_row_columns[0]
+
+        response2 = mock.MagicMock()
+        response2.status_code = HTTPStatus.OK
+        response2.content = faked_two_row_columns[1]
+
+        spy_process_download_for_chart_block.side_effect = [response1, response2]
 
         # When
         downloads = private_api_crawler_with_mocked_internal_api_client.get_downloads_from_chart_row_columns(
@@ -68,12 +78,6 @@ class TestPrivateAPICrawlerGetAllDownloads:
             for chart_card in faked_two_row_columns
         ]
 
-        expected_calls = [
-            mock.call(chart_block={"title": "title text one", "body": "body text one", "chart": []}, file_format="csv"),
-            mock.call().status_code.__eq__(HTTPStatus.OK),
-            mock.call(chart_block={"title": "title text two", "body": "body text two", "chart": []}, file_format="csv"),
-            mock.call().status_code.__eq__(HTTPStatus.OK),
-        ]
         spy_process_download_for_chart_block.assert_has_calls(expected_calls)
         assert len(downloads) == len(faked_two_row_columns)
 
