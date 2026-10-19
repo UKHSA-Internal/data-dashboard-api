@@ -418,7 +418,7 @@ class ChartsInterface:
             "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=chart_output.figure),
             "alt_text": chart_output.description,
-            "figure": chart_output.interactive_figure,
+            "figure": interactive_figure,
             "figure_config": build_figure_config(
                 figure=interactive_figure,
                 rotate_compact=self.supports_compact_rotation,
