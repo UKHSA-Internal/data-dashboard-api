@@ -1,4 +1,6 @@
 import logging
+from http import HTTPStatus
+from imaplib import Response_code
 from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
@@ -64,6 +66,13 @@ class TestPrivateAPICrawlerGetAllDownloads:
         expected_calls = [
             mock.call(chart_block=chart_card["value"], file_format="csv")
             for chart_card in faked_two_row_columns
+        ]
+
+        expected_calls = [
+            mock.call(chart_block={"title": "title text one", "body": "body text one", "chart": []}, file_format="csv"),
+            mock.call().status_code.__eq__(HTTPStatus.OK),
+            mock.call(chart_block={"title": "title text two", "body": "body text two", "chart": []}, file_format="csv"),
+            mock.call().status_code.__eq__(HTTPStatus.OK),
         ]
         spy_process_download_for_chart_block.assert_has_calls(expected_calls)
         assert len(downloads) == len(faked_two_row_columns)
