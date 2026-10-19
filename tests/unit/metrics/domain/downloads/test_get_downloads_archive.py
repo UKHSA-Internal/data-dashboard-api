@@ -35,6 +35,56 @@ class TestGetBulkDownloadsArchive:
 
     @mock.patch(f"{MODULE_PATH}.get_all_downloads")
     @mock.patch(f"{MODULE_PATH}.write_data_to_zip")
+    def test_get_bulk_downloads_archive_delegates_permission_sets(
+        self,
+        mocked_write_data_to_zip: mock.MagicMock,
+        spy_get_all_downloads: mock.MagicMock,
+    ):
+        """
+        Given a fake file_format and fake permission sets
+        When the get_bulk_downloads_archive method is called
+        Then the permission sets are passed to the get_all_downloads function
+        """
+        # Given
+        fake_file_format = "csv"
+        mocked_permission_sets = mock.Mock()
+
+        # When
+        get_bulk_downloads_archive(
+            file_format=fake_file_format, permission_sets=mocked_permission_sets
+        )
+
+        # Then
+        spy_get_all_downloads.assert_called_once_with(
+            file_format=fake_file_format, permission_sets=mocked_permission_sets
+        )
+
+    @mock.patch(f"{MODULE_PATH}.get_all_downloads")
+    @mock.patch(f"{MODULE_PATH}.write_data_to_zip")
+    def test_get_bulk_downloads_archive_defaults_to_no_permission_sets(
+        self,
+        mocked_write_data_to_zip: mock.MagicMock,
+        spy_get_all_downloads: mock.MagicMock,
+    ):
+        """
+        Given a fake file_format and no permission sets
+        When the get_bulk_downloads_archive method is called
+        Then no permission sets are passed to the get_all_downloads function
+            i.e. only public pages are to be collected
+        """
+        # Given
+        fake_file_format = "csv"
+
+        # When
+        get_bulk_downloads_archive(file_format=fake_file_format)
+
+        # Then
+        spy_get_all_downloads.assert_called_once_with(
+            file_format=fake_file_format, permission_sets=None
+        )
+
+    @mock.patch(f"{MODULE_PATH}.get_all_downloads")
+    @mock.patch(f"{MODULE_PATH}.write_data_to_zip")
     def test_get_bulk_downloads_archive_returns_filename_including_data(
         self,
         mocked_write_data_to_zip: mock.MagicMock,
