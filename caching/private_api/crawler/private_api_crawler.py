@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+from http import HTTPStatus
 from typing import Self
 
 import django
@@ -272,7 +273,9 @@ class PrivateAPICrawler:
                     chart_block=chart_card_content, file_format=file_format
                 )
             )
-            downloads.append({"name": filename, "content": response.content})
+            # if not "error_message" in str(response.content):
+            if response.status_code == HTTPStatus.OK:
+                downloads.append({"name": filename, "content": response.content})
 
         return downloads
 
@@ -361,22 +364,16 @@ class PrivateAPICrawler:
 
         for page in pages:
             try:
-
-                download = self.get_downloads_from_page_sections(
+                page_downloads = self.get_downloads_from_page_sections(
                     sections=page.body.raw_data, file_format=file_format
                 )
-                filtered_downloads = [
-                    item for item in download
-                    if 'error_message' not in json.loads(item['content'].decode('utf-8'))
-                ]
-
-                if len(filtered_downloads) > 0:
+                if len(page_downloads) > 0:
                     downloads.append(
                         {
                             "directory_name": self.create_directory_name_for_downloads(
                                 file_name=page.title
                             ),
-                            "downloads": filtered_downloads,
+                            "downloads": page_downloads,
                         }
                     )
             except AttributeError:

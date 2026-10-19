@@ -215,6 +215,9 @@ class InternalAPIClient:
         """
         path = self.downloads_endpoint_path
         headers = self._build_headers()
+        # fix
+        # data["plots"][0]["theme"] = "theme"
+        # data["plots"][0]["sub_theme"] = "sub_theme"
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
     def hit_geographies_list_endpoint_deprecated(self, *, topic: str) -> Response:
