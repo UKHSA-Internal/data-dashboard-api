@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http.response import HttpResponse
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
@@ -22,7 +24,10 @@ from metrics.domain.exports.csv_output import (
 from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.interfaces.downloads.subplot_downloads import access
-from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 
 DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
 
@@ -70,6 +75,10 @@ class SubplotDownloadsView(SingleCategoryDownloadsView):
                 )
             except DataNotFoundForAnyPlotError:
                 continue
+            except InvalidPlotParametersError as error:
+                return Response(
+                    status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+                )
 
             serializer = self._get_serializer_class(
                 queryset=queryset, metric_group=charts_request_param.metric_group

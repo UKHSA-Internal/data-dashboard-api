@@ -84,6 +84,13 @@ VALID_PARAMETERS = [
         "cases",
     ),
     (
+        "infectious_disease",
+        "gastrointestinal",
+        "norovirus",
+        "norovirus_cases_count",
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "chemical_exposure",
         "Lead",
@@ -201,5 +208,12 @@ VALID_PARAMETERS = [
         "antibiotics",
         "antibiotics_consumption_awareAccess",
         "consumption",
+    ),
+    (
+        "infectious_disease",
+        "contact",
+        "mpox",
+        "mpox_cases_countByMonth",
+        "cases",
     ),
 ]

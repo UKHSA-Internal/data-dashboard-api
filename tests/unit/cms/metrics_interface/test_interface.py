@@ -25,6 +25,26 @@ class TestMetricsAPIInterface:
         # Then
         assert selectable_chart_types == ChartTypes.selectable_choices()
 
+    @mock.patch.object(interface, "extract_metric_group_from_metric")
+    def test_get_metric_group_from_metric_delegates_call_correctly(
+        self, spy_extract_metric_group_from_metric: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_metric_group_by_metric()` is called from that object
+        Then the call is delegated to the metrics domain helper
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+        metric = "OFF-SENS_influenza_headline_positivityLatest"
+
+        # When
+        metric_group = metrics_api_interface.get_metric_group_from_metric(metric=metric)
+
+        # Then
+        assert metric_group == spy_extract_metric_group_from_metric.return_value
+        spy_extract_metric_group_from_metric.assert_called_once_with(metric=metric)
+
     def test_get_headline_chart_type_delegates_call_correctly(self):
         """
         Given an instance of the `MetricsAPIInterface`

@@ -33,10 +33,12 @@ class TestGeographyFilter:
             ]
         }
 
+    @mock.patch.object(MetricsAPIInterface, "get_all_geography_type_names")
     @mock.patch.object(StructBlock, "clean")
     def test_clean_passes_with_valid_payload(
         self,
         mocked_super_clean: mock.MagicMock,
+        mocked_get_all_geography_type_names: mock.MagicMock,
     ):
         """
         Given a `GeographyFilter` with a valid payload
@@ -44,6 +46,10 @@ class TestGeographyFilter:
         Then no error should be raised
         """
         # Given
+        mocked_get_all_geography_type_names.return_value = [
+            "Nation",
+            "UKHSA Region",
+        ]
         geography_filter = GeographyFilter()
         value: StructValue = geography_filter.to_python(value=self.valid_payload)
 

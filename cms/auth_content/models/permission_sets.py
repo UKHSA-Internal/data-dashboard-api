@@ -28,7 +28,7 @@ class PermissionSetForm(WagtailAdminPageForm):
                 field, WILDCARD_ID_VALUE
             )
 
-        if self.instance and self.instance.pk:
+        if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
             self._initialize_dependent_fields()
 
     def _initialize_dependent_fields(self):
@@ -41,10 +41,16 @@ class PermissionSetForm(WagtailAdminPageForm):
         }
 
         for field_name, (placeholder, wildcard_label) in dependent_fields.items():
-            value = getattr(self.instance, field_name, None)
+            value = self._get_dependent_field_value(field_name)
             if value:
                 choices = self._get_field_choices(value, placeholder, wildcard_label)
                 self.fields[field_name].widget.choices = choices
+
+    def _get_dependent_field_value(self, field_name: str):
+        if getattr(self, "is_bound", False):
+            return self.data.get(field_name)
+
+        return getattr(self.instance, field_name, None)
 
     @staticmethod
     def _get_field_choices(value, placeholder, wildcard_label):

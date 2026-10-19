@@ -60,6 +60,7 @@ class _VaccinePreventableTopic(Enum):
 class _ContactTopic(Enum):
     MPOX_CLADE_1B = "mpox-clade-1b"
     MPOX_CLADE_2B = "mpox-clade-2b"
+    MPOX = "mpox"
 
 
 class _ChildhoodIllnessTopic(Enum):
@@ -131,6 +132,7 @@ class _BloodstreamInfectionTopic(Enum):
 
 class _GastrointestinalTopic(Enum):
     C_DIFFICILE = "C-difficile"
+    NOROVIRUS = "norovirus"
 
 
 class _AntimicrobialResistanceTopic(Enum):

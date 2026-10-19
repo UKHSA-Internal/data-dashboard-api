@@ -15,3 +15,7 @@ updates:
         update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
       - dependency-name: "botocore"
         update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
+      # ensure we stay on the correct plotly version - plotly v7 comes with a check that breaks if you aren't using
+      # kaleido > v1 which we are not
+      - dependency-name: "plotly"
+        versions: [">=7"]

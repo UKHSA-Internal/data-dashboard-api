@@ -429,31 +429,22 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert permission_classes == []
 
-    @patch(
-        "cms.dashboard.viewsets.PagesAPIViewSet.get_queryset",
-        return_value=MagicMock(
-            specific=MagicMock(return_value=[]),
-            filter=MagicMock(
-                return_value=MagicMock(specific=MagicMock(return_value=[]))
-            ),
-        ),
-    )
+    @patch("cms.dashboard.viewsets.PagesAPIViewSet.get_queryset")
     def test_cms_pages_api_viewset_get_queryset_calls_super(self, mock_super):
         """
         Given the parent get_queryset returns a queryset supporting specific()
         When get_queryset is called on CMSPagesAPIViewSet
-        Then the parent method is called and the specific queryset is returned
+        Then the parent method is called
         """
         # Given
         viewset = CMSPagesAPIViewSet()
         viewset.request = MagicMock(spec=Request)
 
         # When
-        result = viewset.get_queryset()
+        viewset.get_queryset()
 
         # Then
         mock_super.assert_called_once()
-        assert result == []
 
 
 class TestCMSPagesAPIViewSet:

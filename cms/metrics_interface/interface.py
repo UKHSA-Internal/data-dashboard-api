@@ -5,7 +5,11 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
     ChartLineTypes,
 )
-from metrics.domain.common.utils import ChartAxisFields, ChartTypes
+from metrics.domain.common.utils import (
+    ChartAxisFields,
+    ChartTypes,
+    extract_metric_group_from_metric,
+)
 
 DEFAULT_THEME_MANAGER = core_models.Theme.objects
 DEFAULT_SUB_THEME_MANAGER = core_models.SubTheme.objects
@@ -174,6 +178,11 @@ class MetricsAPIInterface:
 
         """
         return RGBAChartLineColours.selectable_choices()
+
+    @staticmethod
+    def get_metric_group_from_metric(metric: str) -> str | None:
+        """Gets the metric group from the provided metric name."""
+        return extract_metric_group_from_metric(metric=metric)
 
     def get_all_theme_names(self) -> QuerySet:
         """Gets all available theme names as a flat list queryset.
