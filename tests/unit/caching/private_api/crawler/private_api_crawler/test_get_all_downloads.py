@@ -55,7 +55,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         """
         # Given
         faked_two_row_columns = example_chart_row_column
-        
+
         response1 = mock.MagicMock()
         response1.status_code = HTTPStatus.OK
         response1.content = faked_two_row_columns[0]
@@ -195,15 +195,36 @@ class TestPrivateAPICrawlerGetAllDownloads:
         expected_log = f"Page {fake_pages[0]} does not contain chart data"
         assert expected_log in caplog.text
 
-    def test_get_all_downloads_filters_any_errors(
+    @mock.patch.object(PrivateAPICrawler, "get_downloads_from_page_sections")
+    def test_get_all_downloads_filters_empty_pages(
             self,
-            mocked_get_downloads_from_page_sections: mock.MagicMock,
+            spy_get_downloads_from_page_sections: mock.MagicMock,
             private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
-        Given a list of pages, some containing errors
+        Given a list of pages, some containing content and some empty
         When: the `get_all_downloads()` function is called.
-        Then: errors are filtered out and directories containing no files are omitted
+        Then: emtpy pages are filtered out and directories containing no files are omitted
         """
-        pass
+        fake_pages = [
+            FakeTopicPageFactory._build_page(page_name="covid_19"),
+        ]
+        # the page has no sections to download from
+        spy_get_downloads_from_page_sections.side_effect = [[]]
+
+        # When
+        downloads = private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
+            pages=fake_pages, file_format="csv"
+        )
+
+        # Then
+        expected_pages = [
+            mock.call(sections=page.body.raw_data, file_format="csv")
+            for page in fake_pages
+        ]
+        spy_get_downloads_from_page_sections.assert_has_calls(
+            expected_pages, any_order=True
+        )
+
+        assert len(downloads) == 0
 
