@@ -87,7 +87,7 @@ virtualenv==21.14.2
 wagtail==7.4.3
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.4.0
-webencodings==0.5.1
+webencodings==0.6.1
 Willow==1.12.0
 zipp==3.23.1
 -r requirements-prod-ingestion.txt
