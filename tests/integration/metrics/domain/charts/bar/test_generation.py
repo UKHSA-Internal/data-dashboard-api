@@ -395,4 +395,4 @@ class TestBarCharts:
         # The x-axis type and ticks should be the default
         assert x_axis.type == "-"
         assert x_axis.tickformat is None
-        assert x_axis.nticks == COMPACT_X_AXIS_NTICKS
+        assert x_axis.nticks is None

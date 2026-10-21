@@ -807,7 +807,7 @@ class TestEncodingSingleCategoryChartResponseSerializer:
         assert serializer.is_valid(raise_exception=True)
         assert serializer.validated_data["figure_config"] == payload["figure_config"]
 
-    def test_figure_config_is_required(self):
+    def test_figure_config_can_be_omitted(self):
         payload = {
             "last_updated": "2026-10-08",
             "chart": "encoded-svg",
@@ -816,5 +816,5 @@ class TestEncodingSingleCategoryChartResponseSerializer:
         }
         serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)
 
-        assert not serializer.is_valid()
-        assert "figure_config" in serializer.errors
+        assert serializer.is_valid(raise_exception=True)
+        assert "figure_config" not in serializer.validated_data

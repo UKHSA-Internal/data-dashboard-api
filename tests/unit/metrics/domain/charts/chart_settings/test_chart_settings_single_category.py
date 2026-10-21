@@ -154,7 +154,6 @@ class TestSingleCategoryChartSettings:
             "autotickangles": [0, 90],
             "ticklabeloverflow": "allow",
             "automargin": True,
-            "nticks": COMPACT_X_AXIS_NTICKS,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -357,7 +356,7 @@ class TestSingleCategoryChartSettings:
 
         assert fake_chart_settings.get_x_axis_nticks() == expected_nticks
 
-    def test_get_x_axis_config_applies_nticks_to_text_axes(
+    def test_get_x_axis_config_does_not_apply_nticks_to_text_axes(
         self, fake_chart_settings: SingleCategoryChartSettings
     ):
         fake_chart_settings.plots_data[0].x_axis_values = [
@@ -367,7 +366,18 @@ class TestSingleCategoryChartSettings:
 
         x_axis_config = fake_chart_settings._get_x_axis_config()
 
-        assert x_axis_config["nticks"] == COMPACT_X_AXIS_NTICKS
+        assert "nticks" not in x_axis_config
+
+    def test_get_x_axis_config_does_not_apply_nticks_to_headline_data(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
+        fake_chart_settings.plots_data[0].parameters.metric = (
+            "COVID-a9_headline_vaccines_spring24Uptake"
+        )
+
+        x_axis_config = fake_chart_settings._get_x_axis_config()
+
+        assert "nticks" not in x_axis_config
 
     def test_get_x_axis_text_type(
         self, fake_chart_settings: SingleCategoryChartSettings

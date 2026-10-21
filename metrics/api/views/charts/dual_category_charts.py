@@ -189,7 +189,9 @@ class DualCategoryChartsView(APIView):
             )
 
         response_data = chart_result.output()
-        response_data["figure_config"] = get_x_axis_figure_config()
+        x_axis_config = response_data["figure"].get("layout", {}).get("xaxis", {})
+        if x_axis_config.get("nticks") is not None:
+            response_data["figure_config"] = get_x_axis_figure_config()
         serializer = EncodedDualCategoryChartResponseSerializer(data=response_data)
         serializer.is_valid(raise_exception=True)
 

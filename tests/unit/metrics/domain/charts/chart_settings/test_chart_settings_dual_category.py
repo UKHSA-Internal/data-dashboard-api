@@ -30,6 +30,18 @@ class TestDualCategoryChartSettings:
         assert x_axis_config["ticklabeloverflow"] == "allow"
         assert x_axis_config["automargin"] is True
 
+    def test_categorical_x_axis_does_not_use_responsive_tick_limit(
+        self, fake_dual_category_chart_settings: DualCategoryChartSettings
+    ):
+        fake_dual_category_chart_settings.plots_data[0].x_axis_values = [
+            "category-1",
+            "category-2",
+        ]
+
+        x_axis_config = fake_dual_category_chart_settings._get_x_axis_config()
+
+        assert "nticks" not in x_axis_config
+
     def test_get_legend_config(
         self, fake_dual_category_chart_settings: DualCategoryChartSettings
     ):

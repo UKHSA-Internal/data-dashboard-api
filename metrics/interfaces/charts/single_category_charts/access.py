@@ -414,7 +414,8 @@ class ChartsInterface:
             "figure": chart_output.interactive_chart_figure_output,
         }
 
-        encoded_chart["figure_config"] = get_x_axis_figure_config()
+        if chart_output.figure.layout.xaxis.nticks is not None:
+            encoded_chart["figure_config"] = get_x_axis_figure_config()
 
         return encoded_chart
 

@@ -152,4 +152,4 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
 
 
 class EncodedDualCategoryChartResponseSerializer(EncodedChartResponseSerializer):
-    figure_config = FigureConfigSerializer()
+    figure_config = FigureConfigSerializer(required=False)

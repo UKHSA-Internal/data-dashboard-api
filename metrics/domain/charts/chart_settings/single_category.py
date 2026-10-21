@@ -57,11 +57,13 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": self._get_tick_font_config(),
             "autotickangles": [0, 90],
-            "nticks": self.get_x_axis_nticks(),
             "mirror": True,
             "ticklabeloverflow": "allow",
             "automargin": True,
         }
+
+        if self.should_limit_x_axis_ticks:
+            base_x_axis_config["nticks"] = self.get_x_axis_nticks()
 
         if self._chart_generation_payload.x_axis_title:
             base_x_axis_config["title"] = {
@@ -186,6 +188,14 @@ class SingleCategoryChartSettings(ChartSettings):
         if self.width >= FULL_WIDTH_CHART_MINIMUM:
             return FULL_WIDTH_X_AXIS_NTICKS
         return COMPACT_X_AXIS_NTICKS
+
+    @property
+    def should_limit_x_axis_ticks(self) -> bool:
+        """Return whether Plotly should limit ticks on this chart's x-axis"""
+        return (
+            self.is_date_type_x_axis
+            and self.plots_data[0].parameters.is_timeseries_data
+        )
 
     def get_x_axis_date_tick_format_stops(self) -> list[dict]:
         """Return date formats for Plotly's automatically selected tick intervel."""
