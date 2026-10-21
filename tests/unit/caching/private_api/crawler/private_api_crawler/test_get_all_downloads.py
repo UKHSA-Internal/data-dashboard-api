@@ -84,11 +84,11 @@ class TestPrivateAPICrawlerGetAllDownloads:
     @mock.patch.object(PrivateAPICrawler, "create_filename_for_chart_card")
     @mock.patch.object(DynamicContentBlockCrawler, "process_download_for_chart_block")
     def test_get_downloads_from_chart_row_columns_handles_non_200_responses_correctly(
-            self,
-            spy_process_download_for_chart_block: mock.MagicMock,
-            spy_create_filename_for_chart_card: mock.MagicMock,
-            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-            example_chart_row_column: dict[str, str | list[dict]],
+        self,
+        spy_process_download_for_chart_block: mock.MagicMock,
+        spy_create_filename_for_chart_card: mock.MagicMock,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        example_chart_row_column: dict[str, str | list[dict]],
     ):
         """
         Given a chart_row_column containing two columns
@@ -107,13 +107,17 @@ class TestPrivateAPICrawlerGetAllDownloads:
 
         response2 = mock.MagicMock()
         response2.status_code = HTTPStatus.BAD_REQUEST
-        response2.content = 'error'
+        response2.content = "error"
 
         response3 = mock.MagicMock()
         response3.status_code = HTTPStatus.FORBIDDEN
-        response3.content = 'error'
+        response3.content = "error"
 
-        spy_process_download_for_chart_block.side_effect = [response1, response2, response3]
+        spy_process_download_for_chart_block.side_effect = [
+            response1,
+            response2,
+            response3,
+        ]
 
         # When
         downloads = private_api_crawler_with_mocked_internal_api_client.get_downloads_from_chart_row_columns(
@@ -245,9 +249,9 @@ class TestPrivateAPICrawlerGetAllDownloads:
 
     @mock.patch.object(PrivateAPICrawler, "get_downloads_from_page_sections")
     def test_get_all_downloads_filters_empty_pages(
-            self,
-            spy_get_downloads_from_page_sections: mock.MagicMock,
-            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        self,
+        spy_get_downloads_from_page_sections: mock.MagicMock,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages, some containing content and some empty
@@ -261,8 +265,10 @@ class TestPrivateAPICrawlerGetAllDownloads:
         spy_get_downloads_from_page_sections.side_effect = [[]]
 
         # When
-        downloads = private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
-            pages=fake_pages, file_format="csv"
+        downloads = (
+            private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
+                pages=fake_pages, file_format="csv"
+            )
         )
 
         # Then
@@ -278,9 +284,9 @@ class TestPrivateAPICrawlerGetAllDownloads:
 
     @mock.patch.object(PrivateAPICrawler, "get_downloads_from_page_sections")
     def test_get_all_downloads_filters_empty_pages_only(
-            self,
-            spy_get_downloads_from_page_sections: mock.MagicMock,
-            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        self,
+        spy_get_downloads_from_page_sections: mock.MagicMock,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages, some containing content and some empty
@@ -292,12 +298,15 @@ class TestPrivateAPICrawlerGetAllDownloads:
             FakeTopicPageFactory._build_page(page_name="influenza"),
         ]
         # the page has no sections to download from
-        spy_get_downloads_from_page_sections.return_value = '{"sections":"sections", "file_format"="csv"}'
-
+        spy_get_downloads_from_page_sections.return_value = (
+            '{"sections":"sections", "file_format"="csv"}'
+        )
 
         # When
-        downloads = private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
-            pages=fake_pages, file_format="csv"
+        downloads = (
+            private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
+                pages=fake_pages, file_format="csv"
+            )
         )
 
         # Then
@@ -310,4 +319,3 @@ class TestPrivateAPICrawlerGetAllDownloads:
         )
 
         assert len(downloads) == 2
-
