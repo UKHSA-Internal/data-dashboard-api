@@ -81,6 +81,54 @@ class TestPrivateAPICrawlerGetAllDownloads:
         spy_process_download_for_chart_block.assert_has_calls(expected_calls)
         assert len(downloads) == len(faked_two_row_columns)
 
+    @mock.patch.object(PrivateAPICrawler, "create_filename_for_chart_card")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_download_for_chart_block")
+    def test_get_downloads_from_chart_row_columns_handles_non_200_responses_correctly(
+            self,
+            spy_process_download_for_chart_block: mock.MagicMock,
+            spy_create_filename_for_chart_card: mock.MagicMock,
+            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+            example_chart_row_column: dict[str, str | list[dict]],
+    ):
+        """
+        Given a chart_row_column containing two columns
+        When get_downloads_from_chart_row_columns() is called
+        Then process_download_for_cart_block is called twice
+        and one downloads is returned
+        and the rest an error is returned
+        only the download is present in the returned list
+        """
+        # Given
+        faked_two_row_columns = example_chart_row_column
+
+        response1 = mock.MagicMock()
+        response1.status_code = HTTPStatus.OK
+        response1.content = faked_two_row_columns[0]
+
+        response2 = mock.MagicMock()
+        response2.status_code = HTTPStatus.BAD_REQUEST
+        response2.content = 'error'
+
+        response3 = mock.MagicMock()
+        response3.status_code = HTTPStatus.FORBIDDEN
+        response3.content = 'error'
+
+        spy_process_download_for_chart_block.side_effect = [response1, response2, response3]
+
+        # When
+        downloads = private_api_crawler_with_mocked_internal_api_client.get_downloads_from_chart_row_columns(
+            chart_row_columns=[faked_two_row_columns[0]], file_format="csv"
+        )
+
+        # Then
+        spy_create_filename_for_chart_card.assert_called()
+        expected_calls = [
+            mock.call(chart_block=faked_two_row_columns[0]["value"], file_format="csv")
+        ]
+
+        spy_process_download_for_chart_block.assert_has_calls(expected_calls)
+        assert len(downloads) == 1
+
     @mock.patch.object(PrivateAPICrawler, "get_downloads_from_chart_row_columns")
     def test_get_downloads_from_chart_cards_delegates_calls_correctly(
         self,
@@ -227,4 +275,39 @@ class TestPrivateAPICrawlerGetAllDownloads:
         )
 
         assert len(downloads) == 0
+
+    @mock.patch.object(PrivateAPICrawler, "get_downloads_from_page_sections")
+    def test_get_all_downloads_filters_empty_pages_only(
+            self,
+            spy_get_downloads_from_page_sections: mock.MagicMock,
+            private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+    ):
+        """
+        Given a list of pages, some containing content and some empty
+        When: the `get_all_downloads()` function is called.
+        Then: emtpy pages are filtered out and directories containing no files are omitted
+        """
+        fake_pages = [
+            FakeTopicPageFactory._build_page(page_name="covid_19"),
+            FakeTopicPageFactory._build_page(page_name="influenza"),
+        ]
+        # the page has no sections to download from
+        spy_get_downloads_from_page_sections.return_value = '{"sections":"sections", "file_format"="csv"}'
+
+
+        # When
+        downloads = private_api_crawler_with_mocked_internal_api_client.get_all_downloads(
+            pages=fake_pages, file_format="csv"
+        )
+
+        # Then
+        expected_pages = [
+            mock.call(sections=page.body.raw_data, file_format="csv")
+            for page in fake_pages
+        ]
+        spy_get_downloads_from_page_sections.assert_has_calls(
+            expected_pages, any_order=True
+        )
+
+        assert len(downloads) == 2
 
