@@ -455,6 +455,8 @@ def example_chart_block() -> dict[str, str | list[dict]]:
                     "line_type": "",
                     "use_markers": False,
                     "use_smooth_lines": True,
+                    "theme": "default",
+                    "sub_theme":"default",
                 },
                 "id": "791efbf1-8880-4dfa-9f5d-526982ed1539",
             }
