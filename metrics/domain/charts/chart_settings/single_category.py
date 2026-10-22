@@ -211,12 +211,36 @@ class SingleCategoryChartSettings(ChartSettings):
             },
         ]
 
+    def _get_single_x_axis_date(self) -> datetime.date | None:
+        """Return the date when every x-axis value is the same date."""
+        unique_x_axis_dates = {
+            x_axis_value
+            for plot_data in self.plots_data
+            for x_axis_value in plot_data.x_axis_values
+        }
+
+        if len(unique_x_axis_dates) != 1:
+            return None
+
+        return next(iter(unique_x_axis_dates))
+    
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
-        return {
+        x_axis_date_config = {
             "type": "date",
             "autorange": True,
             "tickformatstops": self.get_x_axis_date_tick_format_stops(),
         }
+
+        if single_x_axis_date := self._get_single_x_axis_date():
+            x_axis_date_config.update(
+                {
+                    "tickmode": "array",
+                    "tickvals": [single_x_axis_date],
+                    "tickformat": self._get_date_tick_format(weekly=True),
+                }
+            )
+
+        return x_axis_date_config
 
     def _build_line_single_simplified_y_axis_value_params(
         self,
