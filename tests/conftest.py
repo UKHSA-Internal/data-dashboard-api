@@ -455,8 +455,8 @@ def example_chart_block() -> dict[str, str | list[dict]]:
                     "line_type": "",
                     "use_markers": False,
                     "use_smooth_lines": True,
-                    "theme": "default",
-                    "sub_theme":"default",
+                    "theme": "infectious_disease",
+                    "sub_theme":"respiratory",
                 },
                 "id": "791efbf1-8880-4dfa-9f5d-526982ed1539",
             }
@@ -542,6 +542,8 @@ def example_headline_chart_block() -> dict[str, str | list[dict]]:
                     "line_type": "",
                     "use_markers": False,
                     "use_smooth_lines": True,
+                    "theme": "infectious_disease",
+                    "sub_theme": "respiratory",
                 },
                 "id": "791efbf1-8880-4dfa-9f5d-526982ed1539",
             }

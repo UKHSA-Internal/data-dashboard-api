@@ -323,6 +323,8 @@ class TestRequestPayloadBuilder:
                     "geography_type": plot_value["geography_type"],
                     "sex": plot_value["sex"],
                     "age": plot_value["age"],
+                    "theme": plot_value["theme"],
+                    "sub_theme": plot_value["sub_theme"],
                 }
             ],
         }
