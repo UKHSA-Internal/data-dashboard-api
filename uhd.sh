@@ -8,13 +8,13 @@ done
 
 function _uhd_commands_help() {
 
-    echo 
+    echo
     echo "                    █░█ █▄▀ █░█ █▀ ▄▀█ "
     echo "                    █▄█ █░█ █▀█ ▄█ █▀█ "
-    echo 
+    echo
     echo "    █▀▄ ▄▀█ ▀█▀ ▄▀█   █▀▄ ▄▀█ █▀ █░█ █▄▄ █▀█ ▄▀█ █▀█ █▀▄ "
     echo "    █▄▀ █▀█ ░█░ █▀█   █▄▀ █▀█ ▄█ █▀█ █▄█ █▄█ █▀█ █▀▄ █▄▀ "
-    echo 
+    echo
     echo "                        █▀▀ █░░ █"
     echo "                        █▄▄ █▄▄ █"
     echo
@@ -40,7 +40,7 @@ function _uhd_commands_help() {
 function uhd() {
     local current=$(pwd)
     local command=$1
-    local args=(${@:2}) 
+    local args=(${@:2})
 
     cd $root
 

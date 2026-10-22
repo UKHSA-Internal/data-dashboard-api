@@ -2,6 +2,7 @@ from unittest import mock
 
 from caching.common.pages import (
     collect_all_pages,
+    collect_viewable_pages,
     extract_area_selectable_pages,
     get_pages_for_area_selector,
 )
@@ -145,6 +146,87 @@ class TestCollectAllPages:
         assert published_topic_page in collected_pages
         assert published_covid_page in collected_pages
         assert unpublished_page not in collected_pages
+
+
+class TestCollectViewablePages:
+    @mock.patch(f"{MODULE_PATH}.filter_pages_for_permissions")
+    def test_live_pages_of_each_type_are_filtered_for_permissions(
+        self, spy_filter_pages_for_permissions: mock.MagicMock
+    ):
+        """
+        Given a number of page managers
+        When `collect_viewable_pages()` is called
+        Then the live pages of each page type
+            are filtered according to the given permission sets
+
+        Patches:
+            `spy_filter_pages_for_permissions`: To check the live pages
+                of each page type are filtered for the given permission sets
+
+        """
+        # Given
+        mocked_permission_sets = mock.Mock()
+        page_managers = {
+            "topic_page_manager": mock.Mock(),
+            "common_page_manager": mock.Mock(),
+            "whats_new_parent_page_manager": mock.Mock(),
+            "whats_new_child_entry_manager": mock.Mock(),
+        }
+        spy_filter_pages_for_permissions.side_effect = lambda queryset, **kwargs: [
+            queryset
+        ]
+
+        # When
+        collected_pages = collect_viewable_pages(
+            permission_sets=mocked_permission_sets, **page_managers
+        )
+
+        # Then
+        expected_calls = [
+            mock.call(
+                queryset=page_manager.get_live_pages.return_value,
+                permission_sets=mocked_permission_sets,
+            )
+            for page_manager in page_managers.values()
+        ]
+        spy_filter_pages_for_permissions.assert_has_calls(
+            calls=expected_calls, any_order=True
+        )
+        assert collected_pages == [
+            page_manager.get_live_pages.return_value
+            for page_manager in page_managers.values()
+        ]
+
+    @mock.patch(f"{MODULE_PATH}.filter_pages_for_permissions")
+    def test_no_permission_sets_are_used_by_default(
+        self, spy_filter_pages_for_permissions: mock.MagicMock
+    ):
+        """
+        Given no permission sets
+        When `collect_viewable_pages()` is called
+        Then the live pages of each page type
+            are filtered with no permission sets
+            i.e. only public pages are to be returned
+
+        Patches:
+            `spy_filter_pages_for_permissions`: To check the live pages
+                are filtered with no permission sets
+
+        """
+        # Given
+        page_managers = {
+            "topic_page_manager": mock.Mock(),
+            "common_page_manager": mock.Mock(),
+            "whats_new_parent_page_manager": mock.Mock(),
+            "whats_new_child_entry_manager": mock.Mock(),
+        }
+
+        # When
+        collect_viewable_pages(**page_managers)
+
+        # Then
+        for call in spy_filter_pages_for_permissions.call_args_list:
+            assert call.kwargs["permission_sets"] is None
 
 
 class TestExtractAreaSelectablePages:

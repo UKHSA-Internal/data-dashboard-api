@@ -5,9 +5,83 @@ from django.db.models import Q
 from cms.auth_content.page_filtering import (
     _to_predicate,
     filter_non_public_pages,
+    filter_pages_for_permissions,
     filter_public_pages,
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
+
+
+class TestFilterPagesForPermissions:
+
+    @patch("cms.auth_content.page_filtering.filter_public_pages")
+    def test_filters_for_public_pages_when_no_permission_sets_are_given(
+        self, spy_filter_public_pages: MagicMock
+    ):
+        """
+        Given no permission sets i.e. an anonymous/unauthenticated user
+        When the queryset is filtered for permissions
+        Then only public pages are returned
+        """
+        # given
+        queryset = MagicMock()
+
+        # when
+        result = filter_pages_for_permissions(queryset=queryset)
+
+        # then
+        spy_filter_public_pages.assert_called_once_with(queryset=queryset)
+        assert result == spy_filter_public_pages.return_value
+
+    def test_returns_unfiltered_queryset_when_permission_sets_have_global_access(self):
+        """
+        Given permission sets which have global access
+        When the queryset is filtered for permissions
+        Then the queryset is returned unfiltered
+        """
+        # given
+        queryset = MagicMock()
+        permission_sets = {
+            "permission_sets": [{"theme": {"id": "theme-1"}}],
+            "summary": {"has_global_access": True},
+        }
+
+        # when
+        result = filter_pages_for_permissions(
+            queryset=queryset, permission_sets=permission_sets
+        )
+
+        # then
+        assert result == queryset
+        queryset.filter.assert_not_called()
+        queryset.exclude.assert_not_called()
+
+    @patch("cms.auth_content.page_filtering.filter_non_public_pages")
+    def test_filters_non_public_pages_when_permission_sets_are_restricted(
+        self, spy_filter_non_public_pages: MagicMock
+    ):
+        """
+        Given permission sets which do not have global access
+        When the queryset is filtered for permissions
+        Then public pages and the permitted non-public pages are returned
+        """
+        # given
+        queryset = MagicMock()
+        permission_set = {"theme": {"id": "theme-1"}}
+        permission_sets = {
+            "permission_sets": [permission_set],
+            "summary": {"has_global_access": False},
+        }
+
+        # when
+        result = filter_pages_for_permissions(
+            queryset=queryset, permission_sets=permission_sets
+        )
+
+        # then
+        spy_filter_non_public_pages.assert_called_once_with(
+            queryset=queryset, permission_sets=[permission_set]
+        )
+        assert result == spy_filter_non_public_pages.return_value
 
 
 class TestFilterPublicPages:

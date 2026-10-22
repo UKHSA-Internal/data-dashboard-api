@@ -5,7 +5,41 @@ from django.db.models import Q
 from wagtail.query import PageQuerySet
 
 from cms.auth_content.models.non_public_page import get_non_public_page_types
-from common.auth.permissions import WILDCARD_ID_VALUE, PermissionRowType
+from common.auth.permissions import (
+    WILDCARD_ID_VALUE,
+    PermissionRowType,
+    PermissionSetsType,
+)
+
+
+def filter_pages_for_permissions(
+    *,
+    queryset: PageQuerySet,
+    permission_sets: PermissionSetsType | None = None,
+) -> PageQuerySet:
+    """
+    Filters the queryset if needed:
+    No permission_sets (i.e. anonymous users) == filter to only return public pages.
+    Permission_sets with global access == no filter / return all pages.
+    Permission_sets with restricted access == filter non-public pages
+        based on permissions.
+
+    Args:
+        queryset: the queryset to filter
+        permission_sets: the permission sets to filter on
+
+    Returns: the altered queryset
+    """
+    if not permission_sets:
+        return filter_public_pages(queryset=queryset)
+
+    if permission_sets["summary"]["has_global_access"]:
+        return queryset
+
+    return filter_non_public_pages(
+        queryset=queryset,
+        permission_sets=permission_sets["permission_sets"],
+    )
 
 
 def filter_public_pages(*, queryset: PageQuerySet) -> PageQuerySet:
