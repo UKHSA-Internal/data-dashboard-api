@@ -223,7 +223,7 @@ class SingleCategoryChartSettings(ChartSettings):
             return None
 
         return next(iter(unique_x_axis_dates))
-    
+
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         x_axis_date_config = {
             "type": "date",

@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
@@ -41,6 +43,25 @@ class TestDualCategoryChartSettings:
         x_axis_config = fake_dual_category_chart_settings._get_x_axis_config()
 
         assert "nticks" not in x_axis_config
+
+    def test_single_date_x_axis_uses_one_explicit_tick_across_segments(
+        self, fake_dual_category_chart_settings: DualCategoryChartSettings
+    ):
+        single_date = datetime.date(2024, 3, 31)
+        first_segment = fake_dual_category_chart_settings.plots_data[0]
+        first_segment.x_axis_values = [single_date]
+        second_segment = first_segment.model_copy(deep=True)
+        second_segment.x_axis_values = [single_date]
+        fake_dual_category_chart_settings.plots_data = [
+            first_segment,
+            second_segment,
+        ]
+
+        x_axis_config = fake_dual_category_chart_settings._get_x_axis_config()
+
+        assert x_axis_config["tickmode"] == "array"
+        assert x_axis_config["tickvals"] == [single_date]
+        assert x_axis_config["tickformat"] == "%d %b<br>%Y"
 
     def test_get_legend_config(
         self, fake_dual_category_chart_settings: DualCategoryChartSettings

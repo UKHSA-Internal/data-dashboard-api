@@ -308,11 +308,35 @@ class TestSingleCategoryChartSettings:
         assert "range" not in x_axis_date_type
         assert "dtick" not in x_axis_date_type
         assert "nticks" not in x_axis_date_type
+        assert "tickmode" not in x_axis_date_type
+        assert "tickvals" not in x_axis_date_type
         assert x_axis_date_type["tickformatstops"] == [
             {"dtickrange": ["M12", None], "value": "%Y"},
             {"dtickrange": ["M1", "M12"], "value": "%b %Y"},
             {"dtickrange": [None, "M1"], "value": "%d %b<br>%Y"},
         ]
+
+    def test_get_x_axis_date_type_uses_one_explicit_tick_for_one_distinct_date(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
+        """
+        Given an instance of `SingleCategoryChartSettings` with a single data point
+        When `get_x_axis_date_type()` is called
+        Then the correct configuration is returned with one 'tickvals' representing that date
+        """
+        single_date = datetime.date(2024, 3, 31)
+        fake_chart_settings.plots_data[0].x_axis_values = [
+            single_date,
+            single_date,
+            single_date,
+        ]
+
+        x_axis_date_type = fake_chart_settings.get_x_axis_date_type()
+
+        assert x_axis_date_type["autorange"] is True
+        assert x_axis_date_type["tickmode"] == "array"
+        assert x_axis_date_type["tickvals"] == [single_date]
+        assert x_axis_date_type["tickformat"] == "%d %b<br>%Y"
 
     def test_get_x_axis_date_type_breaks_month_and_year_for_narrow_charts(
         self, fake_plot_data: PlotGenerationData
