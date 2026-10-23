@@ -104,8 +104,8 @@ class GeographiesAPICrawler:
         geography_type_data_models: list[GeographyTypeData] = (
             self.hit_list_endpoint_for_topic(
                 topic=selected_topic,
-                theme=page.theme_name or "",
-                sub_theme=page.sub_theme_name or "",
+                theme=page.theme_name or None,
+                sub_theme=page.sub_theme_name or None,
             )
         )
 
