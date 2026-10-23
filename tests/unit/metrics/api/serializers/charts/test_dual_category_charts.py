@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSegmentSerializer,
     DualCategoryChartSerializer,
+    EncodedDualCategoryChartResponseSerializer,
 )
 from metrics.api.serializers.plots import PlotSerializer
 from metrics.api.views.charts.dual_category_charts import (
@@ -22,6 +23,38 @@ from tests.fakes.managers.topic_manager import FakeTopicManager
 
 HEADLINE_METRIC = "COVID-19_headline_vaccines_spring24Uptake"
 TIMESERIES_METRIC = "COVID-19_cases_rateRollingMean"
+
+
+class TestEncodedDualCategoryChartResponseSerializer:
+    @property
+    def valid_payload(self) -> dict:
+        return {
+            "last_updated": "2026-10-14",
+            "chart": "encoded-svg",
+            "alt_text": "Chart description",
+            "figure": {},
+            "figure_config": {
+                "xaxis_full": {"nticks": 13},
+                "xaxis_compact": {"nticks": 5},
+            },
+        }
+
+    def test_validates_responsive_figure_config(self):
+        serializer = EncodedDualCategoryChartResponseSerializer(data=self.valid_payload)
+
+        assert serializer.is_valid(raise_exception=True)
+        assert (
+            serializer.validated_data["figure_config"]
+            == self.valid_payload["figure_config"]
+        )
+
+    def test_figure_config_can_be_omitted(self):
+        payload = self.valid_payload
+        payload.pop("figure_config")
+        serializer = EncodedDualCategoryChartResponseSerializer(data=payload)
+
+        serializer.is_valid(raise_exception=True)
+        assert "figure_config" not in serializer.validated_data
 
 
 class TestDualCategoryChartSegmentSerializer:
