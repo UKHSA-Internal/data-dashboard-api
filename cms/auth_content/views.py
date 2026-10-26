@@ -13,8 +13,9 @@ audit_logger = logging.getLogger("audit")
 
 @require_http_methods(["GET"])
 def export_user_permission_sets_csv(request):
+    # Stops Editors/Moderators from accessing export
     if not request.user.is_superuser:
-        return PermissionDenied
+        raise PermissionDenied
 
     user_id = (
         request.user.id
