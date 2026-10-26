@@ -6,11 +6,19 @@ This file contains the custom queryset and Manger classes associated with the `A
 from typing import Self
 
 from django.db import models
+from django.db.models.functions.window import Rank
 from django.utils import timezone
+
+from common.auth.filtering import filter_for_permissions
+from common.auth.permissions import PermissionSetsType
 
 
 class APIHeadlineQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `APIHeadlineManger`"""
+
+    @property
+    def partition_fields(self) -> list[str]:
+        return ["age", "sex", "stratum", "period_start", "period_end"]
 
     @staticmethod
     def _newest_to_oldest(
@@ -162,6 +170,124 @@ class APIHeadlineQuerySet(models.QuerySet):
         return self._newest_to_oldest(
             queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
         )
+
+    def filter_for_list_view(
+        self,
+        *,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        geography_type: str,
+        geography: str,
+        metric: str,
+        permission_sets: PermissionSetsType | None = None,
+    ) -> Self:
+        """Filters by the given fields to provide headline data as per the fields.
+
+        Args:
+            theme: The name of the root theme being queried for.
+                E.g. `infectious_disease`
+            sub_theme: The name of the child/ sub theme being queried for.
+                E.g. `respiratory`.
+                Which would filter for `respiratory` under the `sub_theme` entity.
+            topic: The name of the disease being queried.
+                E.g. `COVID-19`
+            geography_type: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            geography: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            metric: The name of the metric to filter for.
+                E.g. `COVID-19_deaths_ONSByDay`.
+            permission_sets: The JWT permissions extracted from the token
+                used to filter which non-public records will be included.
+
+        Returns:
+            QuerySet: An ordered queryset from oldest -> newest
+                Examples:
+                    `<APIHeadlineQuerySet [
+                        <APIHeadline:
+                            APIHeadline,
+                                  metric 'COVID-19_headline_ONSdeaths_7DayTotals',
+                                  stratum 'default',
+                                  value: 2364.0
+                            >,
+                            ...
+                        ]
+                    >`
+
+        """
+
+        queryset = self.filter(
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            geography_type=geography_type,
+            geography=geography,
+            metric=metric,
+        )
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
+
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
+        return self.filter_for_latest_refresh_date_records(queryset=queryset)
+
+    def filter_for_latest_refresh_date_records(self, *, queryset: Self) -> Self:
+        """Filters the given `queryset` to ensure the latest record is returned for each individual date
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 4th round  | 2nd round  | 3rd round  |   <- expected results
+
+            This method will handle mixtures of records
+            so that we don't simply return the latest round
+            in its entirety but rather the overall result
+            which return the most recent record
+            for the individual dates.
+
+            This will partition the `queryset`
+            and returns records with the latest `refresh_date`
+            from each window
+
+        Args:
+            queryset: The queryset to filter against
+
+        Returns:
+            A new filtered queryset containing
+            only the latest records for each refresh_date
+
+        """
+        # Filter the queryset to get records with a ranking of 1.
+        # This will return the records with the latest `refresh_date` within each partition
+        queryset = self._partition_and_rank_data(
+            queryset=queryset, partition_fields=self.partition_fields
+        )
+        return queryset.filter(refresh_ranking=1)
+
+    @classmethod
+    def _partition_and_rank_data(
+        cls, *, queryset: Self, partition_fields: list[str]
+    ) -> Self:
+        # Use the window function to annotate
+        # the rank of each record within its partition
+        window = models.Window(
+            expression=Rank(),
+            partition_by=partition_fields,
+            order_by=models.F("refresh_date").desc(),
+        )
+
+        # Annotate each record with a calculated ranking.
+        # Whereby the `refresh_ranking` is determined by the latest `refresh_date`
+        return queryset.annotate(refresh_ranking=window)
 
 
 class APIHeadlineManager(models.Manager):
@@ -315,3 +441,32 @@ class APIHeadlineManager(models.Manager):
             is_public=is_public,
         )
         superseded_records.delete()
+
+    def get_distinct_column_values_with_filters(
+        self,
+        *,
+        lookup_field: str,
+        permission_sets: PermissionSetsType | None = None,
+        **kwargs,
+    ) -> APIHeadlineQuerySet:
+        """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
+
+        Args:
+            lookup_field: A column to query and retrieve unique values for.
+            permission_sets: The JWT permissions extracted from the token
+                used to filter which non-public records will be included.
+            **kwargs: The filters to apply to the query.
+
+        Returns:
+            APIHeadlineQuerySet: The unique column values as a queryset.
+            Examples:
+                `<APIHeadlineQuerySet ['infectious_disease']>`
+
+        """
+        queryset = self.filter(**kwargs)
+        queryset = filter_for_permissions(
+            queryset=queryset,
+            permission_sets=permission_sets,
+        )
+
+        return queryset.values_list(lookup_field, flat=True).distinct()
