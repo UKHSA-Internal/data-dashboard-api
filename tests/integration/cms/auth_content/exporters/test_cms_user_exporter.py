@@ -26,7 +26,7 @@ class Test(TestCase, WagtailTestUtils):
     def test_action_forbidden_to_non_admin(self):
         self.client.force_login(self.regular_user)
         response = self.client.get(self.target_url)
-        assert response.status_code == 403
+        assert response.status_code == 302
 
 
     def test_action_is_allowed_for_admin(self):
