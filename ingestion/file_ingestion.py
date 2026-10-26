@@ -39,7 +39,7 @@ def data_ingester(*, data: INCOMING_DATA_TYPE, filename: str) -> None:
     consumer = Consumer(source_data=data, filename=filename)
 
     if consumer.is_headline_data:
-        return consumer.process_core_headlines()
+        return consumer.process_core_and_api_headlines()
 
     return consumer.process_core_and_api_timeseries()
 

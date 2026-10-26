@@ -103,5 +103,5 @@ class TestDataMigrationForUpdatedGeographyCodes(MigrationTests):
                 geography=old["name"], geography_code=old["code"]
             )
             APITimeSeriesFactory.create_record(
-                geography_name=old["name"], geography_code=old["code"]
+                geography=old["name"], geography_code=old["code"]
             )
