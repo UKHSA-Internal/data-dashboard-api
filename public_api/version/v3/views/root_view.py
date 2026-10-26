@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from public_api.version_02.views.base import PUBLIC_API_TAG
+from public_api.version.v3.views.base import PUBLIC_API_TAG
 
 
-class PublicAPIRootViewV2(APIView):
+class PublicAPIRootViewV3(APIView):
     """
     **Using the API**
 
@@ -57,10 +57,15 @@ class PublicAPIRootViewV2(APIView):
 
     @classmethod
     @extend_schema(tags=[PUBLIC_API_TAG])
-    def get(cls, request, format=None):
+    def get(cls, request, format=None):  # noqa:A002
         data = {
             "links": {
-                "themes": reverse("theme-list-v2", request=request, format=format),
+                "headline/themes": reverse(
+                    "headline-theme-list-v3", request=request, format=format
+                ),
+                "timeseries/themes": reverse(
+                    "timeseries-theme-list-v3", request=request, format=format
+                ),
             }
         }
 
