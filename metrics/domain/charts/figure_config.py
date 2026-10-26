@@ -95,12 +95,6 @@ def _build_trace_override(trace: Mapping[str, Any], *, rotate: bool) -> dict:
     return override
 
 
-def _copy_axis_with_tick_limit(axis: Any, *, nticks: int) -> dict:
-    copied_axis = copy.deepcopy(axis) if isinstance(axis, Mapping) else {}
-    copied_axis["nticks"] = nticks
-    return copied_axis
-
-
 def _axis_for_rotated_position(
     *, source_axis: Mapping[str, Any], destination_axis: Mapping[str, Any]
 ) -> dict:
@@ -221,7 +215,7 @@ def _build_layout_configs(
         compact_x_axis = copy.deepcopy(x_axis)
         compact_y_axis = copy.deepcopy(y_axis)
 
-        should_limit_x_axis_ticks = x_key == "x_axis" and "nticks" in x_axis
+        should_limit_x_axis_ticks = x_key == "xaxis" and "nticks" in x_axis
 
         if should_limit_x_axis_ticks:
             full_x_axis["nticks"] = FULL_WIDTH_X_AXIS_NTICKS

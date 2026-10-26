@@ -145,7 +145,10 @@ class TestDualCategoryChartsViewSuccessHandling:
             last_updated="2024-01-01",
             chart="encoded-svg",
             alt_text="Chart description",
-            figure={"layout": {"xaxis": {"nticks": 5}}},
+            figure={
+                "data": [{"type": "scatter", "x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
         )
         chart_request_params = mock.MagicMock(spec=DualCategoryChartRequestParams)
 
@@ -159,14 +162,20 @@ class TestDualCategoryChartsViewSuccessHandling:
         assert response.status_code == HTTPStatus.OK
         assert response.data["chart"] == "encoded-svg"
         assert response.data["figure_config"] == {
-            "xaxis_full": {"nticks": 13},
-            "xaxis_compact": {"nticks": 5},
+            "full": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 13}, "yaxis": {}},
+            },
+            "compact": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
         }
 
     @mock.patch(
         "metrics.api.views.charts.dual_category_charts.generate_encoded_chart",
     )
-    def test_handle_encoded_svg_omits_figure_config_for_categorical_axis(
+    def test_handle_encoded_svg_returns_figure_config_for_categorical_axis(
         self,
         mocked_generate_encoded_chart: mock.MagicMock,
     ):
@@ -174,7 +183,7 @@ class TestDualCategoryChartsViewSuccessHandling:
             last_updated="2024-01-01",
             chart="encoded-svg",
             alt_text="Chart description",
-            figure={"layout": {"xaxis": {"type": "-"}}},
+            figure={"layout": {"xaxis": {"type": "-"}, "yaxis": {}}},
         )
         chart_request_params = mock.MagicMock(spec=DualCategoryChartRequestParams)
 
@@ -184,4 +193,13 @@ class TestDualCategoryChartsViewSuccessHandling:
 
         assert isinstance(response, Response)
         assert response.status_code == HTTPStatus.OK
-        assert "figure_config" not in response.data
+        assert response.data["figure_config"] == {
+            "full": {
+                "data": [],
+                "layout": {"xaxis": {"type": "-"}, "yaxis": {}},
+            },
+            "compact": {
+                "data": [],
+                "layout": {"xaxis": {"type": "-"}, "yaxis": {}},
+            },
+        }
