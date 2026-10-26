@@ -221,9 +221,7 @@ def _build_layout_configs(
         compact_x_axis = copy.deepcopy(x_axis)
         compact_y_axis = copy.deepcopy(y_axis)
 
-        should_limit_x_axis_ticks = (
-            x_key == "x_axis" and "nticks" in x_axis
-        )
+        should_limit_x_axis_ticks = x_key == "x_axis" and "nticks" in x_axis
 
         if should_limit_x_axis_ticks:
             full_x_axis["nticks"] = FULL_WIDTH_X_AXIS_NTICKS
@@ -245,7 +243,6 @@ def _build_layout_configs(
         compact_layout[x_key] = compact_x_axis
         compact_layout[y_key] = compact_y_axis
 
-    
     shapes = layout.get("shapes")
     if isinstance(shapes, (list, tuple)):
         full_layout["shapes"] = copy.deepcopy(shapes)

@@ -66,7 +66,7 @@ class ChartsInterface:
     @property
     def supports_compact_rotation(self) -> bool:
         """Return whether the compact chart may be rotated safely."""
-        return self.is_headline_data and all (
+        return self.is_headline_data and all(
             plot.chart_type == ChartTypes.bar.value
             for plot in self.chart_request_params.plots
         )

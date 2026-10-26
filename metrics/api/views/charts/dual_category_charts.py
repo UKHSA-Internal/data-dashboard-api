@@ -182,8 +182,7 @@ class DualCategoryChartsView(APIView):
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
-                status=HTTPStatus.BAD_REQUEST,
-                data={"error_message": str(error)}
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
         serializer = EncodedDualCategoryChartResponseSerializer(
