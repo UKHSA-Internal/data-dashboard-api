@@ -11,6 +11,9 @@ from metrics.domain.charts import (
     common_charts,
     line_single_simplified,
 )
+from metrics.domain.charts.chart_settings.single_category import (
+    get_x_axis_figure_config,
+)
 from metrics.domain.common.utils import (
     ChartTypes,
     extract_metric_group_from_metric,
@@ -400,14 +403,21 @@ class ChartsInterface:
              "last_updated": A timestamp for the last data point
              "chart": An encoded string representing the chart figure
              "alt_text": A string representation of the chart description
+             "figure": The Plotly figure used by interactive clients
+             "figure_config": Config to support client side display
 
         """
-        return {
+        encoded_chart = {
             "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=chart_output.figure),
             "alt_text": chart_output.description,
             "figure": chart_output.interactive_chart_figure_output,
         }
+
+        if chart_output.figure.layout.xaxis.nticks is not None:
+            encoded_chart["figure_config"] = get_x_axis_figure_config()
+
+        return encoded_chart
 
 
 def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes:
@@ -419,7 +429,7 @@ def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes
 
 def generate_encoded_chart(
     *, chart_request_params: ChartRequestParams
-) -> dict[str, str]:
+) -> dict[str, str | dict]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
 
@@ -431,6 +441,7 @@ def generate_encoded_chart(
         A dict containing:
          "last_updated": A timestamp for the last data point
          "chart": An encoded string representing the chart figure
+         "figure_config": Config to support client side display
 
     Raises:
         `InvalidPlotParametersError`: If an underlying

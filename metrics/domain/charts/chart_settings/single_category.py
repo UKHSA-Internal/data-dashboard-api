@@ -14,14 +14,17 @@ from metrics.domain.models.plots import ChartGenerationPayload
 
 logger = logging.getLogger(__name__)
 
-SEVEN_DAYS = 7
-SIXTY_ONE_DAYS = 61
-NINTY_TWO_DAYS = 92
-TWELVE_MONTHS = 12
-TWENTY_FOUR_MONTHS = 24
-THIRTY_SIX_MONTHS = 36
-WEEK_IN_MILLISECONDS = 604800000
-TWO_WEEKS_IN_MILLISECONDS = 1209600000
+FULL_WIDTH_CHART_MINIMUM = 1100
+FULL_WIDTH_X_AXIS_NTICKS = 13
+COMPACT_X_AXIS_NTICKS = 5
+
+
+def get_x_axis_figure_config() -> dict[str, dict[str, int]]:
+    """Return the responsive x-axis settings used by interactive charts."""
+    return {
+        "xaxis_full": {"nticks": FULL_WIDTH_X_AXIS_NTICKS},
+        "xaxis_compact": {"nticks": COMPACT_X_AXIS_NTICKS},
+    }
 
 
 class SingleCategoryChartSettings(ChartSettings):
@@ -52,12 +55,15 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickson": "boundaries",
             "type": "date",
             "tickcolor": "rgba(0,0,0,0)",
-            "dtick": "M1",
-            "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
             "autotickangles": [0, 90],
             "mirror": True,
+            "ticklabeloverflow": "allow",
+            "automargin": True,
         }
+
+        if self.should_limit_x_axis_ticks:
+            base_x_axis_config["nticks"] = self.get_x_axis_nticks()
 
         if self._chart_generation_payload.x_axis_title:
             base_x_axis_config["title"] = {
@@ -177,137 +183,64 @@ class SingleCategoryChartSettings(ChartSettings):
             "legend": legend_config,
         }
 
-    def _get_min_and_max_x_axis_values(self) -> tuple[str, str]:
-        possible_minimums = []
-        possible_maximums = []
+    def get_x_axis_nticks(self) -> int:
+        """Return the maximum number of x-axis ticks for the chart width."""
+        if self.width >= FULL_WIDTH_CHART_MINIMUM:
+            return FULL_WIDTH_X_AXIS_NTICKS
+        return COMPACT_X_AXIS_NTICKS
 
-        for plot_data in self.plots_data:
-            possible_minimums.append(plot_data.x_axis_values[0])
-            possible_maximums.append(plot_data.x_axis_values[-1])
+    @property
+    def should_limit_x_axis_ticks(self) -> bool:
+        """Return whether Plotly should limit ticks on this chart's x-axis"""
+        return (
+            self.is_date_type_x_axis
+            and self.plots_data[0].parameters.is_timeseries_data
+        )
 
-        return min(possible_minimums), max(possible_maximums)
-
-    @staticmethod
-    def get_x_axis_interval(days: int, months: int) -> str | int:
-        """Returns the `dtick` used for date intervals based on the number
-        of days and months in the current date range.
-
-        Note:
-            for weekly and `fortnightly` milliseconds were used due to a lack of support
-            for these intervals using a string format such as `M1` for monthly
-            604800000 = weekly
-            1209600000 = fortnightly
-
-        Args:
-            days: Integer representing the number of days
-            months: Integer representing the number of months
-
-        Returns: list of strings | int containing the `dtick` value
-        """
-        if days <= SEVEN_DAYS:
-            return "D7"
-        if days <= SIXTY_ONE_DAYS:
-            return WEEK_IN_MILLISECONDS
-        if days <= NINTY_TWO_DAYS:
-            return TWO_WEEKS_IN_MILLISECONDS
-        if months <= TWELVE_MONTHS:
-            return "M1"
-        if months <= TWENTY_FOUR_MONTHS:
-            return "M3"
-        if months <= THIRTY_SIX_MONTHS:
-            return "M6"
-        return "M12"
-
-    @staticmethod
-    def get_timeseries_margin_days(interval: str | int) -> int:
-        """Returns a number of days as an integer based on the provided interval.
-
-        Note:
-            This value is used to shift the start and end date on timeseries charts
-            to avoid cropping issues with Plotly by padding out the timeframe of a chart.
-
-            The interval, which is used for `dtick` attribute of a chart can be either
-            a `str` or `int` this is because while we use the D3 time interval convention
-            of `M1`, `M3`, `M12` etc. for weekly and fortnightly intervals
-            milliseconds are used due to a lack of support for these intervals in string
-            format.
-
-        Returns:
-            number of days as an integer
-        """
-        if interval == "M1":
-            return 15
-        if interval == "M3":
-            return 45
-        if interval == "M6":
-            return 90
-        if interval == "M12":
-            return 178
-        return 1
-
-    def get_x_axis_range(
-        self, min_date: int, max_date: int, interval: str | int
-    ) -> list[datetime.date]:
-        """Returns the first and last date to make up the timeseries date range.
-
-        Note:
-            Plotly can sometimes crop or partially hide the first and last data points
-            in charts. To prevent this rendering issue, we adjust the date range:
-            - Shift the first date backwards by half the current time interval
-            - Shift the last date forwards by half the current time interval
-            - If timeseries intervals are less than 1 month we shift the dates by 1 day
-
-            Eg:
-            - For 1-year interval, 178 days (just under 6 months)
-            - For 6-month interval, shift by 90 days
-            - For 1-month interval, shift by 1 day
-
-            This ensures all data points are fully visible and not cut off at the
-            chart's edges.
-
-        Returns:
-            A list containing two dates, the first in the timeseries and the last `list[datetime.date]`
-        """
+    def get_x_axis_date_tick_format_stops(self) -> list[dict]:
+        """Return date formats for Plotly's automatically selected tick intervel."""
         return [
-            (
-                min_date
-                - datetime.timedelta(
-                    days=self.get_timeseries_margin_days(interval=interval)
-                )
-            ),
-            (
-                max_date
-                + datetime.timedelta(
-                    days=self.get_timeseries_margin_days(interval=interval)
-                )
-            ),
+            {"dtickrange": ["M12", None], "value": "%Y"},
+            {
+                "dtickrange": ["M1", "M12"],
+                "value": self._get_date_tick_format(),
+            },
+            {
+                "dtickrange": [None, "M1"],
+                "value": self._get_date_tick_format(weekly=True),
+            },
         ]
 
-    def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
-        min_date, max_date = self._get_min_and_max_x_axis_values()
-
-        number_of_days, number_of_months = get_number_of_days_and_months(
-            min_date=min_date, max_date=max_date
-        )
-
-        tick0 = min_date.replace(day=1)
-
-        dtick = self.get_x_axis_interval(
-            days=number_of_days,
-            months=number_of_months,
-        )
-
-        weekly = number_of_days <= NINTY_TWO_DAYS
-
-        return {
-            "type": "date",
-            "tick0": tick0,
-            "dtick": dtick,
-            "tickformat": self._get_date_tick_format(weekly=weekly),
-            "range": self.get_x_axis_range(
-                min_date=tick0, max_date=max_date, interval=dtick
-            ),
+    def _get_single_x_axis_date(self) -> datetime.date | None:
+        """Return the date when every x-axis value is the same date."""
+        unique_x_axis_dates = {
+            x_axis_value
+            for plot_data in self.plots_data
+            for x_axis_value in plot_data.x_axis_values
         }
+
+        if len(unique_x_axis_dates) != 1:
+            return None
+
+        return next(iter(unique_x_axis_dates))
+
+    def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
+        x_axis_date_config = {
+            "type": "date",
+            "autorange": True,
+            "tickformatstops": self.get_x_axis_date_tick_format_stops(),
+        }
+
+        if single_x_axis_date := self._get_single_x_axis_date():
+            x_axis_date_config.update(
+                {
+                    "tickmode": "array",
+                    "tickvals": [single_x_axis_date],
+                    "tickformat": self._get_date_tick_format(weekly=True),
+                }
+            )
+
+        return x_axis_date_config
 
     def _build_line_single_simplified_y_axis_value_params(
         self,
@@ -408,23 +341,3 @@ class SingleCategoryChartSettings(ChartSettings):
 
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_top_centre_config()}
-
-
-def get_number_of_days_and_months(
-    min_date: datetime.date, max_date: datetime.date
-) -> list[int]:
-    """Takes two datetime.date objects and returns the number of days and months in the time frame.
-
-    Args:
-        min_date: represents the earliest date in the time series, this is the first day of the
-            earliest month. Eg: '2025-01-27' will have a `min_date` of '2025-01-01'
-        max_date: The last day in the time series Eg '2025-01-15' will be '2025-01-15'
-
-    Returns:
-        A list of 2 integers representing the number of days and months between the two dates provided.
-    """
-    number_of_days = (max_date - min_date).days
-    number_of_months = (max_date.year - min_date.year) * 12 + (
-        max_date.month - min_date.month
-    )
-    return [number_of_days, number_of_months]
