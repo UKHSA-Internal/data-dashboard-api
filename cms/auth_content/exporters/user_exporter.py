@@ -9,7 +9,7 @@ class Echo:
 
 
 def generate_user_permission_sets_csv_rows(users):
-    writer = csv.writer(Echo(), quoting=csv.QUOTE_ALL)
+    writer = csv.writer(Echo())
     yield writer.writerow(
         ["User ID", "Permission Set", "Gives Global Access", "Permissions"]
     )
