@@ -4,12 +4,12 @@ from ingestion.consumer import Consumer
 
 
 class TestConsumerProcessModels:
-    @mock.patch.object(Consumer, "create_core_headlines")
+    @mock.patch.object(Consumer, "create_core_and_api_headlines")
     @mock.patch.object(Consumer, "clear_stale_headlines")
     def test_process_core_headlines(
         self,
         spy_clear_stale_headlines: mock.MagicMock,
-        spy_create_core_headlines: mock.MagicMock,
+        spy_create_core_and_api_headlines: mock.MagicMock,
         example_headline_data,
         test_filename: str,
     ):
@@ -23,16 +23,18 @@ class TestConsumerProcessModels:
         # Given
         spy_manager = mock.Mock()
         spy_manager.attach_mock(spy_clear_stale_headlines, "spy_clear_stale_headlines")
-        spy_manager.attach_mock(spy_create_core_headlines, "spy_create_core_headlines")
+        spy_manager.attach_mock(
+            spy_create_core_and_api_headlines, "spy_create_core_and_api_headlines"
+        )
         consumer = Consumer(source_data=example_headline_data, filename=test_filename)
 
         # When
-        consumer.process_core_headlines()
+        consumer.process_core_and_api_headlines()
 
         # Then
         expected_calls = [
             mock.call.spy_clear_stale_headlines,
-            mock.call.spy_create_core_headlines,
+            mock.call.spy_create_core_and_api_headlines,
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
 
