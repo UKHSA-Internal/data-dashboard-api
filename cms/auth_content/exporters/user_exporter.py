@@ -1,5 +1,6 @@
 import csv
 
+FORMULA_TRIGGERS = ('=', '+', '-', '@', '|')
 
 class Echo:
     @staticmethod
@@ -8,7 +9,7 @@ class Echo:
 
 
 def generate_user_permission_sets_csv_rows(users):
-    writer = csv.writer(Echo())
+    writer = csv.writer(Echo(), quoting=csv.QUOTE_ALL)
     yield writer.writerow(
         ["User ID", "Permission Set", "Gives Global Access", "Permissions"]
     )
@@ -17,7 +18,17 @@ def generate_user_permission_sets_csv_rows(users):
         if permission_sets:
             for ps in permission_sets:
                 yield writer.writerow(
-                    [user.user_id, ps.display_name, ps.global_access, ps.name]
+                    sanitise_row([user.user_id, ps.display_name, ps.global_access, ps.name])
                 )
         else:
-            yield writer.writerow([user.user_id, "", "", ""])
+            yield writer.writerow(sanitise_row([user.user_id, "", "", ""]))
+
+def sanitise_row(row):
+    sanitised_row = []
+    for cell in row:
+        cell_str = str(cell)
+        if cell_str.startswith(FORMULA_TRIGGERS):
+            sanitised_row.append(f"'{cell_str}")
+        else:
+            sanitised_row.append(cell_str)
+    return sanitised_row
