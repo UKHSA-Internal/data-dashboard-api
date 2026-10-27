@@ -673,6 +673,71 @@ class TestChartsInterface:
         }
 
     @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_rotates_non_timeseries_bar_in_compact_mode(
+        self,
+        mocked_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters_headline_data: PlotParameters,
+    ):
+        mocked_chart_output = mock.Mock()
+        mocked_chart_output.interactive_chart_figure_output = {
+            "data": [
+                {
+                    "type": "bar",
+                    "x": ["00-04", "05-14"],
+                    "y": [10, 20],
+                    "hovertemplate": "%{x}: %{y}",
+                }
+            ],
+            "layout": {
+                "xaxis": {"title": {"text": "Age group"}},
+                "yaxis": {"title": {"text": "Admission rate"}},
+            },
+        }
+
+        fake_chart_plot_parameters_headline_data.chart_type = ChartTypes.bar.value
+
+        mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters_headline_data]
+
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
+
+        encoded_chart = charts_interface.get_encoded_chart(
+            chart_output=mocked_chart_output
+        )
+
+        assert encoded_chart["figure_config"]["full"]["data"] == [
+            {
+                "x": ["00-04", "05-14"],
+                "y": [10, 20],
+                "hovertemplate": "%{x}: %{y}",
+                "orientation": "v",
+            }
+        ]
+
+        assert encoded_chart["figure_config"]["compact"]["data"] == [
+            {
+                "x": [10, 20],
+                "y": ["00-04", "05-14"],
+                "hovertemplate": "%{y}: %{x}",
+                "orientation": "h",
+            }
+        ]
+
+        assert (
+            encoded_chart["figure_config"]["compact"]["layout"]["xaxis"]["title"][
+                "text"
+            ]
+            == "Admission rate"
+        )
+
+        assert (
+            encoded_chart["figure_config"]["compact"]["layout"]["yaxis"]["title"][
+                "text"
+            ]
+            == "Age group"
+        )
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
     def test_get_encoded_chart_returns_unrotated_config_for_non_bar_headline(
         self,
         mocked_encode_figure: mock.MagicMock,
