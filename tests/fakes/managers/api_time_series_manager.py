@@ -12,7 +12,7 @@ class FakeAPITimeSeriesManager(APITimeSeriesManager):
         super().__init__(**kwargs)
 
     def get_distinct_column_values_with_filters(
-        self, lookup_field, permission_sets, **kwargs
+        self, lookup_field, permission_sets=None, **kwargs
     ) -> list[str]:
         filtered_time_series = self.time_series
         for field_name, field_value in kwargs.items():
