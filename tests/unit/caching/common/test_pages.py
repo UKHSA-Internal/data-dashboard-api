@@ -3,7 +3,7 @@ from unittest import mock
 from caching.common.pages import (
     collect_all_pages,
     extract_area_selectable_pages,
-    get_pages_for_area_selector,
+    get_pages_for_area_selector, collect_all_public_pages,
 )
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
@@ -145,6 +145,40 @@ class TestCollectAllPages:
         assert published_topic_page in collected_pages
         assert published_covid_page in collected_pages
         assert unpublished_page not in collected_pages
+
+    def test_all_public_pages_are_collected(self):
+        """
+        Given a list of pages that are public or private
+        when 'collect_all_public_pages()' is called
+        Then only the public pages are returned
+        """
+        # Given
+        public_topic_page = (
+            FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template(
+                live=True,
+                is_public=True,
+        ))
+        private_topic_page = (FakeTopicPageFactory.build_covid_19_page_from_template(
+                live=True,
+                is_public=False,
+        ))
+
+        fake_topic_page_manager = FakeTopicPageManager(
+            pages=[public_topic_page, private_topic_page]
+        )
+
+        # When
+        collected_public_pages = collect_all_public_pages(
+            topic_page_manager=fake_topic_page_manager,
+            common_page_manager=FakeCommonPageManager(pages=[]),
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
+            whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
+        )
+
+        # Then
+        assert public_topic_page in collected_public_pages
+        assert private_topic_page not in collected_public_pages
+
 
 
 class TestExtractAreaSelectablePages:

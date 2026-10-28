@@ -295,7 +295,7 @@ class TestRefreshReservedCache:
 
 
 class TestGetAllDownloads:
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_all_public_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_delegates_calls_correctly(
         self,
@@ -323,7 +323,7 @@ class TestGetAllDownloads:
             pages=expected_pages, file_format=fake_file_format
         )
 
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_all_public_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_default_file_format_can_be_changed_to_json(
         self,
@@ -349,7 +349,7 @@ class TestGetAllDownloads:
             pages=collected_pages, file_format=file_format
         )
 
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_all_public_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_default_file_format_is_csv(
         self,
