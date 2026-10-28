@@ -246,7 +246,7 @@ class TestGeographiesView:
         )
 
         # When
-        query_params = {"geography_type": ltla}
+        query_params = {"geography_type": ltla, "theme": "", "sub_theme": ""}
         response: Response = client.get(path=self.path, query_params=query_params)
 
         # Then

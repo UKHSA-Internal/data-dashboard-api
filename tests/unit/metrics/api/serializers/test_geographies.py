@@ -255,7 +255,7 @@ class TestGeographiesRequestSerializer:
         Then a `ValidationError` is raised
         """
         # Given
-        payload = {}
+        payload = {"theme": "", "sub_theme": ""}
         serializer = GeographiesRequestSerializer(data=payload)
 
         # When / Then
@@ -275,7 +275,12 @@ class TestGeographiesRequestSerializer:
         Then a `ValidationError` is raised
         """
         # Given
-        payload = {"topic": "COVID-19", "geography_type": "Nation"}
+        payload = {
+            "topic": "COVID-19",
+            "geography_type": "Nation",
+            "theme": "",
+            "sub_theme": "",
+        }
         serializer = GeographiesRequestSerializer(data=payload)
 
         # When / Then
@@ -648,3 +653,50 @@ class TestQuerysetToGeographyCodeNameTuples:
             ("E06000001", "Hartlepool & District"),
             ("E06000002", "St. Albans"),
         ]
+
+
+class TestGeographiesForGeographyTypeSerializer:
+    def test_data_returns_geographies_for_geography_type(self):
+        """
+        Given a `geography_type`
+        When `data()` is called
+        Then the geographies from the manager are returned with their relationships
+        """
+        # Given
+        ltla = "Lower Tier Local Authority"
+        mock_manager = mock.MagicMock()
+        mock_manager.get_geographies_by_geography_type.return_value = [
+            {"name": "Bexley", "geography_code": "E09000004"},
+        ]
+        serializer = GeographiesForGeographyTypeSerializer(
+            data={"geography_type": ltla},
+            context={"geography_manager": mock_manager},
+        )
+        serializer.is_valid(raise_exception=True)
+
+        # When
+        results = serializer.data()
+
+        # Then
+        mock_manager.get_geographies_by_geography_type.assert_called_once_with(
+            geography_type_name=ltla
+        )
+        assert results == [
+            {
+                "geography_type": ltla,
+                "geographies": [
+                    {
+                        "name": "Bexley",
+                        "geography_code": "E09000004",
+                        "relationships": None,
+                    }
+                ],
+            }
+        ]
+
+    def test_geography_manager_falls_back_to_default(self):
+        serializer = GeographiesForGeographyTypeSerializer(
+            data={"geography_type": "Nation"}
+        )
+
+        assert serializer.geography_manager == Geography.objects
