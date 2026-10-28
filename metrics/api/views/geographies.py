@@ -55,9 +55,9 @@ class GeographiesViewDeprecated(APIView):
         data = filter_geographies_by_permission(
             request=request,
             data=data,
-            theme=serializer.validated_data.get("theme", ""),
-            sub_theme=serializer.validated_data.get("sub_theme", ""),
-            topic=serializer.validated_data["topic"],
+            theme=payload["theme"],
+            sub_theme=payload["sub_theme"],
+            topic=payload["topic"],
         )
         return Response(data)
 
