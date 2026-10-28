@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from django.core.exceptions import PermissionDenied
 from django.http import StreamingHttpResponse
 from django.views.decorators.http import require_http_methods
 
@@ -12,6 +13,10 @@ audit_logger = logging.getLogger("audit")
 
 @require_http_methods(["GET"])
 def export_user_permission_sets_csv(request):
+    # Stops Editors/Moderators from accessing export
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     user_id = (
         request.user.id
         if request.user and request.user.is_authenticated
