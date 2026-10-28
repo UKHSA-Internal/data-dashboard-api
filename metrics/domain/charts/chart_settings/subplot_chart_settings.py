@@ -34,8 +34,156 @@ THIRD_CHART_WIDTH = 400
 THIRD_CHART_MULTIPLIER = 2
 THIRD_CHART_BASE_Y = 0.6
 
+FULL_CHART_WIDTH = 1100
 
 class SubplotChartSettings(ChartSettings):
+    def __init__(self, *, chart_generation_payload: SubplotChartGenerationPayload):
+        super().__init__(chart_generation_payload=chart_generation_payload)
+        self.subplot_data: List[SubplotGenerationData] = chart_generation_payload.subplot_data
+
+    @property
+    def is_horizontal_chart(self):
+        return self._chart_generation_payload.chart_width == FULL_CHART_WIDTH
+
+    def _get_x_axis_config(self) -> CHART_ARGS:
+        return {
+            "showgrid": True,
+            "griddash": "dash",
+            "gridcolor": "rgba(200,200,200,0.5)",
+            "ticklen": 5,
+            "ticks": "outside",
+            "tickfont": self._get_tick_font_config(),
+        }
+
+    def _get_y_axis_config(self) -> CHART_ARGS:
+        return {
+            "showticklabels": False,
+            "ticklen": 0,
+            "ticks": "outside",
+            "tickfont": self._get_tick_font_config(),
+            "tickson": "boundaries",
+            "showgrid": True,
+            "gridcolor": "rgba(220, 220, 220, 0.7)",
+            "griddash": "dash",
+        }
+
+    def get_make_subplots_config(self) -> CHART_ARGS:
+        suplot_config = {
+            "shared_xaxes": True,
+            "shared_yaxes": True,
+        }
+
+        if self.is_horizontal_chart:
+            suplot_config = {
+                **suplot_config,
+                "rows": 1,
+                "cols": len(self.subplot_data),
+                "horizontal_spacing": 0.03,
+            }
+
+        if not self.is_horizontal_chart:
+            suplot_config = {
+                **suplot_config,
+                "rows": len(self.subplot_data),
+                "cols": 1,
+                "horizontal_spacing": 0,
+            }
+
+        return suplot_config
+
+    def _get_legend_size_config(self):
+        """Returns the `base y` and `legend size` used to position the legend
+            of a subplot chart based on the `width` of the chart being generated.
+
+        Returns: list of numbers (int|float) used to position the legend of a
+            subplot chart based on the `width` of the chart being generated.
+        """
+        if self.width <= THIRD_CHART_WIDTH:
+            return [THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER]
+        if self.width <= NARROW_CHART_WIDTH:
+            return [NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER]
+        if self.width <= HALF_CHART_WIDTH:
+            return [HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER]
+        if self.width <= WIDE_CHART_WIDTH:
+            return [WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER]
+
+        return [DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER]
+
+    def get_legend_bottom_centre_config(self, number_of_legend_items: int):
+        [y_base, y_multiplier] = self._get_legend_size_config()
+
+        return {
+            "font": {**self._get_tick_font_config(), "size": DEFAULT_LEGEND_FONT_SIZE},
+            "orientation": "h",
+            "y": -(y_base * y_multiplier),
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "bottom",
+        }
+
+    def get_subplot_chart_config(self, number_of_legend_items: int) -> CHART_ARGS:
+        chart_config = self._get_base_chart_config()
+
+        chart_config["legend"] = self.get_legend_bottom_centre_config(
+            number_of_legend_items=number_of_legend_items
+        )
+        chart_config["autosize"] = True
+        chart_config["margin"] = {
+            "l": 3,
+            "r": 3,
+            "b": 3,
+            "t": 3,
+        }
+
+        return chart_config
+
+    def get_subplot_xaxis_config(self) -> CHART_ARGS:
+        x_axis_config = self._get_x_axis_config()
+        x_axis_config["col"] = 1
+        return x_axis_config
+
+    def get_subplot_yaxis_config(self) -> CHART_ARGS:
+        y_axis_config = self._get_y_axis_config()
+        y_axis_config["col"] = 1
+        return y_axis_config
+
+    def get_primary_subplot_yaxis_config(self) -> CHART_ARGS:
+        primary_yaxis_config = self._get_y_axis_config()
+
+        primary_yaxis_config["row"] = 1
+        primary_yaxis_config["col"] = 1
+        primary_yaxis_config["showticklabels"] = True
+        primary_yaxis_config["ticklen"] = 5
+
+        primary_yaxis_config["title_text"] = self._chart_generation_payload.y_axis_title
+        primary_yaxis_config["title_font"] = self._get_tick_font_config()
+
+        return primary_yaxis_config
+
+    def get_x_axis_title_as_annotation_config(self) -> dict:
+        y_base, _ = self._get_legend_size_config()
+
+        return {
+            "annotations": [
+                {
+                    "text": self._chart_generation_payload.x_axis_title,
+                    "x": 0.5,
+                    "y": -y_base,
+                    "xanchor": "center",
+                    "yanchor": "bottom",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {
+                        **self._get_tick_font_config(),
+                        "size": DEFAULT_ANNOTATION_FONT_SIZE,
+                    },
+                }
+            ]
+        }
+
+
+class SubplotChartSettingsOld(ChartSettings):
 
     def __init__(self, *, chart_generation_payload: SubplotChartGenerationPayload):
         super().__init__(chart_generation_payload=chart_generation_payload)

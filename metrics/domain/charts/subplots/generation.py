@@ -4,13 +4,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings.subplot_chart_settings import (
-    SubplotChartSettings,
-)
-from metrics.domain.models.subplot_plots import (
-    SubplotChartGenerationPayload,
-    SubplotGenerationData,
-)
+from metrics.domain.charts.chart_settings.subplot_chart_settings import SubplotChartSettings
+from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload, SubplotGenerationData
 
 
 def format_tick_text(*, tick_text: str) -> str:
@@ -65,16 +60,25 @@ def generate_chart_figure(
     )
     subplot_data: list[SubplotGenerationData] = chart_generation_payload.subplot_data
 
-    figure = make_subplots(
-        cols=len(subplot_data), **settings.get_make_subplots_config()
-    )
+    figure = make_subplots(**settings.get_make_subplots_config())
+    chart_orientation = "v" if settings.is_horizontal_chart else "h"
 
     for plot_index, plot_data in enumerate(subplot_data, start=1):
+
+        rows, cols = (1, plot_index) if settings.is_horizontal_chart else (plot_index, 1)
+
         for data in plot_data.subplot_data:
+
+            x_values, y_values = (
+                (data.x_axis_values, data.y_axis_values)
+                if settings.is_horizontal_chart
+                else (data.y_axis_values, data.x_axis_values)
+            )
+
             figure.add_trace(
                 go.Bar(
-                    x=data.x_axis_values,
-                    y=data.y_axis_values,
+                    x=x_values,
+                    y=y_values,
                     name=getattr(
                         data.parameters,
                         data.parameters.x_axis,
@@ -87,36 +91,70 @@ def generate_chart_figure(
                             ).stringified,
                         )
                     },
+                    orientation=chart_orientation,
                 ),
-                row=1,
-                col=plot_index,
+                row=rows,
+                col=cols,
             )
 
-        figure.update_xaxes(
-            col=plot_index,
-            ticktext=[format_tick_text(tick_text=plot_data.subplot_title)],
-            tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
-        )
+        """
+        Review the docs for this - is this the chart or subplot and what implications does
+        this have for the `col` property?
+        """
+        axis_config = {
+            "col":plot_index,
+            "ticktext":[format_tick_text(tick_text=plot_data.subplot_title)],
+            "tickvals":[math.ceil(len(plot_data.subplot_data) / 2) - 1],
+        }
+
+        if settings.is_horizontal_chart:
+            figure.update_xaxes(**axis_config)
+
+        if not settings.is_horizontal_chart:
+            figure.update_yaxes(**axis_config)
 
     [figure, plot_labels] = format_legend_names(figure)
 
+    """
+    This section needs work on how to apply these correctly
+    This updates the styles for the chart (background colour, grid etc)
+    and the plot labels updates converting y or x axis labels to the correct titles
+    depending on the "orientation"
+
+    currently just switch which xxis config loaded into x or y, this should be cleaned up
+    (probably in settings).
+
+    """
     figure.update_layout(
         **settings.get_subplot_chart_config(number_of_legend_items=len(plot_labels))
     )
-    figure.update_yaxes(**settings.get_subplot_yaxis_config())
-    figure.update_xaxes(**settings.get_subplot_xaxis_config())
+    if settings.is_horizontal_chart:
+        figure.update_yaxes(**settings.get_subplot_yaxis_config())
+        figure.update_xaxes(**settings.get_subplot_xaxis_config())
 
-    # Update primary y-axis settings (first subplot)
-    figure.update_yaxes(**settings.get_primary_subplot_yaxis_config())
+    if not settings.is_horizontal_chart:
+        figure.update_yaxes(**settings.get_subplot_xaxis_config())
+        figure.update_xaxes(**settings.get_subplot_yaxis_config())
+
+    ## Update primary y-axis settings (first subplot)
+
+    if settings.is_horizontal_chart:
+        figure.update_yaxes(**settings.get_primary_subplot_yaxis_config())
+
+    if not settings.is_horizontal_chart:
+        figure.update_xaxes(**settings.get_primary_subplot_yaxis_config())
 
     figure.update_layout(**settings.get_x_axis_title_as_annotation_config())
 
-    if chart_generation_payload.target_threshold:
+    if chart_generation_payload.target_threshold and settings.is_horizontal_chart:
         figure = add_target_threshold(
             figure=figure,
             y_bottom=chart_generation_payload.target_threshold,
             target_threshold_label=chart_generation_payload.target_threshold_label,
         )
+
+    if chart_generation_payload.target_threshold and settings.is_horizontal_chart:
+        pass
 
     return figure
 
