@@ -74,15 +74,14 @@ class TestUserCsvExporter(TestCase):
     def test_special_characters_are_escaped(self):
         user_id = str(uuid.uuid4())
         user = User.objects.create(user_id=user_id)
-        permission_set_with_special_characters = (
-            PermissionSet.objects.create(
-                display_name="=1+1", #special character escape added before the equals in the csv output
-                theme="-1",
-                sub_theme="-1",
-                topic="-1",
-                metric="-1",
-                geography_type="-1",
-            ))
+        permission_set_with_special_characters = PermissionSet.objects.create(
+            display_name="=1+1",  # special character escape added before the equals in the csv output
+            theme="-1",
+            sub_theme="-1",
+            topic="-1",
+            metric="-1",
+            geography_type="-1",
+        )
 
         user.permission_sets.add(permission_set_with_special_characters)
 
@@ -90,8 +89,10 @@ class TestUserCsvExporter(TestCase):
 
         self.assertEqual(len(rows), 2)
         self.assertEqual(
-                rows[0], "User ID,Permission Set,Gives Global Access,Permissions\r\n"
+            rows[0], "User ID,Permission Set,Gives Global Access,Permissions\r\n"
         )
         #                                                      ⌄ - Special Character Escaped
-        self.assertEqual(rows[1], f"{str(user.user_id)},'=1+1,True,Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All)\r\n")
-
+        self.assertEqual(
+            rows[1],
+            f"{str(user.user_id)},'=1+1,True,Theme: * (All) | Sub-theme: * (All) | Topic: * (All) | Metric: * (All) | Geography Type: * (All)\r\n",
+        )
