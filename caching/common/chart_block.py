@@ -1,3 +1,5 @@
+from metrics.domain.common.utils import ChartTypes
+
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
 
 
@@ -18,6 +20,6 @@ def is_dual_category_chart_block(chart_block: CMS_COMPONENT_BLOCK_TYPE) -> bool:
     )
     return (
         has_axes_fields
-        and chart_block.get("chart_type") == "stacked_bar"
+        and chart_block.get("chart_type") in ChartTypes.dual_category_chart_options()
         and chart_block.get("segments") is not None
     )

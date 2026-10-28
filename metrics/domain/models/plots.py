@@ -234,6 +234,12 @@ class ChartGenerationPayload(BaseModel):
     confidence_intervals: bool | None = False
     confidence_colour: str | None = ""
     secondary_category: str | None = ""
+    # The requested secondary category values, in the order they were
+    # requested. This is needed by chart types such as butterfly charts,
+    # where the requested order determines which side of the chart each
+    # segment is drawn on, and cannot be inferred from the plots alone
+    # since plots which return no data are dropped before generation.
+    secondary_field_values: list[str] | None = None
 
 
 class CompletePlotData(BaseModel):

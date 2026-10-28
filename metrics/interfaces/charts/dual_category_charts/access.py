@@ -3,8 +3,10 @@ from datetime import datetime
 import plotly.graph_objects as go
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from metrics.domain.charts.butterfly.generation import generate_butterfly
 from metrics.domain.charts.stacked_bar.generation import generate_stacked_bar
 from metrics.domain.common.utils import (
+    ChartTypes,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models.charts.dual_category_charts import (
@@ -63,6 +65,14 @@ class DualCategoryChartsInterface:
         Returns:
             A plotly `Figure` object for the created dual-category chart.
         """
+        if (
+            len(chart_generation_payload.plots) > 0
+            and chart_generation_payload.plots[0].parameters.chart_type == ChartTypes.butterfly.value
+        ):
+            return generate_butterfly(
+                chart_generation_payload=chart_generation_payload,
+            )
+
         return generate_stacked_bar(
             chart_generation_payload=chart_generation_payload,
         )
@@ -134,6 +144,29 @@ class DualCategoryChartsInterface:
             confidence_intervals=self.chart_request_params.confidence_intervals,
             confidence_colour=self.chart_request_params.confidence_colour,
             secondary_category=self.chart_request_params.secondary_category,
+            secondary_field_values=self._build_requested_secondary_field_values(),
+        )
+
+    def _build_requested_secondary_field_values(self) -> list[str]:
+        """Extracts the requested secondary category values in their requested order.
+
+        Notes:
+            This is taken from the full set of requested plots,
+            rather than the plots which returned data, so that the
+            order is preserved even when a plot is dropped because
+            no data was found for it.
+
+        Returns:
+            The de-duplicated secondary category values,
+            in the order in which they were requested.
+
+        """
+        secondary_category = self.chart_request_params.secondary_category
+        return list(
+            dict.fromkeys(
+                getattr(plot, secondary_category)
+                for plot in self.chart_request_params.plots
+            )
         )
 
     def _set_core_model_manager(self) -> bool:
