@@ -47,6 +47,8 @@ def collect_all_pages(
 
     return pages
 
+def collect_all_public_pages():
+    return [page for page in collect_all_pages() if getattr(page, 'is_public', False)]
 
 def extract_area_selectable_pages(*, all_pages: ALL_PAGE_TYPES) -> list[TopicPage]:
     """Builds a new list containing only the pages which are deemed suitable for the area selector

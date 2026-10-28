@@ -4,7 +4,7 @@ from timeit import default_timer
 from caching.common.pages import (
     ALL_PAGE_TYPES,
     collect_all_pages,
-    extract_area_selectable_pages,
+    extract_area_selectable_pages, collect_all_public_pages,
 )
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.area_selector.orchestration import (
@@ -12,6 +12,7 @@ from caching.private_api.crawler.area_selector.orchestration import (
 )
 from caching.private_api.management import CacheManagement
 from cms.topic.models import TopicPage
+from wagtail.models import Page
 
 logger = logging.getLogger(__name__)
 
@@ -174,6 +175,7 @@ def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
        A list of dictionaries containing a filename and download content.
 
     """
-    pages = collect_all_pages()
+
+    pages = collect_all_public_pages()
     crawler = PrivateAPICrawler.create_crawler_for_default_cache()
     return crawler.get_all_downloads(pages=pages, file_format=file_format)
