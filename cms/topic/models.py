@@ -88,8 +88,8 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         APIField("enable_area_selector"),
         *NonPublicCapablePage.api_fields,
         APIField("selected_topics"),
-        APIField("theme_name"),
-        APIField("sub_theme_name"),
+        # APIField("theme_name"),
+        # APIField("sub_theme_name"),
     ]
 
     # Tabs to position at the top of the view
@@ -147,17 +147,17 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
             sections=self.body.raw_data
         )
 
-    @property
-    def theme_name(self) -> str | None:
-        if not self.theme:
-            return None
-        return self.theme
+    # @property
+    # def theme_name(self) -> str | None:
+    #     if not self.theme:
+    #         return None
+    #     return self.theme
 
-    @property
-    def sub_theme_name(self) -> str | None:
-        if not self.sub_theme:
-            return None
-        return self.sub_theme
+    # @property
+    # def sub_theme_name(self) -> str | None:
+    #     if not self.sub_theme:
+    #         return None
+    #     return self.sub_theme
 
     def find_latest_released_embargo_for_metrics(
         self,
