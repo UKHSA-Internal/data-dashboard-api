@@ -217,8 +217,8 @@ SINGLE_FIELD_ONLY_ERROR_MESSAGE = (
 class GeographiesRequestSerializer(serializers.Serializer):
     topic = serializers.CharField(required=False)
     geography_type = serializers.CharField(required=False)
-    theme = serializers.CharField(required=False)
-    sub_theme = serializers.CharField(required=False)
+    theme = serializers.CharField(allow_blank=True)
+    sub_theme = serializers.CharField(allow_blank=True)
 
     @classmethod
     def validate(cls, attrs: dict[str, str]) -> dict[str, str]:

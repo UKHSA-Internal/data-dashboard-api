@@ -910,8 +910,10 @@ def _is_geography_permitted(
     sub_theme_id = str(sub_theme_id) if sub_theme_id else ""
     topic_id = str(topic_id) if topic_id else ""
 
-    # Step 1: only permission_sets whose theme/sub_theme (and topic, if relevant)
-    # match the page we're rendering are "in scope" for this check at all.
+    # Step 1: narrow down to the permission sets that apply to the given
+    # theme/sub_theme (and topic, if one is provided). Permission sets for any
+    # other theme/sub_theme can't grant access to this data, so they are
+    # ignored for the rest of the check.
     relevant_permission_sets = [
         permission_set
         for permission_set in permission_sets
