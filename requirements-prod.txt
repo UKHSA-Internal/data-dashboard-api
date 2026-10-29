@@ -3,7 +3,7 @@ anyascii==0.3.3
 attrs==26.1.0
 beautifulsoup4==4.15.0
 CacheControl==0.14.4
-certifi==2026.10.19
+certifi==2026.10.23
 cfgv==3.5.0
 charset-normalizer==3.5.2
 click==8.4.2
@@ -18,7 +18,7 @@ django-db-connection-pool==1.2.5
 django-filter==24.3
 django-modelcluster==6.5
 django-permissionedforms==0.1
-django-taggit==5.0.0
+django-taggit==6.1.0
 django-treebeard==5.3.1
 djangorestframework==3.18.3
 draftjs-exporter==5.2.0
@@ -30,8 +30,8 @@ filelock==4.2.1
 grimp==3.14
 gunicorn==26.2.0
 html5lib==1.1
-identify==2.6.19
-idna==3.19
+identify==2.6.20
+idna==3.20
 importlib-metadata==9.0.0
 inflection==0.5.1
 iniconfig==2.3.0
@@ -72,7 +72,7 @@ ruamel.yaml==0.19.1
 ruamel.yaml.clib==0.2.15
 SQLAlchemy==2.0.52
 scour==0.38.2
-setuptools==84.1.0
+setuptools==84.2.1
 six==1.17.0
 sortedcontainers==2.4.0
 soupsieve==2.9
