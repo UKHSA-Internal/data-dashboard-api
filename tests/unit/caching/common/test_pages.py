@@ -3,7 +3,8 @@ from unittest import mock
 from caching.common.pages import (
     collect_all_pages,
     extract_area_selectable_pages,
-    get_pages_for_area_selector, collect_all_public_pages,
+    get_pages_for_area_selector,
+    collect_all_public_pages,
 )
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
@@ -157,11 +158,12 @@ class TestCollectAllPages:
             FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template(
                 live=True,
                 is_public=True,
-        ))
-        private_topic_page = (FakeTopicPageFactory.build_covid_19_page_from_template(
-                live=True,
-                is_public=False,
-        ))
+            )
+        )
+        private_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template(
+            live=True,
+            is_public=False,
+        )
 
         whats_new_parent_page = FakeWhatsNewParentPageFactory.build_page_from_template(
             live=True,
@@ -172,9 +174,13 @@ class TestCollectAllPages:
 
         # When
         collected_public_pages = collect_all_public_pages(
-            topic_page_manager=FakeTopicPageManager(pages=[public_topic_page, private_topic_page]),
+            topic_page_manager=FakeTopicPageManager(
+                pages=[public_topic_page, private_topic_page]
+            ),
             common_page_manager=FakeCommonPageManager(pages=[common_page]),
-            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[whats_new_parent_page]),
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(
+                pages=[whats_new_parent_page]
+            ),
             whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
         )
 
@@ -184,7 +190,6 @@ class TestCollectAllPages:
         assert whats_new_parent_page in collected_public_pages
 
         assert private_topic_page not in collected_public_pages
-
 
 
 class TestExtractAreaSelectablePages:

@@ -121,9 +121,12 @@ class TestPrivateAPICrawlerGetAllDownloads:
 
         # When
         downloads = private_api_crawler_with_mocked_internal_api_client.get_downloads_from_chart_row_columns(
-            chart_row_columns=[faked_two_row_columns[0],
-                               faked_two_row_columns[0],
-                               faked_two_row_columns[0]], file_format="csv"
+            chart_row_columns=[
+                faked_two_row_columns[0],
+                faked_two_row_columns[0],
+                faked_two_row_columns[0],
+            ],
+            file_format="csv",
         )
 
         # Then

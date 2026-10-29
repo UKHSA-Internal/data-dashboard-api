@@ -4,8 +4,8 @@ from timeit import default_timer
 from caching.common.pages import (
     ALL_PAGE_TYPES,
     collect_all_pages,
-    extract_area_selectable_pages,
     collect_all_public_pages,
+    extract_area_selectable_pages,
 )
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.area_selector.orchestration import (
