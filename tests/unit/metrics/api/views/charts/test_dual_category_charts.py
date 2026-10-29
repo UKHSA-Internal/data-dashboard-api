@@ -146,7 +146,7 @@ class TestDualCategoryChartsViewSuccessHandling:
             chart="encoded-svg",
             alt_text="Chart description",
             figure={
-                "data": [{"type": "scatter", "x": ["2024-01-01"], "y": [1]}],
+                "data": [],
                 "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
             },
         )
@@ -163,11 +163,15 @@ class TestDualCategoryChartsViewSuccessHandling:
         assert response.data["chart"] == "encoded-svg"
         assert response.data["figure_config"] == {
             "full": {
-                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "data": [],
                 "layout": {"xaxis": {"nticks": 13}, "yaxis": {}},
             },
             "compact": {
-                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "data": [],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
+            "compact_rotated": {
+                "data": [],
                 "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
             },
         }
@@ -183,7 +187,7 @@ class TestDualCategoryChartsViewSuccessHandling:
             last_updated="2024-01-01",
             chart="encoded-svg",
             alt_text="Chart description",
-            figure={"layout": {"xaxis": {"type": "-"}, "yaxis": {}}},
+            figure={"layout": {"xaxis": {"type": "-"}}},
         )
         chart_request_params = mock.MagicMock(spec=DualCategoryChartRequestParams)
 
@@ -194,12 +198,7 @@ class TestDualCategoryChartsViewSuccessHandling:
         assert isinstance(response, Response)
         assert response.status_code == HTTPStatus.OK
         assert response.data["figure_config"] == {
-            "full": {
-                "data": [],
-                "layout": {"xaxis": {"type": "-"}, "yaxis": {}},
-            },
-            "compact": {
-                "data": [],
-                "layout": {"xaxis": {"type": "-"}, "yaxis": {}},
-            },
+            "full": {"data": [], "layout": {}},
+            "compact": {"data": [], "layout": {}},
+            "compact_rotated": {"data": [], "layout": {}},
         }

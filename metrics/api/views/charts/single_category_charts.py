@@ -289,6 +289,16 @@ class EncodedChartsView(APIView):
                             ],
                             "layout": {"xaxis": {"nticks": 5}},
                         },
+                        "compact_rotated": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 5}},
+                        },
                     },
                 },
                 response_only=True,

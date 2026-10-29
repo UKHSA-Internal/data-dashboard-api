@@ -30,6 +30,7 @@ from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.factories.metrics.domain.plots.plot_parameters import FakePlotParameters
 
 MODULE_PATH = "metrics.interfaces.charts.single_category_charts.access"
+MINIMUM_EXPECTED_COMPACT_HEIGHT = 400
 
 
 class TestChartsInterface:
@@ -670,87 +671,23 @@ class TestChartsInterface:
                 "data": [{"x": ["2024-01-01"], "y": [1]}],
                 "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
             },
-        }
-
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    def test_get_encoded_chart_rotates_non_timeseries_bar_in_compact_mode(
-        self,
-        mocked_encode_figure: mock.MagicMock,
-        fake_chart_plot_parameters_headline_data: PlotParameters,
-    ):
-        mocked_chart_output = mock.Mock()
-        mocked_chart_output.interactive_chart_figure_output = {
-            "data": [
-                {
-                    "type": "bar",
-                    "x": ["00-04", "05-14"],
-                    "y": [10, 20],
-                    "hovertemplate": "%{x}: %{y}",
-                }
-            ],
-            "layout": {
-                "xaxis": {"title": {"text": "Age group"}},
-                "yaxis": {"title": {"text": "Admission rate"}},
+            "compact_rotated": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
             },
         }
 
-        fake_chart_plot_parameters_headline_data.chart_type = ChartTypes.bar.value
-
-        mocked_plots_collection = mock.MagicMock()
-        mocked_plots_collection.plots = [fake_chart_plot_parameters_headline_data]
-
-        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
-
-        encoded_chart = charts_interface.get_encoded_chart(
-            chart_output=mocked_chart_output
-        )
-
-        assert encoded_chart["figure_config"]["full"]["data"] == [
-            {
-                "x": ["00-04", "05-14"],
-                "y": [10, 20],
-                "hovertemplate": "%{x}: %{y}",
-                "orientation": "v",
-            }
-        ]
-
-        assert encoded_chart["figure_config"]["compact"]["data"] == [
-            {
-                "x": [10, 20],
-                "y": ["00-04", "05-14"],
-                "hovertemplate": "%{y}: %{x}",
-                "orientation": "h",
-            }
-        ]
-
-        assert (
-            encoded_chart["figure_config"]["compact"]["layout"]["xaxis"]["title"][
-                "text"
-            ]
-            == "Admission rate"
-        )
-
-        assert (
-            encoded_chart["figure_config"]["compact"]["layout"]["yaxis"]["title"][
-                "text"
-            ]
-            == "Age group"
-        )
-
     @mock.patch.object(ChartsInterface, "encode_figure")
-    def test_get_encoded_chart_returns_unrotated_config_for_non_bar_headline(
+    def test_get_encoded_chart_returns_rotated_config_for_headline_bar(
         self,
         mocked_encode_figure: mock.MagicMock,
         fake_chart_plot_parameters_headline_data: PlotParameters,
     ):
         mocked_chart_output = mock.Mock()
         mocked_chart_output.interactive_chart_figure_output = {
-            "data": [{"type": "scatter", "x": ["Category"], "y": [1]}],
+            "data": [{"type": "bar", "x": ["Category"], "y": [1]}],
             "layout": {"xaxis": {"type": "category"}, "yaxis": {}},
         }
-        fake_chart_plot_parameters_headline_data.chart_type = (
-            ChartTypes.line_multi_coloured.value
-        )
         mocked_plots_collection = mock.MagicMock()
         mocked_plots_collection.plots = [fake_chart_plot_parameters_headline_data]
         charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
@@ -759,16 +696,20 @@ class TestChartsInterface:
             chart_output=mocked_chart_output
         )
 
-        assert encoded_chart["figure_config"] == {
-            "full": {
-                "data": [{"x": ["Category"], "y": [1]}],
-                "layout": {"xaxis": {"type": "category"}, "yaxis": {}},
-            },
-            "compact": {
-                "data": [{"x": ["Category"], "y": [1]}],
-                "layout": {"xaxis": {"type": "category"}, "yaxis": {}},
-            },
+        assert encoded_chart["figure_config"]["compact"]["data"][0] == {
+            "x": ["Category"],
+            "y": [1],
+            "orientation": "v",
         }
+        assert encoded_chart["figure_config"]["compact_rotated"]["data"][0] == {
+            "x": [1],
+            "y": ["Category"],
+            "orientation": "h",
+        }
+        assert (
+            encoded_chart["figure_config"]["compact_rotated"]["layout"]["height"]
+            == MINIMUM_EXPECTED_COMPACT_HEIGHT
+        )
 
 
 class TestGenerateChartAsFile:

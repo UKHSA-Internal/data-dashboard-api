@@ -136,6 +136,7 @@ class FigureModeConfigSerializer(serializers.Serializer):
 class FigureConfigSerializer(serializers.Serializer):
     full = FigureModeConfigSerializer()
     compact = FigureModeConfigSerializer()
+    compact_rotated = FigureModeConfigSerializer()
 
 
 class EncodedResponsiveChartResponseSerializer(EncodedChartResponseSerializer):

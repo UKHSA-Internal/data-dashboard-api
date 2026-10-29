@@ -1,4 +1,4 @@
-"""Build responsive Plotly overrides for interactive charts.
+"""Build the three responsive Plotly overrides for interactive charts.
 
 The base ``figure`` remains the source used for static and non-JavaScript output.
 The configurations built here contain only the trace and layout attributes the
@@ -22,6 +22,10 @@ PATH_COORDINATE_PATTERN = re.compile(
     r"(?P<y>-?(?:\d+(?:\.\d*)?|\.\d+))"
 )
 HOVER_AXIS_PATTERN = re.compile(r"%\{(?P<axis>[xy])(?P<remainder>[^}]*)\}")
+
+COMPACT_CHART_BASE_HEIGHT = 200
+COMPACT_CHART_HEIGHT_PER_BAR = 25
+MINIMUM_COMPACT_CHART_HEIGHT = 400
 
 AXIS_POSITION_PROPERTIES = {
     "anchor",
@@ -205,9 +209,10 @@ def _rotate_annotation(annotation: Mapping[str, Any]) -> dict:
 
 def _build_layout_configs(
     layout: Mapping[str, Any], *, rotate_compact: bool
-) -> tuple[dict, dict]:
+) -> tuple[dict, dict, dict]:
     full_layout: dict[str, Any] = {}
     compact_layout: dict[str, Any] = {}
+    compact_rotated_layout: dict[str, Any] = {}
 
     for x_key, y_key, x_axis, y_axis in _axis_pairs(layout):
         full_x_axis = copy.deepcopy(x_axis)
@@ -219,28 +224,33 @@ def _build_layout_configs(
 
         if should_limit_x_axis_ticks:
             full_x_axis["nticks"] = FULL_WIDTH_X_AXIS_NTICKS
+            compact_x_axis["nticks"] = COMPACT_X_AXIS_NTICKS
 
         if rotate_compact:
-            compact_x_axis = _axis_for_rotated_position(
+            compact_rotated_x_axis = _axis_for_rotated_position(
                 source_axis=y_axis,
                 destination_axis=x_axis,
             )
-            compact_y_axis = _axis_for_rotated_position(
+            compact_rotated_y_axis = _axis_for_rotated_position(
                 source_axis=x_axis,
                 destination_axis=y_axis,
             )
-        elif should_limit_x_axis_ticks:
-            compact_x_axis["nticks"] = COMPACT_X_AXIS_NTICKS
+        else:
+            compact_rotated_x_axis = copy.deepcopy(compact_x_axis)
+            compact_rotated_y_axis = copy.deepcopy(compact_y_axis)
 
         full_layout[x_key] = full_x_axis
         full_layout[y_key] = full_y_axis
         compact_layout[x_key] = compact_x_axis
         compact_layout[y_key] = compact_y_axis
+        compact_rotated_layout[x_key] = compact_rotated_x_axis
+        compact_rotated_layout[y_key] = compact_rotated_y_axis
 
     shapes = layout.get("shapes")
     if isinstance(shapes, (list, tuple)):
         full_layout["shapes"] = copy.deepcopy(shapes)
-        compact_layout["shapes"] = (
+        compact_layout["shapes"] = copy.deepcopy(shapes)
+        compact_rotated_layout["shapes"] = (
             [_rotate_shape(shape) for shape in shapes]
             if rotate_compact
             else copy.deepcopy(shapes)
@@ -249,19 +259,47 @@ def _build_layout_configs(
     annotations = layout.get("annotations")
     if isinstance(annotations, (list, tuple)):
         full_layout["annotations"] = copy.deepcopy(annotations)
-        compact_layout["annotations"] = (
+        compact_layout["annotations"] = copy.deepcopy(annotations)
+        compact_rotated_layout["annotations"] = (
             [_rotate_annotation(annotation) for annotation in annotations]
             if rotate_compact
             else copy.deepcopy(annotations)
         )
 
-    return full_layout, compact_layout
+    return full_layout, compact_layout, compact_rotated_layout
+
+
+def _count_bar_categories(traces: list | tuple) -> int:
+    """Count distinct category positions without double-counting stacked traces."""
+    categories: list[Any] = []
+
+    for trace in traces:
+        if not isinstance(trace, Mapping) or trace.get("type") != "bar":
+            continue
+
+        x_values = trace.get("x", [])
+        if not isinstance(x_values, (list, tuple)):
+            continue
+
+        for category in x_values:
+            if category not in categories:
+                categories.append(category)
+
+    return len(categories)
+
+
+def _calculate_compact_bar_chart_height(traces: list | tuple) -> int:
+    number_of_bars = _count_bar_categories(traces)
+    calculated_height = (
+        COMPACT_CHART_BASE_HEIGHT + number_of_bars * COMPACT_CHART_HEIGHT_PER_BAR
+    )
+    return max(MINIMUM_COMPACT_CHART_HEIGHT, calculated_height)
 
 
 def build_figure_config(
     *, figure: Any, rotate_compact: bool = False
 ) -> dict[str, dict[str, Any]]:
-    """Build the full and compact overrides for an interactive Plotly figure."""
+    """Build full, compact and compact-rotated Plotly overrides."""
     if not isinstance(figure, Mapping):
         figure = {}
 
@@ -279,16 +317,34 @@ def build_figure_config(
         if isinstance(trace, Mapping)
     ]
     compact_data = [
-        _build_trace_override(trace, rotate=rotate_compact)
+        _build_trace_override(trace, rotate=False)
         for trace in traces
         if isinstance(trace, Mapping)
     ]
-    full_layout, compact_layout = _build_layout_configs(
+    compact_rotated_data = (
+        [
+            _build_trace_override(trace, rotate=True)
+            for trace in traces
+            if isinstance(trace, Mapping)
+        ]
+        if rotate_compact
+        else copy.deepcopy(compact_data)
+    )
+    full_layout, compact_layout, compact_rotated_layout = _build_layout_configs(
         layout,
         rotate_compact=rotate_compact,
     )
 
+    if rotate_compact:
+        compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(
+            traces
+        )
+
     return {
         "full": {"data": full_data, "layout": full_layout},
         "compact": {"data": compact_data, "layout": compact_layout},
+        "compact_rotated": {
+            "data": compact_rotated_data,
+            "layout": compact_rotated_layout,
+        },
     }
