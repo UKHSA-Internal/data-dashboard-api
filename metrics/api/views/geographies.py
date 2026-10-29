@@ -47,7 +47,7 @@ class GeographiesViewDeprecated(APIView):
         if one is not provided.
 
         """
-        payload = {"topic": self.kwargs["topic"]}
+        payload = {"topic": self.kwargs["topic"], "theme": "", "sub_theme": ""}
         serializer = GeographiesForTopicSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
 
@@ -55,9 +55,9 @@ class GeographiesViewDeprecated(APIView):
         data = filter_geographies_by_permission(
             request=request,
             data=data,
-            theme=payload["theme"],
-            sub_theme=payload["sub_theme"],
-            topic=payload["topic"],
+            theme=serializer.validated_data["theme"],
+            sub_theme=serializer.validated_data["sub_theme"],
+            topic=serializer.validated_data["topic"],
         )
         return Response(data)
 
@@ -84,32 +84,29 @@ class GeographiesView(APIView):
         request_serializer = GeographiesRequestSerializer(data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
 
-        payload = request_serializer.data
+        payload = request_serializer.validated_data
+        theme: str = payload["theme"]
+        sub_theme: str = payload["sub_theme"]
 
         if "topic" in payload:
             payload["is_public"] = request.auth is None
             data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
                 payload=payload
             )
-            data = filter_geographies_by_permission(
-                request=request,
-                data=data,
-                theme=payload.get("theme", ""),
-                sub_theme=payload.get("sub_theme", ""),
-                topic=payload["topic"],
-            )
+            topic: str = payload["topic"]
         else:
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-            data = filter_geographies_by_permission(
-                request=request,
-                data=data,
-                theme=payload.get("theme", ""),
-                sub_theme=payload.get("sub_theme", ""),
-                topic="",
-            )
+            topic = ""
 
+        data = filter_geographies_by_permission(
+            request=request,
+            data=data,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+        )
         return Response(data)
 
     @classmethod

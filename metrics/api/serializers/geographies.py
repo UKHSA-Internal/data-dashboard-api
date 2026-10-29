@@ -20,8 +20,8 @@ GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 class GeographiesForTopicSerializer(serializers.Serializer):
     topic = serializers.CharField()
-    theme = serializers.CharField(required=False, default="")
-    sub_theme = serializers.CharField(required=False, default="")
+    theme = serializers.CharField(allow_blank=True)
+    sub_theme = serializers.CharField(allow_blank=True)
     is_public = serializers.BooleanField(required=False, default=True)
 
     def validate_topic(self, value):

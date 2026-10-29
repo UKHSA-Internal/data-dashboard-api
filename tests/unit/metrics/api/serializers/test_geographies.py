@@ -8,6 +8,7 @@ from common.auth.permissions import WILDCARD_ID_VALUE
 from metrics.data.models.core_models.supporting import Geography
 from validation.geography_code import UNITED_KINGDOM_GEOGRAPHY_CODE
 from metrics.api.serializers.geographies import (
+    GeographiesForGeographyTypeSerializer,
     GeographiesForTopicSerializer,
     _serialize_queryset,
     GeographiesRequestSerializer,
@@ -172,7 +173,7 @@ class TestGeographiesSerializer:
             context={
                 "topic_manager": fake_topic_manager,
             },
-            data={"topic": "COVID-19"},
+            data={"topic": "COVID-19", "theme": "", "sub_theme": ""},
         )
 
         # Then
