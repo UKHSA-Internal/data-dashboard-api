@@ -66,22 +66,19 @@ class TestAPITimeSeriesRequestSerializerV3:
         ],
     )
     def test_get_formatted_kwargs_from_request(self, api_model: models.Model):
-        """
-        Given a request which contains kwargs from the URL parameters
-        When `get_formatted_kwargs_from_request()` is called from an instance of the `APITimeSeriesRequestSerializer`
-        Then the kwargs from the request URL parameters are returned and any + symbols replaced with spaces.
-        """
         with mock.patch.object(api_model, "objects") as api_manager_spy:
 
             # Given
             fake_request_kwargs = {
                 "theme": "infectious_disease",
                 "geography_type": "Government+Office+Region",
+                "sub_theme": "respiratory",
             }
             fake_parser_context = {
                 "kwargs": fake_request_kwargs,
             }
             mocked_request = mock.Mock(parser_context=fake_parser_context)
+            mocked_request.user.permission_sets = None
             serializer = APIRequestSerializerv3(
                 context={
                     "request": mocked_request,
@@ -97,6 +94,7 @@ class TestAPITimeSeriesRequestSerializerV3:
             api_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
                 lookup_field="theme",
                 theme="infectious_disease",
+                sub_theme="respiratory",
                 permission_sets=None,
                 geography_type="Government Office Region",
             )
