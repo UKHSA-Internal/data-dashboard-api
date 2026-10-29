@@ -800,6 +800,7 @@ class TestEncodingSingleCategoryChartResponseSerializer:
             "figure_config": {
                 "full": {"data": [], "layout": {"axis": {"nticks": 13}}},
                 "compact": {"data": [], "layout": {"axis": {"nticks": 5}}},
+                "compact_rotated": {"data": [], "layout": {"axis": {"nticks": 5}}},
             },
         }
         serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)

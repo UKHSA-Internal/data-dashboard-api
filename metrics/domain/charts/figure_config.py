@@ -336,9 +336,7 @@ def build_figure_config(
     )
 
     if rotate_compact:
-        compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(
-            traces
-        )
+        compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
     return {
         "full": {"data": full_data, "layout": full_layout},

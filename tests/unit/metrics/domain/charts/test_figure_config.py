@@ -29,12 +29,8 @@ class TestBuildFigureConfig:
 
         config = build_figure_config(figure=figure)
 
-        assert config["full"]["layout"]["xaxis"]["nticks"] == (
-            FULL_WIDTH_X_AXIS_NTICKS
-        )
-        assert config["compact"]["layout"]["xaxis"]["nticks"] == (
-            COMPACT_X_AXIS_NTICKS
-        )
+        assert config["full"]["layout"]["xaxis"]["nticks"] == (FULL_WIDTH_X_AXIS_NTICKS)
+        assert config["compact"]["layout"]["xaxis"]["nticks"] == (COMPACT_X_AXIS_NTICKS)
         assert config["compact_rotated"] == config["compact"]
         assert config["compact"]["data"] == config["full"]["data"]
 
@@ -70,15 +66,11 @@ class TestBuildFigureConfig:
 
         assert config["compact"]["data"] == config["full"]["data"]
         assert config["compact"]["data"][0]["orientation"] == "v"
-        assert config["compact"]["layout"]["xaxis"]["title"]["text"] == (
-            "Category"
-        )
+        assert config["compact"]["layout"]["xaxis"]["title"]["text"] == ("Category")
 
         rotated_trace = config["compact_rotated"]["data"][0]
         assert rotated_trace["x"] == list(range(7))
-        assert rotated_trace["y"] == [
-            f"Category {index}" for index in range(7)
-        ]
+        assert rotated_trace["y"] == [f"Category {index}" for index in range(7)]
         assert rotated_trace["orientation"] == "h"
         assert rotated_trace["hovertemplate"] == "%{y}: %{x:.1f}"
         assert rotated_trace["error_x"] == {
