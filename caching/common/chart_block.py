@@ -18,8 +18,9 @@ def is_dual_category_chart_block(chart_block: CMS_COMPONENT_BLOCK_TYPE) -> bool:
         chart_block.get("x_axis") is not None
         or chart_block.get("primary_field_values") is not None
     )
+    dual_category_chart_options = [chart_type for chart_type, _ in ChartTypes.dual_category_chart_options()]
     return (
         has_axes_fields
-        and chart_block.get("chart_type") in ChartTypes.dual_category_chart_options()
+        and chart_block.get("chart_type") in dual_category_chart_options
         and chart_block.get("segments") is not None
     )

@@ -163,7 +163,7 @@ class DualCategoryChartsInterface:
         """
         secondary_category = self.chart_request_params.secondary_category
         return list(
-            dict.fromkeys(
+            set(
                 getattr(plot, secondary_category)
                 for plot in self.chart_request_params.plots
             )

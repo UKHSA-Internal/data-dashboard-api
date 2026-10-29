@@ -71,8 +71,6 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
     def to_models(self, request: Request) -> DualCategoryChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
-        x_axis_title = self.data.get("x_axis_title", "")
-        y_axis_title = self.data.get("y_axis_title", "")
         is_public: bool = self.data.get("is_public", True)
         data_classification: str | None = self.data.get("data_classification")
 
@@ -102,7 +100,7 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             # filter each plot and read its values back from the database,
             # so the pair is swapped back into that internal form here.
             x_axis, y_axis = y_axis, x_axis
-            x_axis_title, y_axis_title = y_axis_title, x_axis_title
+            x_axis_title, y_axis_title = self.data.get("y_axis_title", ""), self.data.get("x_axis_title", "")
 
         # Butterfly charts always plot a primary category (eg. age) against
         # a secondary category, so they follow the same grouping as headline
@@ -150,8 +148,8 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
             x_axis=x_axis,
             y_axis=y_axis,
-            x_axis_title=x_axis_title,
-            y_axis_title=y_axis_title,
+            x_axis_title = (x_axis_title := ""),
+            y_axis_title = (y_axis_title := ""),
             y_axis_minimum_value=self.data["y_axis_minimum_value"]
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],

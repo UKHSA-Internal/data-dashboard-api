@@ -6,59 +6,6 @@ from metrics.domain.charts.chart_settings.single_category import (
 )
 from metrics.domain.models.plots import ChartGenerationPayload, PlotGenerationData
 
-BUTTERFLY_TARGET_TICKS_PER_SIDE = 4
-# Multipliers which produce "rounded" tick steps,
-# eg. 1, 2, 2.5 or 5 for any given power of 10
-NICE_TICK_STEP_MULTIPLIERS = (1, 2, 2.5, 5, 10)
-
-
-def _calculate_nice_tick_step(
-    *,
-    maximum_value: float,
-    target_tick_count: int,
-) -> float:
-    """Calculates a rounded tick step which covers the given `maximum_value`.
-
-    Args:
-        maximum_value: The largest absolute value in the plotted data.
-        target_tick_count: The number of ticks to aim
-            for on each side of the chart.
-
-    Returns:
-        A rounded step size, eg. 1, 2, 2.5, 5 or 10
-        for the relevant power of 10.
-
-    """
-    if maximum_value <= 0:
-        return 1
-
-    rough_step = maximum_value / target_tick_count
-    magnitude = 10 ** math.floor(math.log10(rough_step))
-
-    for multiplier in NICE_TICK_STEP_MULTIPLIERS:
-        step = multiplier * magnitude
-        if step >= rough_step:
-            return step
-
-    return 10 * magnitude
-
-
-def _format_tick_label(*, value: float) -> str:
-    """Formats the given tick `value` for display on the value axis.
-
-    Args:
-        value: The absolute value of the tick.
-
-    Returns:
-        The thousands-separated label for the tick,
-        with decimal places only included when needed.
-
-    """
-    if float(value).is_integer():
-        return f"{int(value):,}"
-
-    return f"{value:,.1f}"
-
 
 class DualCategoryChartSettings(SingleCategoryChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -155,70 +102,10 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                     "text": self._chart_generation_payload.y_axis_title,
                     "font": tick_font,
                 },
-                **self._get_butterfly_value_axis_tick_config(
-                    plotted_values=plotted_values
-                ),
             },
         }
 
         return {**chart_config, **self._get_legend_config()}
-
-    def _get_butterfly_value_axis_tick_config(
-        self,
-        *,
-        plotted_values: list[float] | None = None,
-    ) -> dict:
-        """
-        Builds the tick values/labels for the butterfly chart's value axis.
-
-        Notes:
-            Tick marks are placed at evenly spaced, rounded intervals
-            which are mirrored on both sides of zero, and are labelled
-            with their absolute (ie. non-negative) value so that both
-            sides of the chart remain easy to read.
-            The axis range is also kept symmetrical so that the centre
-            of the chart stays aligned with zero, giving both sides of
-            the chart the same amount of room.
-
-        Args:
-            plotted_values: The values which are actually drawn on the
-                chart. Falls back to the raw plot values when not given.
-
-        Returns:
-            A dict containing the `tickvals`, `ticktext`
-            and `range` for the axis.
-        """
-        if plotted_values is None:
-            plotted_values = [
-                value for plot in self.plots_data for value in plot.y_axis_values
-            ]
-
-        maximum_value = max(
-            (abs(float(value)) for value in plotted_values),
-            default=0,
-        )
-
-        tick_step = _calculate_nice_tick_step(
-            maximum_value=maximum_value,
-            target_tick_count=BUTTERFLY_TARGET_TICKS_PER_SIDE,
-        )
-        ticks_per_side = max(math.ceil(maximum_value / tick_step), 1)
-
-        positive_tickvals = [
-            tick_step * tick_index for tick_index in range(1, ticks_per_side + 1)
-        ]
-        tickvals = (
-            [-tickval for tickval in reversed(positive_tickvals)]
-            + [0]
-            + positive_tickvals
-        )
-        axis_limit = tick_step * ticks_per_side
-
-        return {
-            "tickvals": tickvals,
-            "ticktext": [_format_tick_label(value=abs(tickval)) for tickval in tickvals],
-            "range": [-axis_limit, axis_limit],
-        }
 
     def _get_legend_config(self) -> dict:
         """
