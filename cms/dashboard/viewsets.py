@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.private_api.decorators import cache_response
+from cms.acknowledgement.models import AcknowledgementPage
 from cms.auth_content.auth_utils import is_auth_enabled
 from cms.auth_content.page_filtering import (
     filter_non_public_pages,
@@ -63,7 +64,9 @@ class BaseCMSPagesAPIViewSet(PagesAPIViewSet):
         req = self.request
 
         if not AUTH_ENABLED or req.auth is None:
-            filtered_queryset = filter_public_pages(queryset=queryset)
+            filtered_queryset = filter_public_pages(
+                queryset=queryset.not_type(AcknowledgementPage)
+            )
         else:
             log_user_permission_summary(req.user)
             has_global_access = req.user.permission_sets["summary"]["has_global_access"]
