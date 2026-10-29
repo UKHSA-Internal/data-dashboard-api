@@ -20,8 +20,8 @@ GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 class GeographiesForTopicSerializer(serializers.Serializer):
     topic = serializers.CharField()
-    theme = serializers.CharField(allow_blank=True)
-    sub_theme = serializers.CharField(allow_blank=True)
+    theme = serializers.CharField(required=False, allow_blank=True, default="")
+    sub_theme = serializers.CharField(required=False, allow_blank=True, default="")
     is_public = serializers.BooleanField(required=False, default=True)
 
     def validate_topic(self, value):
@@ -217,8 +217,8 @@ SINGLE_FIELD_ONLY_ERROR_MESSAGE = (
 class GeographiesRequestSerializer(serializers.Serializer):
     topic = serializers.CharField(required=False)
     geography_type = serializers.CharField(required=False)
-    theme = serializers.CharField(allow_blank=True)
-    sub_theme = serializers.CharField(allow_blank=True)
+    theme = serializers.CharField(required=False, allow_blank=True, default="")
+    sub_theme = serializers.CharField(required=False, allow_blank=True, default="")
 
     @classmethod
     def validate(cls, attrs: dict[str, str]) -> dict[str, str]:
