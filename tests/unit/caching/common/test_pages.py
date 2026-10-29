@@ -163,20 +163,26 @@ class TestCollectAllPages:
                 is_public=False,
         ))
 
-        fake_topic_page_manager = FakeTopicPageManager(
-            pages=[public_topic_page, private_topic_page]
+        whats_new_parent_page = FakeWhatsNewParentPageFactory.build_page_from_template(
+            live=True,
+        )
+        common_page = FakeCommonPageFactory.build_blank_page(
+            live=True,
         )
 
         # When
         collected_public_pages = collect_all_public_pages(
-            topic_page_manager=fake_topic_page_manager,
-            common_page_manager=FakeCommonPageManager(pages=[]),
-            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
+            topic_page_manager=FakeTopicPageManager(pages=[public_topic_page, private_topic_page]),
+            common_page_manager=FakeCommonPageManager(pages=[common_page]),
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[whats_new_parent_page]),
             whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
         )
 
         # Then
         assert public_topic_page in collected_public_pages
+        assert common_page in collected_public_pages
+        assert whats_new_parent_page in collected_public_pages
+
         assert private_topic_page not in collected_public_pages
 
 

@@ -80,7 +80,7 @@ def collect_all_public_pages(
     pages += whats_new_parent_page_manager.get_live_pages()
     pages += whats_new_child_entry_manager.get_live_pages()
 
-    return [page for page in pages if getattr(page, 'is_public', False)]
+    return [page for page in pages if getattr(page, 'is_public', True)]
 
 def extract_area_selectable_pages(*, all_pages: ALL_PAGE_TYPES) -> list[TopicPage]:
     """Builds a new list containing only the pages which are deemed suitable for the area selector
