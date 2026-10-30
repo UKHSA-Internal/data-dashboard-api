@@ -3,8 +3,8 @@ from typing import Any
 
 import plotly.graph_objects
 
+from metrics.domain.charts.chart_settings.single_category import COMPACT_X_AXIS_NTICKS
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
-
 from metrics.domain.charts.common_charts import generation
 from metrics.domain.models import (
     PlotGenerationData,
@@ -110,11 +110,13 @@ class TestLineMultiColouredCharts:
 
         # ---X Axis checks---
         x_axis = main_layout.xaxis
-        # The `M1` dtick setting ensures x values within the same month do not show repeated months:
-        # ___Sep___Oct___Nov___  as opposed to _Sep_Sep_Oct_Oct_Oct_Nov_Nov_
-        assert x_axis.dtick == "M1"
-        # The date format is in `Month Year` e.g. `May 2023`
-        assert x_axis.tickformat == "%b %Y"
+        assert x_axis.dtick is None
+        assert x_axis.autorange is True
+        assert x_axis.range is None
+        assert x_axis.nticks is COMPACT_X_AXIS_NTICKS
+        assert x_axis.tickformatstops[0].value == "%Y"
+        assert x_axis.tickformatstops[1].value == "%b %Y"
+        assert x_axis.tickformatstops[2].value == "%d %b<br>%Y"
 
         # ---Y Axis checks---
         y_axis = main_layout.yaxis

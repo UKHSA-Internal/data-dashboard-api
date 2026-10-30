@@ -37,6 +37,11 @@ class SubplotChartsInterface:
         self.core_time_series_manager = core_time_series_manager
         self.last_updated = ""
 
+    @property
+    def supports_compact_rotation(self) -> bool:
+        """Cover-page subplots are categorical bar cahrts in both modes."""
+        return True
+
     def _build_plots_data(self) -> list[dict[str, PlotGenerationData | str]]:
         """Creates a list of `Subplot` models which hold the params and corresponding data for the
             requested subplots and each subplot's `PlotGenerationData`.

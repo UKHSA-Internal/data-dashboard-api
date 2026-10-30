@@ -145,7 +145,10 @@ class TestDualCategoryChartsViewSuccessHandling:
             last_updated="2024-01-01",
             chart="encoded-svg",
             alt_text="Chart description",
-            figure={},
+            figure={
+                "data": [],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
         )
         chart_request_params = mock.MagicMock(spec=DualCategoryChartRequestParams)
 
@@ -158,3 +161,44 @@ class TestDualCategoryChartsViewSuccessHandling:
         assert isinstance(response, Response)
         assert response.status_code == HTTPStatus.OK
         assert response.data["chart"] == "encoded-svg"
+        assert response.data["figure_config"] == {
+            "full": {
+                "data": [],
+                "layout": {"xaxis": {"nticks": 13}, "yaxis": {}},
+            },
+            "compact": {
+                "data": [],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
+            "compact_rotated": {
+                "data": [],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
+        }
+
+    @mock.patch(
+        "metrics.api.views.charts.dual_category_charts.generate_encoded_chart",
+    )
+    def test_handle_encoded_svg_returns_figure_config_for_categorical_axis(
+        self,
+        mocked_generate_encoded_chart: mock.MagicMock,
+    ):
+        mocked_generate_encoded_chart.return_value = ChartResult(
+            last_updated="2024-01-01",
+            chart="encoded-svg",
+            alt_text="Chart description",
+            figure={"layout": {"xaxis": {"type": "-"}}},
+        )
+        chart_request_params = mock.MagicMock(spec=DualCategoryChartRequestParams)
+
+        response = DualCategoryChartsView._handle_encoded_svg(
+            chart_request_params=chart_request_params,
+        )
+
+        assert isinstance(response, Response)
+        assert response.status_code == HTTPStatus.OK
+        assert response.data["figure_config"] == {
+            "full": {"data": [], "layout": {}},
+            "compact": {"data": [], "layout": {}},
+            "compact_rotated": {"data": [], "layout": {}},
+        }
