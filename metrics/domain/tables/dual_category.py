@@ -9,7 +9,10 @@ def build_dual_category_plot_params(
     primary_field_values: list[str],
     is_timeseries_data: bool,
 ) -> list[dict]:
-    if is_timeseries_data:
+    # Butterfly charts always plot a primary category (eg. age) against
+    # a secondary category, so they follow the same grouping as headline
+    # data, even when the underlying metric is sourced from timeseries data.
+    if is_timeseries_data and chart_type != "butterfly":
         return [
             {
                 "x_axis": x_axis,

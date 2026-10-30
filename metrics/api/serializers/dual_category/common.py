@@ -6,10 +6,13 @@ from metrics.domain.common.utils import (
     DEFAULT_X_AXIS,
     DEFAULT_Y_AXIS,
     ChartAxisFields,
+    ChartTypes,
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
 from metrics.domain.tables.dual_category import build_dual_category_plot_params
+
+REQUIRED_BUTTERFLY_SEGMENT_COUNT = 2
 
 
 def validate_dual_category_fields(attrs: dict) -> dict:
@@ -27,11 +30,28 @@ def validate_dual_category_fields(attrs: dict) -> dict:
     """
     x_axis = attrs.get("x_axis") or DEFAULT_X_AXIS
     primary_field_values = attrs.get("primary_field_values") or []
+    segments = attrs.get("segments") or []
+    chart_type = attrs.get("chart_type") or "stacked_bar"
+    is_butterfly_chart = chart_type == ChartTypes.butterfly.value
     metric = attrs["static_fields"]["metric"]
     metric_group = extract_metric_group_from_metric(metric=metric)
     is_timeseries_data = DataSourceFileType[metric_group].is_timeseries
 
-    if is_timeseries_data:
+    if is_butterfly_chart and len(segments) != REQUIRED_BUTTERFLY_SEGMENT_COUNT:
+        raise serializers.ValidationError(
+            {
+                "segments": (
+                    "Butterfly charts require exactly "
+                    f"{REQUIRED_BUTTERFLY_SEGMENT_COUNT} segments, "
+                    f"one for each side of the chart. Got {len(segments)}."
+                )
+            }
+        )
+
+    # Butterfly charts always plot a primary category (eg. age) against
+    # a secondary category (eg. stratum), regardless of whether the
+    # underlying metric is sourced from headline or timeseries data.
+    if is_timeseries_data and not is_butterfly_chart:
         if primary_field_values:
             raise serializers.ValidationError(
                 {
@@ -75,6 +95,15 @@ def parse_dual_category_request(
 ) -> DualCategoryRequestContext:
     x_axis = data.get("x_axis") or DEFAULT_X_AXIS
     y_axis = data.get("y_axis") or DEFAULT_Y_AXIS
+
+    if chart_type == ChartTypes.butterfly.value:
+        # Butterfly charts draw horizontal bars, so callers describe the axes
+        # as they appear on the chart: the horizontal (x) axis holds the metric
+        # values and the vertical (y) axis holds the primary category (eg. age).
+        # Internally the primary category is always carried on `x_axis`, so the
+        # pair is swapped back here, matching `DualCategoryChartSerializer`.
+        x_axis, y_axis = y_axis, x_axis
+
     primary_field_values = data.get("primary_field_values") or []
     secondary_category = data["secondary_category"]
     segments: list[dict] = data["segments"]

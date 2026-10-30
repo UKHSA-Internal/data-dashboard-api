@@ -22,7 +22,7 @@ class ChartTypes(Enum):
 
     # Dual category charts
     stacked_bar = "stacked_bar"
-    pyramid = "pyramid"
+    butterfly = "butterfly"
 
     @classmethod
     def choices(cls) -> tuple[tuple[str, str], ...]:
@@ -107,18 +107,19 @@ class ChartTypes(Enum):
     def dual_category_chart_options(cls) -> list[str]:
         """Returns a list of `dual` chart types as strings
         Note:
-            Dual category chart types include charts like `stacked-bar` and `pyramid` chart,
+            Dual category chart types include charts like `stacked-bar` and `butterfly` chart,
             which are charts that include two categorical variables.
+            It is used by CMS code to determine which dual category charts are available
+            for selection (it expects a tuple of 2-item tuples).
 
         Returns:
-            A list of `dual` chart types as strings.
+            A tuple of `dual` chart types as strings.
             Examples:
-                ["stacked-bar", "pyramid"]
+                (("stacked_bar", "stacked_bar"), ("butterfly", "butterfly"))
         """
         selectable = (
             cls.stacked_bar,
-            # Note: Uncomment this once we have a proper pyramid chart implementation
-            # cls.pyramid,
+            cls.butterfly,
         )
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 

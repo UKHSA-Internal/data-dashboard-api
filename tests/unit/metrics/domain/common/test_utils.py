@@ -143,7 +143,7 @@ class TestChartTypes:
             "line_multi_coloured",
             "line_single_simplified",
             "stacked_bar",
-            "pyramid",
+            "butterfly",
         )
         assert choices == tuple((choice, choice) for choice in _choices)
 
@@ -186,7 +186,7 @@ class TestChartTypes:
 
     def test_simplified_chart_selectable_choices(self):
         """
-        Given an expected chioce
+        Given an expected choice
         When the `selectable_simplified_chart_choices()` class method is called
         Then choice is in the returned selectable choices
         """
@@ -215,7 +215,7 @@ class TestChartTypes:
             "line_multi_coloured",
             "line_single_simplified",
             "stacked_bar",
-            "pyramid",
+            "butterfly",
         ]
         assert values == expected_values
 
@@ -224,13 +224,14 @@ class TestChartTypes:
         Given no input
         When the `dual_category_chart_options()` class method is called
             from the `ChartTypes` enum
-        Then only stacked_bar is returned as a CMS-selectable dual category chart type
+        Then `stacked_bar` and `butterfly` are returned as the
+            CMS-selectable dual category chart types
         """
         # Given / When
         choices = ChartTypes.dual_category_chart_options()
 
         # Then
-        assert choices == (("stacked_bar", "stacked_bar"),)
+        assert choices == (("stacked_bar", "stacked_bar"), ("butterfly", "butterfly"))
 
     @pytest.mark.parametrize(
         "metric_name",
