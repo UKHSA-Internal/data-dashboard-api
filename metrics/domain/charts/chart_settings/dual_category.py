@@ -1,4 +1,3 @@
-import math
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.single_category import (
@@ -29,7 +28,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         self,
         *,
         categories: list[str] | None = None,
-        plotted_values: list[float] | None = None,
     ) -> dict:
         """
         Builds the configuration for the butterfly chart.
@@ -54,10 +52,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                 to the axis so that the categories are always drawn in
                 the order they were requested, with the first requested
                 value at the bottom of the chart.
-            plotted_values: The values which are actually drawn on the
-                chart. These are used to scale the value axis, and can
-                differ from the raw plot values, since a butterfly chart
-                draws a single bar per category, per side.
 
         Returns:
             The configuration for the butterfly chart.

@@ -87,9 +87,6 @@ def generate_butterfly(
 
     layout_args = settings.get_butterfly_chart_config(
         categories=categories,
-        plotted_values=[
-            value for data in grouped.values() for value in data["values"].values()
-        ],
     )
     figure.update_layout(**layout_args)
 
