@@ -4,6 +4,7 @@ from timeit import default_timer
 from caching.common.pages import (
     ALL_PAGE_TYPES,
     collect_all_pages,
+    collect_viewable_pages,
     extract_area_selectable_pages,
 )
 from caching.private_api.crawler import PrivateAPICrawler
@@ -12,6 +13,7 @@ from caching.private_api.crawler.area_selector.orchestration import (
 )
 from caching.private_api.management import CacheManagement
 from cms.topic.models import TopicPage
+from common.auth.permissions import PermissionSetsType
 
 logger = logging.getLogger(__name__)
 
@@ -158,12 +160,20 @@ def refresh_reserved_cache(
     )
 
 
-def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
-    """Get all downloads from chart cards on supported pages
+def get_all_downloads(
+    *,
+    file_format: str = "csv",
+    permission_sets: PermissionSetsType | None = None,
+) -> list[dict[str, str]]:
+    """Get all downloads from chart cards on pages which can be viewed with the given `permission_sets`
 
     Args:
         file_format: the format for download response data supports csv and json
             defaults to csv.
+        permission_sets: The permission sets extracted
+            from the request of the end user.
+            Defaults to None, in which case
+            only downloads from public pages are returned.
 
     Notes:
         You can pass all pages to the crawler's `get_all_downloads'
@@ -174,6 +184,6 @@ def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
        A list of dictionaries containing a filename and download content.
 
     """
-    pages = collect_all_pages()
+    pages = collect_viewable_pages(permission_sets=permission_sets)
     crawler = PrivateAPICrawler.create_crawler_for_default_cache()
     return crawler.get_all_downloads(pages=pages, file_format=file_format)

@@ -295,17 +295,17 @@ class TestRefreshReservedCache:
 
 
 class TestGetAllDownloads:
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_viewable_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_delegates_calls_correctly(
         self,
         spy_create_crawler_for_default_cache: mock.MagicMock,
-        spy_collect_all_pages: mock.MagicMock,
+        spy_collect_viewable_pages: mock.MagicMock,
     ):
         """
         Given a mocked `Crawler` object and fake_file_format
         When `get_all_downloads()` is called
-        Then calls are delegated to `collect_all_pages()` and
+        Then calls are delegated to `collect_viewable_pages()` and
             crawler_get_all_downloads() methods.
         """
         # Given
@@ -316,19 +316,47 @@ class TestGetAllDownloads:
         get_all_downloads()
 
         # Then
-        spy_collect_all_pages.assert_called_once()
-        expected_pages = spy_collect_all_pages.return_value
+        spy_collect_viewable_pages.assert_called_once_with(permission_sets=None)
+        expected_pages = spy_collect_viewable_pages.return_value
         spy_create_crawler_for_default_cache.assert_called_once()
         crawler.get_all_downloads.assert_called_once_with(
             pages=expected_pages, file_format=fake_file_format
         )
 
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_viewable_pages")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
+    def test_delegates_given_permission_sets_when_collecting_pages(
+        self,
+        spy_create_crawler_for_default_cache: mock.MagicMock,
+        spy_collect_viewable_pages: mock.MagicMock,
+    ):
+        """
+        Given a mocked `Crawler` object and fake permission sets
+        When `get_all_downloads()` is called
+        Then the permission sets are passed to `collect_viewable_pages()`
+        """
+        # Given
+        crawler = spy_create_crawler_for_default_cache.return_value
+        mocked_permission_sets = mock.Mock()
+
+        # When
+        get_all_downloads(permission_sets=mocked_permission_sets)
+
+        # Then
+        spy_collect_viewable_pages.assert_called_once_with(
+            permission_sets=mocked_permission_sets
+        )
+        expected_pages = spy_collect_viewable_pages.return_value
+        crawler.get_all_downloads.assert_called_once_with(
+            pages=expected_pages, file_format="csv"
+        )
+
+    @mock.patch(f"{MODULE_PATH}.collect_viewable_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_default_file_format_can_be_changed_to_json(
         self,
         spy_create_crawler_for_default_cache: mock.MagicMock,
-        spy_collect_all_pages,
+        spy_collect_viewable_pages,
     ):
         """
         Given a mocked `Crawler` object
@@ -344,17 +372,17 @@ class TestGetAllDownloads:
         get_all_downloads(file_format=file_format)
 
         # Then
-        collected_pages = spy_collect_all_pages.return_value
+        collected_pages = spy_collect_viewable_pages.return_value
         crawler.get_all_downloads.assert_called_once_with(
             pages=collected_pages, file_format=file_format
         )
 
-    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_viewable_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_default_cache")
     def test_default_file_format_is_csv(
         self,
         spy_create_crawler_for_default_cache: mock.MagicMock,
-        spy_collect_all_pages,
+        spy_collect_viewable_pages,
     ):
         """
         Given a mocked `Crawler` object.
@@ -368,7 +396,7 @@ class TestGetAllDownloads:
         get_all_downloads()
 
         # Then crawl.get_all_downloads will have file_format csv
-        collected_pages = spy_collect_all_pages.return_value
+        collected_pages = spy_collect_viewable_pages.return_value
         crawler.get_all_downloads.assert_called_once_with(
             pages=collected_pages, file_format="csv"
         )
