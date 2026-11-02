@@ -22,6 +22,9 @@ from metrics.api.serializers.charts.common import (
 from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
 )
+from metrics.domain.charts.butterfly.generation import (
+    InvalidButterflyChartSegmentsError,
+)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
@@ -155,7 +158,11 @@ class DualCategoryChartsView(APIView):
                 chart_request_params=chart_request_params,
                 interface=DualCategoryChartsInterface,
             )
-        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
+        except (
+            InvalidPlotParametersError,
+            DataNotFoundForAnyPlotError,
+            InvalidButterflyChartSegmentsError,
+        ) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
@@ -183,7 +190,11 @@ class DualCategoryChartsView(APIView):
                 interface=DualCategoryChartsInterface,
             )
 
-        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
+        except (
+            InvalidPlotParametersError,
+            DataNotFoundForAnyPlotError,
+            InvalidButterflyChartSegmentsError,
+        ) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )

@@ -131,7 +131,7 @@ class MetricsAPIInterface:
     @staticmethod
     def get_dual_category_chart_types() -> tuple[tuple[str, str], ...]:
         """Gets all available chart type choices for dual category charts as a nested tuple of 2-item tuples.
-        Note this is achieved by delegating the calle to the `ChartTypes` enum from the Metrics API
+        Note this is achieved by delegating the caller to the `ChartTypes` enum from the Metrics API
 
         Returns:
             Nested tuples of 2 item tuples as expected by the form blocks.

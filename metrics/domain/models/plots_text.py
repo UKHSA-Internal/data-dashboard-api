@@ -445,6 +445,13 @@ class PlotsText:
         return plot_data.parameters.is_headline_data
 
     def _describe_reporting_delay_period(self) -> str:
+        # This prevents from calculating the reporting delay period if the plot is not date-based timeseries data
+        if not any(
+            self._plot_is_date_based_timeseries_data(plot_data=plot_data)
+            for plot_data in self.plots_data
+        ):
+            return ""
+
         try:
             start_of_reporting_delay_period: datetime.date = (
                 get_x_value_at_start_of_reporting_delay_period(
