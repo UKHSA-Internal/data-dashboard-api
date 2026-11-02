@@ -4,5 +4,5 @@ botocore==1.34.109
 Django==5.2.17
 psycopg2-binary==2.9.13
 pydantic==2.13.4
-python-dotenv==1.2.2
+python-dotenv==1.2.4
 sqlparse==0.6.0
