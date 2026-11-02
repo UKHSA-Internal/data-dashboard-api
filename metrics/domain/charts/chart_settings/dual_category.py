@@ -40,7 +40,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
             "y": -0.5,
             "x": 0.5,
             "xanchor": "center",
-            "yanchor": "bottom",
+            "yanchor": "top",
             "entrywidth": 80,
         }
 

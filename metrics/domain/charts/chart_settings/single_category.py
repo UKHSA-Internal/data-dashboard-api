@@ -154,13 +154,31 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickformat": None,
         }
 
-    def _get_legend_bottom_centre_config(self):
-        has_x_axis_title = bool(self._chart_generation_payload.x_axis_title)
+    def _has_x_axis_title(self) -> bool:
+        return bool(self._chart_generation_payload.x_axis_title)
 
+    def _get_legend_top_offset_px(self) -> int:
+        """Distance from the x-axis line to the top edge of the legend"""
+        return 100 if self._has_x_axis_title() else 50
+
+    def _get_approx_plot_height_px(self) -> int:
+        base_margin = self._get_base_chart_config()["margin"]
+        top_margin_px = (
+            30
+            if self._chart_generation_payload.y_axis_title
+            else base_margin.get("t", 0)
+        )
+        return max(
+            self.height - top_margin_px - self._get_legend_top_offset_px() - 28,
+            50,
+        )
+
+    def _get_legend_config(self):
         legend_config = {
             "font": self._get_tick_font_config(),
             "orientation": "h",
-            "y": -0.5 if has_x_axis_title else -0.3,
+            "yref": "paper",
+            "y": -self._get_legend_top_offset_px() / self._get_approx_plot_height_px(),
             "x": 0.5,
             "xanchor": "center",
             "yanchor": "top",
@@ -363,6 +381,7 @@ class SingleCategoryChartSettings(ChartSettings):
         chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
         chart_config["margin"]["t"] = 12
+        chart_config["margin"]["b"] = 0
         chart_config["margin"]["pad"] = 25
 
         # x_axis config
@@ -402,7 +421,7 @@ class SingleCategoryChartSettings(ChartSettings):
         if self._chart_generation_payload.y_axis_title:
             chart_config["margin"]["t"] = 30
 
-        return {**chart_config, **self._get_legend_bottom_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
 
     def get_common_chart_config(self):
         chart_config = self._get_base_chart_config()
@@ -413,7 +432,7 @@ class SingleCategoryChartSettings(ChartSettings):
             chart_config["margin"]["t"] = 30
 
         chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_bottom_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
 
 
 def get_number_of_days_and_months(

@@ -16,6 +16,10 @@ from tests.conftest import fake_plot_data
 
 MODULE_PATH: str = "metrics.domain.charts.charts.chart_settings.single_category"
 
+# The legend's `y` position as a fraction of the plot height,
+# i.e. a fixed pixel offset below the plot area divided by the plot height in px.
+EXPECTED_LEGEND_Y = -50 / 31
+
 
 @pytest.fixture()
 def fake_chart_settings(
@@ -755,43 +759,44 @@ class TestSingleCategoryChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_legend_bottom_centre_config(
+    def test_get_legend_config(
         self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
-        When `_get_legend_bottom_centre_config()` is called
+        When `_get_legend_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        legend_bottom_centre_config = chart_settings._get_legend_bottom_centre_config()
+        legend_config = chart_settings._get_legend_config()
 
         # Then
-        expected_legend_bottom_centre_config = {
-            "legend": {
-                "font": {
-                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-                    "family": "Arial",
-                },
-                "orientation": "h",
-                "y": -0.5,
-                "x": 0.5,
-                "xanchor": "center",
-                "yanchor": "top",
-            },
-        }
-        assert legend_bottom_centre_config == expected_legend_bottom_centre_config
+        legend = legend_config["legend"]
+        legend_y = legend.pop("y")
 
-    def test_get_legend_bottom_centre_config_includes_legend_title_when_provided(
+        assert legend == {
+            "font": {
+                "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                "family": "Arial",
+            },
+            "orientation": "h",
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "yref": "paper",
+        }
+        assert legend_y == pytest.approx(EXPECTED_LEGEND_Y)
+
+    def test_get_legend_config_includes_legend_title_when_provided(
         self, fake_chart_settings: ChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
             which includes a legend title
-        When `_get_legend_bottom_centre_config()` is called
+        When `_get_legend_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
@@ -800,24 +805,25 @@ class TestSingleCategoryChartSettings:
         chart_settings._chart_generation_payload.legend_title = legend_title
 
         # When
-        legend_bottom_centre_config = chart_settings._get_legend_bottom_centre_config()
+        legend_config = chart_settings._get_legend_config()
 
         # Then
-        expected_legend_bottom_centre_config = {
-            "legend": {
-                "title": f"<b>{legend_title}</b>",
-                "font": {
-                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-                    "family": "Arial",
-                },
-                "orientation": "h",
-                "y": -0.5,
-                "x": 0.5,
-                "xanchor": "center",
-                "yanchor": "top",
+        legend = legend_config["legend"]
+        legend_y = legend.pop("y")
+
+        assert legend == {
+            "title": f"<b>{legend_title}</b>",
+            "font": {
+                "family": "Arial",
+                "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
             },
+            "orientation": "h",
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "yref": "paper",
         }
-        assert legend_bottom_centre_config == expected_legend_bottom_centre_config
+        assert legend_y == pytest.approx(EXPECTED_LEGEND_Y)
 
     def test_get_line_multi_coloured_chart_config(
         self,
@@ -839,7 +845,7 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_line_multi_coloured_chart_config = {
             **chart_settings._get_base_chart_config(),
-            **chart_settings._get_legend_bottom_centre_config(),
+            **chart_settings._get_legend_config(),
             "showlegend": True,
             "annotations": [
                 {

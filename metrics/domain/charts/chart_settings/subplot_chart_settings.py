@@ -10,31 +10,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_LEGEND_FONT_SIZE = 14
 DEFAULT_ANNOTATION_FONT_SIZE = 14
 
-# W: >1100
-DEFAULT_CHART_MULTIPLIER = 2
-DEFAULT_CHART_BASE_Y = 0.1
-
-# W: 515 H: 260
-NARROW_CHART_WIDTH = 515
-NARROW_CHART_MULTIPLIER = 2
-NARROW_CHART_BASE_Y = 0.4
-
-# W: 1100 H: 260
-WIDE_CHART_WIDTH = 1100
-WIDE_CHART_MULTIPLIER = 2
-WIDE_CHART_BASE_Y = 0.3
-
-# W: 650 H: 200
-HALF_CHART_WIDTH = 650
-HALF_CHART_MULTIPLIER = 2
-HALF_CHART_BASE_Y = 0.5
-
-# W: 400 H: 200
-THIRD_CHART_WIDTH = 400
-THIRD_CHART_MULTIPLIER = 2
-THIRD_CHART_BASE_Y = 0.6
-
-
 class SubplotChartSettings(ChartSettings):
 
     def __init__(self, *, chart_generation_payload: SubplotChartGenerationPayload):
@@ -72,47 +47,52 @@ class SubplotChartSettings(ChartSettings):
             "horizontal_spacing": 0.03,
         }
 
-    def _get_legend_size_config(self):
-        """Returns the `base y` and `legend size` used to position the legend
-            of a subplot chart based on the `width` of the chart being generated.
+    def _get_margin_top_px(self) -> int:
+        return 30 if self._chart_generation_payload.y_axis_title else 3
 
-        Returns: list of numbers (int|float) used to position the legend of a
-            subplot chart based on the `width` of the chart being generated.
-        """
-        if self.width <= THIRD_CHART_WIDTH:
-            return [THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER]
-        if self.width <= NARROW_CHART_WIDTH:
-            return [NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER]
-        if self.width <= HALF_CHART_WIDTH:
-            return [HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER]
-        if self.width <= WIDE_CHART_WIDTH:
-            return [WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER]
+    def _get_approx_plot_height_px(self) -> int:
+        return max(self.height - self._get_margin_top_px() - 88, 50)
 
-        return [DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER]
+    def _has_x_axis_title(self) -> bool:
+        return bool(self._chart_generation_payload.x_axis_title)
 
-    def get_legend_bottom_centre_config(self, number_of_legend_items: int):
-        [y_base, y_multiplier] = self._get_legend_size_config()
+    def _get_xaxis_title_offset_px(self) -> int:
+        """More space needed for x-axis title when present"""
+        return 30 if self._has_x_axis_title() else 0
+
+    def _get_legend_top_offset_px(self) -> int:
+        """Distance from the x-axis line to the top edge of the legend"""
+        return (
+                self._get_xaxis_title_offset_px()
+                + (
+                    40
+                    if self._has_x_axis_title()
+                    else 50
+                )
+        )
+
+    def get_legend_config(self) -> CHART_ARGS:
+        legend_top_offset_px = self._get_legend_top_offset_px()
 
         return {
             "font": {**self._get_tick_font_config(), "size": DEFAULT_LEGEND_FONT_SIZE},
             "orientation": "h",
-            "y": -(y_base * y_multiplier),
+            "yref": "paper",
+            "y": -legend_top_offset_px / self._get_approx_plot_height_px(),
+            "yanchor": "top",
             "x": 0.5,
             "xanchor": "center",
-            "yanchor": "bottom",
         }
 
-    def get_subplot_chart_config(self, number_of_legend_items: int) -> CHART_ARGS:
+    def get_subplot_chart_config(self) -> CHART_ARGS:
         chart_config = self._get_base_chart_config()
 
-        chart_config["legend"] = self.get_legend_bottom_centre_config(
-            number_of_legend_items=number_of_legend_items
-        )
+        chart_config["legend"] = self.get_legend_config()
         chart_config["autosize"] = True
         chart_config["margin"] = {
             "l": 3,
             "b": 3,
-            "t": 3,
+            "t": self._get_margin_top_px(),
         }
 
         return chart_config
@@ -136,29 +116,26 @@ class SubplotChartSettings(ChartSettings):
         primary_yaxis_config["showticklabels"] = True
         primary_yaxis_config["ticklen"] = 5
 
-        primary_yaxis_config["title_text"] = self._chart_generation_payload.y_axis_title
-        primary_yaxis_config["title_font"] = self._get_tick_font_config()
-
         return primary_yaxis_config
 
     def get_x_axis_title_as_annotation_config(self) -> dict:
-        y_base, _ = self._get_legend_size_config()
+        annotations = list(self._get_y_axis_title_annotation_config() or [])
 
-        return {
-            "annotations": [
-                {
-                    "text": self._chart_generation_payload.x_axis_title,
-                    "x": 0.5,
-                    "y": -y_base,
-                    "xanchor": "center",
-                    "yanchor": "bottom",
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                    "font": {
-                        **self._get_tick_font_config(),
-                        "size": DEFAULT_ANNOTATION_FONT_SIZE,
-                    },
-                }
-            ]
-        }
+        annotations.append(
+            {
+                "text": self._chart_generation_payload.x_axis_title,
+                "x": 0.5,
+                "y": -75 / self._get_approx_plot_height_px(),
+                "xanchor": "center",
+                "yanchor": "bottom",
+                "xref": "paper",
+                "yref": "paper",
+                "showarrow": False,
+                "font": {
+                    **self._get_tick_font_config(),
+                    "size": DEFAULT_ANNOTATION_FONT_SIZE,
+                },
+            }
+        )
+
+        return {"annotations": annotations}

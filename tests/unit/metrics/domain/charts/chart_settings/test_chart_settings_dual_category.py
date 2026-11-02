@@ -43,7 +43,7 @@ class TestDualCategoryChartSettings:
                 "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
                 "entrywidth": 80,
             },
         }
@@ -72,7 +72,7 @@ class TestDualCategoryChartSettings:
                 "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
                 "entrywidth": 80,
                 "title": {
                     "text": f"<b>{legend_title}</b>",
