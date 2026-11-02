@@ -22,6 +22,7 @@ class ChartTypes(Enum):
 
     # Dual category charts
     stacked_bar = "stacked_bar"
+    butterfly = "butterfly"
     pyramid = "pyramid"
 
     @classmethod
@@ -117,6 +118,7 @@ class ChartTypes(Enum):
         """
         selectable = (
             cls.stacked_bar,
+            cls.butterfly
             # Note: Uncomment this once we have a proper pyramid chart implementation
             # cls.pyramid,
         )

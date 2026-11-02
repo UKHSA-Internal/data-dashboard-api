@@ -3,6 +3,7 @@ from datetime import datetime
 import plotly.graph_objects as go
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from metrics.domain.charts.butterfly.generation import generate_butterfly
 from metrics.domain.charts.stacked_bar.generation import generate_stacked_bar
 from metrics.domain.common.utils import (
     extract_metric_group_from_metric,
@@ -51,6 +52,7 @@ class DualCategoryChartsInterface:
     @staticmethod
     def _build_chart_figure(
         chart_generation_payload: ChartGenerationPayload,
+        chart_type: str,
     ) -> go.Figure:
         """Build a Plotly chart `Figure` object for a `DualCategory` chart.
 
@@ -63,9 +65,14 @@ class DualCategoryChartsInterface:
         Returns:
             A plotly `Figure` object for the created dual-category chart.
         """
-        return generate_stacked_bar(
-            chart_generation_payload=chart_generation_payload,
-        )
+        if chart_type == "stacked_bar":
+            return generate_stacked_bar(
+                chart_generation_payload=chart_generation_payload,
+            )
+        elif chart_type == "butterfly":
+            return generate_butterfly(
+                chart_generation_payload=chart_generation_payload,
+            )
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
@@ -188,7 +195,8 @@ class DualCategoryChartsInterface:
             plots_data=chart_generation_payload.plots
         )
         figure = self._build_chart_figure(
-            chart_generation_payload=chart_generation_payload
+            chart_generation_payload=chart_generation_payload,
+            chart_type=self.chart_type
         )
 
         return ChartOutput(
