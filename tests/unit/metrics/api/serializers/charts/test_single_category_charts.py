@@ -6,6 +6,7 @@ from metrics.api.serializers.charts import (
     ChartPlotSerializer,
     ChartsSerializer,
     EncodedChartsRequestSerializer,
+    EncodedSingleCategoryChartResponseSerializer,
 )
 from metrics.domain.charts import colour_scheme
 
@@ -787,3 +788,33 @@ class TestEncodedChartResponseSerializer:
         # When / Then
         with pytest.raises(ValidationError):
             serializer.is_valid(raise_exception=True)
+
+
+class TestEncodingSingleCategoryChartResponseSerializer:
+    def test_validates_responsive_figure_config(self):
+        payload = {
+            "last_updated": "2026-10-08",
+            "chart": "encoded-svg",
+            "alt_text": "Chart description",
+            "figure": {},
+            "figure_config": {
+                "xaxis_full": {"nticks": 13},
+                "xaxis_compact": {"nticks": 5},
+            },
+        }
+        serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)
+
+        assert serializer.is_valid(raise_exception=True)
+        assert serializer.validated_data["figure_config"] == payload["figure_config"]
+
+    def test_figure_config_can_be_omitted(self):
+        payload = {
+            "last_updated": "2026-10-08",
+            "chart": "encoded-svg",
+            "alt_text": "Chart description",
+            "figure": {},
+        }
+        serializer = EncodedSingleCategoryChartResponseSerializer(data=payload)
+
+        assert serializer.is_valid(raise_exception=True)
+        assert "figure_config" not in serializer.validated_data
