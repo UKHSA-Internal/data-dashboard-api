@@ -5,7 +5,11 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts, plots
-from metrics.api.serializers.charts.common import BaseChartsSerializer
+from metrics.api.serializers.charts.common import (
+    BaseChartsSerializer,
+    EncodedChartResponseSerializer,
+    FigureConfigSerializer,
+)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
     ChartLineTypes,
@@ -72,7 +76,6 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
 
 
 class ChartsSerializer(BaseChartsSerializer):
-
     plots = ChartPlotsListSerializer()
 
     def to_models(self, request: Request) -> ChartRequestParams:
@@ -118,3 +121,7 @@ class EncodedChartsRequestSerializer(ChartsSerializer):
         help_text=help_texts.ENCODED_CHARTS_FILE_FORMAT_FIELD,
         default="svg",
     )
+
+
+class EncodedSingleCategoryChartResponseSerializer(EncodedChartResponseSerializer):
+    figure_config = FigureConfigSerializer(required=False)
