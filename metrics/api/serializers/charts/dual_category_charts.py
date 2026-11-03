@@ -91,24 +91,24 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         is_timeseries_data = DataSourceFileType[metric_group].is_timeseries
         is_butterfly_chart = self.data["chart_type"] == ChartTypes.butterfly.value
 
-        x_axis_title = self.data.get("x_axis_title", "")
-        y_axis_title = self.data.get("y_axis_title", "")
-
         if is_butterfly_chart:
-            # Butterfly charts draw horizontal bars, so callers describe the
-            # axes as they appear on the chart: the horizontal (x) axis holds
-            # the metric values and the vertical (y) axis holds the primary
-            # category (eg. age). Internally the primary category is always
-            # carried on `x_axis`, since that is the field name used to both
-            # filter each plot and read its values back from the database,
-            # so the pair is swapped back into that internal form here.
-            x_axis, y_axis = y_axis, x_axis
-            x_axis_title, y_axis_title = y_axis_title, x_axis_title
+            for primary_field_value in primary_field_values:
+                plots = [
+                    {
+                        "x_axis": x_axis,
+                        "y_axis": y_axis,
+                        "line_colour": segment["colour"],
+                        **static_fields,
+                        y_axis: primary_field_value,
+                        secondary_category: segment["secondary_field_value"],
+                        "chart_type": self.data["chart_type"],
+                        "label": segment["label"],
+                    }
+                    for segment in segments
+                ]
+                groups_plots.extend(plots)
 
-        # Butterfly charts always plot a primary category (eg. age) against
-        # a secondary category, so they follow the same grouping as headline
-        # data, even when the underlying metric is sourced from timeseries data.
-        if is_timeseries_data and not is_butterfly_chart:
+        elif is_timeseries_data:
             plots = [
                 {
                     "x_axis": x_axis,
@@ -151,8 +151,8 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
             x_axis=x_axis,
             y_axis=y_axis,
-            x_axis_title=x_axis_title,
-            y_axis_title=y_axis_title,
+            x_axis_title=self.data.get("x_axis_title", ""),
+            y_axis_title=self.data.get("y_axis_title", ""),
             y_axis_minimum_value=self.data["y_axis_minimum_value"]
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],

@@ -95,15 +95,6 @@ def parse_dual_category_request(
 ) -> DualCategoryRequestContext:
     x_axis = data.get("x_axis") or DEFAULT_X_AXIS
     y_axis = data.get("y_axis") or DEFAULT_Y_AXIS
-
-    if chart_type == ChartTypes.butterfly.value:
-        # Butterfly charts draw horizontal bars, so callers describe the axes
-        # as they appear on the chart: the horizontal (x) axis holds the metric
-        # values and the vertical (y) axis holds the primary category (eg. age).
-        # Internally the primary category is always carried on `x_axis`, so the
-        # pair is swapped back here, matching `DualCategoryChartSerializer`.
-        x_axis, y_axis = y_axis, x_axis
-
     primary_field_values = data.get("primary_field_values") or []
     secondary_category = data["secondary_category"]
     segments: list[dict] = data["segments"]

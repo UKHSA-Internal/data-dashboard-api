@@ -158,11 +158,7 @@ class DualCategoryChartsView(APIView):
                 chart_request_params=chart_request_params,
                 interface=DualCategoryChartsInterface,
             )
-        except (
-            InvalidPlotParametersError,
-            DataNotFoundForAnyPlotError,
-            InvalidButterflyChartSegmentsError,
-        ) as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
@@ -190,11 +186,7 @@ class DualCategoryChartsView(APIView):
                 interface=DualCategoryChartsInterface,
             )
 
-        except (
-            InvalidPlotParametersError,
-            DataNotFoundForAnyPlotError,
-            InvalidButterflyChartSegmentsError,
-        ) as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )

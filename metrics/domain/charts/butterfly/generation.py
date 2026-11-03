@@ -136,7 +136,7 @@ def _group_plots_by_secondary_category(
         group = getattr(plot.parameters, secondary_category)
         group_data = grouped.setdefault(group, {"values": {}})
 
-        for category, value in zip(
+        for value, category in zip(
             plot.x_axis_values, plot.y_axis_values, strict=False
         ):
             categories[category] = None
