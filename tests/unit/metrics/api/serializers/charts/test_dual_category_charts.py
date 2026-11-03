@@ -447,3 +447,71 @@ class TestDualCategoryChartSerializer:
             assert getattr(plot, x_axis) == primary_field_value
             assert getattr(plot, secondary_category) == segment["secondary_field_value"]
             assert plot.line_colour == segment["colour"]
+
+    def test_swapping_axes_for_y_axis_dominant_charts(self):
+        fake_metric = FakeMetricFactory.build_example_metric(
+            metric_name=HEADLINE_METRIC,
+            metric_group_name="headline",
+        )
+        fake_topic = fake_metric.metric_group.topic
+        metric_manager = FakeMetricManager([fake_metric])
+        topic_manager = FakeTopicManager([fake_topic])
+        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        valid_payload["static_fields"] = valid_payload["static_fields"].copy()
+        valid_payload["static_fields"]["topic"] = fake_topic.name
+        valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        valid_payload["x_axis"] = "metric"
+        valid_payload["y_axis"] = "age"
+        valid_payload["chart_type"] = "butterfly"
+        valid_payload["primary_field_values"] = ["00-01", "01-04", "05-11", "12-15"]
+        valid_payload["segments"] = [
+            {
+                "secondary_field_value": "m",
+                "colour": "COLOUR_1_DARK_BLUE",
+                "label": "Male"
+            },
+            {
+                "secondary_field_value": "f",
+                "colour": "COLOUR_3_DARK_PINK",
+                "label": "Female"
+            }
+        ]
+
+        serializer_context = {
+            "topic_manager": topic_manager,
+            "metric_manager": metric_manager,
+        }
+        serializer = DualCategoryChartSerializer(
+            data=valid_payload,
+            context=serializer_context,
+        )
+        serializer.fields["static_fields"] = PlotSerializer(context=serializer_context)
+        serializer.is_valid(raise_exception=True)
+
+        # When
+        result: DualCategoryChartRequestParams = serializer.to_models(request=None)
+
+        # Then
+        segments = valid_payload["segments"]
+        secondary_category = valid_payload["secondary_category"]
+        x_axis = valid_payload["x_axis"]
+
+        assert result.primary_field_values == ["00-01", "01-04", "05-11", "12-15"]
+        assert len(result.plots) == len(segments) * len(
+            valid_payload["primary_field_values"]
+        )
+
+        for index, plot in enumerate(result.plots):
+            segment_index = index % len(segments)
+            primary_index = index // len(segments)
+            segment = segments[segment_index]
+            primary_field_value = valid_payload["primary_field_values"][primary_index]
+
+            assert plot.x_axis == x_axis
+            assert getattr(plot, x_axis) == primary_field_value
+            assert getattr(plot, secondary_category) == segment["secondary_field_value"]
+            assert plot.line_colour == segment["colour"]
+
+        # expections?
+        assert result.plots[0].metric is HEADLINE_METRIC
+        assert result.plots[0].metric_group is "headline"

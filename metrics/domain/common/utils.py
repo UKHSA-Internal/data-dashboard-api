@@ -212,6 +212,7 @@ def extract_metric_group_from_metric(metric: str) -> str | None:
         if no matching metric group is found then a `ValueError` is
         raised due to an invalid metric value.
     """
+    print(metric)
     if DataSourceFileType.headline.value in metric:
         return DataSourceFileType.headline.value
 
