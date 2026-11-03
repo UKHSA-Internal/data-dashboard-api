@@ -63,6 +63,9 @@ def generate_encoded_chart(
     )
     if not isinstance(supports_compact_rotation, bool):
         supports_compact_rotation = False
+    rotate_subplot_grid = getattr(chart_output, "is_subplot", False)
+    if not isinstance(rotate_subplot_grid, bool):
+        rotate_subplot_grid = False
 
     return ChartResult(
         last_updated=charts_interface.last_updated,
@@ -74,6 +77,7 @@ def generate_encoded_chart(
         figure_config=build_figure_config(
             figure=interactive_figure,
             rotate_compact=supports_compact_rotation,
+            rotate_subplot_grid=rotate_subplot_grid,
         ),
     )
 

@@ -15,6 +15,11 @@ from metrics.domain.charts.chart_settings.single_category import (
     COMPACT_X_AXIS_NTICKS,
     FULL_WIDTH_X_AXIS_NTICKS,
 )
+from metrics.domain.charts.chart_settings.subplot_chart_settings import (
+    ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG,
+    ROTATED_SUBPLOT_LEGEND_CONFIG,
+    ROTATED_SUBPLOT_MARGIN_CONFIG,
+)
 
 AXIS_KEY_PATTERN = re.compile(r"^xaxis(?P<suffix>\d*)$")
 PATH_COORDINATE_PATTERN = re.compile(
@@ -31,6 +36,8 @@ ROTATED_CATEGORY_LABEL_MAX_CHARACTERS = 18
 ROTATED_Y_AXIS_TITLE_TOP_MARGIN = 50
 ROTATED_Y_AXIS_TITLE_FONT_SIZE = 14
 ROTATED_LEGEND_Y_POSITION = -0.2
+
+DOMAIN_COORDINATE_COUNT = 2
 
 AXIS_POSITION_PROPERTIES = {
     "anchor",
@@ -159,6 +166,73 @@ def _wrap_rotated_category_label(category: Any) -> Any:
     return "<br>".join(lines) if lines else category
 
 
+def _transpose_domain(domain: Any) -> Any:
+    """Turn a left-to-right subplot domain into a top-to-bottom domain"""
+    if (
+        not isinstance(domain, (list, tuple))
+        or len(domain) != DOMAIN_COORDINATE_COUNT
+    ):
+        return domain
+
+    start, end = domain
+    if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
+        return domain
+
+    return [1 - end, 1 - start]
+
+
+def _position_rotated_subplot_grid(
+    *,
+    axis_pairs: list[tuple[str, str, Mapping[str, Any], Mapping[str, Any]]],
+    rotated_layout: dict[str, Any],
+) -> None:
+    """Transpose a one-row subplot grid into one column while preserving order."""
+    if not axis_pairs:
+        return
+
+    first_x_key = axis_pairs[0][0]
+    last_x_key = axis_pairs[-1][0]
+    primary_x_axis = rotated_layout[first_x_key]
+    primary_title = copy.deepcopy(primary_x_axis.get("title"))
+    primary_tick_length = primary_x_axis.get("ticklen", 5)
+
+    for x_key, y_key, source_x_axis, source_y_axis in axis_pairs:
+        rotated_x_axis = rotated_layout[x_key]
+        rotated_y_axis = rotated_layout[y_key]
+
+        rotated_x_axis["domain"] = copy.deepcopy(source_y_axis.get("domain", [0, 1]))
+        rotated_x_axis["showticklabels"] = False
+        rotated_x_axis["ticklen"] = 0
+        rotated_x_axis["automargin"] = True
+        rotated_x_axis.pop("title", None)
+
+        source_x_domain = source_x_axis.get("domain")
+        transposed_domain = _transpose_domain(source_x_domain)
+        if transposed_domain is not None:
+            rotated_y_axis["domain"] = copy.deepcopy(transposed_domain)
+        rotated_y_axis["automargin"] = True
+
+    bottom_x_axis = rotated_layout[last_x_key]
+    bottom_x_axis["showticklabels"] = True
+    bottom_x_axis["ticklen"] = primary_tick_length
+    if primary_title is not None:
+        bottom_x_axis["title"] = primary_title
+
+
+def _position_rotated_subplot_annotations(annotations: list[dict]) -> None:
+    """Keep the shared categorical-axis title close to a tall subplot grid."""
+    for annotation in annotations:
+        if (
+            annotation.get("xref") == "paper"
+            and annotation.get("yref") == "paper"
+            and annotation.get("textangle")
+            == ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG["textangle"]
+        ):
+            annotation.update(
+                copy.deepcopy(ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG)
+            )
+
+
 def _rotate_shape(shape: Mapping[str, Any]) -> dict:
     rotated_shape = copy.deepcopy(shape)
 
@@ -227,13 +301,15 @@ def _rotate_annotation(annotation: Mapping[str, Any]) -> dict:
 
 
 def _build_layout_configs(
-    layout: Mapping[str, Any], *, rotate_compact: bool
+    layout: Mapping[str, Any], *, rotate_compact: bool, rotate_subplot_grid: bool,
 ) -> tuple[dict, dict, dict]:
     full_layout: dict[str, Any] = {}
     compact_layout: dict[str, Any] = {}
     compact_rotated_layout: dict[str, Any] = {}
 
-    for x_key, y_key, x_axis, y_axis in _axis_pairs(layout):
+    axis_pairs = list(_axis_pairs(layout))
+
+    for x_key, y_key, x_axis, y_axis in axis_pairs:
         full_x_axis = copy.deepcopy(x_axis)
         full_y_axis = copy.deepcopy(y_axis)
         compact_x_axis = copy.deepcopy(x_axis)
@@ -265,6 +341,12 @@ def _build_layout_configs(
         compact_rotated_layout[x_key] = compact_rotated_x_axis
         compact_rotated_layout[y_key] = compact_rotated_y_axis
 
+    if rotate_compact and rotate_subplot_grid:
+        _position_rotated_subplot_grid(
+            axis_pairs=axis_pairs,
+            rotated_layout=compact_rotated_layout,
+        )
+
     shapes = layout.get("shapes")
     if isinstance(shapes, (list, tuple)):
         full_layout["shapes"] = copy.deepcopy(shapes)
@@ -279,10 +361,21 @@ def _build_layout_configs(
     if isinstance(annotations, (list, tuple)):
         full_layout["annotations"] = copy.deepcopy(annotations)
         compact_layout["annotations"] = copy.deepcopy(annotations)
-        compact_rotated_layout["annotations"] = (
+        compact_rotated_annotations = (
             [_rotate_annotation(annotation) for annotation in annotations]
             if rotate_compact
             else copy.deepcopy(annotations)
+        )
+        if rotate_compact and rotate_subplot_grid:
+            _position_rotated_subplot_annotations(compact_rotated_annotations)
+        compact_rotated_layout["annotations"] = compact_rotated_annotations
+
+    if rotate_compact and rotate_subplot_grid:
+        legend = copy.deepcopy(layout.get("legend", {}))
+        legend.update(copy.deepcopy(ROTATED_SUBPLOT_LEGEND_CONFIG))
+        compact_rotated_layout["legend"] = legend
+        compact_rotated_layout["margin"] = copy.deepcopy(
+            ROTATED_SUBPLOT_MARGIN_CONFIG
         )
 
     return full_layout, compact_layout, compact_rotated_layout
@@ -363,7 +456,7 @@ def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) ->
 
 def _count_bar_categories(traces: list | tuple) -> int:
     """Count distinct category positions without double-counting stacked traces."""
-    categories: list[Any] = []
+    categories: list[tuple[Any, Any]] = []
 
     for trace in traces:
         if not isinstance(trace, Mapping) or trace.get("type") != "bar":
@@ -373,9 +466,11 @@ def _count_bar_categories(traces: list | tuple) -> int:
         if not isinstance(x_values, (list, tuple)):
             continue
 
+        x_axis_reference = trace.get("x", [])
         for category in x_values:
-            if category not in categories:
-                categories.append(category)
+            category_position = (x_axis_reference, category)
+            if category_position not in categories:
+                categories.append(category_position)
 
     return len(categories)
 
@@ -389,7 +484,10 @@ def _calculate_compact_bar_chart_height(traces: list | tuple) -> int:
 
 
 def build_figure_config(
-    *, figure: Any, rotate_compact: bool = False
+    *,
+    figure: Any,
+    rotate_compact: bool = False,
+    rotate_subplot_grid: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Build full, compact and compact-rotated Plotly overrides."""
     if not isinstance(figure, Mapping):
@@ -425,6 +523,7 @@ def build_figure_config(
     full_layout, compact_layout, compact_rotated_layout = _build_layout_configs(
         layout,
         rotate_compact=rotate_compact,
+        rotate_subplot_grid=rotate_subplot_grid,
     )
 
     if rotate_compact:
