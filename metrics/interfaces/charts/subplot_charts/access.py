@@ -39,7 +39,7 @@ class SubplotChartsInterface:
 
     @property
     def supports_compact_rotation(self) -> bool:
-        """Cover-page subplots are categorical bar cahrts in both modes."""
+        """Cover-page subplots are categorical bar charts in both modes."""
         return True
 
     def _build_plots_data(self) -> list[dict[str, PlotGenerationData | str]]:
