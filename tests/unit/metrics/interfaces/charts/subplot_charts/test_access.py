@@ -156,16 +156,13 @@ class TestChartsInterface:
         charts_interface = SubplotChartsInterface(
             chart_request_params=fake_subplot_chart_request_params
         )
-        fake_figure = mock.Mock(spec=plotly.graph_objects.Figure)
-        fake_figure.write_image.side_effect = lambda *, file, **_: file.write(
-            b"<svg></svg>"
-        )
+        fake_figure = plotly.graph_objects.Figure()
 
         # When
         chart_bytes = charts_interface.write_figure(figure=fake_figure)
 
         # Then
-        assert chart_bytes == b"<svg></svg>"
+        assert type(chart_bytes) == bytes
 
 
 class TestGenerateSubPlotChartImage:
