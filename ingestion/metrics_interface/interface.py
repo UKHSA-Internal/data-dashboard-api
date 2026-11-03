@@ -45,6 +45,10 @@ class MetricsAPIInterface:
         return core_models.CoreHeadline.objects
 
     @staticmethod
+    def get_api_headline_manager():
+        return api_models.APIHeadline.objects
+
+    @staticmethod
     def get_core_timeseries_manager():
         return core_models.CoreTimeSeries.objects
 
@@ -59,6 +63,10 @@ class MetricsAPIInterface:
     @staticmethod
     def get_core_headline():
         return core_models.CoreHeadline
+
+    @staticmethod
+    def get_api_headline():
+        return api_models.APIHeadline
 
     @staticmethod
     def get_core_timeseries():

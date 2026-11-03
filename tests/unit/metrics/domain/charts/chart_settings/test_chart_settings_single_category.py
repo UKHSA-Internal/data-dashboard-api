@@ -7,9 +7,10 @@ import pytest
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.chart_settings.single_category import (
+    COMPACT_X_AXIS_NTICKS,
+    FULL_WIDTH_X_AXIS_NTICKS,
     SingleCategoryChartSettings,
-    WEEK_IN_MILLISECONDS,
-    TWO_WEEKS_IN_MILLISECONDS,
+    get_x_axis_figure_config,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 from tests.conftest import fake_plot_data
@@ -32,6 +33,12 @@ def fake_chart_settings(
 
 
 class TestSingleCategoryChartSettings:
+    def test_get_x_axis_figure_config_returns_responsive_tick_limits(self):
+        assert get_x_axis_figure_config() == {
+            "xaxis_full": {"nticks": FULL_WIDTH_X_AXIS_NTICKS},
+            "xaxis_compact": {"nticks": COMPACT_X_AXIS_NTICKS},
+        }
+
     def test_get_tick_font_setting(
         self, fake_chart_settings: SingleCategoryChartSettings
     ):
@@ -87,10 +94,11 @@ class TestSingleCategoryChartSettings:
             "ticks": "outside",
             "tickson": "boundaries",
             "type": "date",
-            "dtick": "M1",
-            "tickformat": "%b %Y",
             "tickfont": chart_settings._get_tick_font_config(),
             "autotickangles": [0, 90],
+            "ticklabeloverflow": "allow",
+            "automargin": True,
+            "nticks": COMPACT_X_AXIS_NTICKS,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -144,6 +152,8 @@ class TestSingleCategoryChartSettings:
             "tickformat": None,
             "tickfont": chart_settings._get_tick_font_config(),
             "autotickangles": [0, 90],
+            "ticklabeloverflow": "allow",
+            "automargin": True,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -294,163 +304,41 @@ class TestSingleCategoryChartSettings:
 
         # Then
         assert x_axis_date_type["type"] == "date"
-        assert x_axis_date_type["dtick"] == "M1"
-        assert x_axis_date_type["tickformat"] == "%b %Y"
+        assert x_axis_date_type["autorange"] is True
+        assert "range" not in x_axis_date_type
+        assert "dtick" not in x_axis_date_type
+        assert "nticks" not in x_axis_date_type
+        assert "tickmode" not in x_axis_date_type
+        assert "tickvals" not in x_axis_date_type
+        assert x_axis_date_type["tickformatstops"] == [
+            {"dtickrange": ["M12", None], "value": "%Y"},
+            {"dtickrange": ["M1", "M12"], "value": "%b %Y"},
+            {"dtickrange": [None, "M1"], "value": "%d %b<br>%Y"},
+        ]
 
-    @pytest.mark.parametrize(
-        "x_axis_values, dtick",
-        (
-            [[datetime.date(year=2025, month=1, day=1)], "D7"],
-            [
-                [
-                    datetime.date(year=2025, month=1, day=1),
-                    datetime.date(year=2025, month=2, day=1),
-                    datetime.date(year=2025, month=3, day=1),
-                ],
-                WEEK_IN_MILLISECONDS,
-            ],
-            [
-                [
-                    datetime.date(year=2025, month=1, day=1),
-                    datetime.date(year=2025, month=2, day=1),
-                    datetime.date(year=2025, month=3, day=1),
-                    datetime.date(year=2025, month=4, day=1),
-                ],
-                TWO_WEEKS_IN_MILLISECONDS,
-            ],
-            [
-                [
-                    datetime.date(year=2025, month=1, day=1),
-                    datetime.date(year=2025, month=12, day=1),
-                ],
-                "M1",
-            ],
-            [
-                [
-                    datetime.date(year=2023, month=1, day=1),
-                    datetime.date(year=2025, month=1, day=1),
-                ],
-                "M3",
-            ],
-            [
-                [
-                    datetime.date(year=2022, month=1, day=1),
-                    datetime.date(year=2025, month=1, day=1),
-                ],
-                "M6",
-            ],
-            [
-                [
-                    datetime.date(year=2020, month=1, day=1),
-                    datetime.date(year=2025, month=1, day=1),
-                ],
-                "M12",
-            ],
-        ),
-    )
-    def test_get_x_axis_date_type_returns_correct_dtick(
-        self,
-        x_axis_values: list[datetime],
-        dtick: str,
-        fake_chart_settings: SingleCategoryChartSettings,
+    def test_get_x_axis_date_type_uses_one_explicit_tick_for_one_distinct_date(
+        self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
-        Given a valid date range in `x_axis_values`
+        Given an instance of `SingleCategoryChartSettings` with a single data point
         When `get_x_axis_date_type()` is called
-        Then the correct dtick value is returned for the timeseries
-            x_axis intervals.
+        Then the correct configuration is returned with one 'tickvals' representing that date
         """
-        # Given
-        fake_chart_settings.plots_data[0].x_axis_values = x_axis_values
+        single_date = datetime.date(2024, 3, 31)
+        fake_chart_settings.plots_data[0].x_axis_values = [
+            single_date,
+            single_date,
+            single_date,
+        ]
 
-        # When
         x_axis_date_type = fake_chart_settings.get_x_axis_date_type()
 
-        # Then
-        assert x_axis_date_type["dtick"] == dtick
+        assert x_axis_date_type["autorange"] is True
+        assert x_axis_date_type["tickmode"] == "array"
+        assert x_axis_date_type["tickvals"] == [single_date]
+        assert x_axis_date_type["tickformat"] == "%d %b<br>%Y"
 
-    def test_get_x_axis_date_type_calls_get_x_axis_rane(
-        self, fake_plot_data: PlotGenerationData
-    ):
-        """
-        Given an instance of `SingleCategoryChartSettings`
-        When `get_x_axis_date_type()` is called
-        Then the corrent config is returned
-        """
-        # Given
-        payload = ChartGenerationPayload(
-            chart_width=435,
-            chart_height=220,
-            plots=[fake_plot_data],
-            x_axis_title="",
-            y_axis_title="",
-        )
-        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
-
-        # When
-        x_axis_date_type = chart_settings.get_x_axis_date_type()
-
-        # Then
-        min_date, max_date = chart_settings._get_min_and_max_x_axis_values()
-        tick0 = min_date.replace(day=1)
-
-        expected_axis_config = {
-            "type": "date",
-            "dtick": "M1",
-            "tick0": tick0,
-            "tickformat": "%b<br>%Y",
-            "range": [
-                # shift first and last date 15 days for monthly intervals
-                tick0 - datetime.timedelta(days=15),
-                max_date + datetime.timedelta(days=15),
-            ],
-        }
-
-        assert x_axis_date_type == expected_axis_config
-
-    @pytest.mark.parametrize(
-        "interval, number_of_days",
-        (
-            ["D7", 1],
-            ["M1", 15],
-            ["M3", 45],
-            ["M6", 90],
-            ["M12", 178],
-            [WEEK_IN_MILLISECONDS, 1],
-            [TWO_WEEKS_IN_MILLISECONDS, 1],
-        ),
-    )
-    def test_date_range_is_padding_correctly_based_on_x_axis_interval(
-        self,
-        interval: str,
-        number_of_days: int,
-        fake_plot_data: PlotGenerationData,
-    ):
-        """
-        Given a valid `dtick` (the chart x-axis interval)
-        When the `get_timeseries_margin_days()` method is called
-        Then the correct number of days to use a padding is returned
-        """
-        # Given
-        dtick = interval
-        payload = ChartGenerationPayload(
-            chart_width=435,
-            chart_height=220,
-            plots=[fake_plot_data],
-            x_axis_title="",
-            y_axis_title="",
-        )
-        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
-
-        # When
-        expected_number_of_days = chart_settings.get_timeseries_margin_days(
-            interval=dtick
-        )
-
-        # Then
-        assert expected_number_of_days == number_of_days
-
-    def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
+    def test_get_x_axis_date_type_breaks_month_and_year_for_narrow_charts(
         self, fake_plot_data: PlotGenerationData
     ):
         """
@@ -472,7 +360,48 @@ class TestSingleCategoryChartSettings:
         x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        assert x_axis_date_type["tickformat"] == "%b<br>%Y"
+        assert x_axis_date_type["tickformatstops"][1]["value"] == "%b<br>%Y"
+
+    @pytest.mark.parametrize(
+        ("chart_width", "expected_nticks"),
+        (
+            (1099, COMPACT_X_AXIS_NTICKS),
+            (1100, FULL_WIDTH_X_AXIS_NTICKS),
+            (1200, FULL_WIDTH_X_AXIS_NTICKS),
+        ),
+    )
+    def test_get_x_axis_nticks_uses_chart_width(
+        self,
+        chart_width: int,
+        expected_nticks: int,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        fake_chart_settings._chart_generation_payload.chart_width = chart_width
+
+        assert fake_chart_settings.get_x_axis_nticks() == expected_nticks
+
+    def test_get_x_axis_config_does_not_apply_nticks_to_text_axes(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
+        fake_chart_settings.plots_data[0].x_axis_values = [
+            "category-1",
+            "category-2",
+        ]
+
+        x_axis_config = fake_chart_settings._get_x_axis_config()
+
+        assert "nticks" not in x_axis_config
+
+    def test_get_x_axis_config_does_not_apply_nticks_to_headline_data(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
+        fake_chart_settings.plots_data[0].parameters.metric = (
+            "COVID-a9_headline_vaccines_spring24Uptake"
+        )
+
+        x_axis_config = fake_chart_settings._get_x_axis_config()
+
+        assert "nticks" not in x_axis_config
 
     def test_get_x_axis_text_type(
         self, fake_chart_settings: SingleCategoryChartSettings
@@ -648,6 +577,35 @@ class TestSingleCategoryChartSettings:
         assert expected_y_axis_params == returned_y_axis_params
 
     @mock.patch.object(
+        SingleCategoryChartSettings, "_build_line_single_simplified_y_axis_value_params"
+    )
+    def test_build_line_simplified_axis_params(
+        self,
+        mock_build_y_axis_params: mock.MagicMock,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """The simplified axis parameters use the first and last plot values."""
+        first_date = datetime.date(2023, 1, 1)
+        last_date = datetime.date(2023, 10, 30)
+        fake_chart_settings.plots_data[0].x_axis_values = [first_date, last_date]
+        mock_build_y_axis_params.return_value = {
+            "y_axis_tick_values": [0, 10],
+            "y_axis_tick_text": ["0", "10"],
+            "range": [0, 10],
+        }
+
+        axis_params = fake_chart_settings._build_line_single_simplified_axis_params()
+
+        assert axis_params == {
+            "x_axis_tick_values": [first_date, last_date],
+            "x_axis_tick_text": ["Jan, 2023", "Oct, 2023"],
+            "y_axis_tick_values": [0, 10],
+            "y_axis_tick_text": ["0", "10"],
+            "range": [0, 10],
+            "rangemode": "tozero",
+        }
+
+    @mock.patch.object(
         SingleCategoryChartSettings, "_build_line_single_simplified_axis_params"
     )
     def test_get_line_single_simplified_chart_config(
@@ -816,6 +774,30 @@ class TestSingleCategoryChartSettings:
             == expected_line_multi_coloured_chart_config
         )
 
+    def test_get_common_chart_config(
+        self,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """
+        Given an insatnce of `SinglecategoryChartSettings`
+        When `get_common_chart_config()` is called
+        Then the base chart configuration includes grouped bars and the shared legend
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        common_chart_config = chart_settings.get_common_chart_config()
+
+        # Then
+        expected_common_chart_config = {
+            **chart_settings._get_base_chart_config(),
+            **chart_settings._get_legend_top_centre_config(),
+            "barmode": "group",
+        }
+
+        assert common_chart_config == expected_common_chart_config
+
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
@@ -878,21 +860,3 @@ class TestSingleCategoryChartSettings:
 
         # Then
         assert returned_date_tick_format == expected_date_tick_format
-
-    def test_get_min_and_max_x_axis_values(
-        self, fake_chart_settings: SingleCategoryChartSettings
-    ):
-        """
-        Given an instance of `SingleCategoryChartSettings`
-        When `get_min_and_max_x_axis_values()` is called
-        Then the correct dates are returned
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        min_date, max_date = chart_settings._get_min_and_max_x_axis_values()
-
-        # Then
-        assert min_date == chart_settings.plots_data[0].x_axis_values[0]
-        assert max_date == chart_settings.plots_data[0].x_axis_values[-1]
