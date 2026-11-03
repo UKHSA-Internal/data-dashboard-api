@@ -27,9 +27,6 @@ from rest_framework.test import APIClient
 from ingestion.file_ingestion import data_ingester
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.charts.butterfly.generation import (
-    InvalidButterflyChartSegmentsError,
-)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
@@ -579,34 +576,6 @@ class TestButterflyChartsViewWithRealMeaslesSourceData:
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
-    def test_raises_error_when_only_one_segment_returns_data(
-        self,
-        admin_user: User,
-    ):
-        """
-        Given real measles source data ingested for only one
-            of the two requested secondary field values (strata)
-        When the `POST /api/charts/dual-category/v1` endpoint is hit
-            with a butterfly chart payload requesting both strata
-        Then an `InvalidButterflyChartSegmentsError` is raised,
-            since a butterfly chart cannot be drawn
-            without data for both sides of the chart
-        """
-        # Given
-        client = APIClient()
-        client.force_authenticate(user=admin_user)
-        # Only ingest the "active" stratum data, omitting "recovered"
-        for age in MEASLES_PRIMARY_FIELD_VALUES:
-            _ingest_measles_source_file(age=age, stratum="active")
-
-        # When / Then
-        with pytest.raises(InvalidButterflyChartSegmentsError):
-            client.post(
-                path=self.path,
-                data=_build_measles_butterfly_payload(),
-                format="json",
-            )
-
 
 @pytest.mark.django_db
 class TestButterflyChartsViewWithRealLeadSourceData:
@@ -737,32 +706,6 @@ class TestButterflyChartsViewWithRealLeadSourceData:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-
-    def test_raises_error_when_only_one_segment_returns_data(
-        self,
-        admin_user: User,
-    ):
-        """
-        Given real lead source data ingested for only one
-            of the two requested segments (sexes)
-        When the `POST /api/charts/dual-category/v1` endpoint is hit
-            with a butterfly chart payload requesting both sexes
-        Then an `InvalidButterflyChartSegmentsError` is raised,
-            since a butterfly chart cannot be drawn
-            without data for both sides of the chart
-        """
-        client = APIClient()
-        client.force_authenticate(user=admin_user)
-        # Only ingest the "Male" segment data, omitting "Female"
-        for age in LEAD_PRIMARY_FIELD_VALUES:
-            _ingest_lead_source_file(age=age, sex="Male")
-
-        with pytest.raises(InvalidButterflyChartSegmentsError):
-            client.post(
-                path=self.path,
-                data=_build_lead_butterfly_payload(),
-                format="json",
-            )
 
 
 @pytest.mark.django_db

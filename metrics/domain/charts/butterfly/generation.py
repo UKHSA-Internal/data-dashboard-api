@@ -7,19 +7,6 @@ from metrics.domain.models.plots import ChartGenerationPayload
 BUTTERFLY_SIDES_COUNT = 2
 LEFT_HAND_SIDE_INDEX = 0
 
-BUTTERFLY_SEGMENT_COUNT_ERROR_MESSAGE = (
-    "Butterfly charts require exactly 2 segments, "
-    "one for each side of the chart. Got {segment_count}."
-)
-
-
-class InvalidButterflyChartSegmentsError(Exception):
-    def __init__(self, *, segment_count: int):
-        message = BUTTERFLY_SEGMENT_COUNT_ERROR_MESSAGE.format(
-            segment_count=segment_count
-        )
-        super().__init__(message)
-
 
 def generate_butterfly(
     *,
@@ -43,7 +30,7 @@ def generate_butterfly(
         The figure for the butterfly chart.
 
     Raises:
-        `InvalidButterflyChartSegmentsError`: If the payload does not
+        `ValueError`: If the payload does not
             resolve to exactly 2 secondary category segments.
 
     """
@@ -57,7 +44,9 @@ def generate_butterfly(
     )
 
     if len(grouped) != BUTTERFLY_SIDES_COUNT:
-        raise InvalidButterflyChartSegmentsError(segment_count=len(grouped))
+        raise ValueError(
+            f"Butterfly charts require exactly {BUTTERFLY_SIDES_COUNT} segments, got {len(grouped)}."
+        )
 
     for index, (group, data) in enumerate(grouped.items()):
         is_left_hand_side = index == LEFT_HAND_SIDE_INDEX

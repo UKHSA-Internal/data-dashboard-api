@@ -22,9 +22,6 @@ from metrics.api.serializers.charts.common import (
 from metrics.api.serializers.charts.dual_category_charts import (
     DualCategoryChartSerializer,
 )
-from metrics.domain.charts.butterfly.generation import (
-    InvalidButterflyChartSegmentsError,
-)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,

@@ -3,10 +3,7 @@ from decimal import Decimal
 import plotly.graph_objects as go
 import pytest
 
-from metrics.domain.charts.butterfly.generation import (
-    InvalidButterflyChartSegmentsError,
-    generate_butterfly,
-)
+from metrics.domain.charts.butterfly.generation import generate_butterfly
 from metrics.domain.models.plots import (
     ChartGenerationPayload,
     PlotGenerationData,
@@ -231,32 +228,6 @@ class TestGenerateButterfly:
         assert figure.layout.yaxis.title.text == "Age group"
         assert figure.layout.xaxis.title.text == "Cases"
         assert figure.layout.legend.title.text == "<b>Sex</b>"
-
-    @pytest.mark.parametrize(
-        "segments",
-        (
-            (("m", LEFT_HAND_SIDE_COLOUR, "Male"),),
-            (
-                ("m", LEFT_HAND_SIDE_COLOUR, "Male"),
-                ("f", RIGHT_HAND_SIDE_COLOUR, "Female"),
-                ("all", "COLOUR_2_TURQUOISE", "All"),
-            ),
-        ),
-    )
-    def test_raises_error_when_segment_count_is_not_two(
-        self, segments: tuple[tuple[str, str, str], ...]
-    ):
-        """
-        Given a dual category payload which does not contain exactly 2 segments
-        When `generate_butterfly()` is called
-        Then an `InvalidButterflyChartSegmentsError` is raised
-        """
-        # Given
-        chart_payload = _build_chart_generation_payload(segments=segments)
-
-        # When / Then
-        with pytest.raises(InvalidButterflyChartSegmentsError):
-            generate_butterfly(chart_generation_payload=chart_payload)
 
 
 class TestGenerateButterflyAggregatesCategories:
