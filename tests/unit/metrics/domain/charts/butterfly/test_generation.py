@@ -34,6 +34,14 @@ def _build_plot_data(
     label: str,
     metric_value: int,
 ) -> PlotGenerationData:
+    """Builds a plot for a single primary field value, for a single segment.
+
+    Notes:
+        Butterfly charts draw horizontal bars, so the metric values are
+        carried along the x-axis whilst the primary field values (eg.
+        the age bands) are carried along the y-axis as the categories.
+
+    """
     plot_parameters = PlotParameters(
         chart_type="butterfly",
         topic="Lyme-disease",
@@ -43,15 +51,15 @@ def _build_plot_data(
         geography_type="Nation",
         sex=sex,
         age=primary_field_value,
-        x_axis="age",
-        y_axis="metric",
+        x_axis="metric",
+        y_axis="age",
         line_colour=colour,
         label=label,
     )
     return PlotGenerationData(
         parameters=plot_parameters,
-        x_axis_values=[primary_field_value],
-        y_axis_values=[Decimal(metric_value)],
+        x_axis_values=[Decimal(metric_value)],
+        y_axis_values=[primary_field_value],
     )
 
 
@@ -272,8 +280,8 @@ class TestGenerateButterflyAggregatesCategories:
                     metric_value=1,
                 ).parameters,
                 # 3 data points, eg. one per week of timeseries data
-                x_axis_values=["00-04", "00-04", "00-04"],
-                y_axis_values=[Decimal(1), Decimal(2), Decimal(3)],
+                x_axis_values=[Decimal(1), Decimal(2), Decimal(3)],
+                y_axis_values=["00-04", "00-04", "00-04"],
             )
             for sex, colour, label in DEFAULT_SEGMENTS
         ]
@@ -312,8 +320,8 @@ class TestGenerateButterflyAggregatesCategories:
                     label=label,
                     metric_value=1,
                 ).parameters,
-                x_axis_values=["00-04", "00-04", "00-04"],
-                y_axis_values=[Decimal(1), Decimal(2), Decimal(7)],
+                x_axis_values=[Decimal(1), Decimal(2), Decimal(7)],
+                y_axis_values=["00-04", "00-04", "00-04"],
             )
             for sex, colour, label in DEFAULT_SEGMENTS
         ]
