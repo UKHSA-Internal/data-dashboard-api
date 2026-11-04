@@ -82,6 +82,14 @@ class TestBuildFigureConfig:
         rotated_layout = config["compact_rotated"]["layout"]
         assert rotated_layout["xaxis"]["title"]["text"] == "Percentage"
         assert rotated_layout["yaxis"]["title"]["text"] == "Category"
+        assert rotated_layout["yaxis"]["tickmode"] == "array"
+        assert rotated_layout["yaxis"]["tickvals"] == [
+            f"Category {index}" for index in range(7)
+        ]
+        assert rotated_layout["yaxis"]["ticktext"] == [
+            f"Category {index}" for index in range(7)
+        ]
+        assert rotated_layout["yaxis"]["tickangle"] == 0
         assert rotated_layout["height"] == MINIMUM_EXPECTED_COMPACT_HEIGHT
         assert rotated_layout["shapes"] == [
             {
@@ -112,6 +120,27 @@ class TestBuildFigureConfig:
             EXPECTED_NINE_BAR_COMPACT_HEIGHT
         )
         assert "height" not in config["compact"]["layout"]
+
+    def test_wraps_long_rotated_labels(self):
+        long_category = "Bournemouth, Christchurch and Poole"
+        categories = [long_category, *[f"Category {index}" for index in range(7)]]
+
+        config = build_figure_config(
+            figure={
+                "data": [{"type": "bar", "x": categories, "y": list(range(8))}],
+                "layout": {"xaxis": {}, "yaxis": {}},
+            },
+            rotate_compact=True,
+        )
+
+        rotated_layout = config["compact_rotated"]["layout"]
+        assert rotated_layout["yaxis"]["tickvals"] == categories
+        assert rotated_layout["yaxis"]["ticktext"][0] == (
+            "Bournemouth,<br>Christchurch and<br>Poole"
+        )
+        assert rotated_layout["height"] == MINIMUM_EXPECTED_COMPACT_HEIGHT
+
+        assert "ticktext" not in config["compact"]["layout"]["xaxis"]
 
     def test_rotates_subplot_axis_positions_and_axis_references(self):
         config = build_figure_config(

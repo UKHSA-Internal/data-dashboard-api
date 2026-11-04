@@ -7,6 +7,7 @@ frontend needs to apply for the selected responsive mode.
 
 import copy
 import re
+import textwrap
 from collections.abc import Mapping
 from typing import Any
 
@@ -26,6 +27,7 @@ HOVER_AXIS_PATTERN = re.compile(r"%\{(?P<axis>[xy])(?P<remainder>[^}]*)\}")
 COMPACT_CHART_BASE_HEIGHT = 200
 COMPACT_CHART_HEIGHT_PER_BAR = 25
 MINIMUM_COMPACT_CHART_HEIGHT = 400
+ROTATED_CATEGORY_LABEL_MAX_CHARACTERS = 18
 
 AXIS_POSITION_PROPERTIES = {
     "anchor",
@@ -138,6 +140,20 @@ def _axis_pairs(layout: Mapping[str, Any]):
         y_axis = layout.get(y_axis_key)
         if isinstance(y_axis, Mapping):
             yield key, y_axis_key, x_axis, y_axis
+
+
+def _wrap_rotated_category_label(category: Any) -> Any:
+    """Wrap text labels without changing the category values used by traces."""
+    if not isinstance(category, str):
+        return category
+
+    lines = textwrap.wrap(
+        category,
+        width=ROTATED_CATEGORY_LABEL_MAX_CHARACTERS,
+        break_long_words=False,
+        break_on_hyphens=False,
+    )
+    return "<br>".join(lines) if lines else category
 
 
 def _rotate_shape(shape: Mapping[str, Any]) -> dict:
@@ -269,6 +285,40 @@ def _build_layout_configs(
     return full_layout, compact_layout, compact_rotated_layout
 
 
+def _get_bar_categories(traces: list | tuple) -> list[Any]:
+    """Return distinct category positions without double-counting stacked traces."""
+    categories: list[Any] = []
+
+    for trace in traces:
+        if not isinstance(trace, Mapping) or trace.get("type") != "bar":
+            continue
+
+        x_values = trace.get("x", [])
+        if not isinstance(x_values, (list, tuple)):
+            continue
+
+        for catergory in x_values:
+            if catergory not in categories:
+                categories.append(catergory)
+
+    return categories
+
+
+def _add_wrapped_category_labels(*, layout: dict, traces: list | tuple) -> None:
+    """Wrap the y-axis labels and preserve hover values"""
+    categories = _get_bar_categories(traces)
+    y_axis = layout.get("yaxis")
+    if not categories or not isinstance(y_axis, dict):
+        return
+
+    y_axis["tickmode"] = "array"
+    y_axis["tickvals"] = copy.deepcopy(categories)
+    y_axis["ticktext"] = [
+        _wrap_rotated_category_label(category) for category in categories
+    ]
+    y_axis["tickangle"] = 0
+
+
 def _count_bar_categories(traces: list | tuple) -> int:
     """Count distinct category positions without double-counting stacked traces."""
     categories: list[Any] = []
@@ -336,6 +386,10 @@ def build_figure_config(
     )
 
     if rotate_compact:
+        _add_wrapped_category_labels(
+            layout= compact_rotated_layout,
+            traces=traces,
+        )
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
     return {
