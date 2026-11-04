@@ -72,20 +72,20 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
     def compute_butterfly_charge_xaxis_ticks(self, left_data, right_data):
 
 
-        # 2. Find the largest absolute value in the dataset
+        # Find the largest absolute value in the dataset
         max_val = float(max(max(abs(x) for x in left_data), max(abs(x) for x in right_data)))
 
-        # 3. Base the step size calculation on a maximum allowance of 4 ticks per side
+        # Base the step size calculation on a maximum allowance of 4 ticks per side
         max_ticks_per_side = 4
         target_step = max_val / max_ticks_per_side
 
-        # 4. Extract the Order of Magnitude (Power of 10)
+        # Extract the Order of Magnitude (Power of 10)
         if target_step >= 1:
             magnitude = 10 ** (len(str(int(target_step))) - 1)
         else:
             magnitude = 1
 
-        # 5. Normalize and snap to standard Plotly modifiers (1, 2, 5, or 10)
+        # Normalize and snap to standard Plotly modifiers (1, 2, 5, or 10)
         normalized_step = target_step / magnitude
         if normalized_step <= 1:
             clean_modifier = 1
@@ -98,9 +98,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
 
         clean_step = int(clean_modifier * magnitude)
 
-        # ==========================================
-        # NEW: Dynamically limit the ticks per side
-        # ==========================================
         # Calculate exactly how many steps are actually needed to cover max_val
         actual_ticks_per_side = int((max_val // clean_step) + 1)
 
@@ -108,11 +105,11 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         actual_ticks_per_side = min(actual_ticks_per_side, max_ticks_per_side)
         # ==========================================
 
-        # 6. Generate the optimized symmetric arrays
+        # Generate the optimized symmetric arrays
         tick_values = [i * clean_step for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)]
         tick_labels = [str(abs(val)) for val in tick_values]
 
-        # 7. Establish visual boundary limits tightly matching the active ticks
+        # Establish visual boundary limits tightly matching the active ticks
         axis_limit = actual_ticks_per_side * clean_step
 
         return {
