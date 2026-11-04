@@ -90,6 +90,7 @@ class TestBuildFigureConfig:
             f"Category {index}" for index in range(7)
         ]
         assert rotated_layout["yaxis"]["tickangle"] == 0
+        assert rotated_layout["yaxis"]["autorange"] == "reversed"
         assert rotated_layout["height"] == MINIMUM_EXPECTED_COMPACT_HEIGHT
         assert rotated_layout["shapes"] == [
             {
@@ -138,9 +139,26 @@ class TestBuildFigureConfig:
         assert rotated_layout["yaxis"]["ticktext"][0] == (
             "Bournemouth,<br>Christchurch and<br>Poole"
         )
+        assert rotated_layout["yaxis"]["autorange"] == "reversed"
         assert rotated_layout["height"] == MINIMUM_EXPECTED_COMPACT_HEIGHT
 
         assert "ticktext" not in config["compact"]["layout"]["xaxis"]
+        assert "autorange" not in config["compact"]["layout"]["xaxis"]
+
+    def test_preserves_non_string_and_empty_rotated_category_labels(self):
+        categories = [1, ""]
+
+        config = build_figure_config(
+            figure={
+                "data": [{"type": "bar", "x": categories, "y": [10, 20]}],
+                "layout": {"xaxis": {}, "yaxis": {}},
+            },
+            rotate_compact=True,
+        )
+
+        rotated_y_axis = config["compact_rotated"]["layout"]["yaxis"]
+        assert rotated_y_axis["tickvals"] == categories
+        assert rotated_y_axis["ticktext"] == categories
 
     def test_rotates_subplot_axis_positions_and_axis_references(self):
         config = build_figure_config(

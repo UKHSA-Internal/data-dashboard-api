@@ -317,6 +317,7 @@ def _add_wrapped_category_labels(*, layout: dict, traces: list | tuple) -> None:
         _wrap_rotated_category_label(category) for category in categories
     ]
     y_axis["tickangle"] = 0
+    y_axis["autorange"] = "reversed"
 
 
 def _count_bar_categories(traces: list | tuple) -> int:
