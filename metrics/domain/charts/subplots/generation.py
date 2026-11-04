@@ -101,7 +101,7 @@ def generate_chart_figure(
     [figure, plot_labels] = format_legend_names(figure)
 
     figure.update_layout(
-        **settings.get_subplot_chart_config(number_of_legend_items=len(plot_labels))
+        **settings.get_subplot_chart_config()
     )
     figure.update_yaxes(**settings.get_subplot_yaxis_config())
     figure.update_xaxes(**settings.get_subplot_xaxis_config())
