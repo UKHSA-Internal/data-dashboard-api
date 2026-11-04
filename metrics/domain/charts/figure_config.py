@@ -387,7 +387,7 @@ def build_figure_config(
 
     if rotate_compact:
         _add_wrapped_category_labels(
-            layout= compact_rotated_layout,
+            layout=compact_rotated_layout,
             traces=traces,
         )
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
