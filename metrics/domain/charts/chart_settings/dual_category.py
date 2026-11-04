@@ -1,3 +1,5 @@
+from plotly.graph_objs.indicator.gauge import step
+
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.single_category import (
     SingleCategoryChartSettings,
@@ -24,23 +26,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         return {**chart_config, **self._get_legend_config()}
 
     def get_butterfly_chart_config(self, values1, values2) -> dict:
-        left_wing_data = values1  # Plotted negatively
-        right_wing_data = values2
-
-        # 2. Find the single largest absolute value to ensure perfect symmetry around 0
-        max_val = float(max(max(abs(x) for x in left_wing_data), max(abs(x) for x in right_wing_data)))
-
-        # 3. Determine a clean, rounded step size (e.g., ticking by 10s, 20s, or 50s)
-        # Let's say we want 4 ticks on each side of zero (9 total ticks including 0)
-        ticks_per_side = 4
-        step = int(round(max_val / ticks_per_side))
-
-        # 4. Generate the symmetric tick positions from negative max to positive max
-        # Using an odd number of total ticks ensures 0 sits dead-centre
-        tick_values = [i * step for i in range(-ticks_per_side, ticks_per_side + 1)]
-
-        # 5. Map the tick positions to absolute (positive) strings
-        tick_labels = [str(abs(val)) for val in tick_values]
 
         tick_font = self._get_tick_font_config()
         yaxis_config = {
@@ -78,14 +63,65 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                     "text": self._chart_generation_payload.x_axis_title,
                     "font": tick_font,
                 },
-                "tickmode":"array",
-                "tickvals":tick_values,
-                "ticktext":tick_labels,
-                "range": [-max_val - (step * 0.5), max_val + (step * 0.5)]
+                **self.compute_butterfly_charge_xaxis_ticks(values1, values2),
             },
         }
 
         return {**chart_config, **self._get_legend_config()}
+
+    def compute_butterfly_charge_xaxis_ticks(self, left_data, right_data):
+
+
+        # 2. Find the largest absolute value in the dataset
+        max_val = float(max(max(abs(x) for x in left_data), max(abs(x) for x in right_data)))
+
+        # 3. Base the step size calculation on a maximum allowance of 4 ticks per side
+        max_ticks_per_side = 4
+        target_step = max_val / max_ticks_per_side
+
+        # 4. Extract the Order of Magnitude (Power of 10)
+        if target_step >= 1:
+            magnitude = 10 ** (len(str(int(target_step))) - 1)
+        else:
+            magnitude = 1
+
+        # 5. Normalize and snap to standard Plotly modifiers (1, 2, 5, or 10)
+        normalized_step = target_step / magnitude
+        if normalized_step <= 1:
+            clean_modifier = 1
+        elif normalized_step <= 2:
+            clean_modifier = 2
+        elif normalized_step <= 5:
+            clean_modifier = 5
+        else:
+            clean_modifier = 10
+
+        clean_step = int(clean_modifier * magnitude)
+
+        # ==========================================
+        # NEW: Dynamically limit the ticks per side
+        # ==========================================
+        # Calculate exactly how many steps are actually needed to cover max_val
+        actual_ticks_per_side = int((max_val // clean_step) + 1)
+
+        # Cap it at your preferred maximum constraint just in case
+        actual_ticks_per_side = min(actual_ticks_per_side, max_ticks_per_side)
+        # ==========================================
+
+        # 6. Generate the optimized symmetric arrays
+        tick_values = [i * clean_step for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)]
+        tick_labels = [str(abs(val)) for val in tick_values]
+
+        # 7. Establish visual boundary limits tightly matching the active ticks
+        axis_limit = actual_ticks_per_side * clean_step
+
+        return {
+            "tickmode": "array",
+            "tickvals": tick_values,
+            "ticktext": tick_labels,
+            "range": [-axis_limit - 1, axis_limit + 1],
+        }
+
 
     def _get_legend_config(self) -> dict:
         """
