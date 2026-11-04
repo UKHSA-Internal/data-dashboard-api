@@ -42,11 +42,12 @@ def generate_butterfly(
     categories, grouped = _group_plots_by_secondary_category(
         chart_generation_payload=chart_generation_payload,
     )
-
     if len(grouped) != BUTTERFLY_SIDES_COUNT:
         raise ValueError(
             f"Butterfly charts require exactly {BUTTERFLY_SIDES_COUNT} segments, got {len(grouped)}."
         )
+
+    maximum_value = 0.0
 
     for index, (group, data) in enumerate(grouped.items()):
         is_left_hand_side = index == LEFT_HAND_SIDE_INDEX
@@ -60,12 +61,16 @@ def generate_butterfly(
             None if value is None else -value if is_left_hand_side else value
             for value in values
         ]
+        maximum_value = max(
+            [maximum_value, *[abs(value) for value in values if value is not None]]
+        )
+        name = data["label"] or group
 
         figure.add_trace(
             go.Bar(
                 x=mirrored_values,
                 y=categories,
-                name=data["label"] or group,
+                name=name,
                 orientation="h",
                 marker={
                     "color": data["colour"],
@@ -76,6 +81,7 @@ def generate_butterfly(
 
     layout_args = settings.get_butterfly_chart_config(
         categories=categories,
+        maximum_value=maximum_value,
     )
     figure.update_layout(**layout_args)
 
