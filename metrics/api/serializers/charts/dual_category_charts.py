@@ -127,7 +127,7 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
                         "y_axis": y_axis,
                         "line_colour": segment["colour"],
                         **static_fields,
-                        x_axis: primary_field_value,
+                        self.metric_value_from_x_or_y_axis(x_axis, y_axis): primary_field_value,
                         secondary_category: segment["secondary_field_value"],
                         "chart_type": self.data["chart_type"],
                         "label": segment["label"],

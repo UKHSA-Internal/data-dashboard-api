@@ -44,7 +44,9 @@ def generate_butterfly(
     )
 
     figure.add_trace(
-        go.bar
+        go.Bar(
+
+        )
     )
 
     return figure

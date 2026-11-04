@@ -73,7 +73,6 @@ class DualCategoryChartsInterface:
             return generate_butterfly(
                 chart_generation_payload=chart_generation_payload,
             )
-        elsif chart_type == "my new chart y":
 
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
