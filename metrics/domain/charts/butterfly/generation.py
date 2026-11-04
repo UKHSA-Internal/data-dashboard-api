@@ -40,12 +40,13 @@ def generate_butterfly(
         cols=2,
         shared_xaxes=True,
         shared_yaxes=True,
-        horizontal_spacing=0.01
+        horizontal_spacing=0
     )
 
     column = 1
     values = []
-    for key in grouped.keys():
+    keys = [key for i, key in enumerate(grouped) if i < 2]
+    for key in keys:
         figure.add_trace(
             go.Bar(
                 x=grouped[key]["x_axis_values"],
@@ -67,6 +68,7 @@ def generate_butterfly(
     figure.update_xaxes(range=[0, max_val], row=1, col=1)
     figure.update_xaxes(range=[0, max_val], row=1, col=2)
     figure.update_yaxes(type="category")
+
     # layout_args = settings.get_stacked_bar_chart_config()
     # figure.update_layout(**layout_args)
 
