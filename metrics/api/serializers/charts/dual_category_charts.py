@@ -25,7 +25,6 @@ from metrics.domain.common.utils import (
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
 )
-from tests.integration.metrics.domain.charts import bar
 
 X_DOMINANT_CHARTS = [
     ChartTypes.stacked_bar.value,
