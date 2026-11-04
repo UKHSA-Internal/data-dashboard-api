@@ -35,50 +35,38 @@ def generate_butterfly(
         grouped[group]["label"] = plot.parameters.label
         grouped[group]["colour"] = selected_colour.stringified
 
-    figure = make_subplots(
-        rows=1,
-        cols=2,
-        shared_xaxes=True,
-        shared_yaxes=True,
-        horizontal_spacing=0
-    )
+    figure = go.Figure()
 
-    column = 1
     values = []
+    column = 0
     keys = [key for i, key in enumerate(grouped) if i < 2]
     for key in keys:
+        x_values = grouped[key]["x_axis_values"]
+        if (column > 0):
+            original = grouped[key]["x_axis_values"]
+            x_values = [-x for x in original]
         figure.add_trace(
             go.Bar(
-                x=grouped[key]["x_axis_values"],
+                x=x_values,
                 y=grouped[key]["y_axis_values"],
                 orientation='h',
                 name=grouped[key]["label"],
                 marker_color=grouped[key]["colour"],
                 # hovertemplate="%{y}<extra></extra>",
-            ),
-            row=1,
-            col=column
+            )
         )
         column += 1
         values.extend([grouped[key]["x_axis_values"]])
 
-    figure.update_xaxes(autorange="reversed", row=1, col=1)
+    # move to settings?
+    # figure.update_xaxes(autorange="reversed", row=1, col=1)
 
-    max_val = float(max(max(values[0]), max(values[1]))) * 1.1
-    figure.update_xaxes(range=[0, max_val], row=1, col=1)
-    figure.update_xaxes(range=[0, max_val], row=1, col=2)
-    figure.update_yaxes(type="category")
+    # move to settings?
+    # max_val = float(max(max(values[0]), max(values[1]))) * 1.1
+    # figure.update_xaxes(range=[0, max_val], row=1, col=1)
+    # figure.update_xaxes(range=[0, max_val], row=1, col=2)
 
-    # layout_args = settings.get_stacked_bar_chart_config()
-    # figure.update_layout(**layout_args)
-
-    # figure.update_layout(
-    #     title_x=0.5,
-    #     barmode="overlay",
-    #     bargap=0.2,
-    #     showlegend=False,
-    #     width=800,
-    #     height=500
-    # )
+    layout_args = settings.get_butterfly_chart_config()
+    figure.update_layout(**layout_args)
 
     return figure

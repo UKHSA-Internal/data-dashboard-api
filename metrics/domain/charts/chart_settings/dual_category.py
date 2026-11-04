@@ -1,3 +1,4 @@
+from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.single_category import (
     SingleCategoryChartSettings,
 )
@@ -19,6 +20,48 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         chart_config = self._get_base_chart_config()
 
         chart_config["barmode"] = "stack"
+
+        return {**chart_config, **self._get_legend_config()}
+
+    def get_butterfly_chart_config(self) -> dict:
+        tick_font = self._get_tick_font_config()
+        yaxis_config = {
+            "type": "category",
+            "title": {
+                "text": self._chart_generation_payload.y_axis_title,
+                "font": tick_font,
+            },
+        }
+
+        chart_config = {
+            "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+            "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+            "hoverlabel": {
+                "align": "left",
+                "bgcolor": "white",
+            },
+            "margin": {
+                "l": 0,
+                "r": 0,
+                "b": 0,
+                "t": 0,
+            },
+            # "autosize": False,
+            "height": self.height,
+            "width": self.width,
+            "showlegend": True,
+            "barmode": "overlay",
+            "yaxis": yaxis_config,
+            "xaxis": {
+                "zeroline": True,
+                "showgrid": True,
+                "gridcolor": "rgba(0,0,0,0.05)",
+                "title": {
+                    "text": self._chart_generation_payload.x_axis_title,
+                    "font": tick_font,
+                },
+            },
+        }
 
         return {**chart_config, **self._get_legend_config()}
 
