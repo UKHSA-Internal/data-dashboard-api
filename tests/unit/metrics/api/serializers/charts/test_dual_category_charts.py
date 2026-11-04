@@ -464,6 +464,7 @@ class TestDualCategoryChartSerializer:
         valid_payload["y_axis"] = "age"
         valid_payload["chart_type"] = "butterfly"
         valid_payload["primary_field_values"] = ["00-01", "01-04", "05-11", "12-15"]
+        valid_payload["secondary_field"] = "sex"
         valid_payload["segments"] = [
             {
                 "secondary_field_value": "m",
