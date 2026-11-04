@@ -3,9 +3,10 @@ from datetime import datetime
 import plotly.graph_objects as go
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from metrics.domain.charts.butterfly.generation import generate_butterfly
 from metrics.domain.charts.stacked_bar.generation import generate_stacked_bar
 from metrics.domain.common.utils import (
-    extract_metric_group_from_metric,
+    extract_metric_group_from_metric, ChartTypes,
 )
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
@@ -63,9 +64,18 @@ class DualCategoryChartsInterface:
         Returns:
             A plotly `Figure` object for the created dual-category chart.
         """
-        return generate_stacked_bar(
-            chart_generation_payload=chart_generation_payload,
-        )
+        match chart_generation_payload.plots[0].parameters.chart_type:
+
+            case ChartTypes.stacked_bar.value:
+                return generate_stacked_bar(
+                    chart_generation_payload=chart_generation_payload,
+                )
+            case ChartTypes.butterfly.value:
+                return generate_butterfly(
+                    chart_generation_payload=chart_generation_payload,
+                )
+            case _:
+                raise NotImplementedError
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
