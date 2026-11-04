@@ -66,7 +66,7 @@ def generate_butterfly(
     max_val = float(max(max(values[0]), max(values[1]))) * 1.1
     figure.update_xaxes(range=[0, max_val], row=1, col=1)
     figure.update_xaxes(range=[0, max_val], row=1, col=2)
-
+    figure.update_yaxes(type="category")
     # layout_args = settings.get_stacked_bar_chart_config()
     # figure.update_layout(**layout_args)
 
