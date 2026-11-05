@@ -387,10 +387,21 @@ def build_figure_config(
     )
 
     if rotate_compact:
+        # All rotated charts should have label text wrapped
         _add_wrapped_category_labels(
             layout=compact_rotated_layout,
             traces=traces,
         )
+        # Only stacked bar charts require legend order changes as Plotly's default is
+        # to reverse them for stacked charts in horizontal layout so we need to put
+        # then back to default (normal) for vertical layouts
+        if layout.get("barmode") == "stack":
+            source_legend = layout.get("legend", {})
+            compact_rotated_legend: dict[str, Any] = {}
+            if isinstance(source_legend, Mapping):
+                compact_rotated_legend = copy.deepcopy(dict(source_legend))
+            compact_rotated_legend["traceorder"] = "normal"
+            compact_rotated_layout["legend"] = compact_rotated_legend
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
     return {

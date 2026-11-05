@@ -122,6 +122,68 @@ class TestBuildFigureConfig:
         )
         assert "height" not in config["compact"]["layout"]
 
+    @staticmethod
+    def _build_bar_figure(*, stacked: bool) -> dict:
+        legend = {
+            "orientation": "h",
+            "x": 0.5,
+            "xanchor": "center",
+        }
+        layout = {
+            "legend": legend,
+            "xaxis": {},
+            "yaxis": {},
+        }
+        if stacked:
+            layout["barmode"] = "stack"
+
+        return {
+            "data": [
+                {"type": "bar", "name": "First", "x": ["A"], "y": [10]},
+                {"type": "bar", "name": "Second", "x": ["A"], "y": [20]},
+            ],
+            "layout": layout,
+        }
+
+    def test_leaves_legend_order_unset_for_non_rotated_stacked_bar_chart(self):
+        figure = self._build_bar_figure(stacked=True)
+
+        config = build_figure_config(figure=figure)
+
+        for mode in ("full", "compact", "compact_rotated"):
+            assert "legend" not in config[mode]["layout"]
+        assert "traceorder" not in figure["layout"]["legend"]
+
+    def test_uses_normal_legend_order_for_rotated_stacked_bar_chart(self):
+        figure = self._build_bar_figure(stacked=True)
+
+        config = build_figure_config(figure=figure, rotate_compact=True)
+
+        assert config["compact_rotated"]["layout"]["legend"] == {
+            **figure["layout"]["legend"],
+            "traceorder": "normal",
+        }
+        assert "legend" not in config["full"]["layout"]
+        assert "legend" not in config["compact"]["layout"]
+        assert "traceorder" not in figure["layout"]["legend"]
+
+    def test_leaves_legend_order_unset_for_non_rotated_non_stacked_bar_chart(self):
+        figure = self._build_bar_figure(stacked=False)
+
+        config = build_figure_config(figure=figure)
+
+        for mode in ("full", "compact", "compact_rotated"):
+            assert "legend" not in config[mode]["layout"]
+        assert "traceorder" not in figure["layout"]["legend"]
+
+    def test_leaves_legend_order_unset_for_rotated_non_stacked_bar_chart(self):
+        figure = self._build_bar_figure(stacked=False)
+
+        config = build_figure_config(figure=figure, rotate_compact=True)
+
+        assert "legend" not in config["compact_rotated"]["layout"]
+        assert "traceorder" not in figure["layout"]["legend"]
+
     def test_wraps_long_rotated_labels(self):
         long_category = "Bournemouth, Christchurch and Poole"
         categories = [long_category, *[f"Category {index}" for index in range(7)]]
