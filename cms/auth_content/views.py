@@ -17,15 +17,11 @@ def export_user_permission_sets_csv(request):
     if not request.user.is_superuser:
         raise PermissionDenied
 
-    user_id = (
-        request.user.id
-        if request.user and request.user.is_authenticated
-        else "anonymous"
-    )
+    user_id = request.user.id
     audit_logger.info(
         "User permission sets exported to CSV",
         extra={
-            "user": user_id,
+            "user": request.user.id,
             "action": "CSV EXPORT",
             "target": "Users and permissions",
         },
