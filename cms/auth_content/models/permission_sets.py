@@ -123,7 +123,9 @@ class PermissionSet(models.Model):
 
     @property
     def global_access(self):
-        return self.theme == WILDCARD_ID_VALUE and self.geography_type == WILDCARD_ID_VALUE
+        return (
+            self.theme == WILDCARD_ID_VALUE and self.geography_type == WILDCARD_ID_VALUE
+        )
 
     panels = [
         FieldPanel("display_name"),

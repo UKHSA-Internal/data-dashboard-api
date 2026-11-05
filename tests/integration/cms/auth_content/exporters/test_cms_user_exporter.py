@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from wagtail.test.utils import WagtailTestUtils
 
+
 @pytest.mark.django_db
 class TestCmsUserPermissions(TestCase, WagtailTestUtils):
 
