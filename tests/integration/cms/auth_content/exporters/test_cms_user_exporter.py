@@ -2,12 +2,10 @@ import pytest
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.messages import get_messages
 from wagtail.test.utils import WagtailTestUtils
 
-
 @pytest.mark.django_db
-class Test(TestCase, WagtailTestUtils):
+class TestCmsUserPermissions(TestCase, WagtailTestUtils):
 
     def setUp(self):
         super().setUp()
