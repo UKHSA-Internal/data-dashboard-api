@@ -150,6 +150,7 @@ class TestDualCategoryChartsInterface:
         charts_interface = DualCategoryChartsInterface(
             chart_request_params=dual_category_chart_request_params,
         )
+        fake_plot_data.parameters.chart_type = "stacked_bar"
         chart_generation_payload = ChartGenerationPayload(
             chart_width=320,
             chart_height=200,

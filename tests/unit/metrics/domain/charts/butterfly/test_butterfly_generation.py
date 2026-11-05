@@ -1,14 +1,12 @@
 import random
 
-from metrics.domain.models import ChartGenerationPayload, PlotGenerationData, PlotParameters
-
 from metrics.domain.charts.butterfly.generation import generate_butterfly
-from tests.factories.metrics import geography
+from metrics.domain.models import ChartGenerationPayload, PlotGenerationData, PlotParameters
 
 HEIGHT = 400
 WIDTH = 640
 
-class TestGenerationButterfly:
+class TestGenerateButterfly:
 
     def test_generate_butterfly_chart(self):
 
