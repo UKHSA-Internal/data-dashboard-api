@@ -215,7 +215,7 @@ class TestChartTypes:
             "line_multi_coloured",
             "line_single_simplified",
             "stacked_bar",
-            "pyramid",
+            "butterfly",
         ]
         assert values == expected_values
 
@@ -230,7 +230,7 @@ class TestChartTypes:
         choices = ChartTypes.dual_category_chart_options()
 
         # Then
-        assert choices == (("stacked_bar", "stacked_bar"),)
+        assert choices == (("stacked_bar", "stacked_bar"), ("butterfly", "butterfly"))
 
     @pytest.mark.parametrize(
         "metric_name",
