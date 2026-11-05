@@ -17,7 +17,6 @@ def export_user_permission_sets_csv(request):
     if not request.user.is_superuser:
         raise PermissionDenied
 
-    user_id = request.user.id
     audit_logger.info(
         "User permission sets exported to CSV",
         extra={
