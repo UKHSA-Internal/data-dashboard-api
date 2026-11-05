@@ -42,7 +42,7 @@ def generate_butterfly(
     keys = [key for i, key in enumerate(grouped) if i < 2]
     for key in keys:
         x_values = grouped[key]["x_axis_values"]
-        if (column > 0):
+        if column < 1:
             original = grouped[key]["x_axis_values"]
             x_values = [-x for x in original]
         figure.add_trace(
