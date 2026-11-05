@@ -2,7 +2,6 @@ import csv
 
 FORMULA_TRIGGERS = ("=", "+", "-", "@", "|")
 
-
 class Echo:
     @staticmethod
     def write(value):
@@ -10,6 +9,17 @@ class Echo:
 
 
 def generate_user_permission_sets_csv_rows(users):
+    """
+        Generate a csv row for each user's permission sets
+        Sanitises rows to escape special characters in FORMULA_TRIGGERS
+
+        Args:
+            Users to covert to csv
+    """
+
+
+
+
     writer = csv.writer(Echo())
     yield writer.writerow(
         ["User ID", "Permission Set", "Gives Global Access", "Permissions"]
@@ -28,6 +38,13 @@ def generate_user_permission_sets_csv_rows(users):
 
 
 def sanitise_row(row):
+    """
+        Sanitise a row of data to escape special characters
+        checks the first character of each cell in the row
+
+        Args:
+            row: the row to sanitise
+    """
     sanitised_row = []
     for cell in row:
         cell_str = str(cell)
