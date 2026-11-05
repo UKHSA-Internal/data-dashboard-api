@@ -92,7 +92,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         yaxis_config = {
             "type": "category",
             "title": {
-                "text": self._chart_generation_payload.x_axis_title,
+                "text": self._chart_generation_payload.y_axis_title,
                 "font": tick_font,
             },
         }
@@ -105,7 +105,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
             "showgrid": True,
             "gridcolor": "rgba(0,0,0,0.05)",
             "title": {
-                "text": self._chart_generation_payload.y_axis_title,
+                "text": self._chart_generation_payload.x_axis_title,
                 "font": tick_font,
             },
         }

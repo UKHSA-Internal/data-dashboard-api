@@ -4,7 +4,6 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
 from metrics.domain.models.plots import ChartGenerationPayload
 
-BUTTERFLY_SIDES_COUNT = 2
 LEFT_HAND_SIDE_INDEX = 0
 
 
@@ -42,10 +41,6 @@ def generate_butterfly(
     categories, grouped = _group_plots_by_secondary_category(
         chart_generation_payload=chart_generation_payload,
     )
-    if len(grouped) != BUTTERFLY_SIDES_COUNT:
-        raise ValueError(
-            f"Butterfly charts require exactly {BUTTERFLY_SIDES_COUNT} segments, got {len(grouped)}."
-        )
 
     maximum_value = 0.0
 
