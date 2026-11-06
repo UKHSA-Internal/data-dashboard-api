@@ -28,10 +28,6 @@ def generate_stacked_bar(
         chart_generation_payload=chart_generation_payload,
     )
 
-    grouped: dict[str, dict] = defaultdict(
-        lambda: {"x_axis_values": [], "y_axis_values": []}
-    )
-
     grouped = extract_grouped_data_from_chart_generation_payload(
         chart_generation_payload=chart_generation_payload
     )
