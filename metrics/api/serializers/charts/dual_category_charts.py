@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.request import Request
+from sqlalchemy import null
+from wagtail.api.v2.utils import BadRequestError
 
 from metrics.api.serializers import help_texts
 from metrics.api.serializers.charts.common import (
@@ -121,37 +123,24 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
 
         else:
             if (self.data["chart_type"] in X_DOMINANT_CHARTS):
-                for primary_field_value in primary_field_values:
-                    plots = [
-                        {
-                            "x_axis": x_axis,
-                            "y_axis": y_axis,
-                            "line_colour": segment["colour"],
-                            **static_fields,
-                            x_axis: primary_field_value,
-                            secondary_category: segment["secondary_field_value"],
-                            "chart_type": self.data["chart_type"],
-                            "label": segment["label"],
-                        }
-                        for segment in segments
-                    ]
-                    groups_plots.extend(plots)
+                axis_field_to_add = x_axis
             elif (self.data["chart_type"] in Y_DOMINANT_CHARTS):
-                for primary_field_value in primary_field_values:
-                    plots = [
-                        {
-                            "x_axis": x_axis,
-                            "y_axis": y_axis,
-                            "line_colour": segment["colour"],
-                            **static_fields,
-                            y_axis: primary_field_value,
-                            secondary_category: segment["secondary_field_value"],
-                            "chart_type": self.data["chart_type"],
-                            "label": segment["label"],
-                        }
-                        for segment in segments
-                    ]
-                    groups_plots.extend(plots)
+                axis_field_to_add = y_axis
+            for primary_field_value in primary_field_values:
+                plots = [
+                    {
+                        "x_axis": x_axis,
+                        "y_axis": y_axis,
+                        "line_colour": segment["colour"],
+                        **static_fields,
+                        axis_field_to_add: primary_field_value,
+                        secondary_category: segment["secondary_field_value"],
+                        "chart_type": self.data["chart_type"],
+                        "label": segment["label"],
+                    }
+                    for segment in segments
+                ]
+                groups_plots.extend(plots)
 
         return DualCategoryChartRequestParams(
             chart_type=self.data["chart_type"],
