@@ -447,3 +447,68 @@ class TestDualCategoryChartSerializer:
             assert getattr(plot, x_axis) == primary_field_value
             assert getattr(plot, secondary_category) == segment["secondary_field_value"]
             assert plot.line_colour == segment["colour"]
+
+    def test_to_models_builds_headline_plots_with_primary_field_values_for_y_dominant_graph(self):
+        """
+           Given a valid payload with a headline metric and primary field values for a Y Dominant Graph
+           When `to_models()` is called from the serializer
+           Then one plot per segment is returned for each primary field value
+        """
+        # Given
+        fake_metric = FakeMetricFactory.build_example_metric(
+            metric_name=HEADLINE_METRIC,
+            metric_group_name="headline",
+        )
+        fake_topic = fake_metric.metric_group.topic
+        metric_manager = FakeMetricManager([fake_metric])
+        topic_manager = FakeTopicManager([fake_topic])
+        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        valid_payload["chart_type"] = "butterfly"
+        valid_payload["static_fields"] = valid_payload["static_fields"].copy()
+        valid_payload["static_fields"]["topic"] = fake_topic.name
+        valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        valid_payload["primary_field_values"] = ["00-01", "01-04", "04-25"]
+        valid_payload["secondary_category"] = "sex"
+        valid_payload["y_axis"] = ChartAxisFields.age.name
+        valid_payload["x_axis"] = ChartAxisFields.metric.name
+
+        valid_payload["segments"][0]["secondary_field_value"] = "m"
+        valid_payload["segments"][0]["label"] = "Male"
+        valid_payload["segments"][1]["secondary_field_value"] = "f"
+        valid_payload["segments"][1]["label"] = "Female"
+
+        serializer_context = {
+            "topic_manager": topic_manager,
+            "metric_manager": metric_manager,
+        }
+        serializer = DualCategoryChartSerializer(
+            data=valid_payload,
+            context=serializer_context,
+        )
+        serializer.fields["static_fields"] = PlotSerializer(context=serializer_context)
+        serializer.is_valid(raise_exception=True)
+
+        # When
+        result: DualCategoryChartRequestParams = serializer.to_models(request=None)
+
+        # Then
+        segments = valid_payload["segments"]
+        secondary_category = valid_payload["secondary_category"]
+        y_axis = valid_payload["y_axis"]
+
+        assert result.primary_field_values == ["00-01", "01-04", "04-25"]
+        assert len(result.plots) == len(segments) * len(
+            valid_payload["primary_field_values"]
+        )
+
+        for index, plot in enumerate(result.plots):
+            segment_index = index % len(segments)
+            primary_index = index // len(segments)
+            segment = segments[segment_index]
+            primary_field_value = valid_payload["primary_field_values"][primary_index]
+
+            assert plot.y_axis == y_axis
+            assert getattr(plot, y_axis) == primary_field_value
+            assert getattr(plot, secondary_category) == segment["secondary_field_value"]
+            assert plot.line_colour == segment["colour"]
+            assert plot.chart_type == valid_payload["chart_type"]
