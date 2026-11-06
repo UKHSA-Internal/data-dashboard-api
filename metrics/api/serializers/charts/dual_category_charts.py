@@ -26,6 +26,14 @@ from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
 )
 
+X_DOMINANT_CHARTS = [
+    ChartTypes.stacked_bar.value,
+]
+
+Y_DOMINANT_CHARTS = [
+    ChartTypes.butterfly.value,
+]
+
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
     secondary_field_value = serializers.CharField(
@@ -112,6 +120,10 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             groups_plots.extend(plots)
 
         else:
+            if self.data["chart_type"] in X_DOMINANT_CHARTS:
+                axis_field_to_add = x_axis
+            elif self.data["chart_type"] in Y_DOMINANT_CHARTS:
+                axis_field_to_add = y_axis
             for primary_field_value in primary_field_values:
                 plots = [
                     {
@@ -119,7 +131,7 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
                         "y_axis": y_axis,
                         "line_colour": segment["colour"],
                         **static_fields,
-                        x_axis: primary_field_value,
+                        axis_field_to_add: primary_field_value,
                         secondary_category: segment["secondary_field_value"],
                         "chart_type": self.data["chart_type"],
                         "label": segment["label"],
