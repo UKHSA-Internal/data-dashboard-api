@@ -1,5 +1,3 @@
-import copy
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -34,8 +32,9 @@ class TestEncodedDualCategoryChartResponseSerializer:
             "alt_text": "Chart description",
             "figure": {},
             "figure_config": {
-                "xaxis_full": {"nticks": 13},
-                "xaxis_compact": {"nticks": 5},
+                "full": {"data": [], "layout": {"axis": {"nticks": 13}}},
+                "compact": {"data": [], "layout": {"axis": {"nticks": 5}}},
+                "compact_rotated": {"data": [], "layout": {"axis": {"nticks": 5}}},
             },
         }
 
@@ -48,13 +47,21 @@ class TestEncodedDualCategoryChartResponseSerializer:
             == self.valid_payload["figure_config"]
         )
 
-    def test_figure_config_can_be_omitted(self):
+    def test_figure_config_is_required(self):
         payload = self.valid_payload
         payload.pop("figure_config")
         serializer = EncodedDualCategoryChartResponseSerializer(data=payload)
 
-        serializer.is_valid(raise_exception=True)
-        assert "figure_config" not in serializer.validated_data
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_compact_rotated_mode_is_required(self):
+        payload = self.valid_payload
+        payload["figure_config"].pop("compact_rotated")
+        serializer = EncodedDualCategoryChartResponseSerializer(data=payload)
+
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
 
 
 class TestDualCategoryChartSegmentSerializer:
