@@ -75,7 +75,7 @@ class DualCategoryChartsInterface:
                     chart_generation_payload=chart_generation_payload,
                 )
             case _:
-                raise NotImplementedError
+                raise NotImplementedError("Chart type not supported")
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
