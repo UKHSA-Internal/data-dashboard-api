@@ -22,6 +22,7 @@ class ChartTypes(Enum):
 
     # Dual category charts
     stacked_bar = "stacked_bar"
+    butterfly = "butterfly"
     pyramid = "pyramid"
 
     @classmethod
@@ -117,6 +118,7 @@ class ChartTypes(Enum):
         """
         selectable = (
             cls.stacked_bar,
+            cls.butterfly
             # Note: Uncomment this once we have a proper pyramid chart implementation
             # cls.pyramid,
         )
@@ -210,6 +212,7 @@ def extract_metric_group_from_metric(metric: str) -> str | None:
         if no matching metric group is found then a `ValueError` is
         raised due to an invalid metric value.
     """
+    print(metric)
     if DataSourceFileType.headline.value in metric:
         return DataSourceFileType.headline.value
 
