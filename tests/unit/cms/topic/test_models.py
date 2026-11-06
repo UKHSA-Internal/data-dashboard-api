@@ -252,6 +252,8 @@ class TestTemplateCOVID19Page:
             "is_public",
             "page_classification",
             "selected_topics",
+            "theme_name",
+            "sub_theme_name",
         ],
     )
     def test_api_fields(self, expected_api_field: str):
@@ -709,3 +711,26 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
+
+
+class TestTopicPageThemeProperties:
+    def test_theme_name_returns_none_when_theme_is_not_set(self):
+        """
+        Given a `TopicPage` with no theme set
+        When the `theme_name` property is called
+        Then None is returned
+        """
+        # Given
+        spy_theme_manager = mock.Mock()
+        page = TopicPage(
+            theme_manager=spy_theme_manager,
+            content_type_id=1,
+        )
+        page.theme = None
+
+        # When
+        theme_name = page.theme_name
+
+        # Then
+        assert theme_name is None
+        spy_theme_manager.get_name_by_id.assert_not_called()
