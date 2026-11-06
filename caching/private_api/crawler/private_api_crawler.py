@@ -1,5 +1,6 @@
 import logging
 import re
+from http import HTTPStatus
 from typing import Self
 
 import django
@@ -271,7 +272,9 @@ class PrivateAPICrawler:
                     chart_block=chart_card_content, file_format=file_format
                 )
             )
-            downloads.append({"name": filename, "content": response.content})
+            # this avoids error content being added to the downloads
+            if response.status_code == HTTPStatus.OK:
+                downloads.append({"name": filename, "content": response.content})
 
         return downloads
 
@@ -360,16 +363,18 @@ class PrivateAPICrawler:
 
         for page in pages:
             try:
-                downloads.append(
-                    {
-                        "directory_name": self.create_directory_name_for_downloads(
-                            file_name=page.title
-                        ),
-                        "downloads": self.get_downloads_from_page_sections(
-                            sections=page.body.raw_data, file_format=file_format
-                        ),
-                    }
+                page_downloads = self.get_downloads_from_page_sections(
+                    sections=page.body.raw_data, file_format=file_format
                 )
+                if len(page_downloads) > 0:
+                    downloads.append(
+                        {
+                            "directory_name": self.create_directory_name_for_downloads(
+                                file_name=page.title
+                            ),
+                            "downloads": page_downloads,
+                        }
+                    )
             except AttributeError:
                 logger.info("Page %s does not contain chart data", page)
                 continue
