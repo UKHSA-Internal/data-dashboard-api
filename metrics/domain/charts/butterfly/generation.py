@@ -52,19 +52,10 @@ def generate_butterfly(
                 orientation='h',
                 name=grouped[key]["label"],
                 marker_color=grouped[key]["colour"],
-                # hovertemplate="%{y}<extra></extra>",
             )
         )
         column += 1
         values.extend([grouped[key]["x_axis_values"]])
-
-    # move to settings?
-    # figure.update_xaxes(autorange="reversed", row=1, col=1)
-
-    # move to settings?
-    # max_val = float(max(max(values[0]), max(values[1]))) * 1.1
-    # figure.update_xaxes(range=[0, max_val], row=1, col=1)
-    # figure.update_xaxes(range=[0, max_val], row=1, col=2)
 
     layout_args = settings.get_butterfly_chart_config(values[0], values[1])
     figure.update_layout(**layout_args)
