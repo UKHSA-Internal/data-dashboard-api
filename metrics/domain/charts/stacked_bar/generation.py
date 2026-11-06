@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import plotly.graph_objects as go
 
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
