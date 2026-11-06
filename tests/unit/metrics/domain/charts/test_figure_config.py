@@ -46,8 +46,14 @@ class TestBuildFigureConfig:
                 }
             ],
             "layout": {
-                "xaxis": {"title": {"text": "Category"}},
+                "xaxis": {
+                    "title": {
+                        "text": "Category",
+                        "font": {"family": "Arial", "color": "#0b0c0c"},
+                    }
+                },
                 "yaxis": {"title": {"text": "Percentage"}},
+                "margin": {"l": 0, "r": 0, "b": 0, "t": 0},
                 "shapes": [
                     {
                         "type": "line",
@@ -81,7 +87,7 @@ class TestBuildFigureConfig:
 
         rotated_layout = config["compact_rotated"]["layout"]
         assert rotated_layout["xaxis"]["title"]["text"] == "Percentage"
-        assert rotated_layout["yaxis"]["title"]["text"] == "Category"
+        assert "title" not in rotated_layout["yaxis"]
         assert rotated_layout["yaxis"]["tickmode"] == "array"
         assert rotated_layout["yaxis"]["tickvals"] == [
             f"Category {index}" for index in range(7)
@@ -91,6 +97,22 @@ class TestBuildFigureConfig:
         ]
         assert rotated_layout["yaxis"]["tickangle"] == 0
         assert rotated_layout["yaxis"]["autorange"] == "reversed"
+        assert rotated_layout["annotations"] == [
+            {
+                "text": "Category",
+                "xref": "paper",
+                "yref": "paper",
+                "x": 0,
+                "y": 1.05,
+                "xanchor": "center",
+                "yanchor": "bottom",
+                "showarrow": False,
+                "align": "left",
+                "textangle": 0,
+                "font": {"family": "Arial", "color": "#0b0c0c", "size": 14},
+            }
+        ]
+        assert rotated_layout["margin"] == {"l": 0, "r": 0, "b": 0, "t": 50}
         assert rotated_layout["height"] == MINIMUM_EXPECTED_COMPACT_HEIGHT
         assert rotated_layout["shapes"] == [
             {
@@ -128,6 +150,8 @@ class TestBuildFigureConfig:
             "orientation": "h",
             "x": 0.5,
             "xanchor": "center",
+            "y": 1,
+            "yanchor": "bottom",
         }
         layout = {
             "legend": legend,
@@ -154,13 +178,15 @@ class TestBuildFigureConfig:
             assert "legend" not in config[mode]["layout"]
         assert "traceorder" not in figure["layout"]["legend"]
 
-    def test_uses_normal_legend_order_for_rotated_stacked_bar_chart(self):
+    def test_uses_bottom_legend_with_normal_order_for_rotated_stacked_bar_chart(self):
         figure = self._build_bar_figure(stacked=True)
 
         config = build_figure_config(figure=figure, rotate_compact=True)
 
         assert config["compact_rotated"]["layout"]["legend"] == {
             **figure["layout"]["legend"],
+            "y": -0.2,
+            "yanchor": "top",
             "traceorder": "normal",
         }
         assert "legend" not in config["full"]["layout"]
@@ -176,12 +202,19 @@ class TestBuildFigureConfig:
             assert "legend" not in config[mode]["layout"]
         assert "traceorder" not in figure["layout"]["legend"]
 
-    def test_leaves_legend_order_unset_for_rotated_non_stacked_bar_chart(self):
+    def test_uses_bottom_legend_without_setting_order_for_rotated_non_stacked_chart(
+        self,
+    ):
         figure = self._build_bar_figure(stacked=False)
 
         config = build_figure_config(figure=figure, rotate_compact=True)
 
-        assert "legend" not in config["compact_rotated"]["layout"]
+        assert config["compact_rotated"]["layout"]["legend"] == {
+            **figure["layout"]["legend"],
+            "y": -0.2,
+            "yanchor": "top",
+        }
+        assert "traceorder" not in config["compact_rotated"]["layout"]["legend"]
         assert "traceorder" not in figure["layout"]["legend"]
 
     def test_wraps_long_rotated_labels(self):
@@ -298,6 +331,8 @@ class TestBuildFigureConfig:
             figure={
                 "data": [{"type": "bar", "x": ["A"], "y": [1]}],
                 "layout": {
+                    "xaxis": {"title": {"text": "Category"}},
+                    "yaxis": {},
                     "annotations": [
                         watermark,
                         {
@@ -318,7 +353,7 @@ class TestBuildFigureConfig:
                             "xanchor": "left",
                             "yanchor": "top",
                         },
-                    ]
+                    ],
                 },
             },
             rotate_compact=True,
@@ -344,6 +379,19 @@ class TestBuildFigureConfig:
             "xanchor": "right",
             "yanchor": "bottom",
             "textangle": -90,
+        }
+        assert annotations[3] == {
+            "text": "Category",
+            "xref": "paper",
+            "yref": "paper",
+            "x": 0,
+            "y": 1.05,
+            "xanchor": "center",
+            "yanchor": "bottom",
+            "showarrow": False,
+            "align": "left",
+            "textangle": 0,
+            "font": {"size": 14},
         }
 
     def test_handles_invalid_figure_parts_and_trace_values(self):

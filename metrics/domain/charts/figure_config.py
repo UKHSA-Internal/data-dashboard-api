@@ -28,6 +28,9 @@ COMPACT_CHART_BASE_HEIGHT = 200
 COMPACT_CHART_HEIGHT_PER_BAR = 25
 MINIMUM_COMPACT_CHART_HEIGHT = 400
 ROTATED_CATEGORY_LABEL_MAX_CHARACTERS = 18
+ROTATED_Y_AXIS_TITLE_TOP_MARGIN = 50
+ROTATED_Y_AXIS_TITLE_FONT_SIZE = 14
+ROTATED_LEGEND_Y_POSITION = -0.2
 
 AXIS_POSITION_PROPERTIES = {
     "anchor",
@@ -320,6 +323,44 @@ def _add_wrapped_category_labels(*, layout: dict, traces: list | tuple) -> None:
     y_axis["autorange"] = "reversed"
 
 
+def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) -> None:
+    """Replace the rotated y-axis title with horizontal text above the axis."""
+    y_axis = layout.get("yaxis")
+    if not isinstance(y_axis, dict):
+        return
+
+    title = y_axis.get("title")
+    if not isinstance(title, Mapping) or not title.get("text"):
+        return
+
+    y_axis.pop("title")
+    source_font = title.get("font")
+    annotation_font = (
+        copy.deepcopy(dict(source_font)) if isinstance(source_font, Mapping) else {}
+    )
+    annotation_font.setdefault("size", ROTATED_Y_AXIS_TITLE_FONT_SIZE)
+    title_annotation = {
+        "text": copy.deepcopy(title["text"]),
+        "xref": "paper",
+        "yref": "paper",
+        "x": 0,
+        "y": 1.05,
+        "xanchor": "center",
+        "yanchor": "bottom",
+        "showarrow": False,
+        "align": "left",
+        "textangle": 0,
+        "font": annotation_font,
+    }
+
+    layout.setdefault("annotations", []).append(title_annotation)
+    rotated_margin = (
+        copy.deepcopy(dict(source_margin)) if isinstance(source_margin, Mapping) else {}
+    )
+    rotated_margin["t"] = ROTATED_Y_AXIS_TITLE_TOP_MARGIN
+    layout["margin"] = rotated_margin
+
+
 def _count_bar_categories(traces: list | tuple) -> int:
     """Count distinct category positions without double-counting stacked traces."""
     categories: list[Any] = []
@@ -392,15 +433,19 @@ def build_figure_config(
             layout=compact_rotated_layout,
             traces=traces,
         )
+        _add_rotated_y_axis_title_annotation(
+            layout=compact_rotated_layout, source_margin=layout.get("margin")
+        )
         # Only stacked bar charts require legend order changes as Plotly's default is
         # to reverse them for stacked charts in horizontal layout so we need to put
         # then back to default (normal) for vertical layouts
-        if layout.get("barmode") == "stack":
-            source_legend = layout.get("legend", {})
-            compact_rotated_legend: dict[str, Any] = {}
-            if isinstance(source_legend, Mapping):
-                compact_rotated_legend = copy.deepcopy(dict(source_legend))
-            compact_rotated_legend["traceorder"] = "normal"
+        source_legend = layout.get("legend")
+        if isinstance(source_legend, Mapping):
+            compact_rotated_legend = copy.deepcopy(dict(source_legend))
+            compact_rotated_legend["y"] = ROTATED_LEGEND_Y_POSITION
+            compact_rotated_legend["yanchor"] = "top"
+            if layout.get("barmode") == "stack":
+                compact_rotated_legend["traceorder"] = "normal"
             compact_rotated_layout["legend"] = compact_rotated_legend
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
