@@ -143,7 +143,7 @@ class TestChartTypes:
             "line_multi_coloured",
             "line_single_simplified",
             "stacked_bar",
-            "butterfly"
+            "butterfly",
         )
         assert choices == tuple((choice, choice) for choice in _choices)
 

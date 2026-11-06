@@ -117,7 +117,7 @@ class ChartTypes(Enum):
         """
         selectable = (
             cls.stacked_bar,
-            cls.butterfly
+            cls.butterfly,
             # Note: Uncomment this once we have a proper pyramid chart implementation
             # cls.pyramid,
         )

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from rest_framework.request import Request
-from sqlalchemy import null
-from wagtail.api.v2.utils import BadRequestError
 
 from metrics.api.serializers import help_texts
 from metrics.api.serializers.charts.common import (
@@ -122,9 +120,9 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             groups_plots.extend(plots)
 
         else:
-            if (self.data["chart_type"] in X_DOMINANT_CHARTS):
+            if self.data["chart_type"] in X_DOMINANT_CHARTS:
                 axis_field_to_add = x_axis
-            elif (self.data["chart_type"] in Y_DOMINANT_CHARTS):
+            elif self.data["chart_type"] in Y_DOMINANT_CHARTS:
                 axis_field_to_add = y_axis
             for primary_field_value in primary_field_values:
                 plots = [

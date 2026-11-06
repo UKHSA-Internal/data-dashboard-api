@@ -1,10 +1,15 @@
 import random
 
 from metrics.domain.charts.butterfly.generation import generate_butterfly
-from metrics.domain.models import ChartGenerationPayload, PlotGenerationData, PlotParameters
+from metrics.domain.models import (
+    ChartGenerationPayload,
+    PlotGenerationData,
+    PlotParameters,
+)
 
 HEIGHT = 400
 WIDTH = 640
+
 
 class TestGenerateButterfly:
 
@@ -27,7 +32,7 @@ class TestGenerateButterfly:
             geography_type="test",
             label=left_label,
             sex="m",
-            line_colour="BLUE"
+            line_colour="BLUE",
         )
         right_label = "Right"
         right_plot_params = PlotParameters(
@@ -38,7 +43,7 @@ class TestGenerateButterfly:
             geography_type="test",
             label=right_label,
             sex="f",
-            line_colour = "RED"
+            line_colour="RED",
         )
         for i in range(random_count):
             plots.append(

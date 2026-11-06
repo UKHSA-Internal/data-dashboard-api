@@ -448,11 +448,13 @@ class TestDualCategoryChartSerializer:
             assert getattr(plot, secondary_category) == segment["secondary_field_value"]
             assert plot.line_colour == segment["colour"]
 
-    def test_to_models_builds_headline_plots_with_primary_field_values_for_y_dominant_graph(self):
+    def test_to_models_builds_headline_plots_with_primary_field_values_for_y_dominant_graph(
+        self,
+    ):
         """
-           Given a valid payload with a headline metric and primary field values for a Y Dominant Graph
-           When `to_models()` is called from the serializer
-           Then one plot per segment is returned for each primary field value
+        Given a valid payload with a headline metric and primary field values for a Y Dominant Graph
+        When `to_models()` is called from the serializer
+        Then one plot per segment is returned for each primary field value
         """
         # Given
         fake_metric = FakeMetricFactory.build_example_metric(

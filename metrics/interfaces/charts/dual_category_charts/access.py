@@ -6,7 +6,8 @@ from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts.butterfly.generation import generate_butterfly
 from metrics.domain.charts.stacked_bar.generation import generate_stacked_bar
 from metrics.domain.common.utils import (
-    extract_metric_group_from_metric, ChartTypes,
+    ChartTypes,
+    extract_metric_group_from_metric,
 )
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
@@ -19,6 +20,8 @@ from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts.common.chart_output import ChartOutput
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
+
+NOT_SUPPORTED = "Chart type not supported"
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
@@ -75,7 +78,7 @@ class DualCategoryChartsInterface:
                     chart_generation_payload=chart_generation_payload,
                 )
             case _:
-                raise NotImplementedError("Chart type not supported")
+                raise NotImplementedError(NOT_SUPPORTED)
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots

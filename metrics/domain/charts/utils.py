@@ -2,7 +2,7 @@ from collections import defaultdict
 from decimal import Decimal
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.models import ChartRequestParams, ChartGenerationPayload
+from metrics.domain.models import ChartGenerationPayload
 
 SUFFIXES = ["", "k", "m"]
 E_NOTATION = [1e0, 1e3, 1e6, 1e9]
@@ -119,9 +119,10 @@ def return_formatted_min_y_axis_value(
     min_value = _extract_min_value(y_axis_values=y_axis_values)
     return convert_large_numbers_to_short_text(number=min_value)
 
-def extract_grouped_data_from_chart_generation_payload(
-    chart_generation_payload: ChartGenerationPayload):
 
+def extract_grouped_data_from_chart_generation_payload(
+    chart_generation_payload: ChartGenerationPayload,
+):
     """
     Returns a grouped data from `chart_generation_payload`
 

@@ -176,11 +176,11 @@ class TestDualCategoryChartsInterface:
     @mock.patch(f"{MODULE_PATH}.generate_butterfly")
     @mock.patch(f"{MODULE_PATH}.generate_stacked_bar")
     def test_build_chart_figure_delegates_call_to_generate_butterfly(
-            self,
-            mock_generate_stacked_bar: mock.MagicMock,
-            mock_generate_butterfly: mock.MagicMock,
-            dual_category_chart_request_params: DualCategoryChartRequestParams,
-            fake_plot_data,
+        self,
+        mock_generate_stacked_bar: mock.MagicMock,
+        mock_generate_butterfly: mock.MagicMock,
+        dual_category_chart_request_params: DualCategoryChartRequestParams,
+        fake_plot_data,
     ):
         """
         Given a valid `chart_generation_payload` with chart_type as butterfly
@@ -215,11 +215,11 @@ class TestDualCategoryChartsInterface:
     @mock.patch(f"{MODULE_PATH}.generate_butterfly")
     @mock.patch(f"{MODULE_PATH}.generate_stacked_bar")
     def test_raise_not_implemented_when_using_unknown_chart_type(
-            self,
-            mock_generate_stacked_bar: mock.MagicMock,
-            mock_generate_butterfly: mock.MagicMock,
-            dual_category_chart_request_params: DualCategoryChartRequestParams,
-            fake_plot_data,
+        self,
+        mock_generate_stacked_bar: mock.MagicMock,
+        mock_generate_butterfly: mock.MagicMock,
+        dual_category_chart_request_params: DualCategoryChartRequestParams,
+        fake_plot_data,
     ):
         """
         Given a valid `chart_generation_payload` with an unknown chart type

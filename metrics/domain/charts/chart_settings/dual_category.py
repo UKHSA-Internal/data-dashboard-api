@@ -1,4 +1,4 @@
-from plotly.graph_objs.indicator.gauge import step
+from itertools import chain
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.single_category import (
@@ -6,7 +6,8 @@ from metrics.domain.charts.chart_settings.single_category import (
 )
 from metrics.domain.models.plots import ChartGenerationPayload, PlotGenerationData
 
-PLOTLY_STEPS=[1,2,5,10,15]
+PLOTLY_STEPS = [1, 2, 5, 10, 15]
+
 
 class DualCategoryChartSettings(SingleCategoryChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -50,7 +51,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                 "b": 0,
                 "t": 0,
             },
-            # "autosize": False,
+            "autosize": False,
             "height": self.height,
             "width": self.width,
             "showlegend": True,
@@ -70,10 +71,11 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
 
         return {**chart_config, **self._get_legend_config()}
 
-    def compute_butterfly_charge_xaxis_ticks(self, left_data, right_data):
+    @staticmethod
+    def compute_butterfly_charge_xaxis_ticks(left_data, right_data):
 
         # Find the largest absolute value in the dataset
-        max_val = float(max(max(abs(x) for x in left_data), max(abs(x) for x in right_data)))
+        max_val = float(max(abs(x) for x in chain(left_data, right_data)))
 
         # Base the step size calculation on a maximum allowance of 4 ticks per side
         max_ticks_per_side = 4
@@ -83,7 +85,13 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         magnitude = 10 ** max(0, len(str(int(target_step))) - 1)
 
         # Normalize and snap to standard Plotly modifiers (1, 2, 5, or 10)
-        clean_step = int(next((m for m in PLOTLY_STEPS if target_step / magnitude <= m), PLOTLY_STEPS[-1]) * magnitude)
+        clean_step = int(
+            next(
+                (m for m in PLOTLY_STEPS if target_step / magnitude <= m),
+                PLOTLY_STEPS[-1],
+            )
+            * magnitude
+        )
 
         # Calculate exactly how many steps are actually needed to cover max_val
         actual_ticks_per_side = int((max_val // clean_step) + 1)
@@ -93,7 +101,10 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         # ==========================================
 
         # Generate the optimized symmetric arrays
-        tick_values = [i * clean_step for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)]
+        tick_values = [
+            i * clean_step
+            for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)
+        ]
         tick_labels = [str(abs(val)) for val in tick_values]
 
         # Establish visual boundary limits tightly matching the active ticks
@@ -105,7 +116,6 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
             "ticktext": tick_labels,
             "range": [-axis_limit - 1, axis_limit + 1],
         }
-
 
     def _get_legend_config(self) -> dict:
         """

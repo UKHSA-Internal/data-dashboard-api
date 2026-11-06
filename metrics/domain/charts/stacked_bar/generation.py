@@ -4,7 +4,9 @@ import plotly.graph_objects as go
 
 from metrics.domain.charts.chart_settings.dual_category import DualCategoryChartSettings
 from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
-from metrics.domain.charts.utils import extract_grouped_data_from_chart_generation_payload
+from metrics.domain.charts.utils import (
+    extract_grouped_data_from_chart_generation_payload,
+)
 from metrics.domain.models.plots import ChartGenerationPayload
 
 
@@ -31,7 +33,8 @@ def generate_stacked_bar(
     )
 
     grouped = extract_grouped_data_from_chart_generation_payload(
-        chart_generation_payload=chart_generation_payload)
+        chart_generation_payload=chart_generation_payload
+    )
 
     for label, data in grouped.items():
         figure.add_trace(
