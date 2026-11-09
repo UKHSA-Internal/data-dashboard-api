@@ -363,15 +363,17 @@ The `version` and `commit_sha` values in the `/health` response come from the
 
 ### How to run it
 
-For now the workflow is triggered manually only.
-From the **Actions** tab in GitHub, select **DevOps Pipeline (Standard)** and click **Run workflow**,
-or use the GitHub CLI:
+The workflow runs automatically on every pull request, and appears in the PR's checks as
+**DevOps Pipeline (Standard)**. On pull requests, only the Development Deploy and Verify stages run;
+Pre-production and Production only run on pushes to `main`.
+
+It can also be triggered manually from the **Actions** tab in GitHub, by selecting
+**DevOps Pipeline (Standard)** and clicking **Run workflow**, or with the GitHub CLI:
 
 ```bash
 gh workflow run "DevOps Pipeline (Standard)" --ref <branch>
 ```
 
-The `pull_request` trigger will be added once the TODO values below have been filled in.
 It does not run on pushes to `main` yet, until we have confirmed what the Deploy stage does for this service.
 
 ### Prerequisites still to set up
