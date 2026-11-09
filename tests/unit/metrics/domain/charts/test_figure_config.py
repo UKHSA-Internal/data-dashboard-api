@@ -6,6 +6,7 @@ from metrics.domain.charts.figure_config import build_figure_config
 
 MINIMUM_EXPECTED_COMPACT_HEIGHT = 400
 EXPECTED_NINE_BAR_COMPACT_HEIGHT = 425
+EXPECTED_ROTATED_LEGEND_WITH_TITLE_Y_POSITION = -0.3
 
 
 class TestBuildFigureConfig:
@@ -216,6 +217,18 @@ class TestBuildFigureConfig:
         }
         assert "traceorder" not in config["compact_rotated"]["layout"]["legend"]
         assert "traceorder" not in figure["layout"]["legend"]
+
+    def test_moves_rotated_legend_lower_when_displayed_x_axis_has_title(self):
+        figure = self._build_bar_figure(stacked=False)
+        figure["layout"]["yaxis"]["title"] = {"text": "Percentage"}
+
+        config = build_figure_config(figure=figure, rotate_compact=True)
+
+        rotated_layout = config["compact_rotated"]["layout"]
+        assert rotated_layout["xaxis"]["title"] == {"text": "Percentage"}
+        assert rotated_layout["legend"]["y"] == (
+            EXPECTED_ROTATED_LEGEND_WITH_TITLE_Y_POSITION
+        )
 
     def test_wraps_long_rotated_labels(self):
         long_category = "Bournemouth, Christchurch and Poole"

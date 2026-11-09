@@ -31,6 +31,7 @@ ROTATED_CATEGORY_LABEL_MAX_CHARACTERS = 18
 ROTATED_Y_AXIS_TITLE_TOP_MARGIN = 50
 ROTATED_Y_AXIS_TITLE_FONT_SIZE = 14
 ROTATED_LEGEND_Y_POSITION = -0.2
+ROTATED_LEGEND_X_AXIS_TITLE_OFFSET = 0.1
 
 AXIS_POSITION_PROPERTIES = {
     "anchor",
@@ -361,6 +362,24 @@ def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) ->
     layout["margin"] = rotated_margin
 
 
+def _add_rotated_legend_x_axis_title_spacing(*, layout: dict) -> None:
+    """Move the legend down when a rotated chart has a displayed x-axis title."""
+    legend = layout.get("legend")
+    if not isinstance(legend, dict):
+        return
+
+    has_x_axis_title = any(
+        isinstance(axis, Mapping)
+        and isinstance(axis.get("title"), Mapping)
+        and bool(axis["title"].get("text"))
+        for axis_key, axis in layout.items()
+        if AXIS_KEY_PATTERN.match(axis_key)
+    )
+    legend_y_position = legend.get("y")
+    if has_x_axis_title and isinstance(legend_y_position, (int, float)):
+        legend["y"] = round(legend_y_position - ROTATED_LEGEND_X_AXIS_TITLE_OFFSET, 2)
+
+
 def _count_bar_categories(traces: list | tuple) -> int:
     """Count distinct category positions without double-counting stacked traces."""
     categories: list[Any] = []
@@ -447,6 +466,7 @@ def build_figure_config(
             if layout.get("barmode") == "stack":
                 compact_rotated_legend["traceorder"] = "normal"
             compact_rotated_layout["legend"] = compact_rotated_legend
+        _add_rotated_legend_x_axis_title_spacing(layout=compact_rotated_layout)
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
     return {
