@@ -101,12 +101,6 @@ class SingleCategoryChartSettings(ChartSettings):
             "rangemode": "tozero",
         }
 
-        if self._chart_generation_payload.y_axis_title:
-            base_y_axis_config["title"] = {
-                "text": self._chart_generation_payload.y_axis_title,
-                "font": tick_font,
-            }
-
         y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
 
         base_y_axis_config["tick0"] = y_min_value
@@ -166,14 +160,34 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickformat": None,
         }
 
-    def _get_legend_top_centre_config(self):
+    def _has_x_axis_title(self) -> bool:
+        return bool(self._chart_generation_payload.x_axis_title)
+
+    def _get_legend_top_offset_px(self) -> int:
+        """Distance from the x-axis line to the top edge of the legend"""
+        return 100 if self._has_x_axis_title() else 50
+
+    def _get_approx_plot_height_px(self) -> int:
+        base_margin = self._get_base_chart_config()["margin"]
+        top_margin_px = (
+            30
+            if self._chart_generation_payload.y_axis_title
+            else base_margin.get("t", 0)
+        )
+        return max(
+            self.height - top_margin_px - self._get_legend_top_offset_px() - 28,
+            50,
+        )
+
+    def _get_legend_config(self):
         legend_config = {
             "font": self._get_tick_font_config(),
             "orientation": "h",
-            "y": 1.0,
+            "yref": "paper",
+            "y": -self._get_legend_top_offset_px() / self._get_approx_plot_height_px(),
             "x": 0.5,
             "xanchor": "center",
-            "yanchor": "bottom",
+            "yanchor": "top",
         }
 
         if legend_title := self._chart_generation_payload.legend_title:
@@ -300,6 +314,7 @@ class SingleCategoryChartSettings(ChartSettings):
         chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
         chart_config["margin"]["t"] = 12
+        chart_config["margin"]["b"] = 0
         chart_config["margin"]["pad"] = 25
 
         # x_axis config
@@ -333,11 +348,41 @@ class SingleCategoryChartSettings(ChartSettings):
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
+        chart_config.setdefault("annotations", []).extend(
+            self._get_y_axis_title_annotation_config()
+        )
+        if self._chart_generation_payload.y_axis_title:
+            chart_config["margin"]["t"] = 30
 
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
 
     def get_common_chart_config(self):
         chart_config = self._get_base_chart_config()
+        chart_config.setdefault("annotations", []).extend(
+            self._get_y_axis_title_annotation_config()
+        )
+        if self._chart_generation_payload.y_axis_title:
+            chart_config["margin"]["t"] = 30
 
         chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
+
+#
+# def get_number_of_days_and_months(
+#     min_date: datetime.date, max_date: datetime.date
+# ) -> list[int]:
+#     """Takes two datetime.date objects and returns the number of days and months in the time frame.
+#
+#     Args:
+#         min_date: represents the earliest date in the time series, this is the first day of the
+#             earliest month. Eg: '2025-01-27' will have a `min_date` of '2025-01-01'
+#         max_date: The last day in the time series Eg '2025-01-15' will be '2025-01-15'
+#
+#     Returns:
+#         A list of 2 integers representing the number of days and months between the two dates provided.
+#     """
+#     number_of_days = (max_date - min_date).days
+#     number_of_months = (max_date.year - min_date.year) * 12 + (
+#         max_date.month - min_date.month
+#     )
+#     return [number_of_days, number_of_months]
