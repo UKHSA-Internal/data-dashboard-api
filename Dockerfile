@@ -67,6 +67,13 @@ COPY --from=build /usr/bin/uname /usr/bin/uname
 # Application code
 COPY --from=build /code /code
 
+# Build metadata reported by the `/health` endpoint.
+# Pass these in at build time, e.g. `--build-arg COMMIT_SHA=$(git rev-parse HEAD)`
+ARG APP_VERSION=unknown
+ARG COMMIT_SHA=unknown
+ENV APP_VERSION=${APP_VERSION}
+ENV COMMIT_SHA=${COMMIT_SHA}
+
 ENV PYTHONFAULTHANDLER=1
 ENV PATH=/usr/local/bin:/usr/bin:/bin
 ENV HOME=/tmp

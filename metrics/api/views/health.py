@@ -1,8 +1,9 @@
 from http import HTTPStatus
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 
+import config
 from metrics.interfaces.health.probes import HealthProbeManagement
 
 
@@ -11,8 +12,26 @@ class HealthView(APIView):
 
     @staticmethod
     def get(*args, **kwargs):
-        """This health probe can be used to determine whether the service is ready."""
-        return HttpResponse(status=HTTPStatus.OK.value)
+        """This health probe can be used to determine whether the service is ready.
+
+        Notes:
+            This is a shallow probe, it does not check any upstream services.
+            The response body reports the build metadata
+            which was baked into the image at build time.
+
+        Returns:
+            An `HTTP 200 OK` response with a JSON body containing
+            `status`, `version` and `commit_sha`
+
+        """
+        return JsonResponse(
+            data={
+                "status": "OK",
+                "version": config.APP_VERSION,
+                "commit_sha": config.COMMIT_SHA,
+            },
+            status=HTTPStatus.OK.value,
+        )
 
 
 class InternalHealthView(APIView):

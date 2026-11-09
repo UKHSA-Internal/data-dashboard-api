@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 #   will be used to connect to a remote database
 APIENV = os.environ.get("APIENV")
 
+# Build metadata reported by the `/health` endpoint.
+# These are baked into the image at build time via the
+# `APP_VERSION` and `COMMIT_SHA` Docker build args.
+APP_VERSION = os.environ.get("APP_VERSION") or "unknown"
+COMMIT_SHA = os.environ.get("COMMIT_SHA") or "unknown"
+
 # Logging configuration
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 

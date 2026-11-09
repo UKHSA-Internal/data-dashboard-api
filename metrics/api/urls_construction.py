@@ -266,8 +266,8 @@ static_urlpatterns = [
 ]
 
 common_urlpatterns = [
-    # Health probe
-    path("health/", HealthView.as_view()),
+    # Health probe, served at both `/health` and `/health/` so neither redirects
+    re_path(r"^health/?$", HealthView.as_view()),
     # Internal health probe
     path(".well-known/health-check/", InternalHealthView.as_view()),
     # Static files
