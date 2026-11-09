@@ -84,7 +84,7 @@ typing_extensions==4.16.0
 uritemplate==4.2.0
 urllib3==2.8.0
 virtualenv==21.15.1
-wagtail==7.4.3
+wagtail==8.1
 wagtail_trash==3.2.0
 wagtail_modeladmin==2.4.0
 webencodings==0.6.1
