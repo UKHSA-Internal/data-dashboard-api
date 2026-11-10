@@ -100,11 +100,17 @@ class DualCategoryChartCard {
         SEGMENTS_CONTAINER: '.dual-category-chart-segments-container-form',
         SEGMENT_ITEM: '.dual-category-chart-card__segments',
         SECONDARY_FIELD_VALUE: '[id$="secondary_field_value"]',
-        DUAL_CATEGORY_CHART_CARD: 'dual-category-chart-card'
+        DUAL_CATEGORY_CHART_CARD: 'dual-category-chart-card',
+        STREAMFIELD_CHILD: '[data-streamfield-child]',
+        SEGMENT_SECTION: 'section[id$="-section"]',
+        DELETE_SEGMENT_ACTION: '[data-streamfield-action="DELETE"]',
+        ADD_SEGMENT_BUTTON: '.c-sf-add-button'
     };
 
     static FIELD_SUFFIXES = {
         X_AXIS: 'x_axis',
+        Y_AXIS: 'y_axis',
+        CHART_TYPE: 'chart_type',
         GEOGRAPHY: 'static_fields-geography_type',
         SECONDARY_CATEGORY: 'secondary_category',
         PRIMARY_VALUES: 'primary_field_values',
@@ -119,6 +125,13 @@ class DualCategoryChartCard {
         TEXT: '-----'
     };
 
+    // Butterfly charts plot the metric values along the x-axis and the primary
+    // category along the y-axis, which is the opposite way round to every other
+    // dual category chart. They also mirror one segment against the other, either
+    // side of a shared central axis, so they take exactly 2 segments.
+    static BUTTERFLY_CHART_TYPE = 'butterfly';
+    static BUTTERFLY_SEGMENTS_COUNT = 2;
+
     stateManager = new FormStateManger()
 
     // Category and subcategory choices
@@ -126,7 +139,9 @@ class DualCategoryChartCard {
     secondary_category_choices = null;
 
     // Category fields (fields that drive subcategory choice options)
+    chart_type_field = null;
     x_axis_field = null;
+    y_axis_field = null;
     geography_type_field = null;
     secondary_category_field = null;
 
@@ -170,23 +185,50 @@ class DualCategoryChartCard {
     setupCategoryFormFields(prefix, rootNode) {
         const { FIELD_SUFFIXES } = DualCategoryChartCard;
 
+        this.chart_type_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.CHART_TYPE}`);
         this.x_axis_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.X_AXIS}`);
+        this.y_axis_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.Y_AXIS}`);
         this.geography_type_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.GEOGRAPHY}`);
         this.secondary_category_field = rootNode.querySelector(`select#${prefix}-${FIELD_SUFFIXES.SECONDARY_CATEGORY}`);
 
         const missingFields = [];
+        if (!this.chart_type_field) missingFields.push(FIELD_SUFFIXES.CHART_TYPE);
         if (!this.x_axis_field) missingFields.push(FIELD_SUFFIXES.X_AXIS);
+        if (!this.y_axis_field) missingFields.push(FIELD_SUFFIXES.Y_AXIS);
         if (!this.geography_type_field) missingFields.push(FIELD_SUFFIXES.GEOGRAPHY);
         if (!this.secondary_category_field) missingFields.push(FIELD_SUFFIXES.SECONDARY_CATEGORY);
 
         if (missingFields.length > 0) {
             console.error(`Category form fields not found: ${missingFields.join(', ')}`, {
                 prefix,
+                chart_type_field: this.chart_type_field,
                 x_axis_field: this.x_axis_field,
+                y_axis_field: this.y_axis_field,
                 geography_type_field: this.geography_type_field,
                 secondary_category_field: this.secondary_category_field
             });
         }
+    }
+
+    /**
+     * @name isButterflyChart
+     * @description Whether the card is currently configured as a butterfly chart.
+     * @return {boolean}
+     */
+    isButterflyChart() {
+        return this.chart_type_field?.value === DualCategoryChartCard.BUTTERFLY_CHART_TYPE;
+    }
+
+    /**
+     * @name getPrimaryCategoryField
+     * @description Returns the axis field which holds the primary category, and which
+     * therefore drives the options offered in `primary_field_values`. Butterfly charts
+     * carry the primary category on the y-axis, every other dual category chart
+     * carries it on the x-axis.
+     * @return {HTMLSelectElement|null}
+     */
+    getPrimaryCategoryField() {
+        return this.isButterflyChart() ? this.y_axis_field : this.x_axis_field;
     }
 
     /**
@@ -229,16 +271,17 @@ class DualCategoryChartCard {
         }
 
         const { DEFAULT_OPTION } = DualCategoryChartCard;
+        const primary_category_field = this.getPrimaryCategoryField();
 
-        if (this.x_axis_field && this.primary_field_values_inputs) {
-            this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
+        if (primary_category_field && this.primary_field_values_inputs) {
+            this.updatePrimaryFieldValueOptions(primary_category_field.value);
         }
 
         if (this.secondary_category_field && this.secondary_field_value_inputs) {
             this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
         }
 
-        if (!this.x_axis_field.value && this.primary_field_values_inputs) {
+        if (primary_category_field && !primary_category_field.value && this.primary_field_values_inputs) {
             this.primary_field_values_inputs.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
         }
 
@@ -277,6 +320,10 @@ class DualCategoryChartCard {
      */
     updatePrimaryFieldValueOptions(subcategory_key) {
         const { DEFAULT_OPTION } = DualCategoryChartCard;
+
+        if (!this.primary_field_values_inputs) {
+            return;
+        }
 
         this.primary_field_values_inputs.innerHTML = `<option value="${DEFAULT_OPTION.VALUE}">${DEFAULT_OPTION.TEXT}</option>`;
 
@@ -323,6 +370,72 @@ class DualCategoryChartCard {
     }
 
     /**
+     * @name getActiveSegments
+     * @description Returns the segment elements which are still part of the form.
+     * Deleting a segment leaves its markup in place and flags it as `aria-hidden`,
+     * so those segments are filtered out.
+     * @param rootNode {HTMLElement} the node in which this chart is rendered
+     * @return {HTMLElement[]}
+     */
+    getActiveSegments(rootNode) {
+        const { SELECTORS } = DualCategoryChartCard;
+
+        return Array.from(rootNode.querySelectorAll(SELECTORS.SEGMENT_ITEM)).filter(segment => {
+            const streamfield_child = segment.closest(SELECTORS.STREAMFIELD_CHILD);
+            return streamfield_child?.getAttribute('aria-hidden') !== 'true';
+        });
+    }
+
+    /**
+     * @name clearSegments
+     * @description Removes every segment currently held by the form.
+     * @param rootNode {HTMLElement} the node in which this chart is rendered
+     */
+    clearSegments(rootNode) {
+        const { SELECTORS } = DualCategoryChartCard;
+
+        this.getActiveSegments(rootNode).forEach(segment => {
+            segment
+                .closest(SELECTORS.SEGMENT_SECTION)
+                ?.querySelector(SELECTORS.DELETE_SEGMENT_ACTION)
+                ?.click();
+        });
+    }
+
+    /**
+     * @name applySegmentLimit
+     * @description A butterfly chart mirrors one segment against the other, either side of
+     * a shared central axis, so it takes exactly 2 segments. Once that limit is reached the
+     * `add segment` buttons are hidden, every other chart type keeps them available.
+     * @param rootNode {HTMLElement} the node in which this chart is rendered
+     */
+    applySegmentLimit(rootNode) {
+        const { SELECTORS, BUTTERFLY_SEGMENTS_COUNT } = DualCategoryChartCard;
+        const segments_container = rootNode.querySelector(SELECTORS.SEGMENTS_CONTAINER);
+
+        if (!segments_container) {
+            return;
+        }
+
+        const limit_reached =
+            this.isButterflyChart() &&
+            this.getActiveSegments(rootNode).length >= BUTTERFLY_SEGMENTS_COUNT;
+
+        segments_container.querySelectorAll(SELECTORS.ADD_SEGMENT_BUTTON).forEach(add_button => {
+            const hidden = add_button.style.display === 'none';
+
+            // Writing to the button is guarded, otherwise each write is picked
+            // up by the segments observer which calls straight back into here.
+            if (hidden === limit_reached) {
+                return;
+            }
+
+            add_button.style.display = limit_reached ? 'none' : '';
+            add_button.disabled = limit_reached;
+        });
+    }
+
+    /**
      * @name observeSegmentsBlocks
      * @description This makes use of the `MutationObserver` API to watch for new `segment` `ListBlock` items
      * added to the DOM, when this is `observed` a number of functions are called that update the list of
@@ -354,6 +467,10 @@ class DualCategoryChartCard {
                     })
                 }
             })
+
+            // Segments are added as new nodes but deleted by flagging the existing
+            // node as hidden, so the limit is re-applied for either kind of mutation.
+            this.applySegmentLimit(rootNode);
         })
 
         observer.observe(segments_container, {
@@ -365,46 +482,67 @@ class DualCategoryChartCard {
 
     /**
      * @name setupEvents
-     * @description Setup event handlers for dynamic choice fields `secondary_category` and `x_axis_field`.
+     * @description Setup event handlers for the dynamic choice fields `chart_type`,
+     * `secondary_category`, the axis fields and `geography_type`.
      */
     setupEvents(rootNode) {
         const { FIELD_SUFFIXES } = DualCategoryChartCard;
 
-        this.x_axis_field.addEventListener("change", (evt) => {
+        // Each chart type lays its categories out differently, so the axes,
+        // the primary field values and the segments all start again from scratch.
+        this.chart_type_field?.addEventListener("change", () => {
+            this.resetAxisFields();
             this.stateManager.clearPrimaryFieldState();
-            this.updatePrimaryFieldValueOptions(evt.target.value)
+            this.updatePrimaryFieldValueOptions(this.getPrimaryCategoryField()?.value);
+
+            this.stateManager.clearSecondaryFieldState();
+            this.clearSegments(rootNode);
+            this.applySegmentLimit(rootNode);
+        });
+
+        [this.x_axis_field, this.y_axis_field].filter(Boolean).forEach(axis_field => {
+            axis_field.addEventListener("change", (evt) => {
+                if (evt.target !== this.getPrimaryCategoryField()) {
+                    return;
+                }
+
+                this.stateManager.clearPrimaryFieldState();
+                this.updatePrimaryFieldValueOptions(evt.target.value);
+            });
         });
 
         this.secondary_category_field.addEventListener("change", (evt) => {
             this.stateManager.clearSecondaryFieldState();
             this.updateSecondaryFieldValueOptions(evt.target.value);
 
-            // clear all segments
-            rootNode
-                .querySelectorAll('.dual-category-chart-card__segments')
-                .forEach(segments => {
-                    const streamfieldChild = segments.closest('[data-streamfield-child]');
-                    if (streamfieldChild?.getAttribute('aria-hidden') === 'true') {
-                        return;
-                    }
-
-                    const section = segments.closest('section[id$="-section"]');
-                    section
-                        ?.querySelector('[data-streamfield-action="DELETE"]')
-                        ?.click();
-                });
+            this.clearSegments(rootNode);
         });
 
-        this.geography_type_field.addEventListener("change", (evt) => {
-            if (this.x_axis_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
+        this.geography_type_field.addEventListener("change", () => {
+            const primary_category_field = this.getPrimaryCategoryField();
+
+            if (primary_category_field?.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearPrimaryFieldState();
-                this.updatePrimaryFieldValueOptions(this.x_axis_field.value);
+                this.updatePrimaryFieldValueOptions(primary_category_field.value);
             }
 
             if (this.secondary_category_field.value === FIELD_SUFFIXES.GEOGRAPHY_SUBCATEGORY_KEY) {
                 this.stateManager.clearSecondaryFieldState();
                 this.updateSecondaryFieldValueOptions(this.secondary_category_field.value);
             }
+        });
+    }
+
+    /**
+     * @name resetAxisFields
+     * @description Clears the selected axes, so that an axis chosen for the previous
+     * chart type is not carried over to a chart type which lays its categories out differently.
+     */
+    resetAxisFields() {
+        const { DEFAULT_OPTION } = DualCategoryChartCard;
+
+        [this.x_axis_field, this.y_axis_field].filter(Boolean).forEach(axis_field => {
+            axis_field.value = DEFAULT_OPTION.VALUE;
         });
     }
 
@@ -427,6 +565,9 @@ class DualCategoryChartCard {
 
         // Initial population of field options based on current/initial values
         this.initialiseFieldOptions();
+
+        // Hold existing content to the segment count allowed by its chart type
+        this.applySegmentLimit(rootNode);
 
         // Setup observer for watching segments list and event handlers on
         this.observeSegmentBlocks(prefix, rootNode);
