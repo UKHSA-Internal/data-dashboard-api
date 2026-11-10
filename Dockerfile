@@ -4,7 +4,7 @@
 # Default arguments
 # This version is hardcoded but ideally it should pull from the `.python-version`
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
-ARG PYTHON_VERSION=3.12.13
+ARG PYTHON_VERSION=3.12.16
 
 # this debian version needs to match the version of the distroless image we are using below
 FROM python:${PYTHON_VERSION}-slim-bookworm AS build
