@@ -46,7 +46,7 @@ markdown-it-py==4.2.0
 MarkupSafe==3.0.4
 mdurl==0.1.2
 msgpack==1.2.4
-mypy-extensions==1.1.0
+mypy-extensions==1.2.0
 nodeenv==1.10.0
 openpyxl==3.1.5
 orjson==3.13.0
