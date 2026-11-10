@@ -332,6 +332,39 @@ class TestBuildFigureConfig:
             *categories,
         ]
 
+    def test_handles_invalid_rotated_subplot_domains(self):
+        for invalid_domain in (None, [0], ["start", 1]):
+            config = build_figure_config(
+                figure={
+                    "data": [],
+                    "layout": {
+                        "xaxis": {"domain": invalid_domain},
+                        "yaxis": {},
+                    },
+                },
+                rotate_compact=True,
+                rotate_subplot_grid=True,
+            )
+
+            rotated_y_axis = config["compact_rotated"]["layout"]["yaxis"]
+            if invalid_domain is None:
+                assert "domain" not in rotated_y_axis
+            else:
+                assert rotated_y_axis["domain"] == invalid_domain
+
+    def test_handles_rotated_subplot_grid_without_axes(self):
+        config = build_figure_config(
+            figure={"data": [], "layout": {}},
+            rotate_compact=True,
+            rotate_subplot_grid=True,
+        )
+
+        assert config["compact_rotated"]["layout"] == {
+            "legend": {"y": -0.25, "yanchor": "top"},
+            "margin": {"l": 104, "r": 24, "b": 128, "t": 48},
+            "height": MINIMUM_EXPECTED_COMPACT_HEIGHT,
+        }
+
     def test_wraps_long_rotated_labels(self):
         long_category = "Bournemouth, Christchurch and Poole"
         categories = [long_category, *[f"Category {index}" for index in range(7)]]
