@@ -10,12 +10,12 @@ click==8.4.2
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==50.0.0
+cryptography==50.0.2
 defusedxml==0.7.1
 distlib==0.4.4
 django-cors-headers==4.8.0
 django-db-connection-pool==1.2.5
-django-filter==24.3
+django-filter==26.2
 django-modelcluster==6.5
 django-permissionedforms==0.1
 django-taggit==6.1.0
@@ -32,7 +32,7 @@ gunicorn==26.2.0
 html5lib==1.1
 identify==2.6.20
 idna==3.20
-importlib-metadata==9.0.0
+importlib-metadata==10.1.0
 inflection==0.5.1
 iniconfig==2.3.1
 itypes==1.2.0
@@ -43,7 +43,7 @@ l18n==2021.3
 lockfile==0.12.2
 Markdown==3.11.2
 markdown-it-py==4.2.0
-MarkupSafe==3.0.3
+MarkupSafe==3.0.4
 mdurl==0.1.2
 msgpack==1.2.4
 mypy-extensions==1.1.0
@@ -80,7 +80,7 @@ sqlparams==6.2.0
 telepath==0.3.1
 toml==0.10.2
 tomli==2.4.1
-typing_extensions==4.15.0
+typing_extensions==4.16.0
 uritemplate==4.2.0
 urllib3==2.8.0
 virtualenv==21.15.1
