@@ -20,4 +20,4 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: UKHSA-Internal/devops-pipeline/.github/workflows/standard-pipeline.yml@v0
+    uses: UKHSA-Internal/devops-pipeline/.github/workflows/standard-pipeline.yml@v1
