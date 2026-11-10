@@ -7,7 +7,7 @@
 ARG PYTHON_VERSION=3.12.16
 
 # this debian version needs to match the version of the distroless image we are using below
-FROM python:${PYTHON_VERSION}-slim-bookworm AS build
+FROM python:${PYTHON_VERSION}-slim-trixie AS build
 
 WORKDIR /code
 
