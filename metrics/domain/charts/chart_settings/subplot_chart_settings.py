@@ -34,14 +34,6 @@ THIRD_CHART_WIDTH = 400
 THIRD_CHART_MULTIPLIER = 2
 THIRD_CHART_BASE_Y = 0.6
 
-ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG = {
-    "x": 0,
-    "xshift": -84,
-    "y": 0.5,
-    "xanchor": "center",
-    "yanchor": "middle",
-    "textangle": -90,
-}
 ROTATED_SUBPLOT_LEGEND_CONFIG = {
     "y": -0.25,
     "yanchor": "top",

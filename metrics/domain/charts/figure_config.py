@@ -16,7 +16,6 @@ from metrics.domain.charts.chart_settings.single_category import (
     FULL_WIDTH_X_AXIS_NTICKS,
 )
 from metrics.domain.charts.chart_settings.subplot_chart_settings import (
-    ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG,
     ROTATED_SUBPLOT_LEGEND_CONFIG,
     ROTATED_SUBPLOT_MARGIN_CONFIG,
 )
@@ -35,7 +34,9 @@ MINIMUM_COMPACT_CHART_HEIGHT = 400
 ROTATED_CATEGORY_LABEL_MAX_CHARACTERS = 18
 ROTATED_Y_AXIS_TITLE_TOP_MARGIN = 50
 ROTATED_Y_AXIS_TITLE_FONT_SIZE = 14
+ROTATED_SUBPLOT_Y_AXIS_TITLE_ANGLE = -90
 ROTATED_LEGEND_Y_POSITION = -0.2
+ROTATED_LEGEND_X_AXIS_TITLE_OFFSET = 0.1
 
 DOMAIN_COORDINATE_COUNT = 2
 
@@ -168,10 +169,7 @@ def _wrap_rotated_category_label(category: Any) -> Any:
 
 def _transpose_domain(domain: Any) -> Any:
     """Turn a left-to-right subplot domain into a top-to-bottom domain"""
-    if (
-        not isinstance(domain, (list, tuple))
-        or len(domain) != DOMAIN_COORDINATE_COUNT
-    ):
+    if not isinstance(domain, (list, tuple)) or len(domain) != DOMAIN_COORDINATE_COUNT:
         return domain
 
     start, end = domain
@@ -211,6 +209,7 @@ def _position_rotated_subplot_grid(
         if transposed_domain is not None:
             rotated_y_axis["domain"] = copy.deepcopy(transposed_domain)
         rotated_y_axis["automargin"] = True
+        rotated_y_axis["autorange"] = "reversed"
 
     bottom_x_axis = rotated_layout[last_x_key]
     bottom_x_axis["showticklabels"] = True
@@ -220,17 +219,18 @@ def _position_rotated_subplot_grid(
 
 
 def _position_rotated_subplot_annotations(annotations: list[dict]) -> None:
-    """Keep the shared categorical-axis title close to a tall subplot grid."""
+    """Move the shared categorical-axis title above the rotated subplot grid."""
     for annotation in annotations:
         if (
             annotation.get("xref") == "paper"
             and annotation.get("yref") == "paper"
-            and annotation.get("textangle")
-            == ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG["textangle"]
+            and annotation.get("textangle") == ROTATED_SUBPLOT_Y_AXIS_TITLE_ANGLE
         ):
-            annotation.update(
-                copy.deepcopy(ROTATED_SUBPLOT_AXIS_TITLE_ANNOTATION_CONFIG)
+            horizontal_title_annotation = _build_rotated_y_axis_title_annotation(
+                title=annotation
             )
+            annotation.clear()
+            annotation.update(horizontal_title_annotation)
 
 
 def _rotate_shape(shape: Mapping[str, Any]) -> dict:
@@ -301,7 +301,10 @@ def _rotate_annotation(annotation: Mapping[str, Any]) -> dict:
 
 
 def _build_layout_configs(
-    layout: Mapping[str, Any], *, rotate_compact: bool, rotate_subplot_grid: bool,
+    layout: Mapping[str, Any],
+    *,
+    rotate_compact: bool,
+    rotate_subplot_grid: bool,
 ) -> tuple[dict, dict, dict]:
     full_layout: dict[str, Any] = {}
     compact_layout: dict[str, Any] = {}
@@ -374,9 +377,7 @@ def _build_layout_configs(
         legend = copy.deepcopy(layout.get("legend", {}))
         legend.update(copy.deepcopy(ROTATED_SUBPLOT_LEGEND_CONFIG))
         compact_rotated_layout["legend"] = legend
-        compact_rotated_layout["margin"] = copy.deepcopy(
-            ROTATED_SUBPLOT_MARGIN_CONFIG
-        )
+        compact_rotated_layout["margin"] = copy.deepcopy(ROTATED_SUBPLOT_MARGIN_CONFIG)
 
     return full_layout, compact_layout, compact_rotated_layout
 
@@ -416,23 +417,14 @@ def _add_wrapped_category_labels(*, layout: dict, traces: list | tuple) -> None:
     y_axis["autorange"] = "reversed"
 
 
-def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) -> None:
-    """Replace the rotated y-axis title with horizontal text above the axis."""
-    y_axis = layout.get("yaxis")
-    if not isinstance(y_axis, dict):
-        return
-
-    title = y_axis.get("title")
-    if not isinstance(title, Mapping) or not title.get("text"):
-        return
-
-    y_axis.pop("title")
+def _build_rotated_y_axis_title_annotation(*, title: Mapping[str, Any]) -> dict:
+    """Build the horizontal annotation displayed above the y-axis."""
     source_font = title.get("font")
     annotation_font = (
         copy.deepcopy(dict(source_font)) if isinstance(source_font, Mapping) else {}
     )
     annotation_font.setdefault("size", ROTATED_Y_AXIS_TITLE_FONT_SIZE)
-    title_annotation = {
+    return {
         "text": copy.deepcopy(title["text"]),
         "xref": "paper",
         "yref": "paper",
@@ -446,12 +438,43 @@ def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) ->
         "font": annotation_font,
     }
 
+
+def _add_rotated_y_axis_title_annotation(*, layout: dict, source_margin: Any) -> None:
+    """Replace the rotated y-axis title with horizontal text above the axis."""
+    y_axis = layout.get("yaxis")
+    if not isinstance(y_axis, dict):
+        return
+
+    title = y_axis.get("title")
+    if not isinstance(title, Mapping) or not title.get("text"):
+        return
+
+    y_axis.pop("title")
+    title_annotation = _build_rotated_y_axis_title_annotation(title=title)
     layout.setdefault("annotations", []).append(title_annotation)
     rotated_margin = (
         copy.deepcopy(dict(source_margin)) if isinstance(source_margin, Mapping) else {}
     )
     rotated_margin["t"] = ROTATED_Y_AXIS_TITLE_TOP_MARGIN
     layout["margin"] = rotated_margin
+
+
+def _add_rotated_legend_x_axis_title_spacing(*, layout: dict) -> None:
+    """Move the legend down when a rotated chart has a displayed x-axis title."""
+    legend = layout.get("legend")
+    if not isinstance(legend, dict):
+        return
+
+    has_x_axis_title = any(
+        isinstance(axis, Mapping)
+        and isinstance(axis.get("title"), Mapping)
+        and bool(axis["title"].get("text"))
+        for axis_key, axis in layout.items()
+        if AXIS_KEY_PATTERN.match(axis_key)
+    )
+    legend_y_position = legend.get("y")
+    if has_x_axis_title and isinstance(legend_y_position, (int, float)):
+        legend["y"] = round(legend_y_position - ROTATED_LEGEND_X_AXIS_TITLE_OFFSET, 2)
 
 
 def _count_bar_categories(traces: list | tuple) -> int:
@@ -527,11 +550,14 @@ def build_figure_config(
     )
 
     if rotate_compact:
-        # All rotated charts should have label text wrapped
-        _add_wrapped_category_labels(
-            layout=compact_rotated_layout,
-            traces=traces,
-        )
+        # Subplots retains their shared category labels in the legend and use each
+        # categorical y-axis for the subplot title. Replacing the primary y-axis
+        # ticks with all trace categories would overwrite the first subplot title.
+        if not rotate_subplot_grid:
+            _add_wrapped_category_labels(
+                layout=compact_rotated_layout,
+                traces=traces,
+            )
         _add_rotated_y_axis_title_annotation(
             layout=compact_rotated_layout, source_margin=layout.get("margin")
         )
@@ -546,6 +572,7 @@ def build_figure_config(
             if layout.get("barmode") == "stack":
                 compact_rotated_legend["traceorder"] = "normal"
             compact_rotated_layout["legend"] = compact_rotated_legend
+        _add_rotated_legend_x_axis_title_spacing(layout=compact_rotated_layout)
         compact_rotated_layout["height"] = _calculate_compact_bar_chart_height(traces)
 
     return {

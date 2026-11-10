@@ -6,6 +6,8 @@ from metrics.domain.charts.figure_config import build_figure_config
 
 MINIMUM_EXPECTED_COMPACT_HEIGHT = 400
 EXPECTED_NINE_BAR_COMPACT_HEIGHT = 425
+EXPECTED_ROTATED_LEGEND_WITH_TITLE_Y_POSITION = -0.3
+EXPECTED_ROTATED_SUBPLOT_LEGEND_WITH_TITLE_Y_POSITION = -0.35
 
 
 class TestBuildFigureConfig:
@@ -216,6 +218,119 @@ class TestBuildFigureConfig:
         }
         assert "traceorder" not in config["compact_rotated"]["layout"]["legend"]
         assert "traceorder" not in figure["layout"]["legend"]
+
+    def test_moves_rotated_legend_lower_when_displayed_x_axis_has_title(self):
+        figure = self._build_bar_figure(stacked=False)
+        figure["layout"]["yaxis"]["title"] = {"text": "Percentage"}
+
+        config = build_figure_config(figure=figure, rotate_compact=True)
+
+        rotated_layout = config["compact_rotated"]["layout"]
+        assert rotated_layout["xaxis"]["title"] == {"text": "Percentage"}
+        assert rotated_layout["legend"]["y"] == (
+            EXPECTED_ROTATED_LEGEND_WITH_TITLE_Y_POSITION
+        )
+
+    def test_moves_rotated_subplot_legend_lower_for_bottom_x_axis_title(self):
+        config = build_figure_config(
+            figure={
+                "data": [{"type": "bar", "x": ["A"], "y": [10]}],
+                "layout": {
+                    "xaxis": {"domain": [0, 0.4]},
+                    "yaxis": {"title": {"text": "Percentage"}},
+                    "xaxis2": {"domain": [0.6, 1]},
+                    "yaxis2": {},
+                },
+            },
+            rotate_compact=True,
+            rotate_subplot_grid=True,
+        )
+
+        rotated_layout = config["compact_rotated"]["layout"]
+        assert "title" not in rotated_layout["xaxis"]
+        assert rotated_layout["xaxis2"]["title"] == {"text": "Percentage"}
+        assert rotated_layout["legend"]["y"] == (
+            EXPECTED_ROTATED_SUBPLOT_LEGEND_WITH_TITLE_Y_POSITION
+        )
+
+    def test_preserves_rotated_subplot_titles_and_category_order(self):
+        categories = ["England", "North East", "Darlington"]
+        first_subplot_title = "<b>6-in-1</b><br>(1 year)"
+        second_subplot_title = "<b>6-in-1</b><br>(2 years)"
+        config = build_figure_config(
+            figure={
+                "data": [
+                    {
+                        "type": "bar",
+                        "x": [category],
+                        "y": [90 + index],
+                        "xaxis": axis_reference,
+                        "yaxis": axis_reference.replace("x", "y"),
+                    }
+                    for axis_reference in ("x", "x2")
+                    for index, category in enumerate(categories)
+                ],
+                "layout": {
+                    "annotations": [
+                        {
+                            "text": "Vaccination type",
+                            "x": 0.5,
+                            "y": -0.4,
+                            "xref": "paper",
+                            "yref": "paper",
+                            "xanchor": "center",
+                            "yanchor": "bottom",
+                            "showarrow": False,
+                            "font": {"family": "Arial"},
+                        }
+                    ],
+                    "xaxis": {
+                        "domain": [0, 0.4],
+                        "ticktext": [first_subplot_title],
+                        "tickvals": [1],
+                    },
+                    "yaxis": {"domain": [0, 1]},
+                    "xaxis2": {
+                        "domain": [0.6, 1],
+                        "ticktext": [second_subplot_title],
+                        "tickvals": [1],
+                    },
+                    "yaxis2": {"domain": [0, 1]},
+                },
+            },
+            rotate_compact=True,
+            rotate_subplot_grid=True,
+        )
+
+        rotated_config = config["compact_rotated"]
+        rotated_layout = rotated_config["layout"]
+
+        assert rotated_layout["yaxis"]["ticktext"] == [first_subplot_title]
+        assert rotated_layout["yaxis2"]["ticktext"] == [second_subplot_title]
+        assert rotated_layout["yaxis"]["tickvals"] == [1]
+        assert rotated_layout["yaxis2"]["tickvals"] == [1]
+        assert "tickmode" not in rotated_layout["yaxis"]
+        assert rotated_layout["yaxis"]["autorange"] == "reversed"
+        assert rotated_layout["yaxis2"]["autorange"] == "reversed"
+        assert rotated_layout["annotations"] == [
+            {
+                "text": "Vaccination type",
+                "xref": "paper",
+                "yref": "paper",
+                "x": 0,
+                "y": 1.05,
+                "xanchor": "center",
+                "yanchor": "bottom",
+                "showarrow": False,
+                "align": "left",
+                "textangle": 0,
+                "font": {"family": "Arial", "size": 14},
+            }
+        ]
+        assert [trace["y"][0] for trace in rotated_config["data"]] == [
+            *categories,
+            *categories,
+        ]
 
     def test_wraps_long_rotated_labels(self):
         long_category = "Bournemouth, Christchurch and Poole"
