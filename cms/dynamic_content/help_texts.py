@@ -415,10 +415,20 @@ display `Male` and `Female` along the x-axis. If our stacked bar chart then brea
 age groups, then our `Secondary Category` type is `Age`.
 """
 
+DUAL_CATEGORY_CHART_TYPE_FIELD: str = """
+The type of dual category chart which you want to create e.g. stacked_bar.
+Note that changing this will reset the axes, the primary field values and the segments,
+since each chart type lays its categories out differently.
+A `butterfly` chart takes exactly 2 segments, which are mirrored either side of its central axis.
+"""
+
 PRIMARY_FIELD_VALUES: str = """
-Select a list of primary field values for the chart, these will be you're x-axis.
-For example if we're creating a stacked bar chart that has a metric value in y and geographies along
-the x-axis. The `primary field values` should be the list of geographies to include in the chart.
+Select a list of primary field values for the chart, these are taken from the axis
+which carries the primary category for the selected chart type.
+For a `stacked bar` chart that is the x-axis. For example if we're creating a stacked bar chart
+that has a metric value in y and geographies along the x-axis. The `primary field values`
+should be the list of geographies to include in the chart.
+For a `butterfly` chart that is the y-axis, since the metric values are plotted along the x-axis.
 """
 
 SECONDARY_FIELD_VALUES: str = """

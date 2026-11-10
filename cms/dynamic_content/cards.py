@@ -501,23 +501,28 @@ class DualCategoryChartCard(blocks.StructBlock):
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
         label="Tag manager event ID",
     )
+    chart_type = blocks.ChoiceBlock(
+        required=False,
+        choices=get_dual_category_chart_types,
+        help_text=help_texts.DUAL_CATEGORY_CHART_TYPE_FIELD,
+    )
     x_axis = blocks.ChoiceBlock(
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_X_AXIS,
     )
-    x_axis_title = blocks.CharBlock(
-        required=False,
-        default="",
-        help_text=help_texts.CHART_X_AXIS_TITLE,
+    y_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_Y_AXIS,
     )
     primary_field_values = blocks.MultipleChoiceBlock(
         choices=get_all_subcategory_choices,
         required=False,
         help_text=help_texts.PRIMARY_FIELD_VALUES,
     )
-    y_axis = blocks.ChoiceBlock(
-        choices=get_possible_axis_choices,
-        help_text=help_texts.CHART_Y_AXIS,
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
     )
     y_axis_title = blocks.CharBlock(
         required=False,
@@ -532,11 +537,6 @@ class DualCategoryChartCard(blocks.StructBlock):
     y_axis_maximum_value = blocks.DecimalBlock(
         required=False,
         help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
-    )
-    chart_type = blocks.ChoiceBlock(
-        required=False,
-        choices=get_dual_category_chart_types,
-        help_text=help_texts.CHART_TYPE_FIELD,
     )
     show_timeseries_filter = blocks.BooleanBlock(
         help_text=help_texts.DUAL_CATEGORY_CHART_TIMESERIES_FILTER,
