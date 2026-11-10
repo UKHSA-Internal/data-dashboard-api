@@ -48,7 +48,7 @@ COPY . /code
 #   The distroless base image is pinned to a specific digest for reproducible
 #   builds. When updating, refresh the digest via `docker pull` + `docker inspect`.
 ###############################################################################
-FROM gcr.io/distroless/cc-debian12@sha256:329e54034ce498f9c6b345044e8f530c6691f99e94a92446f68c0adf9baa8464 AS production
+FROM gcr.io/distroless/cc-debian13@sha256:e1f5543d45a2cd7c02a5b43dda5f0ff30729b4832113759d01ed39b0b152cddb AS production
 
 WORKDIR /code
 
