@@ -94,6 +94,7 @@ class GeographiesView(APIView):
                 payload=payload
             )
             topic: str = payload["topic"]
+            data = filter_geographies_by_permission(
                 request=request,
                 data=data,
                 theme=theme,
