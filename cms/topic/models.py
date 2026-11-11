@@ -27,6 +27,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
+from cms.dynamic_content.selected_fields import CMSSelectedFieldParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
 
@@ -143,14 +144,14 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
 
     @property
     def selected_theme(self) -> str | None:
-        themes = CMSBlockParser.get_all_selected_theme_from_sections(
+        themes = CMSSelectedFieldParser.get_all_selected_theme_from_sections(
             sections=self.body.raw_data
         )
         return min(themes, default=None)
 
     @property
     def selected_sub_theme(self) -> str | None:
-        sub_themes = CMSBlockParser.get_all_selected_sub_theme_from_sections(
+        sub_themes = CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
             sections=self.body.raw_data
         )
         return min(sub_themes, default=None)
