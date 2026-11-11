@@ -94,19 +94,17 @@ class GeographiesView(APIView):
                 payload=payload
             )
             topic: str = payload["topic"]
+                request=request,
+                data=data,
+                theme=theme,
+                sub_theme=sub_theme,
+                topic=topic,
+            )
         else:
             data: list[GEOGRAPHY_TYPE_RESULT] = (
                 self._handle_geographies_by_geography_type(payload=payload)
             )
-            topic = ""
 
-        data = filter_geographies_by_permission(
-            request=request,
-            data=data,
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-        )
         return Response(data)
 
     @classmethod

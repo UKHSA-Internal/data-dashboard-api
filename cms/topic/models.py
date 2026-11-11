@@ -32,8 +32,6 @@ from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
-DEFAULT_THEME_MANAGER = MetricsAPIInterface().theme_manager
-DEFAULT_SUB_THEME_MANAGER = MetricsAPIInterface().sub_theme_manager
 
 
 class TopicPage(UKHSAPage, NonPublicCapablePage):
@@ -88,8 +86,9 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         APIField("enable_area_selector"),
         *NonPublicCapablePage.api_fields,
         APIField("selected_topics"),
-        APIField("theme_name"),
-        APIField("sub_theme_name"),
+        APIField("selected_theme"),
+        APIField("selected_sub_theme"),
+
     ]
 
     # Tabs to position at the top of the view
@@ -111,13 +110,9 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         core_headline_manager = kwargs.pop(
             "core_headline_manager", DEFAULT_CORE_HEADLINE_MANGER
         )
-        theme_manager = kwargs.pop("theme_manager", DEFAULT_THEME_MANAGER)
-        sub_theme_manager = kwargs.pop("sub_theme_manager", DEFAULT_SUB_THEME_MANAGER)
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
-        self._theme_manager = theme_manager
-        self._sub_theme_manager = sub_theme_manager
 
     @property
     def selected_topics(self) -> set[str]:
@@ -148,13 +143,19 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         )
 
     @property
-    def theme_name(self) -> str | None:
-        return self._resolve_name(self._theme_manager, self.page_theme)
+    def selected_theme(self) -> str | None:
+        themes = CMSBlockParser.get_all_selected_theme_from_sections(
+            sections=self.body.raw_data
+        )
+        return min(themes, default=None)
 
     @property
-    def sub_theme_name(self) -> str | None:
-        return self._resolve_name(self._sub_theme_manager, self.page_sub_theme)
-
+    def selected_sub_theme(self) -> str | None:
+        sub_themes = CMSBlockParser.get_all_selected_sub_theme_from_sections(
+            sections=self.body.raw_data
+        )
+        return min(sub_themes, default=None)
+    
     @staticmethod
     def _resolve_name(manager, raw_id: str) -> str | None:
         if not raw_id:
