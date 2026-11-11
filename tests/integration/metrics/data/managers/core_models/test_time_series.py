@@ -907,23 +907,23 @@ class TestFilterGeographiesByPermission:
 
     @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
     @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
-    def test_resolves_ids_from_topic_when_topic_provided(
+    def test_resolves_ids_from_each_manager_when_topic_provided(
         self,
         spy_metrics_api_interface: mock.MagicMock,
         spy_is_geography_permitted: mock.MagicMock,
     ):
         """
-        Given a `topic` is provided
+        Given a `topic`, `theme` and `sub_theme` are provided
         When `filter_geographies_by_permission()` is called
-        Then the theme, sub theme and topic ids are resolved via the topic manager
+        Then each id is resolved via its own manager
         And these ids are passed through to the permission check
         """
         # Given
         spy_topic_manager = spy_metrics_api_interface.get_topic_manager.return_value
-        spy_topic_manager.get_id_by_name.return_value = (1, 2, 3)
-        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
-            4
-        )
+        spy_topic_manager.get_id_by_name.return_value = 3
+        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = 1
+        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = 2
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = 4
         self._stub_geography_codes(spy_metrics_api_interface)
         spy_is_geography_permitted.return_value = True
         data = [{"geography_type": "Nation", "geographies": [{"name": "England"}]}]
@@ -939,13 +939,12 @@ class TestFilterGeographiesByPermission:
         )
 
         # Then
-        spy_topic_manager.get_id_by_name.assert_called_once_with(
-            "infectious_disease", "respiratory", "COVID-19"
-        )
+        spy_topic_manager.get_id_by_name.assert_called_once_with("COVID-19")
         _, kwargs = spy_is_geography_permitted.call_args
         assert kwargs["theme_id"] == 1
         assert kwargs["sub_theme_id"] == 2
         assert kwargs["topic_id"] == 3
+        assert kwargs["geography_type_id"] == 4
         assert kwargs["geography_id"] == "CODE-ENGLAND"
         assert filtered == data
 
@@ -1200,52 +1199,3 @@ def managers():
             "E92000001"
         )
         yield spy_interface
-
-
-@mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-class TestFilterGeographiesUnresolvedScope:
-    def test_returns_empty_list_when_theme_is_supplied_but_unresolved(
-        self, data, request_with_permissions, managers
-    ):
-        """
-        Given a theme name which does not resolve to an ID
-        When `filter_geographies_by_permission()` is called
-        Then an empty list is returned
-        """
-        # Given
-        managers.get_theme_manager.return_value.get_id_by_name.return_value = None
-
-        # When
-        result = filter_geographies_by_permission(
-            request=request_with_permissions,
-            data=data,
-            theme="unknown-theme",
-            sub_theme="respiratory",
-            topic="",
-        )
-
-        # Then
-        assert result == []
-
-    def test_returns_empty_list_when_sub_theme_is_supplied_but_unresolved(
-        self, data, request_with_permissions, managers
-    ):
-        """
-        Given a sub_theme name which does not resolve to an ID
-        When `filter_geographies_by_permission()` is called
-        Then an empty list is returned
-        """
-        # Given
-        managers.get_sub_theme_manager.return_value.get_id_by_name.return_value = None
-
-        # When
-        result = filter_geographies_by_permission(
-            request=request_with_permissions,
-            data=data,
-            theme="infectious_disease",
-            sub_theme="unknown-sub-theme",
-            topic="",
-        )
-
-        # Then
-        assert result == []
