@@ -10,7 +10,7 @@ click==8.4.2
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==50.0.0
+cryptography==50.0.2
 defusedxml==0.7.1
 distlib==0.4.4
 django-cors-headers==4.8.0
@@ -46,7 +46,7 @@ markdown-it-py==4.2.0
 MarkupSafe==3.0.4
 mdurl==0.1.2
 msgpack==1.2.4
-mypy-extensions==1.1.0
+mypy-extensions==1.2.0
 nodeenv==1.10.0
 openpyxl==3.1.5
 orjson==3.13.0
@@ -59,7 +59,7 @@ platformdirs==4.13.5
 plotly==6.9.0
 pluggy==1.7.0
 pyjwt==2.15.1
-pyparsing==3.3.2
+pyparsing==3.3.3
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
 pytz==2026.6
