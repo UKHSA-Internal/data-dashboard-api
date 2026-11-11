@@ -88,7 +88,6 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         APIField("selected_topics"),
         APIField("selected_theme"),
         APIField("selected_sub_theme"),
-
     ]
 
     # Tabs to position at the top of the view
@@ -155,7 +154,7 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
             sections=self.body.raw_data
         )
         return min(sub_themes, default=None)
-    
+
     @staticmethod
     def _resolve_name(manager, raw_id: str) -> str | None:
         if not raw_id:

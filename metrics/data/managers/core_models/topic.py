@@ -246,7 +246,7 @@ class TopicManager(models.Manager):
                     `<TopicQuerySet [{'id': 1, 'name': '6-in-1'}, {'id': 2, 'name': 'MMR1'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()
-    
+
     def get_id_by_name(self, name: str) -> int | None:
         """Gets the topic id which matches the given name.
 
@@ -262,4 +262,6 @@ class TopicManager(models.Manager):
             >>> TopicManager.get_id_by_name('NonExistentTopic')
             None
         """
-        return self.get_queryset().filter(name=name).values_list("id", flat=True).first()
+        return (
+            self.get_queryset().filter(name=name).values_list("id", flat=True).first()
+        )
