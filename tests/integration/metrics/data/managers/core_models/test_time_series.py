@@ -921,9 +921,15 @@ class TestFilterGeographiesByPermission:
         # Given
         spy_topic_manager = spy_metrics_api_interface.get_topic_manager.return_value
         spy_topic_manager.get_id_by_name.return_value = 3
-        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = 1
-        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = 2
-        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = 4
+        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
+            1
+        )
+        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = (
+            2
+        )
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            4
+        )
         self._stub_geography_codes(spy_metrics_api_interface)
         spy_is_geography_permitted.return_value = True
         data = [{"geography_type": "Nation", "geographies": [{"name": "England"}]}]
