@@ -10,7 +10,7 @@ freezegun==1.5.5
 Faker==40.44.0
 gitdb==4.0.12
 GitPython==3.2.1
-import-linter==2.11
+import-linter==2.16
 isort==9.0.2
 pip-api==0.0.35
 pysentry-rs==0.5.0
