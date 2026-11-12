@@ -6,7 +6,7 @@ from typing import Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.charts.chart_axis_groups import pick_axis, resolve_axis
+from metrics.domain.charts.chart_axis_groups import resolve_axis
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     ChartAxisFields,
@@ -192,7 +192,7 @@ class PlotGenerationData(BaseModel):
                 y_axis_values=aggregated_results[parameters.x_axis_value],
                 additional_values=additional_values,
                 latest_date=latest_date,
-            )
+            ),
         )
 
     @property

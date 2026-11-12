@@ -1,12 +1,18 @@
 import pytest
 
-from metrics.domain.charts.chart_axis_groups import X_DOMINANT_CHARTS, pick_axis, resolve_axis
+from metrics.domain.charts.chart_axis_groups import (
+    X_DOMINANT_CHARTS,
+    pick_axis,
+    resolve_axis,
+)
 from metrics.domain.common.utils import ChartTypes
 
 """
     File name: test_chart_axis_groups.py
     individually tests chart types without referencing the lists within chart axis groups    
 """
+
+
 class TestChartAxisGroups:
 
     def test_pick_axis_chart_types_returns_as_expected(self):

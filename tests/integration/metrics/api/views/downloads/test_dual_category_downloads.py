@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from metrics.data.models.core_models import CoreHeadline
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
+
 @pytest.mark.django_db
 class TestDualCategoryView:
     @property
@@ -15,17 +16,17 @@ class TestDualCategoryView:
         return "/api/downloads/dual-category/v1/"
 
     def test_headline_x_dominant_and_y_dominant_produce_same_result(
-            self,
-            core_headline_example: CoreHeadline,
-            user_global_access,
+        self,
+        core_headline_example: CoreHeadline,
+        user_global_access,
     ):
         """
-            Given two valid dual-category timeseries payload for x and y charts
-            The download output should be equal to each other.
-            Enough tests cover x dominant dual category chart, this ensures y dominant charts don't differ
+        Given two valid dual-category timeseries payload for x and y charts
+        The download output should be equal to each other.
+        Enough tests cover x dominant dual category chart, this ensures y dominant charts don't differ
 
-            Y dominant payload flips the x/yaxis. X becomes the metric
-            Butterfly only supports Headline for now
+        Y dominant payload flips the x/yaxis. X becomes the metric
+        Butterfly only supports Headline for now
         """
 
         # Given
@@ -60,7 +61,7 @@ class TestDualCategoryView:
         )
 
         x_payload = {
-            "file_format":"csv",
+            "file_format": "csv",
             "x_axis": "age",
             "y_axis": "metric",
             "primary_field_values": [
@@ -134,4 +135,3 @@ class TestDualCategoryView:
         assert y_response.status_code == HTTPStatus.OK
 
         assert x_response.content == y_response.content
-

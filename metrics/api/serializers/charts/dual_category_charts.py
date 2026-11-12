@@ -11,7 +11,7 @@ from metrics.api.serializers.dual_category.common import (
     validate_dual_category_fields,
 )
 from metrics.api.serializers.plots import PlotSerializer
-from metrics.domain.charts.chart_axis_groups import X_DOMINANT_CHARTS, Y_DOMINANT_CHARTS, resolve_axis
+from metrics.domain.charts.chart_axis_groups import resolve_axis
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
@@ -26,6 +26,7 @@ from metrics.domain.common.utils import (
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
 )
+
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
     secondary_field_value = serializers.CharField(
@@ -119,7 +120,9 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
                         "y_axis": y_axis,
                         "line_colour": segment["colour"],
                         **static_fields,
-                        resolve_axis(self.data["chart_type"], x_axis, y_axis): primary_field_value,
+                        resolve_axis(
+                            self.data["chart_type"], x_axis, y_axis
+                        ): primary_field_value,
                         secondary_category: segment["secondary_field_value"],
                         "chart_type": self.data["chart_type"],
                         "label": segment["label"],

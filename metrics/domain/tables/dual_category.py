@@ -1,4 +1,4 @@
-from metrics.domain.charts.chart_axis_groups import X_DOMINANT_CHARTS, Y_DOMINANT_CHARTS, pick_axis
+from metrics.domain.charts.chart_axis_groups import pick_axis
 
 
 def build_dual_category_plot_params(
