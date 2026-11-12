@@ -13,5 +13,5 @@ def pick_axis(chart_type, x, y):
         return x
     if chart_type in Y_DOMINANT_CHARTS:
         return y
-    # Default for now. Possibly a better way to handle
-    return x
+    # Raise value error as chart type not recognised
+    raise ValueError(f"Unknown chart type {chart_type}")
