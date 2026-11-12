@@ -66,6 +66,11 @@ class TestAPITimeSeriesRequestSerializerV3:
         ],
     )
     def test_get_formatted_kwargs_from_request(self, api_model: models.Model):
+        """
+        Given a request which contains kwargs from the URL parameters
+        When `get_formatted_kwargs_from_request()` is called from an instance of the `APITimeSeriesRequestSerializer`
+        Then the kwargs from the request URL parameters are returned and any + symbols replaced with spaces.
+        """
         with mock.patch.object(api_model, "objects") as api_manager_spy:
 
             # Given
