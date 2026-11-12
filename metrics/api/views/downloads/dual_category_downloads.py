@@ -14,6 +14,7 @@ from metrics.api.views.downloads.single_category_downloads import (
 )
 from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
+from metrics.domain.charts.chart_axis_groups import X_DOMINANT_CHARTS, pick_axis
 from metrics.domain.common.utils import DataSourceFileType
 from metrics.domain.exports.dual_category_output import (
     build_dual_category_csv_headers,
@@ -94,7 +95,7 @@ class DualCategoryDownloadsView(SingleCategoryDownloadsView):
 
         return pivot_dual_category_download_rows(
             rows=serializer.data,
-            x_axis=chart_plot_models.x_axis,
+            x_axis=pick_axis(chart_plot_models.plots[0].chart_type, chart_plot_models.x_axis, chart_plot_models.y_axis),
             secondary_category=chart_plot_models.secondary_category,
         )
 
@@ -150,7 +151,7 @@ class DualCategoryDownloadsView(SingleCategoryDownloadsView):
         is_headline = DataSourceFileType[chart_plot_models.metric_group].is_headline
         headers = build_dual_category_csv_headers(
             is_headline=is_headline,
-            x_axis=chart_plot_models.x_axis,
+            x_axis=pick_axis(chart_plot_models.plots[0].chart_type, chart_plot_models.x_axis, chart_plot_models.y_axis),
             secondary_category=chart_plot_models.secondary_category,
             segment_secondary_values=chart_plot_models.segment_secondary_values,
         )

@@ -11,6 +11,7 @@ from metrics.api.serializers.dual_category.common import (
     validate_dual_category_fields,
 )
 from metrics.api.serializers.plots import PlotSerializer
+from metrics.domain.charts.chart_axis_groups import X_DOMINANT_CHARTS, Y_DOMINANT_CHARTS
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
@@ -25,15 +26,6 @@ from metrics.domain.common.utils import (
 from metrics.domain.models.charts.dual_category_charts import (
     DualCategoryChartRequestParams,
 )
-
-X_DOMINANT_CHARTS = [
-    ChartTypes.stacked_bar.value,
-]
-
-Y_DOMINANT_CHARTS = [
-    ChartTypes.butterfly.value,
-]
-
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
     secondary_field_value = serializers.CharField(
