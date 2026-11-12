@@ -1068,6 +1068,7 @@ class TestFilterGeographiesByPermission:
         assert kwargs["sub_theme_id"] is None
         assert kwargs["topic_id"] == 3
 
+
 class TestIsGeographyPermitted:
     THEME_ID = 1
     SUB_THEME_ID = 2
