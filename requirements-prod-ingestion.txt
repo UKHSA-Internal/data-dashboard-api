@@ -5,4 +5,4 @@ Django==5.2.17
 psycopg2-binary==2.9.13
 pydantic==2.14.2
 python-dotenv==1.2.2
-sqlparse==0.6.0
+sqlparse==0.6.1
