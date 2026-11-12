@@ -823,7 +823,7 @@ class TestFilterGeographiesByPermission:
 
     @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
     @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
-    def test_filters_geographies_for_each_geography_type_without_topic(
+    def test_filters_geographies_for_each_geography_type(
         self,
         spy_metrics_api_interface: mock.MagicMock,
         spy_is_geography_permitted: mock.MagicMock,
@@ -831,12 +831,14 @@ class TestFilterGeographiesByPermission:
         """
         Given a user without global access
         And data containing multiple geography types
-        When `filter_geographies_by_permission()` is called without a `topic`
+        When `filter_geographies_by_permission()` is called
         Then only the permitted geographies are returned for every geography type
         And geography types with no permitted geographies are dropped
-
         """
         # Given
+        spy_metrics_api_interface.get_topic_manager.return_value.get_id_by_name.return_value = (
+            3
+        )
         spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
             1
         )
@@ -858,7 +860,7 @@ class TestFilterGeographiesByPermission:
             data=self._build_data(),
             theme="infectious_disease",
             sub_theme="respiratory",
-            topic="",
+            topic="COVID-19",
         )
 
         # Then
@@ -899,7 +901,7 @@ class TestFilterGeographiesByPermission:
             data=data,
             theme="infectious_disease",
             sub_theme="respiratory",
-            topic="",
+            topic="CVID-19",
         )
 
         # Then
@@ -954,6 +956,117 @@ class TestFilterGeographiesByPermission:
         assert kwargs["geography_id"] == "CODE-ENGLAND"
         assert filtered == data
 
+    @pytest.mark.parametrize("topic", ["", "Unknown-Topic"])
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_returns_empty_list_when_topic_is_missing_or_unresolved(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+        topic: str,
+    ):
+        """
+        Given a topic which is empty or has no matching id
+        When `filter_geographies_by_permission()` is called
+        Then an empty list is returned
+        And no permission checks are performed
+        """
+        # Given
+        spy_metrics_api_interface.get_topic_manager.return_value.get_id_by_name.return_value = (
+            None
+        )
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=self._build_data(),
+            theme="",
+            sub_theme="",
+            topic=topic,
+        )
+
+        # Then
+        assert filtered == []
+        spy_is_geography_permitted.assert_not_called()
+
+    @pytest.mark.parametrize("unresolved", ["theme", "sub_theme"])
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_returns_empty_list_when_a_supplied_theme_or_sub_theme_cannot_be_resolved(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+        unresolved: str,
+    ):
+        """
+        Given a supplied theme or sub theme which has no matching id
+        When `filter_geographies_by_permission()` is called
+        Then an empty list is returned
+        And no permission checks are performed
+        """
+        # Given
+        spy_metrics_api_interface.get_topic_manager.return_value.get_id_by_name.return_value = (
+            3
+        )
+        spy_metrics_api_interface.get_theme_manager.return_value.get_id_by_name.return_value = (
+            None if unresolved == "theme" else 1
+        )
+        spy_metrics_api_interface.get_sub_theme_manager.return_value.get_id_by_name.return_value = (
+            None if unresolved == "sub_theme" else 2
+        )
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filtered = filter_geographies_by_permission(
+            request=request,
+            data=self._build_data(),
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="COVID-19",
+        )
+
+        # Then
+        assert filtered == []
+        spy_is_geography_permitted.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}._is_geography_permitted")
+    @mock.patch(f"{MODULE_PATH}.MetricsAPIInterface")
+    def test_does_not_look_up_theme_or_sub_theme_when_not_supplied(
+        self,
+        spy_metrics_api_interface: mock.MagicMock,
+        spy_is_geography_permitted: mock.MagicMock,
+    ):
+        """
+        Given a topic but no theme or sub theme (a public page)
+        When `filter_geographies_by_permission()` is called
+        Then the theme and sub theme ids are passed as None
+        """
+        # Given
+        spy_metrics_api_interface.get_topic_manager.return_value.get_id_by_name.return_value = (
+            3
+        )
+        spy_metrics_api_interface.get_geography_type_manager.return_value.get_id_by_name.return_value = (
+            4
+        )
+        self._stub_geography_codes(spy_metrics_api_interface)
+        spy_is_geography_permitted.return_value = True
+        request = self._build_request(permission_sets=[{"fake": "permission set"}])
+
+        # When
+        filter_geographies_by_permission(
+            request=request,
+            data=[{"geography_type": "Nation", "geographies": [{"name": "England"}]}],
+            theme="",
+            sub_theme="",
+            topic="COVID-19",
+        )
+
+        # Then
+        _, kwargs = spy_is_geography_permitted.call_args
+        assert kwargs["theme_id"] is None
+        assert kwargs["sub_theme_id"] is None
+        assert kwargs["topic_id"] == 3
 
 class TestIsGeographyPermitted:
     THEME_ID = 1
