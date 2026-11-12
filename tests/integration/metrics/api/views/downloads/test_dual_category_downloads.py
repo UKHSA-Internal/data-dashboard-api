@@ -31,24 +31,15 @@ class TestDualCategoryView:
 
         # Given
         client = APIClient()
-        theme: str = (
-            core_headline_example.metric.metric_group.topic.sub_theme.theme.name
-        )
-        sub_theme: str = core_headline_example.metric.metric_group.topic.sub_theme.name
         if not core_headline_example.is_public:
             client.force_authenticate(user=user_global_access, token="token")
 
-        topic: str = core_headline_example.metric.metric_group.topic.name
-        metric: str = core_headline_example.metric.name
-        geography: str = core_headline_example.geography.name
-        geography_type: str = core_headline_example.geography.geography_type.name
-
         CoreHeadlineFactory.create_record(
             metric_value=123.0000,
-            metric=metric,
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
+            metric=core_headline_example.metric.name,
+            theme=core_headline_example.metric.metric_group.topic.sub_theme.theme.name,
+            sub_theme=core_headline_example.metric.metric_group.topic.sub_theme.name,
+            topic=core_headline_example.metric.metric_group.topic.name,
             geography="England",
             geography_type="Nation",
             geography_code="E92000001",
@@ -71,12 +62,12 @@ class TestDualCategoryView:
             "static_fields": {
                 "date_from": "2000-01-01",
                 "date_to": datetime.date.today(),
-                "metric": metric,
-                "topic": topic,
-                "sub_theme": sub_theme,
-                "theme": theme,
-                "geography": geography,
-                "geography_type": geography_type,
+                "metric": core_headline_example.metric.name,
+                "topic": core_headline_example.metric.metric_group.topic.name,
+                "sub_theme": core_headline_example.metric.metric_group.topic.sub_theme.name,
+                "theme": core_headline_example.metric.metric_group.topic.sub_theme.theme.name,
+                "geography": core_headline_example.geography.name,
+                "geography_type": core_headline_example.geography.geography_type.name,
             },
             "secondary_category": "sex",
             "segments": [
@@ -102,12 +93,12 @@ class TestDualCategoryView:
             "static_fields": {
                 "date_from": "2000-01-01",
                 "date_to": datetime.date.today(),
-                "metric": metric,
-                "topic": topic,
-                "sub_theme": sub_theme,
-                "theme": theme,
-                "geography": geography,
-                "geography_type": geography_type,
+                "metric": core_headline_example.metric.name,
+                "topic": core_headline_example.metric.metric_group.topic.name,
+                "sub_theme": core_headline_example.metric.metric_group.topic.sub_theme.name,
+                "theme": core_headline_example.metric.metric_group.topic.sub_theme.theme.name,
+                "geography": core_headline_example.geography.name,
+                "geography_type": core_headline_example.geography.geography_type.name,
             },
             "secondary_category": "sex",
             "segments": [
