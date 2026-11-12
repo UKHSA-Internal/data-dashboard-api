@@ -82,36 +82,10 @@ class TestDualCategoryView:
             ],
         }
 
-        y_payload = {
-            "file_format": "csv",
-            "x_axis": "metric",
-            "y_axis": "age",
-            "primary_field_values": [
-                "default",
-            ],
-            "chart_type": "butterfly",
-            "static_fields": {
-                "date_from": "2000-01-01",
-                "date_to": datetime.date.today(),
-                "metric": core_headline_example.metric.name,
-                "topic": core_headline_example.metric.metric_group.topic.name,
-                "sub_theme": core_headline_example.metric.metric_group.topic.sub_theme.name,
-                "theme": core_headline_example.metric.metric_group.topic.sub_theme.theme.name,
-                "geography": core_headline_example.geography.name,
-                "geography_type": core_headline_example.geography.geography_type.name,
-            },
-            "secondary_category": "sex",
-            "segments": [
-                {
-                    "secondary_field_value": "f",
-                    "label": "0 to 4 years female",
-                },
-                {
-                    "secondary_field_value": "m",
-                    "label": "0 to 4 years male",
-                },
-            ],
-        }
+        y_payload = x_payload
+        y_payload["chart_type"] = "butterfly"
+        y_payload["x_axis"] = "metric"
+        y_payload["y_axis"] = "age"
 
         # When
         x_response: Response = client.post(
