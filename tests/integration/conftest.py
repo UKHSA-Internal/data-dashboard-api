@@ -152,10 +152,18 @@ def user_global_access() -> dict:
     )
     return mock_user
 
-@pytest.fixture(params=[
-        pytest.param({"chart_type": "stacked_bar", "x_axis":"age", "y_axis":"metric"}, id="x_dominant"),
-        pytest.param({"chart_type": "butterfly", "x_axis":"metric", "y_axis":"age"}, id="y_dominant")
-        ]
+
+@pytest.fixture(
+    params=[
+        pytest.param(
+            {"chart_type": "stacked_bar", "x_axis": "age", "y_axis": "metric"},
+            id="x_dominant",
+        ),
+        pytest.param(
+            {"chart_type": "butterfly", "x_axis": "metric", "y_axis": "age"},
+            id="y_dominant",
+        ),
+    ]
 )
 def chart_setup(request) -> list[str]:
     return request.param

@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
+
 @pytest.mark.django_db
 class TestDualCategoryTablesView:
     @property
@@ -74,10 +75,7 @@ class TestDualCategoryTablesView:
         ]
 
     def test_headline_plot(
-        self,
-        core_headline_example: CoreHeadline,
-        user_global_access,
-        chart_setup
+        self, core_headline_example: CoreHeadline, user_global_access, chart_setup
     ):
         """
         Given a valid dual-category headline payload
@@ -171,4 +169,3 @@ class TestDualCategoryTablesView:
         # Then
         assert response.status_code == HTTPStatus.OK
         assert expected_response == response.data
-
