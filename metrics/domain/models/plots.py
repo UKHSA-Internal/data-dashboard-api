@@ -6,7 +6,7 @@ from typing import Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.charts.chart_axis_groups import resolve_axis
+from metrics.domain.chart_axis_groups import resolve_axis
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     ChartAxisFields,

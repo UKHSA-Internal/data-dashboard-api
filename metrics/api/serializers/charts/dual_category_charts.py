@@ -11,7 +11,7 @@ from metrics.api.serializers.dual_category.common import (
     validate_dual_category_fields,
 )
 from metrics.api.serializers.plots import PlotSerializer
-from metrics.domain.charts.chart_axis_groups import resolve_axis
+from metrics.domain.chart_axis_groups import resolve_axis
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,

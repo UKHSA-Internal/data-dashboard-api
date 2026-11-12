@@ -14,7 +14,7 @@ from metrics.api.views.downloads.single_category_downloads import (
 )
 from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
-from metrics.domain.charts.chart_axis_groups import pick_axis
+from metrics.domain.chart_axis_groups import pick_axis
 from metrics.domain.common.utils import DataSourceFileType
 from metrics.domain.exports.dual_category_output import (
     build_dual_category_csv_headers,

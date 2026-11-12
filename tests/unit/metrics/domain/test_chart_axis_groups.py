@@ -1,7 +1,6 @@
 import pytest
 
-from metrics.domain.charts.chart_axis_groups import (
-    X_DOMINANT_CHARTS,
+from metrics.domain.chart_axis_groups import (
     pick_axis,
     resolve_axis,
 )
