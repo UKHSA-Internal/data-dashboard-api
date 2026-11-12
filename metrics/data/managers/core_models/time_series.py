@@ -852,15 +852,13 @@ def filter_geographies_by_permission(
     sub_theme_manager = MetricsAPIInterface.get_sub_theme_manager()
 
     topic_id = topic_manager.get_id_by_name(topic) if topic else None
+    if topic_id is None:
+        return []
+
     theme_id = theme_manager.get_id_by_name(theme) if theme else None
     sub_theme_id = sub_theme_manager.get_id_by_name(sub_theme) if sub_theme else None
 
-    requested_ids = (
-        (topic, topic_id),
-        (theme, theme_id),
-        (sub_theme, sub_theme_id),
-    )
-    if any(name and resolved_id is None for name, resolved_id in requested_ids):
+    if (theme and theme_id is None) or (sub_theme and sub_theme_id is None):
         return []
 
     filtered_data = []

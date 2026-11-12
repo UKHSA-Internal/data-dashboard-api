@@ -156,15 +156,6 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         )
         return min(sub_themes, default=None)
 
-    @staticmethod
-    def _resolve_name(manager, raw_id: str) -> str | None:
-        if not raw_id:
-            return None
-        try:
-            return manager.get(id=int(raw_id)).name
-        except (ValueError, manager.model.DoesNotExist):
-            return None
-
     def find_latest_released_embargo_for_metrics(
         self,
     ) -> list[datetime.datetime | None]:
