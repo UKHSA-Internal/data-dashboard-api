@@ -8,6 +8,63 @@ from rest_framework.test import APIClient
 from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
+expected_response = [
+            {
+                "reference": "default",
+                "values": [
+                    {
+                        "label": "0 to 4 years female",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "0 to 4 years male",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": False,
+                    },
+                ],
+            }
+        ]
+
+
+def valid_headline_payload(
+        metric,
+        topic,
+        sub_theme,
+        theme,
+        geography,
+        geography_type,
+):
+    return {
+        "x_axis": "age",
+        "y_axis": "metric",
+        "primary_field_values": [
+            "default",
+        ],
+        "chart_type": "stacked_bar",
+        "static_fields": {
+            "date_from": "2000-01-01",
+            "date_to": datetime.date.today(),
+            "metric": metric,
+            "topic": topic,
+            "sub_theme": sub_theme,
+            "theme": theme,
+            "geography": geography,
+            "geography_type": geography_type,
+        },
+        "secondary_category": "sex",
+        "segments": [
+            {
+                "secondary_field_value": "f",
+                "label": "0 to 4 years female",
+            },
+            {
+                "secondary_field_value": "m",
+                "label": "0 to 4 years male",
+            },
+        ],
+    }
+
 
 @pytest.mark.django_db
 class TestDualCategoryTablesView:
@@ -115,57 +172,21 @@ class TestDualCategoryTablesView:
             period_end=core_headline_example.period_end,
         )
 
-        valid_payload = {
-            "x_axis": "age",
-            "y_axis": "metric",
-            "primary_field_values": [
-                "default",
-            ],
-            "static_fields": {
-                "date_from": "2000-01-01",
-                "date_to": datetime.date.today(),
-                "metric": metric,
-                "topic": topic,
-                "sub_theme": sub_theme,
-                "theme": theme,
-                "geography": geography,
-                "geography_type": geography_type,
-            },
-            "secondary_category": "sex",
-            "segments": [
-                {
-                    "secondary_field_value": "f",
-                    "label": "0 to 4 years female",
-                },
-                {
-                    "secondary_field_value": "m",
-                    "label": "0 to 4 years male",
-                },
-            ],
-        }
+        valid_payload = valid_headline_payload(
+            metric=metric,
+            topic=topic,
+            sub_theme=sub_theme,
+            theme=theme,
+            geography=geography,
+            geography_type=geography_type,
+        )
 
         # When
         response: Response = client.post(
             path=self.path, data=valid_payload, format="json"
         )
 
-        expected_response = [
-            {
-                "reference": "default",
-                "values": [
-                    {
-                        "label": "0 to 4 years female",
-                        "value": "123.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "0 to 4 years male",
-                        "value": "123.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                ],
-            }
-        ]
+
 
         # Then
         assert response.status_code == HTTPStatus.OK
@@ -212,59 +233,25 @@ class TestDualCategoryTablesView:
             period_end=core_headline_example.period_end,
         )
 
-        valid_payload = {
-            "x_axis": "metric",
-            "y_axis": "age",
-            "primary_field_values": [
-                "default",
-            ],
-            "chart_type": "butterfly",
-            "static_fields": {
-                "date_from": "2000-01-01",
-                "date_to": datetime.date.today(),
-                "metric": metric,
-                "topic": topic,
-                "sub_theme": sub_theme,
-                "theme": theme,
-                "geography": geography,
-                "geography_type": geography_type,
-            },
-            "secondary_category": "sex",
-            "segments": [
-                {
-                    "secondary_field_value": "f",
-                    "label": "0 to 4 years female",
-                },
-                {
-                    "secondary_field_value": "m",
-                    "label": "0 to 4 years male",
-                },
-            ],
-        }
+        valid_payload = valid_headline_payload(
+            metric=metric,
+            topic=topic,
+            sub_theme=sub_theme,
+            theme=theme,
+            geography=geography,
+            geography_type=geography_type,
+        )
+        valid_payload["chart_type"] = "butterfly"
+        valid_payload["x_axis"] = "metric"
+        valid_payload["y_axis"] = "age"
 
         # When
         response: Response = client.post(
             path=self.path, data=valid_payload, format="json"
         )
 
-        expected_response = [
-            {
-                "reference": "default",
-                "values": [
-                    {
-                        "label": "0 to 4 years female",
-                        "value": "123.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                    {
-                        "label": "0 to 4 years male",
-                        "value": "123.0000",
-                        "in_reporting_delay_period": False,
-                    },
-                ],
-            }
-        ]
-
         # Then
         assert response.status_code == HTTPStatus.OK
         assert expected_response == response.data
+
+
