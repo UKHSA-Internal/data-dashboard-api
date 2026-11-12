@@ -15,3 +15,10 @@ def pick_axis(chart_type, x, y):
         return y
     # Raise value error as chart type not recognised
     raise ValueError(f"Unknown chart type {chart_type}")
+
+def resolve_axis(chart_type, x, y):
+    if chart_type in X_DOMINANT_CHARTS:
+        return x
+    if chart_type in Y_DOMINANT_CHARTS:
+        return y
+    return x
