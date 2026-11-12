@@ -133,5 +133,5 @@ class TestDualCategoryView:
         assert x_response.status_code == HTTPStatus.OK
         assert y_response.status_code == HTTPStatus.OK
 
-        assert x_response.content is y_response.content
+        assert x_response.content == y_response.content
 
