@@ -9,7 +9,7 @@ from metrics.api.serializers.downloads.dual_category import (
     DualCategoryDownloadSegmentSerializer,
 )
 from metrics.api.serializers.dual_category.common import parse_dual_category_request
-from metrics.domain.chart_axis_groups import resolve_axis, X_DOMINANT_CHARTS, Y_DOMINANT_CHARTS
+from metrics.domain.chart_axis_groups import X_DOMINANT_CHARTS, Y_DOMINANT_CHARTS
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
