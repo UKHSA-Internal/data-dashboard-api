@@ -121,6 +121,12 @@ class PermissionSet(models.Model):
         parts = [part.strip() for part in self.name.split("|")]
         return mark_safe("<br>".join(parts))
 
+    @property
+    def global_access(self):
+        return (
+            self.theme == WILDCARD_ID_VALUE and self.geography_type == WILDCARD_ID_VALUE
+        )
+
     panels = [
         FieldPanel("display_name"),
         FieldPanel("theme"),

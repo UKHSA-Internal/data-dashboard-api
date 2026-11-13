@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             model_name="topicpage",
             name="body",
             field=wagtail.fields.StreamField(
-                [("section", 158)],
+                [("section", 159)],
                 block_lookup={
                     0: (
                         "wagtail.blocks.TextBlock",
@@ -1438,11 +1438,20 @@ class Migration(migrations.Migration):
                         "wagtail.blocks.CharBlock",
                         (),
                         {
+                            "default": "Last updated",
+                            "help_text": "\nThis is the accompanying text for chart dates Eg: `Up to and including` 21 Oct 2024\n",
+                            "requried": True,
+                        },
+                    ),
+                    151: (
+                        "wagtail.blocks.CharBlock",
+                        (),
+                        {
                             "help_text": "\nThis legend title will be used for the title of the sub plot chart legends. \nEg. the colours associated with the geographies from global filter.\n",
                             "required": True,
                         },
                     ),
-                    151: (
+                    152: (
                         "wagtail.blocks.FloatBlock",
                         (),
                         {
@@ -1450,7 +1459,7 @@ class Migration(migrations.Migration):
                             "required": False,
                         },
                     ),
-                    152: (
+                    153: (
                         "wagtail.blocks.CharBlock",
                         (),
                         {
@@ -1458,7 +1467,7 @@ class Migration(migrations.Migration):
                             "required": False,
                         },
                     ),
-                    153: (
+                    154: (
                         "wagtail.blocks.RichTextBlock",
                         (),
                         {
@@ -1468,15 +1477,16 @@ class Migration(migrations.Migration):
                             "required": False,
                         },
                     ),
-                    154: (
+                    155: (
                         "wagtail.blocks.StructBlock",
                         [
                             [
                                 ("title_prefix", 147),
-                                ("legend_title", 150),
-                                ("target_threshold", 151),
-                                ("target_threshold_label", 152),
-                                ("about", 153),
+                                ("date_prefix", 150),
+                                ("legend_title", 151),
+                                ("target_threshold", 152),
+                                ("target_threshold_label", 153),
+                                ("about", 154),
                             ]
                         ],
                         {
@@ -1484,7 +1494,7 @@ class Migration(migrations.Migration):
                             "required": False,
                         },
                     ),
-                    155: (
+                    156: (
                         "wagtail.blocks.CharBlock",
                         (),
                         {
@@ -1492,13 +1502,14 @@ class Migration(migrations.Migration):
                             "required": True,
                         },
                     ),
-                    156: (
+                    157: (
                         "wagtail.blocks.StructBlock",
                         [
                             [
                                 ("title_prefix", 147),
-                                ("legend_title", 155),
-                                ("about", 153),
+                                ("date_prefix", 150),
+                                ("legend_title", 156),
+                                ("about", 154),
                             ]
                         ],
                         {
@@ -1506,7 +1517,7 @@ class Migration(migrations.Migration):
                             "required": False,
                         },
                     ),
-                    157: (
+                    158: (
                         "wagtail.blocks.StreamBlock",
                         [
                             [
@@ -1515,17 +1526,17 @@ class Migration(migrations.Migration):
                                 ("headline_numbers_row_card", 95),
                                 ("global_filter_card", 146),
                                 ("filter_linked_map", 149),
-                                ("filter_linked_sub_plot_chart_template", 154),
-                                ("filter_linked_time_series_chart_template", 156),
+                                ("filter_linked_sub_plot_chart_template", 155),
+                                ("filter_linked_time_series_chart_template", 157),
                             ]
                         ],
                         {
                             "help_text": "\nHere you can add any number of content row cards for this section.\nNote that these cards will be displayed across the available width.\n"
                         },
                     ),
-                    158: (
+                    159: (
                         "wagtail.blocks.StructBlock",
-                        [[("heading", 0), ("content", 157)]],
+                        [[("heading", 0), ("content", 158)]],
                         {},
                     ),
                 },

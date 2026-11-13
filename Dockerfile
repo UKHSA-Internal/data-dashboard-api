@@ -4,10 +4,10 @@
 # Default arguments
 # This version is hardcoded but ideally it should pull from the `.python-version`
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
-ARG PYTHON_VERSION=3.12.13
+ARG PYTHON_VERSION=3.12.16
 
 # this debian version needs to match the version of the distroless image we are using below
-FROM python:${PYTHON_VERSION}-slim-bookworm AS build
+FROM python:${PYTHON_VERSION}-slim-trixie AS build
 
 WORKDIR /code
 
@@ -48,7 +48,7 @@ COPY . /code
 #   The distroless base image is pinned to a specific digest for reproducible
 #   builds. When updating, refresh the digest via `docker pull` + `docker inspect`.
 ###############################################################################
-FROM gcr.io/distroless/cc-debian12@sha256:329e54034ce498f9c6b345044e8f530c6691f99e94a92446f68c0adf9baa8464 AS production
+FROM gcr.io/distroless/cc-debian13@sha256:e1f5543d45a2cd7c02a5b43dda5f0ff30729b4832113759d01ed39b0b152cddb AS production
 
 WORKDIR /code
 
