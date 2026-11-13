@@ -111,10 +111,16 @@ class ChartOutput:
             `D3-time-format` specifiers. examples can be found at:
             https://d3js.org/d3-time-format
         """
+
+        orientation = self.figure.data[0].orientation
+
         hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         if self.is_headline:
-            hover_template = "%{y:,} (%{x})<extra></extra>"
+            if orientation == "h":
+                hover_template = "%{customdata:,} (%{y})<extra></extra>"
+            else:
+                hover_template = "%{y:,} (%{x})<extra></extra>"
 
         if self.is_subplot:
             hover_template = "%{y} %{fullData.name}<extra></extra>"
