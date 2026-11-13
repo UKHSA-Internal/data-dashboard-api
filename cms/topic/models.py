@@ -45,6 +45,8 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
     )
     body = ALLOWABLE_BODY_CONTENT
 
+    testing = models.BooleanField(default=True)
+
     enable_area_selector = models.BooleanField(default=False)
 
     related_links_layout = models.CharField(
