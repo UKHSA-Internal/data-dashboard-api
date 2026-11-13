@@ -7,6 +7,7 @@ from cms.auth_content.wagtail_hooks import (
     NoEditPermissionPolicy,
     PermissionSetViewSet,
     AuthGroup,
+    UserIndexView,
     register_auth_viewset,
 )
 
@@ -18,6 +19,14 @@ class TestWagtailHooks(TestCase):
         assert result.menu_icon == AuthGroup.menu_icon
         assert result.menu_order == AuthGroup.menu_order
         assert len(result.items) == 3
+
+
+class TestUserIndexView(TestCase):
+    def test_header_more_buttons(self):
+        view = UserIndexView()
+        assert len(view.header_more_buttons) == 1
+        assert view.header_more_buttons[0].label == "Export to CSV"
+        assert view.header_more_buttons[0].url == "/cms-admin/user/export-csv/"
 
 
 class TestPermissionSetDetailsProperty(TestCase):
