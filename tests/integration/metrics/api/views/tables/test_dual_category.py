@@ -75,9 +75,7 @@ class TestDualCategoryTablesView:
         ]
 
     def test_headline_plot(
-        self,
-        core_headline_example: CoreHeadline,
-        user_global_access,
+        self, core_headline_example: CoreHeadline, user_global_access, chart_setup
     ):
         """
         Given a valid dual-category headline payload
@@ -116,11 +114,12 @@ class TestDualCategoryTablesView:
         )
 
         valid_payload = {
-            "x_axis": "age",
-            "y_axis": "metric",
+            "x_axis": chart_setup["x_axis"],
+            "y_axis": chart_setup["y_axis"],
             "primary_field_values": [
                 "default",
             ],
+            "chart_type": chart_setup["chart_type"],
             "static_fields": {
                 "date_from": "2000-01-01",
                 "date_to": datetime.date.today(),
@@ -144,11 +143,6 @@ class TestDualCategoryTablesView:
             ],
         }
 
-        # When
-        response: Response = client.post(
-            path=self.path, data=valid_payload, format="json"
-        )
-
         expected_response = [
             {
                 "reference": "default",
@@ -166,6 +160,11 @@ class TestDualCategoryTablesView:
                 ],
             }
         ]
+
+        # When
+        response: Response = client.post(
+            path=self.path, data=valid_payload, format="json"
+        )
 
         # Then
         assert response.status_code == HTTPStatus.OK

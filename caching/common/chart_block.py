@@ -18,6 +18,6 @@ def is_dual_category_chart_block(chart_block: CMS_COMPONENT_BLOCK_TYPE) -> bool:
     )
     return (
         has_axes_fields
-        and chart_block.get("chart_type") == "stacked_bar"
+        and chart_block.get("chart_type") in ("stacked_bar", "butterfly")
         and chart_block.get("segments") is not None
     )

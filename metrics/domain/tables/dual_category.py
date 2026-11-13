@@ -1,3 +1,6 @@
+from metrics.domain.chart_axis_groups import pick_axis
+
+
 def build_dual_category_plot_params(
     *,
     x_axis: str,
@@ -28,7 +31,7 @@ def build_dual_category_plot_params(
             "y_axis": y_axis,
             "chart_type": chart_type,
             **static_fields,
-            x_axis: primary_field_value,
+            pick_axis(chart_type, x_axis, y_axis): primary_field_value,
             secondary_category: segment["secondary_field_value"],
             "label": segment.get("label") or segment["secondary_field_value"],
         }

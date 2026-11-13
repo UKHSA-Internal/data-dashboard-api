@@ -22,7 +22,7 @@ class ChartTypes(Enum):
 
     # Dual category charts
     stacked_bar = "stacked_bar"
-    pyramid = "pyramid"
+    butterfly = "butterfly"
 
     @classmethod
     def choices(cls) -> tuple[tuple[str, str], ...]:
@@ -117,6 +117,7 @@ class ChartTypes(Enum):
         """
         selectable = (
             cls.stacked_bar,
+            cls.butterfly,
             # Note: Uncomment this once we have a proper pyramid chart implementation
             # cls.pyramid,
         )
