@@ -169,6 +169,19 @@ jobs:
   # Migration tests
   ###############################################################################
 
+  migration-checks:
+    name: Migration checks
+    needs: [build]
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: ./.github/actions/install-cache
+
+      - name: Check missing model migrations
+        run: |
+          source uhd.sh
+          uhd django checkmigrations
+
   migration-tests:
     name: Migration tests
     needs: [build]
