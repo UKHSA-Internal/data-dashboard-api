@@ -10,7 +10,6 @@ from metrics.domain.charts.chart_settings.single_category import (
     COMPACT_X_AXIS_NTICKS,
     FULL_WIDTH_X_AXIS_NTICKS,
     SingleCategoryChartSettings,
-    get_x_axis_figure_config,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 from tests.conftest import fake_plot_data
@@ -33,12 +32,6 @@ def fake_chart_settings(
 
 
 class TestSingleCategoryChartSettings:
-    def test_get_x_axis_figure_config_returns_responsive_tick_limits(self):
-        assert get_x_axis_figure_config() == {
-            "xaxis_full": {"nticks": FULL_WIDTH_X_AXIS_NTICKS},
-            "xaxis_compact": {"nticks": COMPACT_X_AXIS_NTICKS},
-        }
-
     def test_get_tick_font_setting(
         self, fake_chart_settings: SingleCategoryChartSettings
     ):

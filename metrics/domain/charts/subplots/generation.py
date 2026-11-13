@@ -111,7 +111,7 @@ def generate_chart_figure(
 
     figure.update_layout(**settings.get_x_axis_title_as_annotation_config())
 
-    if chart_generation_payload.target_threshold:
+    if chart_generation_payload.target_threshold is not None:
         figure = add_target_threshold(
             figure=figure,
             y_bottom=chart_generation_payload.target_threshold,
