@@ -1,0 +1,42 @@
+# Settings for the shared standard pipeline from UKHSA-Internal/devops-pipeline.
+# Consumed by .github/workflows/devops-pipeline-standard.yml.
+# Values prefixed with `TODO-` are placeholders which must be replaced
+# before the pipeline can pass its Check stage.
+version: "1.0"
+
+service:
+  name: data-dashboard-api
+  owner_team: data-dashboard-engineers
+  language: python
+  test_command: "python3.12 -m venv .venv && . .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt && python -m pytest tests/unit && python -m pytest tests/integration && python -m pytest tests/system && python -m pytest tests/migrations"
+
+environments:
+  - name: TODO-DEV-ENV-NAME
+    category: Development
+    account_id: "TODO-ACCOUNT-ID"
+    role_name: TODO-ROLE-NAME
+    region: eu-west-2
+  - name: TODO-PREPROD-ENV-NAME
+    category: Pre-production
+    account_id: "TODO-ACCOUNT-ID"
+    role_name: TODO-ROLE-NAME
+    region: eu-west-2
+  - name: TODO-PROD-ENV-NAME
+    category: Production
+    account_id: "TODO-ACCOUNT-ID"
+    role_name: TODO-ROLE-NAME
+    region: eu-west-2
+
+governance:
+  retention_days: 30
+  approvers:
+    - TODO-APPROVER-GROUP
+
+verification:
+  health_endpoint: /health
+  timeout_seconds: 60
+  db_check_required: false
+
+deploy:
+  production:
+    approval_mode: all-approvers

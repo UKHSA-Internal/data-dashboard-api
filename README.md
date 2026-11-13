@@ -337,6 +337,61 @@ you will need to set up the variables for validating the token via cognito:
 
 ---
 
+## DevOps Pipeline (Standard)
+
+The workflow at `.github/workflows/devops-pipeline-standard.yml` consumes the shared standard pipeline
+from [UKHSA-Internal/devops-pipeline](https://github.com/UKHSA-Internal/devops-pipeline) (pinned to `@v0`).
+The stages and their logic live in that repository, not in this one.
+This workflow runs alongside the existing `Pipeline` workflow (`.github/workflows/actions.yml`), which is unchanged.
+
+### What it does
+
+The shared pipeline reads this service's settings from `.github/pipeline-settings.yml` and runs these stages in order:
+
+1. **Check** - validates `.github/pipeline-settings.yml`
+2. **Test** - runs the `service.test_command`, which creates a Python 3.12 virtual environment,
+   installs `requirements.txt` and runs the unit, integration, system and migration test suites
+3. **Scan** - security scanning
+4. **Build** - `docker build` of the `Dockerfile` at the root of this repository
+5. **Deploy** and **Verify**, per environment (Development, then Pre-production, then Production).
+   Verify calls `GET /health`, which returns HTTP 200 with a JSON body containing `status`, `version` and `commit_sha`.
+   Production deployments require all approvers (`approval_mode: all-approvers`)
+6. A run report
+
+The `version` and `commit_sha` values in the `/health` response come from the
+`APP_VERSION` and `COMMIT_SHA` Docker build args, and default to `"unknown"` if not provided.
+
+### How to run it
+
+The workflow runs automatically on every pull request, and appears in the PR's checks as
+**DevOps Pipeline (Standard)**. On pull requests, only the Development Deploy and Verify stages run;
+Pre-production and Production only run on pushes to `main`.
+
+It can also be triggered manually from the **Actions** tab in GitHub, by selecting
+**DevOps Pipeline (Standard)** and clicking **Run workflow**, or with the GitHub CLI:
+
+```bash
+gh workflow run "DevOps Pipeline (Standard)" --ref <branch>
+```
+
+It does not run on pushes to `main` yet, until we have confirmed what the Deploy stage does for this service.
+
+### Prerequisites still to set up
+
+- **Settings file TODO values** in `.github/pipeline-settings.yml`:
+  - `environments[].name` - the Development, Pre-production and Production environment names
+  - `environments[].account_id` - the AWS account ID for each environment
+  - `environments[].role_name` - the IAM role name for each environment
+  - `governance.approvers` - the approver group names
+  - The `eu-west-2` region for each environment, which is taken from the existing `Pipeline` workflow and should be confirmed
+- **An IAM role per environment** that trusts GitHub OIDC (`token.actions.githubusercontent.com`)
+  for this repository, matching the `role_name` and `account_id` in the settings file
+- **One repository variable per environment** named `DEPLOYMENT_BASE_URL_<NAME>`,
+  where `<NAME>` is the environment name upper-cased with non-alphanumeric characters replaced by underscores.
+  For example, an environment named `pre-prod` needs `DEPLOYMENT_BASE_URL_PRE_PROD`
+
+---
+
 ## Using the API
 
 ### Via Curl

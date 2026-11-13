@@ -1,0 +1,23 @@
+# Calls the shared standard pipeline from UKHSA-Internal/devops-pipeline.
+# The stages (Check, Test, Scan, Build, Deploy, Verify, run report) and all of
+# their logic live in that repository, not in this one.
+# Service-specific configuration is read from .github/pipeline-settings.yml.
+#
+# Runs on pull requests and can be triggered manually.
+# On pull requests the shared pipeline only runs Deploy/Verify for Development;
+# Pre-production and Production only run on pushes to `main`.
+# Do not add `push` to `main` until we have confirmed what Deploy does for this service.
+name: DevOps Pipeline (Standard)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  standard-pipeline:
+    name: Standard pipeline
+    permissions:
+      contents: read
+      id-token: write
+    uses: UKHSA-Internal/devops-pipeline/.github/workflows/standard-pipeline.yml@v1
