@@ -177,22 +177,12 @@ class PlotGenerationData(BaseModel):
             if key not in keys_to_exclude
         }
 
-        return resolve_axis(
-            parameters.chart_type,
-            cls(
+        return cls(
                 parameters=parameters,
                 x_axis_values=aggregated_results[parameters.x_axis_value],
                 y_axis_values=aggregated_results[parameters.y_axis_value],
                 additional_values=additional_values,
                 latest_date=latest_date,
-            ),
-            cls(
-                parameters=parameters,
-                x_axis_values=aggregated_results[parameters.y_axis_value],
-                y_axis_values=aggregated_results[parameters.x_axis_value],
-                additional_values=additional_values,
-                latest_date=latest_date,
-            ),
         )
 
     @property
