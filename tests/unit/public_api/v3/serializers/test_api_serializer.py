@@ -77,11 +77,13 @@ class TestAPITimeSeriesRequestSerializerV3:
             fake_request_kwargs = {
                 "theme": "infectious_disease",
                 "geography_type": "Government+Office+Region",
+                "sub_theme": "respiratory",
             }
             fake_parser_context = {
                 "kwargs": fake_request_kwargs,
             }
             mocked_request = mock.Mock(parser_context=fake_parser_context)
+            mocked_request.user.permission_sets = None
             serializer = APIRequestSerializerv3(
                 context={
                     "request": mocked_request,
@@ -97,6 +99,7 @@ class TestAPITimeSeriesRequestSerializerV3:
             api_manager_spy.get_distinct_column_values_with_filters.assert_called_once_with(
                 lookup_field="theme",
                 theme="infectious_disease",
+                sub_theme="respiratory",
                 permission_sets=None,
                 geography_type="Government Office Region",
             )

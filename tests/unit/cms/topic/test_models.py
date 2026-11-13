@@ -13,6 +13,8 @@ from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from wagtail.search.index import SearchField
 
+from cms.dynamic_content.selected_fields import CMSSelectedFieldParser
+
 
 @pytest.fixture
 def mock_metric_choice_boundary():
@@ -252,6 +254,8 @@ class TestTemplateCOVID19Page:
             "is_public",
             "page_classification",
             "selected_topics",
+            "selected_theme",
+            "selected_sub_theme",
         ],
     )
     def test_api_fields(self, expected_api_field: str):
@@ -709,3 +713,99 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
+
+
+class TestTopicPageSelectedThemeProperties:
+    def test_selected_theme_returns_none_when_no_theme_selected(self):
+        """
+        Given a `TopicPage` whose body has no theme on any plot
+        When the `selected_theme` property is called
+        Then None is returned
+        """
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When / Then
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_theme_from_sections",
+            return_value=set(),
+        ):
+            assert page.selected_theme is None
+
+    def test_selected_sub_theme_returns_none_when_no_sub_theme_selected(self):
+        """
+        Given a `TopicPage` whose body has no sub-theme on any plot
+        When the `selected_sub_theme` property is called
+        Then None is returned
+        """
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When / Then
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_sub_theme_from_sections",
+            return_value=set(),
+        ):
+            assert page.selected_sub_theme is None
+
+    def test_selected_theme_returns_a_single_string(self):
+        """
+        Given a `TopicPage` whose plots select a theme
+        When the `selected_theme` property is called
+        Then a single string is returned, not a collection
+        """
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_theme_from_sections",
+            return_value={"infectious_disease"},
+        ):
+            selected_theme = page.selected_theme
+
+        # Then
+        assert selected_theme == "infectious_disease"
+
+    def test_selected_sub_theme_returns_a_single_string(self):
+        """
+        Given a `TopicPage` whose plots select a sub-theme
+        When the `selected_sub_theme` property is called
+        Then a single string is returned, not a collection
+        """
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_sub_theme_from_sections",
+            return_value={"respiratory"},
+        ):
+            selected_sub_theme = page.selected_sub_theme
+
+        # Then
+        assert selected_sub_theme == "respiratory"
+
+    def test_selected_theme_is_alphabetically_first_when_multiple_selected(self):
+        """
+        Given a `TopicPage` whose plots select more than one theme
+        When the `selected_theme` property is called
+        Then the alphabetically first theme is returned
+        """
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_theme_from_sections",
+            return_value={"infectious_disease", "extreme_event"},
+        ):
+            selected_theme = page.selected_theme
+
+        # Then
+        assert selected_theme == "extreme_event"

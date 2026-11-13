@@ -27,6 +27,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
+from cms.dynamic_content.selected_fields import CMSSelectedFieldParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
 
@@ -86,6 +87,8 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         APIField("enable_area_selector"),
         *NonPublicCapablePage.api_fields,
         APIField("selected_topics"),
+        APIField("selected_theme"),
+        APIField("selected_sub_theme"),
     ]
 
     # Tabs to position at the top of the view
@@ -138,6 +141,20 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         return CMSBlockParser.get_all_selected_metrics_from_sections(
             sections=self.body.raw_data
         )
+
+    @property
+    def selected_theme(self) -> str | None:
+        themes = CMSSelectedFieldParser.get_all_selected_theme_from_sections(
+            sections=self.body.raw_data
+        )
+        return min(themes, default=None)
+
+    @property
+    def selected_sub_theme(self) -> str | None:
+        sub_themes = CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
+            sections=self.body.raw_data
+        )
+        return min(sub_themes, default=None)
 
     def find_latest_released_embargo_for_metrics(
         self,

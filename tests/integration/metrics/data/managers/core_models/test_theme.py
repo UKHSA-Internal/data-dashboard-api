@@ -48,3 +48,38 @@ class TestThemeManager:
 
         # Then
         assert get_name_by_id == fake_theme_name_two
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_id_for_existing_theme(self):
+        """
+        Given an existing `Theme` record
+        When `get_id_by_name()` is called
+            from an instance of `ThemeManager`
+        Then the id of the matching record is returned
+        """
+        # Given
+        theme_name = "respiratory"
+        theme = ThemeFactory(name=theme_name)
+
+        # When
+        retrieved_id = Theme.objects.get_id_by_name(theme_name)
+
+        # Then
+        assert retrieved_id == theme.id
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_none_when_theme_does_not_exist(self):
+        """
+        Given no matching `Theme` record
+        When `get_id_by_name()` is called
+            from an instance of `ThemeManager`
+        Then None is returned
+        """
+        # Given
+        ThemeFactory(name="respiratory")
+
+        # When
+        retrieved_id = Theme.objects.get_id_by_name("non_existent_theme")
+
+        # Then
+        assert retrieved_id is None

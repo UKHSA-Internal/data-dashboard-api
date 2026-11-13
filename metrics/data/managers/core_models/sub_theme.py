@@ -142,3 +142,7 @@ class SubThemeManager(models.Manager):
                     `<SubThemeQuerySet [{'id': 1, 'name': 'infectious_disease'}, {'id': 2, 'name': 'respiratory'}, ...]>`
         """
         return self.get_queryset().get_all_names_and_ids()
+
+    def get_id_by_name(self, sub_theme_name: str) -> int | None:
+        record = self.filter(name=sub_theme_name).first()
+        return int(record.id) if record else None

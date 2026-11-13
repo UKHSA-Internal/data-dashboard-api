@@ -55,3 +55,27 @@ class TestSubThemeManager:
 
         # Then
         spy_get_all_names_and_ids.assert_called_once_with()
+
+    @mock.patch.object(SubThemeQuerySet, "get_filtered_unique_names_related_to_theme")
+    def test_get_filtered_unique_names_related_to_theme(
+        self, spy_get_filtered_unique_names_related_to_theme: mock.MagicMock
+    ):
+        """
+        Given an instance of a `SubThemeManager`
+        When `get_filtered_unique_names_related_to_theme` is called
+        Then it delegates the call to `SubThemeQuerySet`
+            with the given `parent_theme_id`
+        """
+        # Given
+        sub_theme_manager = SubThemeManager()
+        parent_theme_id = "123"
+
+        # When
+        sub_theme_manager.get_filtered_unique_names_related_to_theme(
+            parent_theme_id=parent_theme_id
+        )
+
+        # Then
+        spy_get_filtered_unique_names_related_to_theme.assert_called_once_with(
+            parent_theme_id=parent_theme_id
+        )

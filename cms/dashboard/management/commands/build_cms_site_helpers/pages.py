@@ -135,7 +135,9 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
         is_public=data["is_public"],
-        page_classification=data["page_classification"]
+        page_classification=data["page_classification"],
+        page_theme=data["page_theme"],
+        page_sub_theme=data["page_sub_theme"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
