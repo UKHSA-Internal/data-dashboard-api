@@ -130,6 +130,4 @@ class ChartOutput:
         self.figure.layout.legend.itemdoubleclick = False
 
     def is_y_dominant_chart(self):
-        if len(self.figure.data) > 0 and self.figure.data[0].orientation == "h":
-            return True
-        return False
+        return len(self.figure.data) > 0 and self.figure.data[0].orientation == "h"
