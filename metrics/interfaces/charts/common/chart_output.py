@@ -114,7 +114,7 @@ class ChartOutput:
         hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         if self.is_headline:
-            if len(self.figure.data) > 0 and self.figure.data[0].orientation == "h":
+            if self.is_y_dominant_chart():
                 hover_template = "%{customdata:,} (%{y})<extra></extra>"
             else:
                 hover_template = "%{y:,} (%{x})<extra></extra>"
@@ -128,3 +128,8 @@ class ChartOutput:
     def _disable_clicks_on_legend(self):
         self.figure.layout.legend.itemclick = False
         self.figure.layout.legend.itemdoubleclick = False
+
+    def is_y_dominant_chart(self):
+        if len(self.figure.data) > 0 and self.figure.data[0].orientation == "h":
+            return True
+        return False
