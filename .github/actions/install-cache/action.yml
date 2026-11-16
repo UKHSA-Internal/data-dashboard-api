@@ -16,7 +16,7 @@ runs:
       # With this we cache the build and so that each CI job can get straight into what it wants to do
       with:
         path: .venv
-        key: venv-${{ hashFiles('requirements-prod.txt') }}-${{ hashFiles('requirements-dev.txt') }}
+        key: venv-${{ hashFiles('requirements*.txt', '.python-version') }}
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
