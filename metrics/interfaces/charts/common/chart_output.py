@@ -112,12 +112,10 @@ class ChartOutput:
             https://d3js.org/d3-time-format
         """
 
-        orientation = self.figure.data[0].orientation
-
         hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         if self.is_headline:
-            if orientation == "h":
+            if len(self.figure.data) > 0 and self.figure.data[0].orientation == "h":
                 hover_template = "%{customdata:,} (%{y})<extra></extra>"
             else:
                 hover_template = "%{y:,} (%{x})<extra></extra>"
