@@ -11,26 +11,26 @@ service:
   test_command: "python3.12 -m venv .venv && . .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt && python -m pytest tests/unit && python -m pytest tests/integration && python -m pytest tests/system && python -m pytest tests/migrations"
 
 environments:
-  - name: TODO-DEV-ENV-NAME
+  - name: dev
     category: Development
-    account_id: "TODO-ACCOUNT-ID"
-    role_name: TODO-ROLE-NAME
+    account_id: "<dev account id>"
+    role_name: <dev deploy role>
     region: eu-west-2
-  - name: TODO-PREPROD-ENV-NAME
+  - name: staging
     category: Pre-production
-    account_id: "TODO-ACCOUNT-ID"
-    role_name: TODO-ROLE-NAME
+    account_id: "<uat account id>"
+    role_name: <uat deploy role>
     region: eu-west-2
-  - name: TODO-PROD-ENV-NAME
+  - name: prod
     category: Production
-    account_id: "TODO-ACCOUNT-ID"
-    role_name: TODO-ROLE-NAME
+    account_id: "<prod account id>"
+    role_name: <prod deploy role>
     region: eu-west-2
 
 governance:
   retention_days: 30
   approvers:
-    - TODO-APPROVER-GROUP
+    - data-dashboard-engineers
 
 verification:
   health_endpoint: /health

@@ -340,7 +340,7 @@ you will need to set up the variables for validating the token via cognito:
 ## DevOps Pipeline (Standard)
 
 The workflow at `.github/workflows/devops-pipeline-standard.yml` consumes the shared standard pipeline
-from [UKHSA-Internal/devops-pipeline](https://github.com/UKHSA-Internal/devops-pipeline) (pinned to `@v0`).
+from [UKHSA-Internal/devops-pipeline](https://github.com/UKHSA-Internal/devops-pipeline) (pinned to `@v1`).
 The stages and their logic live in that repository, not in this one.
 This workflow runs alongside the existing `Pipeline` workflow (`.github/workflows/actions.yml`), which is unchanged.
 
