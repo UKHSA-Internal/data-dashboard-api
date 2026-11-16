@@ -27,6 +27,7 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
         geography: str | None = None,
         geography_type: str | None = None,
         geography_code: str = "E92000001",
+        is_public: bool = True,
         **kwargs,
     ):
         theme, _ = Theme.objects.get_or_create(name=theme)
@@ -38,7 +39,9 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
             topic, _ = Topic.objects.get_or_create(name=topic, sub_theme=sub_theme)
 
         if metric:
-            metric, _ = Metric.objects.get_or_create(name=metric, topic=topic)
+            metric, _ = Metric.objects.get_or_create(
+                name=metric, topic=topic, is_public=is_public
+            )
 
         if geography_type:
             geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)

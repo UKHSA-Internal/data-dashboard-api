@@ -190,6 +190,7 @@ class TestHeadlineDTO:
             topic=source_data["topic"],
             metric_group=source_data["metric_group"],
             metric=source_data["metric"],
+            is_public=source_data["is_public"],
             geography_type=source_data["geography_type"],
             geography=source_data["geography"],
             geography_code=source_data["geography_code"],

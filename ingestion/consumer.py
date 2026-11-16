@@ -284,6 +284,7 @@ class Consumer:
             name=self.dto.metric,
             metric_group_id=metric_group.id,
             topic_id=topic.id,
+            is_public=self.dto.is_public,
         )
 
     def _get_or_create_stratum(self):

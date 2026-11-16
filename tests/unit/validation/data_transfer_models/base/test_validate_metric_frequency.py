@@ -38,6 +38,7 @@ class TestTimeSeriesDTOForMetricFrequency:
             InboundTimeSeriesSpecificFields(**individual_source_data)
             for individual_source_data in example_time_series_data["time_series"]
         ]
+        payload["is_public"] = True
 
         # When
         incoming_base_validation = TimeSeriesDTO(**payload)
@@ -63,6 +64,7 @@ class TestTimeSeriesDTOForMetricFrequency:
         # Given
         payload = valid_payload_for_base_model
         payload["metric_frequency"] = metric_frequency
+        payload["is_public"] = True
 
         # When
         with pytest.raises(ValidationError):
