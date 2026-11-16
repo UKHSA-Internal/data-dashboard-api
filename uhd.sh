@@ -50,7 +50,7 @@ function uhd() {
         "django") _django $args ;;
         "security") _security $args ;;
         "server") _server $args ;;
-        "tests") _tests $args ;;
+        "tests") _tests "${args[@]}" ;;
         "quality") _quality $args ;;
         "venv") _venv $args ;;
 
