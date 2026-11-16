@@ -9,17 +9,17 @@ Y_DOMINANT_CHARTS = [
 ]
 
 
-def pick_axis(chart_type, x, y):
+def pick_axis(chart_type, x_dominant, y_dominant):
     if chart_type in X_DOMINANT_CHARTS:
-        return x
+        return x_dominant
     if chart_type in Y_DOMINANT_CHARTS:
-        return y
+        return y_dominant
     raise ValueError
 
 
-def resolve_axis(chart_type, x, y):
+def resolve_axis(chart_type, x_dominant, y_dominant):
     if chart_type in X_DOMINANT_CHARTS:
-        return x
+        return x_dominant
     if chart_type in Y_DOMINANT_CHARTS:
-        return y
-    return x
+        return y_dominant
+    return x_dominant

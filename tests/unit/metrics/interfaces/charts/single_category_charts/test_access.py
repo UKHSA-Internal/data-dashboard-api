@@ -880,3 +880,34 @@ class TestChartOutput:
             interactive_chart_output["layout"]["yaxis"]["tickfont"]["family"]
             == expected_font_family
         )
+
+    def test_hover_template_swaps_axes_if_figure_orientation_is_horizontal(self):
+        """
+        Given a `plotly` Figure object with a horizontal orientation
+        When the `interactive_chart_figure_output()` is called
+            from an instance of `ChartOutput`
+        Then the returned dict output representation
+            contains the correct settings for interactive charts
+        """
+
+        # Given
+        data = [{"orientation": "h"}]
+        fake_figure = Figure(data=data)
+        chart_output = ChartOutput(
+            figure=fake_figure,
+            description="abc",
+            is_headline=True,
+        )
+
+        # When
+        interactive_chart_output = chart_output.interactive_chart_figure_output
+
+        # Then
+        expected_hover_template_for_y_dominate_chart = (
+            "%{customdata:,} (%{y})<extra></extra>"
+        )
+
+        assert (
+            interactive_chart_output["data"][0]["hovertemplate"]
+            == expected_hover_template_for_y_dominate_chart
+        )

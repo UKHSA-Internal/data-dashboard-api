@@ -9,6 +9,7 @@ from metrics.api.serializers.downloads.dual_category import (
     DualCategoryDownloadSegmentSerializer,
 )
 from metrics.api.serializers.dual_category.common import parse_dual_category_request
+from metrics.domain.chart_axis_groups import resolve_axis
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
@@ -52,14 +53,20 @@ class DualCategoryTableRequestParamsSerializer(DualCategoryChartSerializer):
             chart_type=self.data.get("chart_type", "stacked_bar"),
         )
 
+        adjusted_request_context_x_axis, adjusted_request_context_y_axis = resolve_axis(
+            request_context.chart_type,
+            (request_context.x_axis, request_context.y_axis),
+            (request_context.y_axis, request_context.x_axis),
+        )
+
         return DualCategoryTableRequestParams(
             metric_group=request_context.metric_group,
             plots=request_context.plots,
             file_format=self.data.get("file_format", "svg"),
             chart_height=self.data.get("chart_height") or DEFAULT_CHART_HEIGHT,
             chart_width=self.data.get("chart_width") or DEFAULT_CHART_WIDTH,
-            x_axis=request_context.x_axis,
-            y_axis=request_context.y_axis,
+            x_axis=adjusted_request_context_x_axis,
+            y_axis=adjusted_request_context_y_axis,
             request=request,
             secondary_category=request_context.secondary_category,
             segment_secondary_values=request_context.segment_secondary_values,

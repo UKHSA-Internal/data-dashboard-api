@@ -27,8 +27,8 @@ def build_dual_category_plot_params(
 
     return [
         {
-            "x_axis": y_axis,
-            "y_axis": x_axis,
+            "x_axis": x_axis,
+            "y_axis": y_axis,
             "chart_type": chart_type,
             **static_fields,
             pick_axis(chart_type, x_axis, y_axis): primary_field_value,

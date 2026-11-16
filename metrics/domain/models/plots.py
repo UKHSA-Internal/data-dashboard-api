@@ -6,7 +6,6 @@ from typing import Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.chart_axis_groups import resolve_axis
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     ChartAxisFields,
@@ -177,22 +176,12 @@ class PlotGenerationData(BaseModel):
             if key not in keys_to_exclude
         }
 
-        return resolve_axis(
-            parameters.chart_type,
-            cls(
-                parameters=parameters,
-                x_axis_values=aggregated_results[parameters.x_axis_value],
-                y_axis_values=aggregated_results[parameters.y_axis_value],
-                additional_values=additional_values,
-                latest_date=latest_date,
-            ),
-            cls(
-                parameters=parameters,
-                x_axis_values=aggregated_results[parameters.y_axis_value],
-                y_axis_values=aggregated_results[parameters.x_axis_value],
-                additional_values=additional_values,
-                latest_date=latest_date,
-            ),
+        return cls(
+            parameters=parameters,
+            x_axis_values=aggregated_results[parameters.x_axis_value],
+            y_axis_values=aggregated_results[parameters.y_axis_value],
+            additional_values=additional_values,
+            latest_date=latest_date,
         )
 
     @property

@@ -32,6 +32,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         tick_font = self._get_tick_font_config()
         yaxis_config = {
             "type": "category",
+            "fixedrange": True,
             "title": {
                 "text": self._chart_generation_payload.y_axis_title,
                 "font": tick_font,
@@ -61,6 +62,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                 "zeroline": True,
                 "showgrid": True,
                 "gridcolor": "rgba(0,0,0,0.05)",
+                "fixedrange": True,
                 "title": {
                     "text": self._chart_generation_payload.x_axis_title,
                     "font": tick_font,

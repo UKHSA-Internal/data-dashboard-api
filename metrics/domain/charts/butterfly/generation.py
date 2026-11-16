@@ -36,10 +36,8 @@ def generate_butterfly(
 
     keys = [key for i, key in enumerate(grouped) if i < BUTTERFLY_LIMIT]
     for column, key in enumerate(keys):
-        x_values = grouped[key]["x_axis_values"]
-        if column < 1:
-            original = grouped[key]["x_axis_values"]
-            x_values = [-x for x in original]
+        original = grouped[key]["x_axis_values"]
+        x_values = [-x for x in original] if column < 1 else original
         figure.add_trace(
             go.Bar(
                 x=x_values,
@@ -47,6 +45,7 @@ def generate_butterfly(
                 orientation="h",
                 name=grouped[key]["label"],
                 marker_color=grouped[key]["colour"],
+                customdata=original,
             )
         )
         values.extend([grouped[key]["x_axis_values"]])
