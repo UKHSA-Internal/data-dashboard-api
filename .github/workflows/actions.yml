@@ -196,6 +196,30 @@ jobs:
           retention-days: 1
 
   ###############################################################################
+  # Test coverage
+  ###############################################################################
+
+  test-coverage:
+    name: Test coverage
+    needs: [unit-tests, integration-tests, system-tests]
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: ./.github/actions/install-cache
+
+      - name: Download coverage data
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Evaluate test coverage
+        run: |
+          source uhd.sh
+          uhd tests coverage-report
+
+
+  ###############################################################################
   # Migration tests
   ###############################################################################
 
@@ -214,49 +238,16 @@ jobs:
 
   migration-tests:
     name: Migration tests
-    needs: [build]
+    needs: [migration-checks]
     runs-on: ubuntu-22.04-arm
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - uses: ./.github/actions/install-cache
 
       - name: Run migration tests
-        env:
-          COVERAGE_FILE: .coverage.migrations
         run: |
           source uhd.sh
-          uhd tests migrations --cov --cov-fail-under=0
-
-      - name: Upload coverage data
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: coverage-migrations
-          path: .coverage.migrations
-          include-hidden-files: true
-          retention-days: 1
-
-  ###############################################################################
-  # Test coverage
-  ###############################################################################
-
-  test-coverage:
-    name: Test coverage
-    needs: [unit-tests, integration-tests, system-tests, migration-tests]
-    runs-on: ubuntu-22.04-arm
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - uses: ./.github/actions/install-cache
-
-      - name: Download coverage data
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          pattern: coverage-*
-          merge-multiple: true
-
-      - name: Evaluate test coverage
-        run: |
-          source uhd.sh
-          uhd tests coverage-report
+          uhd tests migrations
 
   ###############################################################################
   # Docker build check (PR validation)
