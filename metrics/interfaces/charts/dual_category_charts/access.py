@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts.stacked_bar.generation import generate_stacked_bar
 from metrics.domain.common.utils import (
+    ChartTypes,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models.charts.dual_category_charts import (
@@ -47,6 +48,13 @@ class DualCategoryChartsInterface:
     @property
     def is_headline_data(self) -> bool:
         return self.chart_request_params.plots[0].is_headline_data
+
+    @property
+    def supports_compact_rotation(self) -> bool:
+        """Stacked bars rotate only when their source is not time-series data."""
+        return self.chart_type == ChartTypes.stacked_bar.value and all(
+            not plot.is_timeseries_data for plot in self.chart_request_params.plots
+        )
 
     @staticmethod
     def _build_chart_figure(

@@ -34,9 +34,19 @@ THIRD_CHART_WIDTH = 400
 THIRD_CHART_MULTIPLIER = 2
 THIRD_CHART_BASE_Y = 0.6
 
+ROTATED_SUBPLOT_LEGEND_CONFIG = {
+    "y": -0.25,
+    "yanchor": "top",
+}
+ROTATED_SUBPLOT_MARGIN_CONFIG = {
+    "l": 104,
+    "r": 24,
+    "b": 128,
+    "t": 48,
+}
+
 
 class SubplotChartSettings(ChartSettings):
-
     def __init__(self, *, chart_generation_payload: SubplotChartGenerationPayload):
         super().__init__(chart_generation_payload=chart_generation_payload)
         self.subplot_data: SubplotGenerationData = chart_generation_payload.subplot_data
