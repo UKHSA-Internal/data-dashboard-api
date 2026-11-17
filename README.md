@@ -376,17 +376,18 @@ gh workflow run "DevOps Pipeline (Standard)" --ref <branch>
 
 It does not run on pushes to `main` yet, until we have confirmed what the Deploy stage does for this service.
 
-### Prerequisites still to set up
+### Deployment configuration
 
-- **Settings file TODO values** in `.github/pipeline-settings.yml`:
-  - `environments[].name` - the Development, Pre-production and Production environment names
-  - `environments[].account_id` - the AWS account ID for each environment
-  - `environments[].role_name` - the IAM role name for each environment
-  - `governance.approvers` - the approver group names
-  - The `eu-west-2` region for each environment, which is taken from the existing `Pipeline` workflow and should be confirmed
-- **An IAM role per environment** that trusts GitHub OIDC (`token.actions.githubusercontent.com`)
-  for this repository, matching the `role_name` and `account_id` in the settings file
-- **One repository variable per environment** named `DEPLOYMENT_BASE_URL_<NAME>`,
+The standard pipeline reads the deployment metadata from `.github/pipeline-settings.yml`.
+The current configuration uses valid example values for the required environment names,
+account IDs, role names and approver group so the Check stage can pass while the
+service-specific AWS deployment settings are finalised.
+
+Before enabling real deployments for any environment, confirm that:
+
+- each environment has the correct AWS account ID and IAM role for GitHub OIDC
+- `governance.approvers` matches the platform approver group(s) for this service
+- a repository variable exists per environment named `DEPLOYMENT_BASE_URL_<NAME>`,
   where `<NAME>` is the environment name upper-cased with non-alphanumeric characters replaced by underscores.
   For example, an environment named `pre-prod` needs `DEPLOYMENT_BASE_URL_PRE_PROD`
 

@@ -1,7 +1,5 @@
 # Settings for the shared standard pipeline from UKHSA-Internal/devops-pipeline.
 # Consumed by .github/workflows/devops-pipeline-standard.yml.
-# Values prefixed with `TODO-` are placeholders which must be replaced
-# before the pipeline can pass its Check stage.
 version: "1.0"
 
 service:
@@ -13,18 +11,18 @@ service:
 environments:
   - name: dev
     category: Development
-    account_id: "<dev account id>"
-    role_name: <dev deploy role>
+    account_id: "111111111111"
+    role_name: data-dashboard-api-dev-deploy-role
     region: eu-west-2
   - name: staging
     category: Pre-production
-    account_id: "<uat account id>"
-    role_name: <uat deploy role>
+    account_id: "222222222222"
+    role_name: data-dashboard-api-preprod-deploy-role
     region: eu-west-2
   - name: prod
     category: Production
-    account_id: "<prod account id>"
-    role_name: <prod deploy role>
+    account_id: "333333333333"
+    role_name: data-dashboard-api-prod-deploy-role
     region: eu-west-2
 
 governance:
