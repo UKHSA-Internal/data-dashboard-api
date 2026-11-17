@@ -19,6 +19,10 @@ def generate_butterfly(
     Args:
         chart_generation_payload: The payload for the chart generation.
 
+    Note:
+        - customdata: this is used for the hover template. the absolute value used for the left side of the butterfly chart.
+                      both sides are set, the right side is positive data wise so not necessarily needed but simplifys the hovertemplte config
+
     Returns:
         The figure for the butterfly chart.
     """

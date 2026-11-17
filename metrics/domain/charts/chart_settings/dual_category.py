@@ -7,7 +7,7 @@ from metrics.domain.charts.chart_settings.single_category import (
 from metrics.domain.models.plots import ChartGenerationPayload, PlotGenerationData
 
 PLOTLY_STEPS = [1, 2, 5, 10, 15]
-
+MAX_TICKS_PER_SIDE = 5
 
 class DualCategoryChartSettings(SingleCategoryChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -27,7 +27,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
 
         return {**chart_config, **self._get_legend_config()}
 
-    def get_butterfly_chart_config(self, values1, values2) -> dict:
+    def get_butterfly_chart_config(self, values1: list[float], values2: list[float]) -> dict:
 
         tick_font = self._get_tick_font_config()
         yaxis_config = {
@@ -37,6 +37,8 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
                 "text": self._chart_generation_payload.y_axis_title,
                 "font": tick_font,
             },
+            "ticklabeloverflow": "allow",
+            "automargin": True,
         }
 
         chart_config = {
@@ -59,6 +61,8 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
             "barmode": "overlay",
             "yaxis": yaxis_config,
             "xaxis": {
+                "ticklabeloverflow": "allow",
+                "automargin": True,
                 "zeroline": True,
                 "showgrid": True,
                 "gridcolor": "rgba(0,0,0,0.05)",
@@ -74,14 +78,13 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         return {**chart_config, **self._get_legend_config()}
 
     @staticmethod
-    def compute_butterfly_charge_xaxis_ticks(left_data, right_data):
+    def compute_butterfly_charge_xaxis_ticks(left_data: list[float], right_data: list[float]) -> dict:
 
         # Find the largest absolute value in the dataset
         max_val = float(max(abs(x) for x in chain(left_data, right_data)))
 
         # Base the step size calculation on a maximum allowance of 4 ticks per side
-        max_ticks_per_side = 4
-        target_step = max_val / max_ticks_per_side
+        target_step = max_val / MAX_TICKS_PER_SIDE
 
         # Extract the Order of Magnitude (Power of 10)
         magnitude = 10 ** max(0, len(str(int(target_step))) - 1)
@@ -99,7 +102,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         actual_ticks_per_side = int((max_val // clean_step) + 1)
 
         # Cap it at your preferred maximum constraint just in case
-        actual_ticks_per_side = min(actual_ticks_per_side, max_ticks_per_side)
+        actual_ticks_per_side = min(actual_ticks_per_side, MAX_TICKS_PER_SIDE)
         # ==========================================
 
         # Generate the optimized symmetric arrays
@@ -112,11 +115,14 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         # Establish visual boundary limits tightly matching the active ticks
         axis_limit = actual_ticks_per_side * clean_step
 
+        # Calculate padding relative to the axis limit and use that to pad the axis negatively and positively.
+        padding = axis_limit * 0.05
+
         return {
             "tickmode": "array",
             "tickvals": tick_values,
             "ticktext": tick_labels,
-            "range": [-axis_limit - 1, axis_limit + 1],
+            "range": [-axis_limit - padding, axis_limit + padding],
         }
 
     def _get_legend_config(self) -> dict:
