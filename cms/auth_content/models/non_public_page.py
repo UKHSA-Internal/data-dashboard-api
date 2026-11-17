@@ -51,11 +51,6 @@ class NonPublicCapablePage(models.Model):
     page_sub_theme = models.CharField(max_length=255, blank=True, default="")
     page_topic = models.CharField(max_length=255, blank=True, default="")
 
-    # these are the old fields which will be removed later
-    theme = models.CharField(max_length=255, blank=True, default="", null=True)
-    sub_theme = models.CharField(max_length=255, blank=True, default="", null=True)
-    topic = models.CharField(max_length=255, blank=True, default="", null=True)
-
     # provide a default content panel list for subclasses to use if they want
     content_panels = [
         # always show the enable public page checkbox
