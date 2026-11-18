@@ -29,6 +29,9 @@ class ContentCards(StreamBlock):
         help_text=help_texts.FILTER_LINKED_TIME_SERIES_CHART_TEMPLATE,
     )
 
+    class Meta:
+        collapsed = True
+
 
 class FooterCardsSectionWithLink(StreamBlock):
     section_link = blocks.SectionFooterLink(max_num=1)
@@ -40,6 +43,9 @@ class ContentCardsSectionWithLink(StreamBlock):
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()
     popular_topics_card = cards.PopularTopicsCard()
+
+    class Meta:
+        collapsed = True
 
 
 class Section(StructBlock):
