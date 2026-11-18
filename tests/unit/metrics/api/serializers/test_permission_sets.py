@@ -370,7 +370,7 @@ class TestMetricRequestSerializer:
 
         # Then
         metrics_manager.get_filtered_unique_names_related_to_parent_topic_id.assert_called_once_with(
-            15
+            15, is_public=None
         )
         assert response == {
             "choices": [
@@ -405,6 +405,72 @@ class TestMetricRequestSerializer:
 
         # When / Then
         assert serializer.metric_manager == Metric.objects
+
+    def test_validates_is_public_true(self):
+        """
+        Given a valid numeric topic_id and is_public set to True
+        When the serializer is validated
+        Then is_public is accepted and stored as True
+        """
+        # Given
+        serializer = MetricRequestSerializer(
+            data={
+                "topic_id": "15",
+                "is_public": True,
+            }
+        )
+
+        # When / Then
+        assert serializer.is_valid()
+        assert serializer.validated_data["is_public"] is True
+
+    def test_validates_is_public_false(self):
+        """
+        Given a valid numeric topic_id and is_public set to False
+        When the serializer is validated
+        Then is_public is accepted and stored as False
+        """
+        # Given
+        serializer = MetricRequestSerializer(
+            data={
+                "topic_id": "15",
+                "is_public": False,
+            }
+        )
+
+        # When / Then
+        assert serializer.is_valid()
+        assert serializer.validated_data["is_public"] is False
+
+    def test_data_passes_is_public_to_metric_manager(self):
+        """
+        Given a valid numeric topic_id and is_public set to True
+        When data() is called
+        Then is_public is passed to the metric manager query
+        """
+        # Given
+        metrics_manager = mock.MagicMock()
+        metrics_manager.get_filtered_unique_names_related_to_parent_topic_id.return_value = (
+            []
+        )
+
+        serializer = MetricRequestSerializer(
+            data={
+                "topic_id": "15",
+                "is_public": True,
+            },
+            context={"metric_manager": metrics_manager},
+        )
+        serializer.is_valid(raise_exception=True)
+
+        # When
+        serializer.data()
+
+        # Then
+        metrics_manager.get_filtered_unique_names_related_to_parent_topic_id.assert_called_once_with(
+            15,
+            is_public=True,
+        )
 
 
 class TestPermissionSetResponseSerializer:

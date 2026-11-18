@@ -14,7 +14,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_sex_names,
     get_all_stratum_names,
     get_all_theme_names,
-    get_all_topic_names,
+    get_all_topic_names_and_ids,
     get_all_unique_metric_names,
     get_all_unique_sub_theme_names,
     get_colours,
@@ -53,7 +53,7 @@ DATA_PARAMETER_FIELDS = [
     (
         "topic",
         make_parameter_field_element(
-            choices=get_all_topic_names,
+            choices=get_all_topic_names_and_ids,
             help_text=help_texts.TOPIC_FIELD,
         ),
     ),
