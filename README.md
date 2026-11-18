@@ -337,6 +337,59 @@ you will need to set up the variables for validating the token via cognito:
 
 ---
 
+## DevOps Pipeline (Standard)
+
+The workflow at `.github/workflows/devops-pipeline-standard.yml` consumes the shared standard pipeline
+from [UKHSA-Internal/devops-pipeline](https://github.com/UKHSA-Internal/devops-pipeline) (pinned to `@v1`).
+The stages and their logic live in that repository, not in this one.
+This workflow runs alongside the existing `Pipeline` workflow (`.github/workflows/actions.yml`), which is unchanged.
+
+### What it does
+
+The shared pipeline reads this service's settings from `.github/pipeline-settings.yml` and runs these stages in order:
+
+1. **Check** - validates `.github/pipeline-settings.yml`
+2. **Test** - runs the `service.test_command`, which creates a Python 3.12 virtual environment,
+   installs `requirements.txt` and runs the unit, integration, system and migration test suites
+3. **Scan** - security scanning
+4. **Build** - `docker build` of the `Dockerfile` at the root of this repository
+5. **Deploy** and **Verify**, per environment (Development, then Pre-production, then Production).
+   Deployment steps are currently simulated.
+   Production deployments require all approvers (`approval_mode: all-approvers`)
+6. A run report
+
+### How to run it
+
+The workflow runs automatically on every pull request, and appears in the PR's checks as
+**DevOps Pipeline (Standard)**. On pull requests, only the Development Deploy and Verify stages run;
+Pre-production and Production only run on pushes to `main`.
+
+It can also be triggered manually from the **Actions** tab in GitHub, by selecting
+**DevOps Pipeline (Standard)** and clicking **Run workflow**, or with the GitHub CLI:
+
+```bash
+gh workflow run "DevOps Pipeline (Standard)" --ref <branch>
+```
+
+It does not run on pushes to `main` yet, until we have confirmed what the Deploy stage does for this service.
+
+### Deployment configuration
+
+The standard pipeline reads the deployment metadata from `.github/pipeline-settings.yml`.
+The current configuration uses valid example values for the required environment names,
+account IDs, role names and approver group so the Check stage can pass while the
+service-specific AWS deployment settings are finalised.
+
+Before enabling real deployments for any environment, confirm that:
+
+- each environment has the correct AWS account ID and IAM role for GitHub OIDC
+- `governance.approvers` matches the platform approver group(s) for this service
+- a repository variable exists per environment named `DEPLOYMENT_BASE_URL_<NAME>`,
+  where `<NAME>` is the environment name upper-cased with non-alphanumeric characters replaced by underscores.
+  For example, an environment named `pre-prod` needs `DEPLOYMENT_BASE_URL_PRE_PROD`
+
+---
+
 ## Using the API
 
 ### Via Curl

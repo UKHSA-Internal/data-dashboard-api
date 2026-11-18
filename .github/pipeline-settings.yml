@@ -1,0 +1,40 @@
+# Settings for the shared standard pipeline from UKHSA-Internal/devops-pipeline.
+# Consumed by .github/workflows/devops-pipeline-standard.yml.
+version: "1.0"
+
+service:
+  name: data-dashboard-api
+  owner_team: data-dashboard-engineers
+  language: python
+  test_command: "python3.12 -m venv .venv && . .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt && python -m pytest tests/unit && python -m pytest tests/integration && python -m pytest tests/system && python -m pytest tests/migrations"
+
+environments:
+  - name: dev
+    category: Development
+    account_id: "111111111111"
+    role_name: data-dashboard-api-dev-deploy-role
+    region: eu-west-2
+  - name: staging
+    category: Pre-production
+    account_id: "222222222222"
+    role_name: data-dashboard-api-preprod-deploy-role
+    region: eu-west-2
+  - name: prod
+    category: Production
+    account_id: "333333333333"
+    role_name: data-dashboard-api-prod-deploy-role
+    region: eu-west-2
+
+governance:
+  retention_days: 30
+  approvers:
+    - data-dashboard-engineers
+
+verification:
+  health_endpoint: /health
+  timeout_seconds: 60
+  db_check_required: false
+
+deploy:
+  production:
+    approval_mode: all-approvers
