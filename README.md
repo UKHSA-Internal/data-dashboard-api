@@ -354,12 +354,9 @@ The shared pipeline reads this service's settings from `.github/pipeline-setting
 3. **Scan** - security scanning
 4. **Build** - `docker build` of the `Dockerfile` at the root of this repository
 5. **Deploy** and **Verify**, per environment (Development, then Pre-production, then Production).
-   Verify calls `GET /health`, which returns HTTP 200 with a JSON body containing `status`, `version` and `commit_sha`.
+   Deployment steps are currently simulated.
    Production deployments require all approvers (`approval_mode: all-approvers`)
 6. A run report
-
-The `version` and `commit_sha` values in the `/health` response come from the
-`APP_VERSION` and `COMMIT_SHA` Docker build args, and default to `"unknown"` if not provided.
 
 ### How to run it
 
