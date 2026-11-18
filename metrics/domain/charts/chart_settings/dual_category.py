@@ -31,50 +31,62 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
     def get_butterfly_chart_config(self, values1: list[float], values2: list[float]) -> dict:
 
         tick_font = self._get_tick_font_config()
-        yaxis_config = {
-            "type": "category",
-            "fixedrange": True,
-            "title": {
-                "text": self._chart_generation_payload.y_axis_title,
-                "font": tick_font,
-            },
-            "ticklabeloverflow": "allow",
-            "automargin": True,
-        }
+        # yaxis_config = {
+        #     "type": "category",
+        #     "fixedrange": True,
+        #     "title": {
+        #         "text": self._chart_generation_payload.y_axis_title,
+        #         "font": tick_font,
+        #     },
+        #     "ticklabeloverflow": "allow",
+        #     "automargin": True,
+        # }
 
-        chart_config = {
-            "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-            "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-            "hoverlabel": {
-                "align": "left",
-                "bgcolor": "white",
-            },
-            "margin": {
-                "l": 0,
-                "r": 0,
-                "b": 0,
-                "t": 0,
-            },
-            "autosize": False,
-            "height": self.height,
-            "width": self.width,
-            "showlegend": True,
-            "barmode": "overlay",
-            "yaxis": yaxis_config,
-            "xaxis": {
-                "ticklabeloverflow": "allow",
-                "automargin": True,
-                "zeroline": True,
-                "showgrid": True,
-                "gridcolor": "rgba(0,0,0,0.05)",
-                "fixedrange": True,
-                "title": {
-                    "text": self._chart_generation_payload.x_axis_title,
-                    "font": tick_font,
-                },
-                **self.compute_butterfly_charge_xaxis_ticks(values1, values2),
-            },
-        }
+        # chart_config = {
+        #     "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+        #     "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+        #     "hoverlabel": {
+        #         "align": "left",
+        #         "bgcolor": "white",
+        #     },
+        #     "margin": {
+        #         "l": 0,
+        #         "r": 0,
+        #         "b": 0,
+        #         "t": 0,
+        #     },
+        #     "autosize": False,
+        #     "height": self.height,
+        #     "width": self.width,
+        #     "showlegend": True,
+        #     "barmode": "overlay",
+        #     "yaxis": yaxis_config,
+        #     "xaxis": {
+        #         "ticklabeloverflow": "allow",
+        #         "automargin": True,
+        #         "zeroline": True,
+        #         "showgrid": True,
+        #         "gridcolor": "rgba(0,0,0,0.05)",
+        #         "fixedrange": True,
+        #         "title": {
+        #             "text": self._chart_generation_payload.x_axis_title,
+        #             "font": tick_font,
+        #         },
+        #         **self.compute_butterfly_charge_xaxis_ticks(values1, values2),
+        #     },
+        # }
+
+        chart_config = self._get_base_chart_config()
+
+        chart_config["barmode"] = "overlay"
+
+        yaxis = chart_config["yaxis"]
+        updated_yaxis = {**yaxis, "type":"category"}
+        chart_config["yaxis"] = updated_yaxis
+
+        xaxis = chart_config["xaxis"]
+        updated_xaxis = {**xaxis, **self.compute_butterfly_charge_xaxis_ticks(values1, values2)}
+        chart_config["xaxis"] = updated_xaxis
 
         return {**chart_config, **self._get_legend_config()}
 

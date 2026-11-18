@@ -2,6 +2,7 @@ import datetime
 import logging
 from decimal import Decimal
 
+from metrics.domain.chart_axis_groups import Y_DOMINANT_CHARTS
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
@@ -107,14 +108,15 @@ class SingleCategoryChartSettings(ChartSettings):
                 "font": tick_font,
             }
 
-        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
+        if self._chart_generation_payload.plots[0].parameters.chart_type not in Y_DOMINANT_CHARTS:
+            y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
 
-        base_y_axis_config["tick0"] = y_min_value
+            base_y_axis_config["tick0"] = y_min_value
 
-        if self.y_axis_maximum_value:
-            base_y_axis_config["range"] = [y_min_value, y_max_value]
+            if self.y_axis_maximum_value:
+                base_y_axis_config["range"] = [y_min_value, y_max_value]
 
-        base_y_axis_config["rangemode"] = "tozero" if y_min_value == 0 else "normal"
+            base_y_axis_config["rangemode"] = "tozero" if y_min_value == 0 else "normal"
 
         return base_y_axis_config
 
