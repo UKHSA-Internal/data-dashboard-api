@@ -189,18 +189,22 @@ class TestDualCategoryDownloadSerializer:
         assert "primary_field_values" in error.value.detail
 
     def test_validation_rejects_butterfly_chart_with_not_exactly_two_segments(self):
-        payload_with_single_segment = EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        payload_with_single_segment = (
+            EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        )
         payload_with_single_segment["chart_type"] = "butterfly"
         payload_with_single_segment["segments"] = [
             {"secondary_field_value": "00-04"},
         ]
 
-        payload_with_three_segments = EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        payload_with_three_segments = (
+            EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        )
         payload_with_three_segments["chart_type"] = "butterfly"
         payload_with_three_segments["segments"] = [
             {"secondary_field_value": "00-04"},
             {"secondary_field_value": "05-10"},
-            {"secondary_field_value": "11+"}
+            {"secondary_field_value": "11+"},
         ]
 
         serializer = DualCategoryDownloadSerializer()
@@ -214,7 +218,3 @@ class TestDualCategoryDownloadSerializer:
 
         assert "segments" in first_error.value.detail
         assert "segments" in second_error.value.detail
-
-
-
-

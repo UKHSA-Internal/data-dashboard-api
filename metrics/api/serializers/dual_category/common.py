@@ -6,10 +6,13 @@ from metrics.domain.common.utils import (
     DEFAULT_X_AXIS,
     DEFAULT_Y_AXIS,
     ChartAxisFields,
+    ChartTypes,
     DataSourceFileType,
-    extract_metric_group_from_metric, ChartTypes,
+    extract_metric_group_from_metric,
 )
 from metrics.domain.tables.dual_category import build_dual_category_plot_params
+
+VALID_BUTTERFLY_SEGEMENT_COUNT = 2
 
 
 def validate_dual_category_fields(attrs: dict) -> dict:
@@ -52,12 +55,13 @@ def validate_dual_category_fields(attrs: dict) -> dict:
 
     if is_butterfly_chart:
         segments = attrs["segments"]
-        if len(segments) != 2:
+        if len(segments) != VALID_BUTTERFLY_SEGEMENT_COUNT:
             raise serializers.ValidationError(
                 {"segments": "Exactly 2 segments required for Butterfly chart."}
             )
 
     return attrs
+
 
 @dataclass(frozen=True)
 class DualCategoryRequestContext:
