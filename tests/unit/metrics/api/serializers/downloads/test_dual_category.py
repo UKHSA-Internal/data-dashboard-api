@@ -147,6 +147,7 @@ class TestDualCategoryDownloadSerializer:
         """
         # Given
         payload = {
+            "chart_type": "stacked_bar",
             "file_format": "json",
             "x_axis": "age",
             "static_fields": {"metric": TIMESERIES_METRIC},
@@ -170,6 +171,7 @@ class TestDualCategoryDownloadSerializer:
         """
         # Given
         payload = {
+            "chart_type": "stacked_bar",
             "file_format": "json",
             "x_axis": "date",
             "static_fields": {"metric": TIMESERIES_METRIC},
@@ -185,3 +187,34 @@ class TestDualCategoryDownloadSerializer:
             serializer.validate(attrs=payload)
 
         assert "primary_field_values" in error.value.detail
+
+    def test_validation_rejects_butterfly_chart_with_not_exactly_two_segments(self):
+        payload_with_single_segment = EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        payload_with_single_segment["chart_type"] = "butterfly"
+        payload_with_single_segment["segments"] = [
+            {"secondary_field_value": "00-04"},
+        ]
+
+        payload_with_three_segments = EXAMPLE_DUAL_CATEGORY_DOWNLOAD_REQUEST_PAYLOAD.copy()
+        payload_with_three_segments["chart_type"] = "butterfly"
+        payload_with_three_segments["segments"] = [
+            {"secondary_field_value": "00-04"},
+            {"secondary_field_value": "05-10"},
+            {"secondary_field_value": "11+"}
+        ]
+
+        serializer = DualCategoryDownloadSerializer()
+
+        # When / Then
+        with pytest.raises(ValidationError) as first_error:
+            serializer.validate(attrs=payload_with_single_segment)
+
+        with pytest.raises(ValidationError) as second_error:
+            serializer.validate(attrs=payload_with_three_segments)
+
+        assert "segments" in first_error.value.detail
+        assert "segments" in second_error.value.detail
+
+
+
+

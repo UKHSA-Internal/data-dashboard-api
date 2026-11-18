@@ -7,7 +7,7 @@ from metrics.domain.common.utils import (
     DEFAULT_Y_AXIS,
     ChartAxisFields,
     DataSourceFileType,
-    extract_metric_group_from_metric,
+    extract_metric_group_from_metric, ChartTypes,
 )
 from metrics.domain.tables.dual_category import build_dual_category_plot_params
 
@@ -30,6 +30,7 @@ def validate_dual_category_fields(attrs: dict) -> dict:
     metric = attrs["static_fields"]["metric"]
     metric_group = extract_metric_group_from_metric(metric=metric)
     is_timeseries_data = DataSourceFileType[metric_group].is_timeseries
+    is_butterfly_chart = attrs["chart_type"] == ChartTypes.butterfly.value
 
     if is_timeseries_data:
         if primary_field_values:
@@ -49,8 +50,14 @@ def validate_dual_category_fields(attrs: dict) -> dict:
             {"primary_field_values": "This field is required for headline data."}
         )
 
-    return attrs
+    if is_butterfly_chart:
+        segments = attrs["segments"]
+        if len(segments) != 2:
+            raise serializers.ValidationError(
+                {"segments": "Exactly 2 segments required for Butterfly chart."}
+            )
 
+    return attrs
 
 @dataclass(frozen=True)
 class DualCategoryRequestContext:
