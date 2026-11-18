@@ -108,7 +108,10 @@ class SingleCategoryChartSettings(ChartSettings):
                 "font": tick_font,
             }
 
-        if self._chart_generation_payload.plots[0].parameters.chart_type not in Y_DOMINANT_CHARTS:
+        if (
+            self._chart_generation_payload.plots[0].parameters.chart_type
+            not in Y_DOMINANT_CHARTS
+        ):
             y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
 
             base_y_axis_config["tick0"] = y_min_value

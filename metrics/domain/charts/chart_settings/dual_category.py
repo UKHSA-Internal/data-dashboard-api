@@ -1,6 +1,5 @@
 from itertools import chain
 
-from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.single_category import (
     SingleCategoryChartSettings,
 )
@@ -9,6 +8,7 @@ from metrics.domain.models.plots import ChartGenerationPayload, PlotGenerationDa
 PLOTLY_STEPS = [1, 2, 5, 10, 15]
 MAX_TICKS_PER_SIDE = 5
 PADDING_PERCENTAGE = 0.05
+
 
 class DualCategoryChartSettings(SingleCategoryChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -28,70 +28,36 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
 
         return {**chart_config, **self._get_legend_config()}
 
-    def get_butterfly_chart_config(self, values1: list[float], values2: list[float]) -> dict:
+    def get_butterfly_chart_config(
+        self, values1: list[float], values2: list[float]
+    ) -> dict:
+        """
+        Builds the configuration for the butterfly chart.
 
-        tick_font = self._get_tick_font_config()
-        # yaxis_config = {
-        #     "type": "category",
-        #     "fixedrange": True,
-        #     "title": {
-        #         "text": self._chart_generation_payload.y_axis_title,
-        #         "font": tick_font,
-        #     },
-        #     "ticklabeloverflow": "allow",
-        #     "automargin": True,
-        # }
-
-        # chart_config = {
-        #     "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-        #     "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-        #     "hoverlabel": {
-        #         "align": "left",
-        #         "bgcolor": "white",
-        #     },
-        #     "margin": {
-        #         "l": 0,
-        #         "r": 0,
-        #         "b": 0,
-        #         "t": 0,
-        #     },
-        #     "autosize": False,
-        #     "height": self.height,
-        #     "width": self.width,
-        #     "showlegend": True,
-        #     "barmode": "overlay",
-        #     "yaxis": yaxis_config,
-        #     "xaxis": {
-        #         "ticklabeloverflow": "allow",
-        #         "automargin": True,
-        #         "zeroline": True,
-        #         "showgrid": True,
-        #         "gridcolor": "rgba(0,0,0,0.05)",
-        #         "fixedrange": True,
-        #         "title": {
-        #             "text": self._chart_generation_payload.x_axis_title,
-        #             "font": tick_font,
-        #         },
-        #         **self.compute_butterfly_charge_xaxis_ticks(values1, values2),
-        #     },
-        # }
-
+        Returns:
+            The configuration for the butterfly chart.
+        """
         chart_config = self._get_base_chart_config()
 
         chart_config["barmode"] = "overlay"
 
         yaxis = chart_config["yaxis"]
-        updated_yaxis = {**yaxis, "type":"category"}
+        updated_yaxis = {**yaxis, "type": "category"}
         chart_config["yaxis"] = updated_yaxis
 
         xaxis = chart_config["xaxis"]
-        updated_xaxis = {**xaxis, **self.compute_butterfly_charge_xaxis_ticks(values1, values2)}
+        updated_xaxis = {
+            **xaxis,
+            **self.compute_butterfly_charge_xaxis_ticks(values1, values2),
+        }
         chart_config["xaxis"] = updated_xaxis
 
         return {**chart_config, **self._get_legend_config()}
 
     @staticmethod
-    def compute_butterfly_charge_xaxis_ticks(left_data: list[float], right_data: list[float]) -> dict:
+    def compute_butterfly_charge_xaxis_ticks(
+        left_data: list[float], right_data: list[float]
+    ) -> dict:
 
         # Find the largest absolute value in the dataset
         max_val = float(max(abs(x) for x in chain(left_data, right_data)))
