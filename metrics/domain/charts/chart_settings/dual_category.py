@@ -8,7 +8,6 @@ from metrics.domain.models.plots import ChartGenerationPayload, PlotGenerationDa
 
 PLOTLY_STEPS = [1, 2, 5, 10, 15]
 MAX_TICKS_PER_SIDE = 5
-PADDING_PERCENTAGE = 0.05
 
 class DualCategoryChartSettings(SingleCategoryChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -117,7 +116,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
         axis_limit = actual_ticks_per_side * clean_step
 
         # Calculate padding relative to the axis limit and use that to pad the axis negatively and positively.
-        padding = axis_limit * PADDING_PERCENTAGE
+        padding = axis_limit * 0.05
 
         return {
             "tickmode": "array",
