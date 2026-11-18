@@ -48,6 +48,42 @@ def collect_all_pages(
     return pages
 
 
+def collect_all_public_pages(
+    *,
+    topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
+    common_page_manager: Manager = DEFAULT_COMMON_PAGE_MANAGER,
+    whats_new_parent_page_manager: Manager = DEFAULT_WHATS_NEW_PARENT_PAGE_MANAGER,
+    whats_new_child_entry_manager: Manager = DEFAULT_WHATS_NEW_CHILD_ENTRY_MANAGER,
+) -> ALL_PAGE_TYPES:
+    """Collects and returns all PUBLIC pages which should be processed for caching
+
+    Args:
+        topic_page_manager: The model manager for the `TopicPage` model
+            Defaults to the concrete `TopicPageManager`
+            via `TopicPage.objects`
+        common_page_manager: The model manager for the `CommonPage` model
+            Defaults to the concrete `CommonPageManager`
+            via `CommonPage.objects`
+        whats_new_parent_page_manager: The model manager for the `WhatsNewParentPage` model
+            Defaults to the concrete `WhatsNewParentPageManager`
+            via `WhatsNewParentPage.objects`
+        whats_new_child_entry_manager: The model manager for the `WhatsNewChildEntry` model
+            Defaults to the concrete `WhatsNewChildEntryManager`
+            via `WhatsNewEntryPage.objects`
+
+    Returns:
+        List of Public `Page` objects which are to be processed for caching
+
+    """
+    pages = []
+    pages += topic_page_manager.get_live_pages()
+    pages += common_page_manager.get_live_pages()
+    pages += whats_new_parent_page_manager.get_live_pages()
+    pages += whats_new_child_entry_manager.get_live_pages()
+
+    return [page for page in pages if getattr(page, "is_public", True)]
+
+
 def extract_area_selectable_pages(*, all_pages: ALL_PAGE_TYPES) -> list[TopicPage]:
     """Builds a new list containing only the pages which are deemed suitable for the area selector
 

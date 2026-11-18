@@ -2,7 +2,10 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts
-from metrics.api.serializers.charts.common import BaseChartsSerializer
+from metrics.api.serializers.charts.common import (
+    BaseChartsSerializer,
+    EncodedResponsiveChartResponseSerializer,
+)
 from metrics.api.serializers.dual_category.common import (
     validate_dual_category_fields,
 )
@@ -145,3 +148,8 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
             is_public=is_public,
             data_classification=data_classification,
         )
+
+
+class EncodedDualCategoryChartResponseSerializer(
+    EncodedResponsiveChartResponseSerializer
+): ...

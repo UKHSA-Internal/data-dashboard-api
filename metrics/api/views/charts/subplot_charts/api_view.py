@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.charts.common import (
     ChartPreviewQueryParamsSerializer,
-    EncodedChartResponseSerializer,
+    EncodedResponsiveChartResponseSerializer,
 )
 from metrics.api.serializers.charts.subplot_charts import (
     SubplotChartRequestSerializer,
@@ -113,7 +113,9 @@ class SubplotChartsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        serializer = EncodedChartResponseSerializer(data=chart_result.output())
+        serializer = EncodedResponsiveChartResponseSerializer(
+            data=chart_result.output()
+        )
         serializer.is_valid(raise_exception=True)
 
         return Response(data=serializer.data)

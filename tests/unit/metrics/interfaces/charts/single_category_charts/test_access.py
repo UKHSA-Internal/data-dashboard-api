@@ -30,6 +30,7 @@ from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.factories.metrics.domain.plots.plot_parameters import FakePlotParameters
 
 MODULE_PATH = "metrics.interfaces.charts.single_category_charts.access"
+MINIMUM_EXPECTED_COMPACT_HEIGHT = 400
 
 
 class TestChartsInterface:
@@ -640,6 +641,74 @@ class TestChartsInterface:
         assert (
             encoded_chart["figure"]
             == mocked_chart_output.interactive_chart_figure_output
+        )
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_returns_responsive_x_axis_config_for_timeseries(
+        self,
+        mocked_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        mocked_chart_output = mock.Mock()
+        mocked_chart_output.interactive_chart_figure_output = {
+            "data": [{"type": "scatter", "x": ["2024-01-01"], "y": [1]}],
+            "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+        }
+        mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
+
+        encoded_chart = charts_interface.get_encoded_chart(
+            chart_output=mocked_chart_output
+        )
+
+        assert encoded_chart["figure_config"] == {
+            "full": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 13}, "yaxis": {}},
+            },
+            "compact": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
+            "compact_rotated": {
+                "data": [{"x": ["2024-01-01"], "y": [1]}],
+                "layout": {"xaxis": {"nticks": 5}, "yaxis": {}},
+            },
+        }
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_returns_rotated_config_for_headline_bar(
+        self,
+        mocked_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters_headline_data: PlotParameters,
+    ):
+        mocked_chart_output = mock.Mock()
+        mocked_chart_output.interactive_chart_figure_output = {
+            "data": [{"type": "bar", "x": ["Category"], "y": [1]}],
+            "layout": {"xaxis": {"type": "category"}, "yaxis": {}},
+        }
+        mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters_headline_data]
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
+
+        encoded_chart = charts_interface.get_encoded_chart(
+            chart_output=mocked_chart_output
+        )
+
+        assert encoded_chart["figure_config"]["compact"]["data"][0] == {
+            "x": ["Category"],
+            "y": [1],
+            "orientation": "v",
+        }
+        assert encoded_chart["figure_config"]["compact_rotated"]["data"][0] == {
+            "x": [1],
+            "y": ["Category"],
+            "orientation": "h",
+        }
+        assert (
+            encoded_chart["figure_config"]["compact_rotated"]["layout"]["height"]
+            == MINIMUM_EXPECTED_COMPACT_HEIGHT
         )
 
 

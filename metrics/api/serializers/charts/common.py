@@ -124,3 +124,20 @@ class EncodedChartResponseSerializer(serializers.Serializer):
     chart = serializers.CharField(help_text=help_texts.ENCODED_CHARTS_RESPONSE)
     alt_text = serializers.CharField(help_text=help_texts.CHARTS_ALT_TEXT)
     figure = serializers.DictField(help_text=help_texts.CHARTS_FIGURE_OUTPUT)
+
+
+class FigureModeConfigSerializer(serializers.Serializer):
+    """Plotly overrides applied for responsive charts"""
+
+    data = serializers.ListField(child=serializers.DictField())
+    layout = serializers.DictField()
+
+
+class FigureConfigSerializer(serializers.Serializer):
+    full = FigureModeConfigSerializer()
+    compact = FigureModeConfigSerializer()
+    compact_rotated = FigureModeConfigSerializer()
+
+
+class EncodedResponsiveChartResponseSerializer(EncodedChartResponseSerializer):
+    figure_config = FigureConfigSerializer()

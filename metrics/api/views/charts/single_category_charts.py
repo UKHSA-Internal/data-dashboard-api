@@ -15,8 +15,8 @@ from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
     EncodedChartsRequestSerializer,
+    EncodedSingleCategoryChartResponseSerializer,
 )
-from metrics.api.serializers.charts.common import EncodedChartResponseSerializer
 from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts.single_category_charts import access
 from metrics.interfaces.plots.access import (
@@ -225,7 +225,7 @@ class EncodedChartsView(APIView):
     @classmethod
     @extend_schema(
         request=EncodedChartsRequestSerializer,
-        responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
+        responses={HTTPStatus.OK.value: EncodedSingleCategoryChartResponseSerializer},
         tags=[CHARTS_API_TAG],
         examples=[
             OpenApiExample(
@@ -266,6 +266,38 @@ class EncodedChartsView(APIView):
                             "title": "COVID-19 Cases by Day",
                             "xaxis": {"title": "Date"},
                             "yaxis": {"title": "Cases"},
+                        },
+                    },
+                    "figure_config": {
+                        "full": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 13}},
+                        },
+                        "compact": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 5}},
+                        },
+                        "compact_rotated": {
+                            "data": [
+                                {
+                                    "x": ["2023-01-01", "2023-01-02"],
+                                    "y": [100, 150],
+                                    "orientation": "v",
+                                }
+                            ],
+                            "layout": {"xaxis": {"nticks": 5}},
                         },
                     },
                 },
@@ -381,11 +413,11 @@ class EncodedChartsView(APIView):
         chart_request_params = request_serializer.to_models(request=request)
 
         try:
-            response: dict[str, str] = access.generate_encoded_chart(
+            response: dict[str, str | dict] = access.generate_encoded_chart(
                 chart_request_params=chart_request_params,
             )
 
-            serializer = EncodedChartResponseSerializer(data=response)
+            serializer = EncodedSingleCategoryChartResponseSerializer(data=response)
             serializer.is_valid(raise_exception=True)
 
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
