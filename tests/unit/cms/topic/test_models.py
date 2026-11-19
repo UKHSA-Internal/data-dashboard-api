@@ -728,7 +728,7 @@ class TestTopicPageSelectedThemeProperties:
         # When / Then
         with mock.patch.object(
             CMSSelectedFieldParser,
-            "get_all_selected_themes_from_sections",
+            "get_all_selected_theme_from_sections",
             return_value=set(),
         ):
             assert page.selected_themes is None
@@ -762,7 +762,7 @@ class TestTopicPageSelectedThemeProperties:
         # When
         with mock.patch.object(
             CMSSelectedFieldParser,
-            "get_all_selected_themes_from_sections",
+            "get_all_selected_theme_from_sections",
             return_value={"infectious_disease"},
         ):
             selected_themes = page.selected_themes
@@ -802,7 +802,7 @@ class TestTopicPageSelectedThemeProperties:
         # When
         with mock.patch.object(
             CMSSelectedFieldParser,
-            "get_all_selected_themes_from_sections",
+            "get_all_selected_theme_from_sections",
             return_value={"infectious_disease", "extreme_event"},
         ):
             selected_themes = page.selected_themes
