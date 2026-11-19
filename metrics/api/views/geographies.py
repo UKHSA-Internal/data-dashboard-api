@@ -85,11 +85,11 @@ class GeographiesView(APIView):
         request_serializer.is_valid(raise_exception=True)
 
         payload = request_serializer.validated_data
-        theme: str = payload["theme"]
-        sub_theme: str = payload["sub_theme"]
 
         if "topic" in payload:
             payload["is_public"] = request.auth is None
+            theme: str = payload["theme"]
+            sub_theme: str = payload["sub_theme"]
             data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
                 payload=payload
             )

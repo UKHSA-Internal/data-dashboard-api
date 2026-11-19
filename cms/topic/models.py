@@ -87,8 +87,8 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         APIField("enable_area_selector"),
         *NonPublicCapablePage.api_fields,
         APIField("selected_topics"),
-        APIField("selected_theme"),
-        APIField("selected_sub_theme"),
+        APIField("selected_themes"),
+        APIField("selected_sub_themes"),
     ]
 
     # Tabs to position at the top of the view
@@ -143,18 +143,16 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         )
 
     @property
-    def selected_theme(self) -> str | None:
-        themes = CMSSelectedFieldParser.get_all_selected_theme_from_sections(
+    def selected_themes(self) -> str | None:
+        return CMSSelectedFieldParser.get_all_selected_theme_from_sections(
             sections=self.body.raw_data
         )
-        return min(themes, default=None)
 
     @property
-    def selected_sub_theme(self) -> str | None:
-        sub_themes = CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
+    def selected_sub_themes(self) -> str | None:
+        return CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
             sections=self.body.raw_data
         )
-        return min(sub_themes, default=None)
 
     def find_latest_released_embargo_for_metrics(
         self,
