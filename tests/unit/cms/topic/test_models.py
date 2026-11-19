@@ -716,45 +716,11 @@ class TestTemplateOtherRespiratoryVirusesPage:
 
 
 class TestTopicPageSelectedThemeProperties:
-    def test_selected_themes_returns_none_when_no_theme_selected(self):
+    def test_selected_themes_returns_empty_list_when_no_theme_selected(self):
         """
         Given a `TopicPage` whose body has no theme on any plot
         When the `selected_themes` property is called
-        Then None is returned
-        """
-        # Given
-        page = TopicPage(content_type_id=1)
-
-        # When / Then
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_theme_from_sections",
-            return_value=set(),
-        ):
-            assert page.selected_themes is None
-
-    def test_selected_sub_themes_returns_none_when_no_sub_theme_selected(self):
-        """
-        Given a `TopicPage` whose body has no sub-theme on any plot
-        When the `selected_sub_themes` property is called
-        Then None is returned
-        """
-        # Given
-        page = TopicPage(content_type_id=1)
-
-        # When / Then
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_sub_theme_from_sections",
-            return_value=set(),
-        ):
-            assert page.selected_sub_themes is None
-
-    def test_selected_themes_returns_a_single_string(self):
-        """
-        Given a `TopicPage` whose plots select a theme
-        When the `selected_themes` property is called
-        Then a single string is returned, not a collection
+        Then an empty list is returned
         """
         # Given
         page = TopicPage(content_type_id=1)
@@ -763,19 +729,14 @@ class TestTopicPageSelectedThemeProperties:
         with mock.patch.object(
             CMSSelectedFieldParser,
             "get_all_selected_theme_from_sections",
-            return_value={"infectious_disease"},
+            return_value=set(),
         ):
             selected_themes = page.selected_themes
 
         # Then
-        assert selected_themes == "infectious_disease"
+        assert selected_themes == []
 
-    def test_selected_sub_themes_returns_a_single_string(self):
-        """
-        Given a `TopicPage` whose plots select a sub-theme
-        When the `selected_sub_themes` property is called
-        Then a single string is returned, not a collection
-        """
+    def test_selected_sub_themes_returns_empty_list_when_no_sub_theme_selected(self):
         # Given
         page = TopicPage(content_type_id=1)
 
@@ -783,19 +744,14 @@ class TestTopicPageSelectedThemeProperties:
         with mock.patch.object(
             CMSSelectedFieldParser,
             "get_all_selected_sub_theme_from_sections",
-            return_value={"respiratory"},
+            return_value=set(),
         ):
             selected_sub_themes = page.selected_sub_themes
 
         # Then
-        assert selected_sub_themes == "respiratory"
+        assert selected_sub_themes == []
 
-    def test_selected_themes_is_alphabetically_first_when_multiple_selected(self):
-        """
-        Given a `TopicPage` whose plots select more than one theme
-        When the `selected_themes` property is called
-        Then the alphabetically first theme is returned
-        """
+    def test_selected_themes_returns_all_selected_themes_sorted(self):
         # Given
         page = TopicPage(content_type_id=1)
 
@@ -808,4 +764,19 @@ class TestTopicPageSelectedThemeProperties:
             selected_themes = page.selected_themes
 
         # Then
-        assert selected_themes == "extreme_event"
+        assert selected_themes == ["extreme_event", "infectious_disease"]
+
+    def test_selected_sub_themes_returns_all_selected_sub_themes_sorted(self):
+        # Given
+        page = TopicPage(content_type_id=1)
+
+        # When
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_sub_theme_from_sections",
+            return_value={"respiratory", "gastrointestinal"},
+        ):
+            selected_sub_themes = page.selected_sub_themes
+
+        # Then
+        assert selected_sub_themes == ["gastrointestinal", "respiratory"]
