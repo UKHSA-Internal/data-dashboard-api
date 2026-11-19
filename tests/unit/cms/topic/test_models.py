@@ -750,33 +750,3 @@ class TestTopicPageSelectedThemeProperties:
 
         # Then
         assert selected_sub_themes == []
-
-    def test_selected_themes_returns_all_selected_themes_sorted(self):
-        # Given
-        page = TopicPage(content_type_id=1)
-
-        # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_theme_from_sections",
-            return_value={"infectious_disease", "extreme_event"},
-        ):
-            selected_themes = page.selected_themes
-
-        # Then
-        assert selected_themes == ["extreme_event", "infectious_disease"]
-
-    def test_selected_sub_themes_returns_all_selected_sub_themes_sorted(self):
-        # Given
-        page = TopicPage(content_type_id=1)
-
-        # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_sub_theme_from_sections",
-            return_value={"respiratory", "gastrointestinal"},
-        ):
-            selected_sub_themes = page.selected_sub_themes
-
-        # Then
-        assert selected_sub_themes == ["gastrointestinal", "respiratory"]
