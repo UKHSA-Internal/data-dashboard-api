@@ -5,7 +5,10 @@ from django.db import models
 from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, mark_safe
 
-from cms.auth_content.auth_utils import _create_form_field
+from cms.auth_content.auth_utils import (
+    _create_required_form_field,
+    _wildcard_chain_valid,
+)
 from cms.auth_content.constants import PERMISSION_SET_FIELDS
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
@@ -18,14 +21,36 @@ from cms.metrics_interface.field_choices_callables import (
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
 
+DUPLICATE_DISPLAY_NAME_CODE = "duplicate_display_name"
+
+PERMISSION_FIELDS = (
+    "theme",
+    "sub_theme",
+    "topic",
+    "metric",
+    "geography_type",
+    "geography",
+)
+
+DUPLICATE_PERMISSIONS_MESSAGE = (
+    "A permission set comprising the same unique permissions combination "
+    "already exists called “%(permission_set_name)s”. "
+    "Permission sets must represent a unique combination of permissions."
+)
+
+DUPLICATE_NAME_MESSAGE = (
+    "A permission set with the name “%(permission_set_name)s” already exists. "
+    "Permission sets must have unique names."
+)
+
 
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for field in PERMISSION_SET_FIELDS:
-            self.fields[field["field_name"]] = _create_form_field(
-                field, WILDCARD_ID_VALUE
+            self.fields[field["field_name"]] = _create_required_form_field(
+                field, WILDCARD_ID_VALUE, help_texts.PERMISSION_SET_FIELD_REQUIRED
             )
 
         if (self.instance and self.instance.pk) or getattr(self, "is_bound", False):
@@ -58,37 +83,6 @@ class PermissionSetForm(WagtailAdminPageForm):
         if value == WILDCARD_ID_VALUE:
             return [(WILDCARD_ID_VALUE, wildcard_label)]
         return [("", placeholder), (value, f"Loading... (ID: {value})")]
-
-    def clean(self):
-        """Validate that this permission set doesn't already exist"""
-        cleaned_data = super().clean()
-
-        theme = cleaned_data.get("theme")
-        sub_theme = cleaned_data.get("sub_theme")
-        topic = cleaned_data.get("topic")
-        metric = cleaned_data.get("metric")
-        geography_type = cleaned_data.get("geography_type")
-        geography = cleaned_data.get("geography")
-
-        # Check if this combination already exists (excluding current instance when editing)
-        queryset = PermissionSet.objects.filter(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-        )
-
-        if self.instance.pk:
-            queryset = queryset.exclude(pk=self.instance.pk)
-
-        if queryset.exists():
-            raise ValidationError(
-                message="A permission set with this exact combination already exists. Please modify your selection to create a unique permission set."
-            )
-
-        return cleaned_data
 
     class Media:
         js = ["js/permission_set.js"]
@@ -137,6 +131,17 @@ class PermissionSet(models.Model):
         FieldPanel("geography"),
     ]
 
+    def field_combination_valid(self):
+        return _wildcard_chain_valid(
+            self.theme, self.sub_theme, self.topic, self.metric
+        ) and _wildcard_chain_valid(self.geography_type, self.geography)
+
+    def clean(self):
+        if not self.field_combination_valid():
+            invalid_permission_set_message = "Invalid permission set"
+            raise ValidationError(invalid_permission_set_message)
+        return super().clean()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -154,8 +159,63 @@ class PermissionSet(models.Model):
                 fields=["display_name"],
                 condition=models.Q(display_name__isnull=False),
                 name="unique_non_null_display_name",
+                violation_error_code=DUPLICATE_DISPLAY_NAME_CODE,
+                violation_error_message=(
+                    "A permission set with this name already exists. "
+                    "Permission sets must have unique names."
+                ),
             ),
         ]
+
+    def validate_constraints(self, exclude=None):
+        try:
+            super().validate_constraints(exclude=exclude)
+        except ValidationError as exc:
+            if not hasattr(exc, "error_dict"):
+                raise
+
+            enriched = {
+                field: [self._with_existing_set_name(error) for error in errors]
+                for field, errors in exc.error_dict.items()
+            }
+
+            raise ValidationError(enriched) from exc
+
+    def _with_existing_set_name(self, error):
+        if error.code == "unique_together":
+            return self._error_naming_existing_set(
+                error,
+                PERMISSION_FIELDS,
+                DUPLICATE_PERMISSIONS_MESSAGE,
+            )
+
+        if error.code == DUPLICATE_DISPLAY_NAME_CODE:
+            return self._error_naming_existing_set(
+                error,
+                ("display_name",),
+                DUPLICATE_NAME_MESSAGE,
+            )
+
+        return error
+
+    def _error_naming_existing_set(self, error, fields, message):
+        matches = type(self).objects.filter(
+            **{field: getattr(self, field) for field in fields}
+        )
+
+        if not self._state.adding and self.pk is not None:
+            matches = matches.exclude(pk=self.pk)
+
+        existing = matches.first()
+
+        if existing is None:
+            return error
+
+        return ValidationError(
+            message,
+            code=error.code,
+            params={"permission_set_name": (existing.display_name or existing.name)},
+        )
 
     def save(self, *args, **kwargs):
         """Generate the display name before saving"""
