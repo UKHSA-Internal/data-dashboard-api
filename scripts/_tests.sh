@@ -12,7 +12,8 @@ function _tests_help() {
     echo "  system                    - run all system tests"
     echo "  migrations                - run all migration tests"
     echo
-    echo "  coverage                  - run test coverage"
+    echo "  coverage                  - run all tests with test coverage"
+    echo "  coverage-report           - combine .coverage.* data from previous runs and enforce the threshold"
     echo "  all                       - run all tests regardless of type"
 
     return 0
@@ -23,11 +24,12 @@ function _tests() {
     local args=(${@:2})
 
     case $verb in
-        "unit") _tests_unit $args ;;
-        "integration") _tests_integration $args ;;
-        "system") _tests_system $args ;;
-        "migrations") _tests_migrations $args ;;
-        "coverage") _tests_coverage $args ;;
+        "unit") _tests_unit "${args[@]}" ;;
+        "integration") _tests_integration "${args[@]}" ;;
+        "system") _tests_system "${args[@]}" ;;
+        "migrations") _tests_migrations "${args[@]}" ;;
+        "coverage") _tests_coverage "${args[@]}" ;;
+        "coverage-report") _tests_coverage_report ;;
         "all") _tests_all $args ;;
 
         *) _tests_help ;;
@@ -57,6 +59,12 @@ function _tests_migrations() {
 function _tests_coverage() {
     uhd venv activate
     pytest --cov
+}
+
+function _tests_coverage_report() {
+    uhd venv activate
+    coverage combine
+    coverage report
 }
 
 function _tests_all() {
