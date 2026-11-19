@@ -21,6 +21,28 @@ from cms.metrics_interface.field_choices_callables import (
 )
 from common.auth.permissions import WILDCARD_ID_VALUE
 
+DUPLICATE_DISPLAY_NAME_CODE = "duplicate_display_name"
+
+PERMISSION_FIELDS = (
+    "theme",
+    "sub_theme",
+    "topic",
+    "metric",
+    "geography_type",
+    "geography",
+)
+
+DUPLICATE_PERMISSIONS_MESSAGE = (
+    "A permission set comprising the same unique permissions combination "
+    "already exists called “%(permission_set_name)s”. "
+    "Permission sets must represent a unique combination of permissions."
+)
+
+DUPLICATE_NAME_MESSAGE = (
+    "A permission set with the name “%(permission_set_name)s” already exists. "
+    "Permission sets must have unique names."
+)
+
 
 class PermissionSetForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
@@ -137,6 +159,11 @@ class PermissionSet(models.Model):
                 fields=["display_name"],
                 condition=models.Q(display_name__isnull=False),
                 name="unique_non_null_display_name",
+                violation_error_code=DUPLICATE_DISPLAY_NAME_CODE,
+                violation_error_message=(
+                    "A permission set with this name already exists. "
+                    "Permission sets must have unique names."
+                ),
             ),
         ]
 
@@ -144,23 +171,51 @@ class PermissionSet(models.Model):
         try:
             super().validate_constraints(exclude=exclude)
         except ValidationError as exc:
-            dupe = (
-                type(self)
-                .objects.filter(
-                    theme=self.theme,
-                    sub_theme=self.sub_theme,
-                    topic=self.topic,
-                    metric=self.metric,
-                    geography_type=self.geography_type,
-                    geography=self.geography,
-                )
-                .exclude(pk=self.pk)
-                .first()
+            if not hasattr(exc, "error_dict"):
+                raise
+
+            enriched = {
+                field: [self._with_existing_set_name(error) for error in errors]
+                for field, errors in exc.error_dict.items()
+            }
+
+            raise ValidationError(enriched) from exc
+
+    def _with_existing_set_name(self, error):
+        if error.code == "unique_together":
+            return self._error_naming_existing_set(
+                error,
+                PERMISSION_FIELDS,
+                DUPLICATE_PERMISSIONS_MESSAGE,
             )
-            if dupe:
-                duplicate_message = f"A matching permission set already exists: {dupe.display_name or dupe.name}."
-                raise ValidationError(duplicate_message) from exc
-            raise
+
+        if error.code == DUPLICATE_DISPLAY_NAME_CODE:
+            return self._error_naming_existing_set(
+                error,
+                ("display_name",),
+                DUPLICATE_NAME_MESSAGE,
+            )
+
+        return error
+
+    def _error_naming_existing_set(self, error, fields, message):
+        matches = type(self).objects.filter(
+            **{field: getattr(self, field) for field in fields}
+        )
+
+        if not self._state.adding and self.pk is not None:
+            matches = matches.exclude(pk=self.pk)
+
+        existing = matches.first()
+
+        if existing is None:
+            return error
+
+        return ValidationError(
+            message,
+            code=error.code,
+            params={"permission_set_name": (existing.display_name or existing.name)},
+        )
 
     def save(self, *args, **kwargs):
         """Generate the display name before saving"""
