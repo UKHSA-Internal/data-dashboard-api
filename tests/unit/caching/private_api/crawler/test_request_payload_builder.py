@@ -376,12 +376,23 @@ class TestRequestPayloadBuilder:
         assert plot_data["line_type"] == plot_value["line_type"]
 
     @pytest.mark.parametrize(
-        "chart_is_double_width, expected_chart_width", ([(True, 1100), (False, 515)])
+        "chart_is_double_width, expected_chart_width, chart_type, x_axis, y_axis",
+        (
+            [
+                (True, 1100, "stacked_bar", "age", "metric"),
+                (False, 515, "stacked_bar", "age", "metric"),
+                (True, 1100, "butterfly", "metric", "age"),
+                (False, 515, "butterfly", "metric", "age"),
+            ]
+        ),
     )
     def test_build_dual_category_chart_request_data(
         self,
         chart_is_double_width: bool,
         expected_chart_width: int,
+        chart_type: str,
+        x_axis: str,
+        y_axis: str,
         example_dual_category_chart_block: dict[str, str | list[dict]],
     ):
         """
@@ -393,6 +404,9 @@ class TestRequestPayloadBuilder:
         # Given
         chart_block_data = example_dual_category_chart_block
         request_payload_builder = RequestPayloadBuilder()
+        chart_block_data["chart_type"] = chart_type
+        chart_block_data["x_axis"] = x_axis
+        chart_block_data["y_axis"] = y_axis
 
         # When
         chart_request_data = (
