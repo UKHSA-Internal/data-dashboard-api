@@ -506,8 +506,7 @@ class TestPlotsText:
         assert "This is a dark blue stacked bar chart." in text
 
     def test_returns_correct_text_for_dual_category_butterfly_chart(
-            self,
-            fake_plot_data: PlotGenerationData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a dual category butterfly plot
