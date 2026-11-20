@@ -674,19 +674,17 @@ class TestSingleCategoryChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_legend_top_centre_config(
-        self, fake_chart_settings: SingleCategoryChartSettings
-    ):
+    def test_get_legend_config(self, fake_chart_settings: SingleCategoryChartSettings):
         """
         Given an instance of `SingleCategoryChartSettings`
-        When `_get_legend_top_centre_config()` is called
+        When `_get_legend_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+        legend_top_centre_config = chart_settings._get_legend_config()
 
         # Then
         expected_legend_top_centre_config = {
@@ -704,13 +702,13 @@ class TestSingleCategoryChartSettings:
         }
         assert legend_top_centre_config == expected_legend_top_centre_config
 
-    def test_get_legend_top_centre_config_includes_legend_title_when_provided(
+    def test_get_legend_config_includes_legend_title_when_provided(
         self, fake_chart_settings: ChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
             which includes a legend title
-        When `_get_legend_top_centre_config()` is called
+        When `_get_legend_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
         # Given
@@ -719,7 +717,7 @@ class TestSingleCategoryChartSettings:
         chart_settings._chart_generation_payload.legend_title = legend_title
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+        legend_top_centre_config = chart_settings._get_legend_config()
 
         # Then
         expected_legend_top_centre_config = {
@@ -758,7 +756,7 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_line_multi_coloured_chart_config = {
             **chart_settings._get_base_chart_config(),
-            **chart_settings._get_legend_top_centre_config(),
+            **chart_settings._get_legend_config(),
             "showlegend": True,
         }
 
@@ -785,7 +783,7 @@ class TestSingleCategoryChartSettings:
         # Then
         expected_common_chart_config = {
             **chart_settings._get_base_chart_config(),
-            **chart_settings._get_legend_top_centre_config(),
+            **chart_settings._get_legend_config(),
             "barmode": "group",
         }
 

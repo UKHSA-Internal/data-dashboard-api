@@ -18,6 +18,10 @@ FULL_WIDTH_CHART_MINIMUM = 1100
 FULL_WIDTH_X_AXIS_NTICKS = 13
 COMPACT_X_AXIS_NTICKS = 5
 
+LEGEND_ROW_HEIGHT_PX = 20
+LEGEND_CHAR_WIDTH_PX = 7
+LEGEND_HORIZONTAL_PADDING_PX = 40
+
 
 class SingleCategoryChartSettings(ChartSettings):
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
@@ -158,14 +162,54 @@ class SingleCategoryChartSettings(ChartSettings):
             "tickformat": None,
         }
 
-    def _get_legend_top_centre_config(self):
+    def _has_x_axis_title(self) -> bool:
+        return bool(self._chart_generation_payload.x_axis_title)
+
+    def _get_legend_labels(self) -> list[str]:
+        return [str(plot.parameters.label or "") for plot in self.plots_data]
+
+    def _estimate_legend_rows(self) -> int:
+        available_width = max(self.width - LEGEND_HORIZONTAL_PADDING_PX, 1)
+        rows, current_row_width = 1, 0
+
+        for label in self._get_legend_labels():
+            item_width = min(
+                len(label) * LEGEND_CHAR_WIDTH_PX + LEGEND_HORIZONTAL_PADDING_PX,
+                available_width,
+            )
+            if current_row_width and current_row_width + item_width > available_width:
+                rows += 1
+                current_row_width = 0
+            current_row_width += item_width
+
+        return rows
+
+    def _get_legend_top_offset_px(self) -> int:
+        # """Distance from the x-axis line to the top edge of the legend"""
+        base_offset = 40 if self._has_x_axis_title() else 30
+        return base_offset + self._estimate_legend_rows() * LEGEND_ROW_HEIGHT_PX
+
+    def _get_approx_plot_height_px(self) -> int:
+        base_margin = self._get_base_chart_config()["margin"]
+        top_margin_px = (
+            30
+            if self._chart_generation_payload.y_axis_title
+            else base_margin.get("t", 0)
+        )
+        return max(
+            self.height - top_margin_px - self._get_legend_top_offset_px() - 28,
+            50,
+        )
+
+    def _get_legend_config(self):
         legend_config = {
             "font": self._get_tick_font_config(),
             "orientation": "h",
-            "y": 1.0,
+            "yref": "paper",
+            "y": -self._get_legend_top_offset_px() / self._get_approx_plot_height_px(),
             "x": 0.5,
             "xanchor": "center",
-            "yanchor": "bottom",
+            "yanchor": "top",
         }
 
         if legend_title := self._chart_generation_payload.legend_title:
@@ -292,6 +336,7 @@ class SingleCategoryChartSettings(ChartSettings):
         chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
         chart_config["margin"]["t"] = 12
+        chart_config["margin"]["b"] = 0
         chart_config["margin"]["pad"] = 25
 
         # x_axis config
@@ -326,10 +371,10 @@ class SingleCategoryChartSettings(ChartSettings):
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
 
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
 
     def get_common_chart_config(self):
         chart_config = self._get_base_chart_config()
 
         chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_top_centre_config()}
+        return {**chart_config, **self._get_legend_config()}
