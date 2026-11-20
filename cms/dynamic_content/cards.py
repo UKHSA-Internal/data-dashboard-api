@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.admin.telepath import register
@@ -46,6 +47,7 @@ MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
 
 MINIMUM_SEGMENTS_COUNT: int = 2
+BUTTERFLY_SEGMENTS_COUNT: int = 2
 
 POPULAR_TOPICS_SEGMENT_COUNT: int = 1
 POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT: int = 2
@@ -570,6 +572,35 @@ class DualCategoryChartCard(blocks.StructBlock):
         )
 
         return context
+
+    def clean(self, value: blocks.StructValue):
+        self._validate_butterfly_chart_segments_count(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_butterfly_chart_segments_count(
+        cls, *, value: blocks.StructValue
+    ) -> None:
+        """Validates that `butterfly` charts have exactly 2 segments
+
+        Notes:
+            This `clean()` override enforces the rule server-side,
+            so it also holds for data which bypasses the form,
+            e.g. the API or imported pages.
+        """
+        if value["chart_type"] != "butterfly":
+            return
+
+        segments_count = len(value["segments"])
+        if segments_count != BUTTERFLY_SEGMENTS_COUNT:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "segments": ValidationError(
+                        "A `butterfly` chart must have exactly "
+                        f"{BUTTERFLY_SEGMENTS_COUNT} segments"
+                    )
+                }
+            )
 
     class Meta:
         form_classname = "dual-category-chart-form"
