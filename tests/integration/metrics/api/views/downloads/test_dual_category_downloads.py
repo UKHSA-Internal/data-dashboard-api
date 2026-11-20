@@ -82,10 +82,12 @@ class TestDualCategoryView:
             ],
         }
 
-        y_payload = x_payload
+        y_payload = x_payload.copy()
         y_payload["chart_type"] = "butterfly"
         y_payload["x_axis"] = "metric"
         y_payload["y_axis"] = "age"
+
+        assert x_payload != y_payload
 
         # When
         x_response: Response = client.post(
