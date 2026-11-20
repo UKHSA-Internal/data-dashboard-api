@@ -674,9 +674,7 @@ class TestSingleCategoryChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_legend_config(
-        self, fake_chart_settings: SingleCategoryChartSettings
-    ):
+    def test_get_legend_config(self, fake_chart_settings: SingleCategoryChartSettings):
         """
         Given an instance of `SingleCategoryChartSettings`
         When `_get_legend_config()` is called

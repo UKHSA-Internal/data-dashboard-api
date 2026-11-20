@@ -186,7 +186,7 @@ class SingleCategoryChartSettings(ChartSettings):
 
     def _get_legend_top_offset_px(self) -> int:
         # """Distance from the x-axis line to the top edge of the legend"""
-        base_offset = (40 if self._has_x_axis_title() else 30)
+        base_offset = 40 if self._has_x_axis_title() else 30
         return base_offset + self._estimate_legend_rows() * LEGEND_ROW_HEIGHT_PX
 
     def _get_approx_plot_height_px(self) -> int:

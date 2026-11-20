@@ -91,13 +91,8 @@ class SubplotChartSettings(ChartSettings):
 
     def _get_legend_top_offset_px(self) -> int:
         """Distance from the x-axis line to the top edge of the legend"""
-        return (
-                self._get_xaxis_title_offset_px()
-                + (
-                    40
-                    if self._has_x_axis_title()
-                    else 50
-                )
+        return self._get_xaxis_title_offset_px() + (
+            40 if self._has_x_axis_title() else 50
         )
 
     def get_legend_config(self, number_of_legend_items: int):

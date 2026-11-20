@@ -8,6 +8,7 @@ import plotly.graph_objects
 from metrics.domain.charts.subplots.generation import generate_chart_figure
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
+
 class TestSubplotGeneration:
     @staticmethod
     def _setup_chart_plot_data(
