@@ -104,7 +104,6 @@ class DualCategoryChartCard {
         STREAMFIELD_CHILD: '[data-streamfield-child]',
         SEGMENT_SECTION: 'section[id$="-section"]',
         DELETE_SEGMENT_ACTION: '[data-streamfield-action="DELETE"]',
-        ADD_SEGMENT_BUTTON: '.c-sf-add-button'
     };
 
     static FIELD_SUFFIXES = {
@@ -403,39 +402,6 @@ class DualCategoryChartCard {
     }
 
     /**
-     * @name applySegmentLimit
-     * @description A butterfly chart mirrors one segment against the other, either side of
-     * a shared central axis, so it takes exactly 2 segments. Once that limit is reached the
-     * `add segment` buttons are hidden, every other chart type keeps them available.
-     * @param rootNode {HTMLElement} the node in which this chart is rendered
-     */
-    applySegmentLimit(rootNode) {
-        const { SELECTORS, BUTTERFLY_SEGMENTS_COUNT } = DualCategoryChartCard;
-        const segments_container = rootNode.querySelector(SELECTORS.SEGMENTS_CONTAINER);
-
-        if (!segments_container) {
-            return;
-        }
-
-        const limit_reached =
-            this.isButterflyChart() &&
-            this.getActiveSegments(rootNode).length >= BUTTERFLY_SEGMENTS_COUNT;
-
-        segments_container.querySelectorAll(SELECTORS.ADD_SEGMENT_BUTTON).forEach(add_button => {
-            const hidden = add_button.style.display === 'none';
-
-            // Writing to the button is guarded, otherwise each write is picked
-            // up by the segments observer which calls straight back into here.
-            if (hidden === limit_reached) {
-                return;
-            }
-
-            add_button.style.display = limit_reached ? 'none' : '';
-            add_button.disabled = limit_reached;
-        });
-    }
-
-    /**
      * @name observeSegmentsBlocks
      * @description This makes use of the `MutationObserver` API to watch for new `segment` `ListBlock` items
      * added to the DOM, when this is `observed` a number of functions are called that update the list of
@@ -467,10 +433,6 @@ class DualCategoryChartCard {
                     })
                 }
             })
-
-            // Segments are added as new nodes but deleted by flagging the existing
-            // node as hidden, so the limit is re-applied for either kind of mutation.
-            this.applySegmentLimit(rootNode);
         })
 
         observer.observe(segments_container, {
@@ -497,7 +459,6 @@ class DualCategoryChartCard {
 
             this.stateManager.clearSecondaryFieldState();
             this.clearSegments(rootNode);
-            this.applySegmentLimit(rootNode);
         });
 
         [this.x_axis_field, this.y_axis_field].filter(Boolean).forEach(axis_field => {
@@ -547,7 +508,7 @@ class DualCategoryChartCard {
     }
 
     render(prefix, initialState, block) {
-        // from the telepath StructBlock representation, 
+        // from the telepath StructBlock representation,
         // find the DOM element in which this chart is rendered.
         const rootNode = Array.from(block.container).find(
             el => el.className === DualCategoryChartCard.SELECTORS.DUAL_CATEGORY_CHART_CARD
@@ -565,9 +526,6 @@ class DualCategoryChartCard {
 
         // Initial population of field options based on current/initial values
         this.initialiseFieldOptions();
-
-        // Hold existing content to the segment count allowed by its chart type
-        this.applySegmentLimit(rootNode);
 
         // Setup observer for watching segments list and event handlers on
         this.observeSegmentBlocks(prefix, rootNode);

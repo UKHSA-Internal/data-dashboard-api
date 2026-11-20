@@ -1,11 +1,14 @@
 import json
+from copy import deepcopy
 from django import forms
 from unittest import mock
+from wagtail.blocks import StructBlock, StructBlockValidationError
 from wagtail.blocks.struct_block import StructBlockAdapter
 
 import pytest
 
 from cms.dynamic_content.cards import (
+    BUTTERFLY_SEGMENTS_COUNT,
     DualCategoryChartCard,
     DualCategoryChartCardAdapter,
 )
@@ -92,6 +95,92 @@ class TestDualCategoryChartCard:
         # Then
         assert context["prefix"] == mock_prefix
         assert context["subcategory_data"] == expected_context_subcategory_data
+
+    @mock.patch.object(StructBlock, "clean")
+    def test_clean_passes_with_valid_butterfly_chart_payload(
+        self,
+        mocked_super_clean: mock.MagicMock,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a `DualCategoryChartCard` payload with a `chart_type` of `butterfly`
+            and exactly 2 segments
+        When `clean()` is called
+        Then the parent `clean()` method should be called,
+            i.e. no error is raised beforehand
+        """
+        # Given
+        payload = deepcopy(example_dual_category_chart_block)
+        payload["chart_type"] = "butterfly"
+        assert len(payload["segments"]) == BUTTERFLY_SEGMENTS_COUNT
+        dual_category_chart_card = DualCategoryChartCard()
+
+        # When
+        dual_category_chart_card.clean(value=payload)
+
+        # Then
+        mocked_super_clean.assert_called_once_with(value=payload)
+
+    @pytest.mark.parametrize("segments_count", (1, 3))
+    def test_clean_raises_validation_error_with_incorrect_butterfly_segments_count(
+        self,
+        segments_count: int,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a `DualCategoryChartCard` payload with a `chart_type` of `butterfly`
+            and a number of segments other than 2
+        When `clean()` is called
+        Then a `StructBlockValidationError` should be raised
+        """
+        # Given
+        payload = deepcopy(example_dual_category_chart_block)
+        payload["chart_type"] = "butterfly"
+        segments = payload["segments"]
+        if segments_count < len(segments):
+            payload["segments"] = segments[:segments_count]
+        else:
+            extra_segment = deepcopy(segments[-1])
+            payload["segments"] = segments + [extra_segment] * (
+                segments_count - len(segments)
+            )
+        dual_category_chart_card = DualCategoryChartCard()
+
+        # When / Then
+        with pytest.raises(StructBlockValidationError) as exc_info:
+            dual_category_chart_card.clean(value=payload)
+
+        block_errors = exc_info.value.block_errors
+        assert (
+            block_errors["segments"].message
+            == f"A `butterfly` chart must have exactly {BUTTERFLY_SEGMENTS_COUNT} segments"
+        )
+
+    @mock.patch.object(StructBlock, "clean")
+    def test_clean_passes_with_non_butterfly_chart_and_other_segments_count(
+        self,
+        mocked_super_clean: mock.MagicMock,
+        example_dual_category_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a `DualCategoryChartCard` payload with a `chart_type` other than `butterfly`
+            and a number of segments other than 2
+        When `clean()` is called
+        Then the parent `clean()` method should be called,
+            i.e. no error is raised beforehand
+        """
+        # Given
+        payload = deepcopy(example_dual_category_chart_block)
+        payload["chart_type"] = "stacked_bar"
+        extra_segment = deepcopy(payload["segments"][-1])
+        payload["segments"] = payload["segments"] + [extra_segment]
+        dual_category_chart_card = DualCategoryChartCard()
+
+        # When
+        dual_category_chart_card.clean(value=payload)
+
+        # Then
+        mocked_super_clean.assert_called_once_with(value=payload)
 
 
 class TestDualCategoryChartCardAdapter:
