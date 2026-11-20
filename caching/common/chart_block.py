@@ -1,4 +1,5 @@
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
+SUPPORTED_DUAL_CATEGORY_CHARTS = ("stacked_bar", "butterfly")
 
 
 def is_dual_category_chart_block(chart_block: CMS_COMPONENT_BLOCK_TYPE) -> bool:
@@ -16,8 +17,9 @@ def is_dual_category_chart_block(chart_block: CMS_COMPONENT_BLOCK_TYPE) -> bool:
         chart_block.get("x_axis") is not None
         or chart_block.get("primary_field_values") is not None
     )
+
     return (
         has_axes_fields
-        and chart_block.get("chart_type") == "stacked_bar"
+        and chart_block.get("chart_type") in SUPPORTED_DUAL_CATEGORY_CHARTS
         and chart_block.get("segments") is not None
     )

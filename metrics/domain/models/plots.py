@@ -175,6 +175,7 @@ class PlotGenerationData(BaseModel):
             for key, value in aggregated_results.items()
             if key not in keys_to_exclude
         }
+
         return cls(
             parameters=parameters,
             x_axis_values=aggregated_results[parameters.x_axis_value],
