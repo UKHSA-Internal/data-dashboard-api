@@ -52,6 +52,13 @@ class DualCategoryChartsInterface:
     def is_headline_data(self) -> bool:
         return self.chart_request_params.plots[0].is_headline_data
 
+    @property
+    def supports_compact_rotation(self) -> bool:
+        """Stacked bars rotate only when their source is not time-series data."""
+        return self.chart_type == ChartTypes.stacked_bar.value and all(
+            not plot.is_timeseries_data for plot in self.chart_request_params.plots
+        )
+
     @staticmethod
     def _build_chart_figure(
         chart_generation_payload: ChartGenerationPayload,

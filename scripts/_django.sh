@@ -9,6 +9,7 @@ function _django_help() {
     echo
     echo "  makemigrations            - create any outstanding database migrations"
     echo "  migrate                   - apply any outstanding database migrations"
+    echo "  checkmigrations           - checks for any outstanding model migrations"
     echo
     echo "  shell                     - create an interactive shell into the django app"
 
@@ -23,6 +24,7 @@ function _django() {
         "makemigrations") _django_make_migrations $args ;;
         "migrate") _django_migrate $args ;;
         "shell") _django_shell $args ;;
+        "checkmigrations") _django_check_migrations $args ;;
 
         *) _django_help ;;
     esac
@@ -41,4 +43,9 @@ function _django_migrate() {
 function _django_shell() {
     uhd venv activate
     python manage.py shell
+}
+
+function _django_check_migrations() {
+    uhd venv activate
+    python manage.py makemigrations --check
 }
