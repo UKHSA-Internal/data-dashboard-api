@@ -350,6 +350,8 @@ class PlotsText:
                 return "line"
             case ChartTypes.line_single_simplified.value:
                 return "line"
+            case ChartTypes.butterfly.value:
+                return "horizontal bar"
 
     @classmethod
     def _get_trend_direction(cls, *, plot_parameters: PlotParameters) -> str:
