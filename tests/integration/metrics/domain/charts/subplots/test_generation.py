@@ -8,6 +8,22 @@ import plotly.graph_objects
 from metrics.domain.charts.subplots.generation import generate_chart_figure
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
+from metrics.domain.charts.chart_settings.subplot_chart_settings import (
+    DEFAULT_CHART_BASE_Y,
+    DEFAULT_CHART_MULTIPLIER,
+    THIRD_CHART_WIDTH,
+    THIRD_CHART_BASE_Y,
+    THIRD_CHART_MULTIPLIER,
+    NARROW_CHART_WIDTH,
+    NARROW_CHART_BASE_Y,
+    NARROW_CHART_MULTIPLIER,
+    HALF_CHART_WIDTH,
+    HALF_CHART_BASE_Y,
+    HALF_CHART_MULTIPLIER,
+    WIDE_CHART_WIDTH,
+    WIDE_CHART_BASE_Y,
+    WIDE_CHART_MULTIPLIER,
+)
 
 class TestSubplotGeneration:
     @staticmethod
