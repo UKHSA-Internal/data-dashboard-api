@@ -5,16 +5,44 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.chart_settings.single_category import (
     COMPACT_X_AXIS_NTICKS,
     FULL_WIDTH_X_AXIS_NTICKS,
+    LEGEND_ROW_HEIGHT_PX,
     SingleCategoryChartSettings,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 from tests.conftest import fake_plot_data
 
 MODULE_PATH: str = "metrics.domain.charts.charts.chart_settings.single_category"
+
+# Layout constants mirrored from `_get_legend_top_offset_px` / `_get_approx_plot_height_px`
+LEGEND_BASE_OFFSET_WITH_X_AXIS_TITLE_PX = 40
+LEGEND_BASE_OFFSET_WITHOUT_X_AXIS_TITLE_PX = 30
+PLOT_TOP_MARGIN_WITH_Y_AXIS_TITLE_PX = 30
+PLOT_BOTTOM_PADDING_PX = 28
+
+def _expected_legend_y(
+    chart_height: int,
+    legend_rows: int,
+    has_x_axis_title: bool,
+    has_y_axis_title: bool,
+    base_top_margin: int = 0,
+) -> float:
+    base_offset = (
+        LEGEND_BASE_OFFSET_WITH_X_AXIS_TITLE_PX
+        if has_x_axis_title
+        else LEGEND_BASE_OFFSET_WITHOUT_X_AXIS_TITLE_PX
+    )
+    legend_top_offset = base_offset + legend_rows * LEGEND_ROW_HEIGHT_PX
+
+    top_margin = (
+        PLOT_TOP_MARGIN_WITH_Y_AXIS_TITLE_PX if has_y_axis_title else base_top_margin
+    )
+    plot_height = max(
+        chart_height - top_margin - legend_top_offset - PLOT_BOTTOM_PADDING_PX, 50
+    )
+    return -legend_top_offset / plot_height
 
 
 @pytest.fixture()
@@ -684,26 +712,33 @@ class TestSingleCategoryChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_config()
+        legend_config = chart_settings._get_legend_config()
 
         # Then
-        expected_legend_top_centre_config = {
+        expected_y = _expected_legend_y(
+            chart_height=220,
+            legend_rows=1,
+            has_x_axis_title=True,
+            has_y_axis_title=True,
+        )  # -60 / 102
+        expected_legend_config = {
             "legend": {
                 "font": {
                     "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
                     "family": "Arial",
                 },
                 "orientation": "h",
-                "y": 1.0,
+                "yref": "paper",
+                "y": expected_y,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
             },
         }
-        assert legend_top_centre_config == expected_legend_top_centre_config
+        assert legend_config == expected_legend_config
 
     def test_get_legend_config_includes_legend_title_when_provided(
-        self, fake_chart_settings: ChartSettings
+        self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
         Given an instance of `SingleCategoryChartSettings`
@@ -717,10 +752,16 @@ class TestSingleCategoryChartSettings:
         chart_settings._chart_generation_payload.legend_title = legend_title
 
         # When
-        legend_top_centre_config = chart_settings._get_legend_config()
+        legend_config = chart_settings._get_legend_config()
 
         # Then
-        expected_legend_top_centre_config = {
+        expected_y = _expected_legend_y(
+            chart_height=220,
+            legend_rows=1,
+            has_x_axis_title=True,
+            has_y_axis_title=True,
+        )
+        expected_legend_config = {
             "legend": {
                 "title": f"<b>{legend_title}</b>",
                 "font": {
@@ -728,13 +769,14 @@ class TestSingleCategoryChartSettings:
                     "family": "Arial",
                 },
                 "orientation": "h",
-                "y": 1.0,
+                "yref": "paper",
+                "y": expected_y,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
             },
         }
-        assert legend_top_centre_config == expected_legend_top_centre_config
+        assert legend_config == expected_legend_config
 
     def test_get_line_multi_coloured_chart_config(
         self,
