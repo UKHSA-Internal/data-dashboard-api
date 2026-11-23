@@ -62,7 +62,7 @@ class CMSSelectedFieldParser:
                     values.add(value)
 
         return values
-    
+
     @classmethod
     def get_all_selected_combinations_from_sections(
         cls, *, sections: list[dict[str, Any]]
@@ -134,4 +134,3 @@ class CMSSelectedFieldParser:
             if (combination[1] and combination[2])
             or combination[0] not in topics_with_complete_combination
         }
-

@@ -114,20 +114,6 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         self._core_timeseries_manager = core_timeseries_manager
         self._core_headline_manager = core_headline_manager
 
-    # @property
-    # def selected_topics(self) -> set[str]:
-    #     """Extracts a set of the selected topics from all the headline & chart blocks in the `body`
-
-    #     Returns:
-    #         Set of strings where each string represents
-    #         a topic which has been selected at least
-    #         once in the body of the page
-
-    #     """
-    #     return CMSBlockParser.get_all_selected_topics_from_sections(
-    #         sections=self.body.raw_data
-    #     )
-
     @property
     def selected_metrics(self) -> set[str]:
         """Extracts a set of the selected metrics from all the headline & chart blocks in the `body`
@@ -142,18 +128,6 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
             sections=self.body.raw_data
         )
 
-    # @property
-    # def selected_themes(self) -> set[str]:
-    #     return CMSSelectedFieldParser.get_all_selected_theme_from_sections(
-    #         sections=self.body.raw_data
-    #     )
-
-    # @property
-    # def selected_sub_themes(self) -> set[str]:
-    #     return CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
-    #         sections=self.body.raw_data
-    #     )
-
     @property
     def selected_topics(self) -> list[str]:
         return [topic for topic, _, _ in self._selected_combinations]
@@ -165,14 +139,14 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
     @property
     def selected_sub_themes(self) -> list[str]:
         return [sub_theme for _, _, sub_theme in self._selected_combinations]
-    
+
     @property
     def _selected_combinations(self) -> list[tuple[str, str, str]]:
         return sorted(
             CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
                 sections=self.body.raw_data
             )
-    )
+        )
 
     def find_latest_released_embargo_for_metrics(
         self,
