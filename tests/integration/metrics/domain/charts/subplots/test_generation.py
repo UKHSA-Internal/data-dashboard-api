@@ -25,6 +25,7 @@ from metrics.domain.charts.chart_settings.subplot_chart_settings import (
     WIDE_CHART_MULTIPLIER,
 )
 
+
 class TestSubplotGeneration:
     @staticmethod
     def _setup_chart_plot_data(

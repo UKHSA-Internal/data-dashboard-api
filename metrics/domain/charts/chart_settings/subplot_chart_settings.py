@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_LEGEND_FONT_SIZE = 14
 DEFAULT_ANNOTATION_FONT_SIZE = 14
 
-# TODO: Below not used for legend positioning any more, review removal once reviewed if anything else using
 # W: >1100
 DEFAULT_CHART_MULTIPLIER = 2
 DEFAULT_CHART_BASE_Y = 0.1

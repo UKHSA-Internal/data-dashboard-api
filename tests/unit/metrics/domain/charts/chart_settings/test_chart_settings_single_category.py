@@ -22,6 +22,7 @@ LEGEND_BASE_OFFSET_WITHOUT_X_AXIS_TITLE_PX = 30
 PLOT_TOP_MARGIN_WITH_Y_AXIS_TITLE_PX = 30
 PLOT_BOTTOM_PADDING_PX = 28
 
+
 def _expected_legend_y(
     chart_height: int,
     legend_rows: int,
