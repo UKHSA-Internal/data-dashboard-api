@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 
 from cms.topic.models import TopicPage
+from django.core.exceptions import ValidationError
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -49,7 +50,65 @@ class TestTopicPage:
         # Then
         search_fields: set[str] = {api_field.field_name for api_field in search_fields}
         assert expected_search_field in search_fields
+        
+    def test_accreditation_badge_defaults_to_none(self):
+        """
+        Given a TopicPage accreditation badge field
+        When its default configuration is inspected
+        Then the badge is optional and defaults to no badge
+        """
+        # Given
+        field = TopicPage._meta.get_field("accreditation_badge")
 
+        # When / Then
+        assert field.blank is True
+        assert field.get_default() == ""
+
+    @pytest.mark.parametrize(
+        "badge_value",
+        [
+            "",
+            "accredited_official_statistics",
+        ],
+    )
+    def test_accreditation_badge_accepts_valid_choices(
+        self, badge_value: str
+    ):
+        """
+        Given an optional accreditation badge field
+        When a supported badge value is validated
+        Then the value is accepted
+        """
+        # Given
+        field = TopicPage._meta.get_field("accreditation_badge")
+
+        # When
+        validated_value = field.clean(badge_value, None)
+
+        # Then
+        assert validated_value == badge_value
+
+    @pytest.mark.parametrize(
+        "badge_value",
+        [
+            "unsupported_badge",
+            "accredited_official_statistics,unsupported_badge",
+        ],
+    )
+    def test_accreditation_badge_rejects_invalid_choices(
+        self, badge_value: str
+    ):
+        """
+        Given an unsupported or multiple badge selection
+        When the accreditation badge field is validated
+        Then a ValidationError is raised
+        """
+        # Given
+        field = TopicPage._meta.get_field("accreditation_badge")
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            field.clean(badge_value, None)
 
 class TestTemplateCOVID19Page:
     @property
