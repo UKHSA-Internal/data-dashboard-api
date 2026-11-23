@@ -13,13 +13,13 @@ service:
     # record coverage data for the final step, as actions.yml does.
     suites:
       - name: unit
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.unit && uhd tests unit --cov --cov-fail-under=0"
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.unit && uhd tests unit --cov --cov-fail-under=0 --junitxml=test-results/unit.xml"
       - name: integration
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.integration && uhd tests integration --cov --cov-fail-under=0"
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.integration && uhd tests integration --cov --cov-fail-under=0 --junitxml=test-results/integration.xml"
       - name: system
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.system && uhd tests system --cov --cov-fail-under=0"
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.system && uhd tests system --cov --cov-fail-under=0 --junitxml=test-results/system.xml"
       - name: migrations
-        command: ". ./uhd.sh && uhd tests migrations"
+        command: ". ./uhd.sh && uhd tests migrations --junitxml=test-results/migrations.xml"
     collect: [".coverage.*"]
     # Combines the suites' coverage data and enforces the threshold, without re-running tests.
     final:
