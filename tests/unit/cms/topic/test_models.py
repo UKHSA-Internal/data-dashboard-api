@@ -835,3 +835,23 @@ class TestTopicPageSelectedThemeProperties:
 
         # Then
         assert selected_sub_themes == {"respiratory", "gastrointestinal"}
+
+    def test_selected_topics_themes_and_sub_themes_are_index_aligned(self):
+        """
+        Given a `TopicPage` with plots from two different topics
+        When the selected properties are read
+        Then index N of each list belongs to the same combination
+        """
+        page = TopicPage(content_type_id=1)
+
+        with mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_combinations_from_sections",
+            return_value={
+                ("COVID-19", "infectious_disease", "respiratory"),
+                ("ticks", "climate_and_environment", "vectors"),
+            },
+        ):
+            assert page.selected_topics == ["COVID-19", "ticks"]
+            assert page.selected_themes == ["infectious_disease", "climate_and_environment"]
+            assert page.selected_sub_themes == ["respiratory", "vectors"]
