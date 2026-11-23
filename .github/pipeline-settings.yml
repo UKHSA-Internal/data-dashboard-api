@@ -1,12 +1,30 @@
 # Settings for the shared standard pipeline from UKHSA-Internal/devops-pipeline.
 # Consumed by .github/workflows/devops-pipeline-standard.yml.
-version: "1.0"
+version: "1.1"
 
 service:
   name: data-dashboard-api
   owner_team: data-dashboard-engineers
   language: python
-  test_command: "python3.12 -m venv .venv && . .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt && python -m pytest tests/unit && python -m pytest tests/integration && python -m pytest tests/system && python -m pytest tests/migrations"
+  test:
+    # Runs at the start of each suite job and of the final step.
+    setup: ". ./uhd.sh && uhd venv create"
+    # Each suite runs as its own job, in parallel. Unit, integration and system
+    # record coverage data for the final step, as actions.yml does.
+    suites:
+      - name: unit
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.unit && uhd tests unit --cov --cov-fail-under=0"
+      - name: integration
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.integration && uhd tests integration --cov --cov-fail-under=0"
+      - name: system
+        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.system && uhd tests system --cov --cov-fail-under=0"
+      - name: migrations
+        command: ". ./uhd.sh && uhd tests migrations"
+    collect: [".coverage.*"]
+    # Combines the suites' coverage data and enforces the threshold, without re-running tests.
+    final:
+      name: coverage
+      command: ". ./uhd.sh && uhd tests coverage-report"
 
 environments:
   - name: dev
