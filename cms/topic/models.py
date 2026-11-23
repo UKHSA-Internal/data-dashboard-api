@@ -34,6 +34,15 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
+ACCREDITATION_BADGE_CHOICES = [
+    ("", "No badge"),
+    (
+        "accredited_official_statistics",
+        "Accredited Official Statistics",
+    ),
+]
+
+
 class TopicPage(UKHSAPage, NonPublicCapablePage):
     base_form_class = NonPublicPageAdminForm
 
@@ -46,6 +55,14 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
     body = ALLOWABLE_BODY_CONTENT
 
     enable_area_selector = models.BooleanField(default=False)
+    accreditation_badge = models.CharField(
+        verbose_name="Accreditation badge",
+        max_length=64,
+        choices=ACCREDITATION_BADGE_CHOICES,
+        blank=True,
+        default="",
+        help_text="Select an accreditation badge to display on this topic page.",
+    )
 
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -71,12 +88,14 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
     content_panels = UKHSAPage.content_panels + [
         *NonPublicCapablePage.content_panels,
         FieldPanel("enable_area_selector"),
+        FieldPanel("accreditation_badge"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
+        APIField("accreditation_badge"),
         APIField("page_description"),
         APIField("body"),
         APIField("related_links_layout"),
