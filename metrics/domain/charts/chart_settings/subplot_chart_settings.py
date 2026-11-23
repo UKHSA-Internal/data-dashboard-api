@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_LEGEND_FONT_SIZE = 14
 DEFAULT_ANNOTATION_FONT_SIZE = 14
 
+# TODO: Below not used for legend positioning any more, review removal once reviewed if anything else using
 # W: >1100
 DEFAULT_CHART_MULTIPLIER = 2
 DEFAULT_CHART_BASE_Y = 0.1
@@ -82,6 +83,24 @@ class SubplotChartSettings(ChartSettings):
             "horizontal_spacing": 0.03,
         }
 
+    def _get_legend_size_config(self):
+        """Returns the `base y` and `legend size` used to position the legend
+            of a subplot chart based on the `width` of the chart being generated.
+
+        Returns: list of numbers (int|float) used to position the legend of a
+            subplot chart based on the `width` of the chart being generated.
+        """
+        if self.width <= THIRD_CHART_WIDTH:
+            return [THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER]
+        if self.width <= NARROW_CHART_WIDTH:
+            return [NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER]
+        if self.width <= HALF_CHART_WIDTH:
+            return [HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER]
+        if self.width <= WIDE_CHART_WIDTH:
+            return [WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER]
+
+        return [DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER]
+
     def _get_margin_top_px(self) -> int:
         return 30 if self._chart_generation_payload.y_axis_title else 3
 
@@ -101,22 +120,29 @@ class SubplotChartSettings(ChartSettings):
             40 if self._has_x_axis_title() else 50
         )
 
-    def get_legend_config(self, number_of_legend_items: int):
-        legend_top_offset_px = self._get_legend_top_offset_px()
+    def _get_legend_y(self) -> float:
+        """Paper-relative y of the legend's top edge, below the x-axis"""
+        return -self._get_legend_top_offset_px() / self._get_approx_plot_height_px()
 
+    def get_legend_config(self, number_of_legend_items: int | None = None):
         return {
             "font": {**self._get_tick_font_config(), "size": DEFAULT_LEGEND_FONT_SIZE},
             "orientation": "h",
             "yref": "paper",
-            "y": -legend_top_offset_px / self._get_approx_plot_height_px(),
+            "y": self._get_legend_y(),
             "x": 0.5,
             "xanchor": "center",
             "yanchor": "top",
         }
 
-    def get_subplot_chart_config(self) -> CHART_ARGS:
+    def get_subplot_chart_config(
+        self, number_of_legend_items: int | None = None
+    ) -> CHART_ARGS:
         chart_config = self._get_base_chart_config()
 
+        chart_config["legend"] = self.get_legend_config(
+            number_of_legend_items=number_of_legend_items
+        )
         chart_config["autosize"] = True
         chart_config["margin"] = {
             "l": 3,
@@ -151,14 +177,12 @@ class SubplotChartSettings(ChartSettings):
         return primary_yaxis_config
 
     def get_x_axis_title_as_annotation_config(self) -> dict:
-        y_base, _ = self._get_legend_size_config()
-
         return {
             "annotations": [
                 {
                     "text": self._chart_generation_payload.x_axis_title,
                     "x": 0.5,
-                    "y": -y_base,
+                    "y": self._get_legend_y(),
                     "xanchor": "center",
                     "yanchor": "bottom",
                     "xref": "paper",
