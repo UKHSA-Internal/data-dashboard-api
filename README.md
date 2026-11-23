@@ -349,8 +349,12 @@ This workflow runs alongside the existing `Pipeline` workflow (`.github/workflow
 The shared pipeline reads this service's settings from `.github/pipeline-settings.yml` and runs these stages in order:
 
 1. **Check** - validates `.github/pipeline-settings.yml`
-2. **Test** - runs the `service.test_command`, which creates a Python 3.12 virtual environment,
-   installs `requirements.txt` and runs the unit, integration, system and migration test suites
+2. **Test** - runs the test suites defined in `service.test`, each as its own job, in parallel, through `uhd`:
+   - `unit`, `integration` and `system` each record coverage data (`.coverage.<suite>`), as in `actions.yml`
+   - `migrations` runs without coverage, because migrations are excluded from coverage in `pyproject.toml`
+   - a final `coverage` step runs once every suite has passed. It combines their coverage data and checks the
+     threshold with `uhd tests coverage-report`, so no tests run twice
+   - each job first runs `uhd venv create`
 3. **Scan** - security scanning
 4. **Build** - `docker build` of the `Dockerfile` at the root of this repository
 5. **Deploy** and **Verify**, per environment (Development, then Pre-production, then Production).
@@ -361,8 +365,8 @@ The shared pipeline reads this service's settings from `.github/pipeline-setting
 ### How to run it
 
 The workflow runs automatically on every pull request, and appears in the PR's checks as
-**DevOps Pipeline (Standard)**. On pull requests, only the Development Deploy and Verify stages run;
-Pre-production and Production only run on pushes to `main`.
+**DevOps Pipeline (Standard)**. Pull requests run Check, Test and Scan only. Build, Deploy and Verify
+run only on `main`.
 
 It can also be triggered manually from the **Actions** tab in GitHub, by selecting
 **DevOps Pipeline (Standard)** and clicking **Run workflow**, or with the GitHub CLI:
