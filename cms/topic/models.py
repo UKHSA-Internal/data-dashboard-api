@@ -143,13 +143,13 @@ class TopicPage(UKHSAPage, NonPublicCapablePage):
         )
 
     @property
-    def selected_themes(self) -> str | None:
+    def selected_themes(self) -> set[str]:
         return CMSSelectedFieldParser.get_all_selected_theme_from_sections(
             sections=self.body.raw_data
         )
 
     @property
-    def selected_sub_themes(self) -> str | None:
+    def selected_sub_themes(self) -> set[str]:
         return CMSSelectedFieldParser.get_all_selected_sub_theme_from_sections(
             sections=self.body.raw_data
         )
