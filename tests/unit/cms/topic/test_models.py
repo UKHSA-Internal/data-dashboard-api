@@ -50,7 +50,7 @@ class TestTopicPage:
         # Then
         search_fields: set[str] = {api_field.field_name for api_field in search_fields}
         assert expected_search_field in search_fields
-        
+
     def test_accreditation_badge_defaults_to_none(self):
         """
         Given a TopicPage accreditation badge field
@@ -71,9 +71,7 @@ class TestTopicPage:
             "accredited_official_statistics",
         ],
     )
-    def test_accreditation_badge_accepts_valid_choices(
-        self, badge_value: str
-    ):
+    def test_accreditation_badge_accepts_valid_choices(self, badge_value: str):
         """
         Given an optional accreditation badge field
         When a supported badge value is validated
@@ -95,9 +93,7 @@ class TestTopicPage:
             "accredited_official_statistics,unsupported_badge",
         ],
     )
-    def test_accreditation_badge_rejects_invalid_choices(
-        self, badge_value: str
-    ):
+    def test_accreditation_badge_rejects_invalid_choices(self, badge_value: str):
         """
         Given an unsupported or multiple badge selection
         When the accreditation badge field is validated
@@ -109,6 +105,7 @@ class TestTopicPage:
         # When / Then
         with pytest.raises(ValidationError):
             field.clean(badge_value, None)
+
 
 class TestTemplateCOVID19Page:
     @property

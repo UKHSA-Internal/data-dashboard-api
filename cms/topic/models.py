@@ -42,6 +42,7 @@ ACCREDITATION_BADGE_CHOICES = [
     ),
 ]
 
+
 class TopicPage(UKHSAPage, NonPublicCapablePage):
     base_form_class = NonPublicPageAdminForm
 
