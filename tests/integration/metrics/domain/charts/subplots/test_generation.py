@@ -24,7 +24,9 @@ SUBPLOT_TOP_MARGIN_WITHOUT_Y_AXIS_TITLE_PX = 3
 SUBPLOT_NON_PLOT_HEIGHT_PX = 88
 
 
-def _expected_legend_y(chart_height: int, has_x_axis_title: bool, has_y_axis_title: bool) -> float:
+def _expected_legend_y(
+    chart_height: int, has_x_axis_title: bool, has_y_axis_title: bool
+) -> float:
     legend_top_offset = (
         SUBPLOT_X_AXIS_TITLE_ZONE_PX + SUBPLOT_LEGEND_BASE_OFFSET_WITH_X_AXIS_TITLE_PX
         if has_x_axis_title
