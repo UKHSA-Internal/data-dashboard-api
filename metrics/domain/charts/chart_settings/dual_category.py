@@ -94,7 +94,9 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
             round(i * clean_step, 10)
             for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)
         ]
-        tick_labels = [f"{abs(val):,.1f}".rstrip('0').rstrip('.') for val in tick_values]
+        tick_labels = [
+            f"{abs(val):,.1f}".rstrip("0").rstrip(".") for val in tick_values
+        ]
 
         # Establish visual boundary limits tightly matching the active ticks
         axis_limit = actual_ticks_per_side * clean_step

@@ -99,22 +99,61 @@ class TestGenerateButterfly:
     @pytest.mark.parametrize(
         "y_axis_data, x_axis_data, expected_tick_vals",
         [
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 1000, 2000, 3000, 4000, 5000], [0, 1000, 2000, 3000, 4000, 5000], id="thousands"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 100, 200, 300, 400, 500], [0, 100, 200, 300, 400, 500], id="hundreds"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 50, 100, 150, 200, 250], [0, 50, 100, 150, 200, 250], id="fiftys"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 40, 80, 120, 160, 200], [0, 50, 100, 150, 200, 250], id="forties"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 20, 40, 60, 80, 100], [0, 20, 40, 60, 80, 100], id="twentys"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 10, 20, 30, 40, 50], [0, 10, 20, 30, 40, 50], id="tens"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 2, 4, 6, 8, 10], [0, 2, 4, 6, 8, 10], id="twos"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], id="ones"),
-            pytest.param([0, 1, 2, 3, 4, 5], [0.0,0.1,0.2,0.3,0.4,0.5], [0, 0.1, 0.2, 0.3, 0.4, 0.5], id="tenths"),
-        ]
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 1000, 2000, 3000, 4000, 5000],
+                [0, 1000, 2000, 3000, 4000, 5000],
+                id="thousands",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 100, 200, 300, 400, 500],
+                [0, 100, 200, 300, 400, 500],
+                id="hundreds",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 50, 100, 150, 200, 250],
+                [0, 50, 100, 150, 200, 250],
+                id="fiftys",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 40, 80, 120, 160, 200],
+                [0, 50, 100, 150, 200, 250],
+                id="forties",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 20, 40, 60, 80, 100],
+                [0, 20, 40, 60, 80, 100],
+                id="twentys",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0, 10, 20, 30, 40, 50],
+                [0, 10, 20, 30, 40, 50],
+                id="tens",
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5], [0, 2, 4, 6, 8, 10], [0, 2, 4, 6, 8, 10], id="twos"
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], id="ones"
+            ),
+            pytest.param(
+                [0, 1, 2, 3, 4, 5],
+                [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+                [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+                id="tenths",
+            ),
+        ],
     )
     def test_generated_tickmarks(
-            self,
-            y_axis_data,
-            x_axis_data,
-            expected_tick_vals,
+        self,
+        y_axis_data,
+        x_axis_data,
+        expected_tick_vals,
     ):
 
         plots = self.generate_plots(
@@ -135,20 +174,30 @@ class TestGenerateButterfly:
 
         figure = generate_butterfly(chart_generation_payload=chart_payload)
 
-        tickvals = list(generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"]["tickvals"])
-        ticktext = list(generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"]["ticktext"])
+        tickvals = list(
+            generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"][
+                "tickvals"
+            ]
+        )
+        ticktext = list(
+            generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"][
+                "ticktext"
+            ]
+        )
 
         expected_full_range_tick_vals = self.mirror_array(expected_tick_vals)
-        expected_full_range_tick_text = self.format_axis_labels(expected_full_range_tick_vals)
+        expected_full_range_tick_text = self.format_axis_labels(
+            expected_full_range_tick_vals
+        )
         assert tickvals == expected_full_range_tick_vals
         assert expected_full_range_tick_text == ticktext
 
     @staticmethod
     def generate_plots(
-            self,
-            y_axis_data: list,
-            left_side: list,
-            right_side: list,
+        self,
+        y_axis_data: list,
+        left_side: list,
+        right_side: list,
     ):
 
         plots = []
