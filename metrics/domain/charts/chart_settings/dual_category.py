@@ -91,7 +91,7 @@ class DualCategoryChartSettings(SingleCategoryChartSettings):
 
         # Generate the optimized symmetric arrays
         tick_values = [
-            i * clean_step
+            round(i * clean_step, 10)
             for i in range(-actual_ticks_per_side, actual_ticks_per_side + 1)
         ]
         tick_labels = [f"{abs(val):,.1f}".rstrip('0').rstrip('.') for val in tick_values]
