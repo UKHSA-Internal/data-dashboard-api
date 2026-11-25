@@ -7,21 +7,28 @@ service:
   owner_team: data-dashboard-engineers
   language: python
   test:
-    # Runs at the start of each suite job and of the final step.
     setup: ". ./uhd.sh && uhd venv create"
-    # Each suite runs as its own job, in parallel. Unit, integration and system
-    # record coverage data for the final step, as actions.yml does.
     suites:
       - name: unit
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.unit && uhd tests unit --cov --cov-fail-under=0 --junitxml=test-results/unit.xml"
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.unit &&
+          uhd tests unit --cov --cov-fail-under=0
+          --junitxml=test-results/unit.xml
       - name: integration
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.integration && uhd tests integration --cov --cov-fail-under=0 --junitxml=test-results/integration.xml"
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.integration &&
+          uhd tests integration --cov --cov-fail-under=0
+          --junitxml=test-results/integration.xml
       - name: system
-        command: ". ./uhd.sh && export COVERAGE_FILE=.coverage.system && uhd tests system --cov --cov-fail-under=0 --junitxml=test-results/system.xml"
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.system &&
+          uhd tests system --cov --cov-fail-under=0
+          --junitxml=test-results/system.xml
       - name: migrations
-        command: ". ./uhd.sh && uhd tests migrations --junitxml=test-results/migrations.xml"
+        command: >-
+          . ./uhd.sh &&
+          uhd tests migrations --junitxml=test-results/migrations.xml
     collect: [".coverage.*"]
-    # Combines the suites' coverage data and enforces the threshold, without re-running tests.
     final:
       name: coverage
       command: ". ./uhd.sh && uhd tests coverage-report"
