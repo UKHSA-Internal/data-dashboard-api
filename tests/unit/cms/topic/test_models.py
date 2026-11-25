@@ -193,7 +193,7 @@ class TestTemplateCOVID19Page:
         selected_topics: bool = template_covid_19_page.selected_topics
 
         # Then
-        assert selected_topics == {"COVID-19"}
+        assert selected_topics == ["COVID-19"]
 
     @pytest.mark.parametrize("enable_area_selector", [True, False])
     def test_is_valid_for_area_selector_for_covid_template_page(
@@ -625,7 +625,7 @@ class TestTemplateInfluenzaPage:
         selected_topics: bool = template_influenza_page.selected_topics
 
         # Then
-        assert selected_topics == {"Influenza"}
+        assert selected_topics == ["Influenza"]
 
     def test_selected_metrics(self):
         """
@@ -715,123 +715,127 @@ class TestTemplateOtherRespiratoryVirusesPage:
         assert selected_metrics == expected_metrics
 
 
-class TestTopicPageSelectedThemeProperties:
-    def test_selected_themes_returns_empty_set_when_no_theme_selected(self):
+class TestTopicPageSelectedCombinationProperties:
+    @staticmethod
+    def _page_with_combinations(combinations: set[tuple[str, str, str]]):
+        page = TopicPage(content_type_id=1)
+        patcher = mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_combinations_from_sections",
+            return_value=combinations,
+        )
+        return page, patcher
+
+    def test_properties_return_empty_lists_when_nothing_selected(self):
         """
-        Given a `TopicPage` whose body has no theme on any plot
-        When the `selected_themes` property is called
-        Then an empty set is returned
+        Given a `TopicPage` whose body has no selected combinations
+        When the selected properties are called
+        Then an empty list is returned for each
         """
         # Given
-        page = TopicPage(content_type_id=1)
+        page, patcher = self._page_with_combinations(set())
 
         # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_theme_from_sections",
-            return_value=set(),
-        ):
-            selected_themes = page.selected_themes
+        with patcher:
+            # Then
+            assert page.selected_topics == []
+            assert page.selected_themes == []
+            assert page.selected_sub_themes == []
 
-        # Then
-        assert selected_themes == set()
-
-    def test_selected_sub_themes_returns_empty_set_when_no_sub_theme_selected(self):
+    def test_properties_return_a_single_combination(self):
         """
-        Given a `TopicPage` whose body has no sub-theme on any plot
-        When the `selected_sub_themes` property is called
-        Then an empty set is returned
+        Given a `TopicPage` with a single selected combination
+        When the selected properties are called
+        Then each list contains the matching component
         """
         # Given
-        page = TopicPage(content_type_id=1)
+        page, patcher = self._page_with_combinations(
+            {("COVID-19", "infectious_disease", "respiratory")}
+        )
 
         # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_sub_theme_from_sections",
-            return_value=set(),
-        ):
-            selected_sub_themes = page.selected_sub_themes
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19"]
+            assert page.selected_themes == ["infectious_disease"]
+            assert page.selected_sub_themes == ["respiratory"]
 
-        # Then
-        assert selected_sub_themes == set()
-
-    def test_selected_themes_returns_a_single_theme(self):
+    def test_selected_topics_themes_and_sub_themes_are_index_aligned(self):
         """
-        Given a `TopicPage` whose plots select a single theme
-        When the `selected_themes` property is called
-        Then a set containing that theme is returned
+        Given a `TopicPage` with plots from two different topics
+        When the selected properties are read
+        Then index N of each list belongs to the same combination
         """
         # Given
-        page = TopicPage(content_type_id=1)
+        page, patcher = self._page_with_combinations(
+            {
+                ("COVID-19", "infectious_disease", "respiratory"),
+                ("ticks", "climate_and_environment", "vectors"),
+            }
+        )
 
         # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_theme_from_sections",
-            return_value={"infectious_disease"},
-        ):
-            selected_themes = page.selected_themes
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19", "ticks"]
+            assert page.selected_themes == [
+                "infectious_disease",
+                "climate_and_environment",
+            ]
+            assert page.selected_sub_themes == ["respiratory", "vectors"]
 
-        # Then
-        assert selected_themes == {"infectious_disease"}
-
-    def test_selected_sub_themes_returns_a_single_sub_theme(self):
+    def test_topic_is_repeated_when_it_has_multiple_combinations(self):
         """
-        Given a `TopicPage` whose plots select a single sub-theme
-        When the `selected_sub_themes` property is called
-        Then a set containing that sub-theme is returned
+        Given a `TopicPage` where one topic has two sub-themes
+        When the selected properties are read
+        Then the topic is repeated so the lists stay index aligned
         """
         # Given
-        page = TopicPage(content_type_id=1)
+        page, patcher = self._page_with_combinations(
+            {
+                ("COVID-19", "infectious_disease", "respiratory"),
+                ("COVID-19", "infectious_disease", "vaccination"),
+            }
+        )
 
         # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_sub_theme_from_sections",
-            return_value={"respiratory"},
-        ):
-            selected_sub_themes = page.selected_sub_themes
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19", "COVID-19"]
+            assert page.selected_sub_themes == ["respiratory", "vaccination"]
 
-        # Then
-        assert selected_sub_themes == {"respiratory"}
-
-    def test_selected_themes_returns_all_selected_themes(self):
+    @pytest.mark.parametrize(
+        "combinations, expected",
+        [
+            (
+                {
+                    ("COVID-19", "infectious_disease", "respiratory"),
+                    ("COVID-19", "infectious_disease", "vaccination"),
+                },
+                True,
+            ),
+            (
+                {
+                    ("COVID-19", "infectious_disease", "respiratory"),
+                    ("ticks", "climate_and_environment", "vectors"),
+                },
+                False,
+            ),
+        ],
+    )
+    def test_is_valid_for_area_selector_counts_unique_topics(
+        self, combinations, expected: bool
+    ):
         """
-        Given a `TopicPage` whose plots select more than one theme
-        When the `selected_themes` property is called
-        Then all the selected themes are returned
+        Given a `TopicPage` with the area selector enabled
+        When `is_valid_for_area_selector` is called
+        Then only unique topics are counted, not combinations
         """
         # Given
-        page = TopicPage(content_type_id=1)
+        page, patcher = self._page_with_combinations(combinations)
+        page.enable_area_selector = True
 
         # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_theme_from_sections",
-            return_value={"infectious_disease", "extreme_event"},
-        ):
-            selected_themes = page.selected_themes
-
-        # Then
-        assert selected_themes == {"infectious_disease", "extreme_event"}
-
-    def test_selected_sub_themes_returns_all_selected_sub_themes(self):
-        """
-        Given a `TopicPage` whose plots select more than one sub-theme
-        When the `selected_sub_themes` property is called
-        Then all the selected sub-themes are returned
-        """
-        # Given
-        page = TopicPage(content_type_id=1)
-
-        # When
-        with mock.patch.object(
-            CMSSelectedFieldParser,
-            "get_all_selected_sub_theme_from_sections",
-            return_value={"respiratory", "gastrointestinal"},
-        ):
-            selected_sub_themes = page.selected_sub_themes
-
-        # Then
-        assert selected_sub_themes == {"respiratory", "gastrointestinal"}
+        with patcher:
+            # Then
+            assert page.is_valid_for_area_selector is expected
