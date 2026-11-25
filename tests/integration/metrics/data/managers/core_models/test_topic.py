@@ -151,3 +151,36 @@ class TestTopicManager:
             else (None, None, None, None)
         )
         assert ids == expected_ids
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_id_for_matching_name(self):
+        """
+        Given a number of existing `Topic` records
+        When `get_id_by_name()` is called with a matching name
+        Then the id of that `Topic` is returned
+        """
+        # Given
+        TopicFactory(name="Cold-alert")
+        expected_topic = TopicFactory(name="COVID-19")
+
+        # When
+        topic_id = Topic.objects.get_id_by_name(name="COVID-19")
+
+        # Then
+        assert topic_id == expected_topic.id
+
+    @pytest.mark.django_db
+    def test_get_id_by_name_returns_none_when_no_match(self):
+        """
+        Given an existing `Topic` record
+        When `get_id_by_name()` is called with a name which does not exist
+        Then None is returned
+        """
+        # Given
+        TopicFactory(name="COVID-19")
+
+        # When
+        topic_id = Topic.objects.get_id_by_name(name="NON-EXISTENT")
+
+        # Then
+        assert topic_id is None

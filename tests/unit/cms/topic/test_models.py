@@ -13,6 +13,8 @@ from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from wagtail.search.index import SearchField
 
+from cms.dynamic_content.selected_fields import CMSSelectedFieldParser
+
 
 @pytest.fixture
 def mock_metric_choice_boundary():
@@ -191,7 +193,7 @@ class TestTemplateCOVID19Page:
         selected_topics: bool = template_covid_19_page.selected_topics
 
         # Then
-        assert selected_topics == {"COVID-19"}
+        assert selected_topics == ["COVID-19"]
 
     @pytest.mark.parametrize("enable_area_selector", [True, False])
     def test_is_valid_for_area_selector_for_covid_template_page(
@@ -252,6 +254,8 @@ class TestTemplateCOVID19Page:
             "is_public",
             "page_classification",
             "selected_topics",
+            "selected_themes",
+            "selected_sub_themes",
         ],
     )
     def test_api_fields(self, expected_api_field: str):
@@ -621,7 +625,7 @@ class TestTemplateInfluenzaPage:
         selected_topics: bool = template_influenza_page.selected_topics
 
         # Then
-        assert selected_topics == {"Influenza"}
+        assert selected_topics == ["Influenza"]
 
     def test_selected_metrics(self):
         """
@@ -709,3 +713,129 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
+
+
+class TestTopicPageSelectedCombinationProperties:
+    @staticmethod
+    def _page_with_combinations(combinations: set[tuple[str, str, str]]):
+        page = TopicPage(content_type_id=1)
+        patcher = mock.patch.object(
+            CMSSelectedFieldParser,
+            "get_all_selected_combinations_from_sections",
+            return_value=combinations,
+        )
+        return page, patcher
+
+    def test_properties_return_empty_lists_when_nothing_selected(self):
+        """
+        Given a `TopicPage` whose body has no selected combinations
+        When the selected properties are called
+        Then an empty list is returned for each
+        """
+        # Given
+        page, patcher = self._page_with_combinations(set())
+
+        # When
+        with patcher:
+            # Then
+            assert page.selected_topics == []
+            assert page.selected_themes == []
+            assert page.selected_sub_themes == []
+
+    def test_properties_return_a_single_combination(self):
+        """
+        Given a `TopicPage` with a single selected combination
+        When the selected properties are called
+        Then each list contains the matching component
+        """
+        # Given
+        page, patcher = self._page_with_combinations(
+            {("COVID-19", "infectious_disease", "respiratory")}
+        )
+
+        # When
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19"]
+            assert page.selected_themes == ["infectious_disease"]
+            assert page.selected_sub_themes == ["respiratory"]
+
+    def test_selected_topics_themes_and_sub_themes_are_index_aligned(self):
+        """
+        Given a `TopicPage` with plots from two different topics
+        When the selected properties are read
+        Then index N of each list belongs to the same combination
+        """
+        # Given
+        page, patcher = self._page_with_combinations(
+            {
+                ("COVID-19", "infectious_disease", "respiratory"),
+                ("ticks", "climate_and_environment", "vectors"),
+            }
+        )
+
+        # When
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19", "ticks"]
+            assert page.selected_themes == [
+                "infectious_disease",
+                "climate_and_environment",
+            ]
+            assert page.selected_sub_themes == ["respiratory", "vectors"]
+
+    def test_topic_is_repeated_when_it_has_multiple_combinations(self):
+        """
+        Given a `TopicPage` where one topic has two sub-themes
+        When the selected properties are read
+        Then the topic is repeated so the lists stay index aligned
+        """
+        # Given
+        page, patcher = self._page_with_combinations(
+            {
+                ("COVID-19", "infectious_disease", "respiratory"),
+                ("COVID-19", "infectious_disease", "vaccination"),
+            }
+        )
+
+        # When
+        with patcher:
+            # Then
+            assert page.selected_topics == ["COVID-19", "COVID-19"]
+            assert page.selected_sub_themes == ["respiratory", "vaccination"]
+
+    @pytest.mark.parametrize(
+        "combinations, expected",
+        [
+            (
+                {
+                    ("COVID-19", "infectious_disease", "respiratory"),
+                    ("COVID-19", "infectious_disease", "vaccination"),
+                },
+                True,
+            ),
+            (
+                {
+                    ("COVID-19", "infectious_disease", "respiratory"),
+                    ("ticks", "climate_and_environment", "vectors"),
+                },
+                False,
+            ),
+        ],
+    )
+    def test_is_valid_for_area_selector_counts_unique_topics(
+        self, combinations, expected: bool
+    ):
+        """
+        Given a `TopicPage` with the area selector enabled
+        When `is_valid_for_area_selector` is called
+        Then only unique topics are counted, not combinations
+        """
+        # Given
+        page, patcher = self._page_with_combinations(combinations)
+        page.enable_area_selector = True
+
+        # When
+        with patcher:
+            # Then
+            assert page.is_valid_for_area_selector is expected

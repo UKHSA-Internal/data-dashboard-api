@@ -50,6 +50,8 @@ class TestGeographiesAPICrawler:
         """
         # Given
         topic = "COVID-19"
+        theme = "respiratory"
+        sub_theme = "viral_infections"
         fake_geography_names = ["Birmingham", "Crawley", "Liverpool"]
         fake_response_data = [
             {
@@ -69,7 +71,9 @@ class TestGeographiesAPICrawler:
 
         # When
         geography_type_data_models: list[GeographyTypeData] = (
-            geographies_api_crawler.hit_list_endpoint_for_topic(topic=topic)
+            geographies_api_crawler.hit_list_endpoint_for_topic(
+                topic=topic, theme=theme, sub_theme=sub_theme
+            )
         )
 
         # Then
@@ -89,6 +93,8 @@ class TestGeographiesAPICrawler:
         """
         # Given
         topic = "COVID-19"
+        theme = "respiratory"
+        sub_theme = "viral_infections"
         mocked_internal_api_client = mock.Mock()
         mocked_internal_api_client.hit_geographies_list_endpoint = mock.MagicMock
         geographies_api_crawler = GeographiesAPICrawler(
@@ -96,7 +102,9 @@ class TestGeographiesAPICrawler:
         )
 
         # When
-        geographies_api_crawler.hit_list_endpoint_for_topic(topic=topic)
+        geographies_api_crawler.hit_list_endpoint_for_topic(
+            topic=topic, theme=theme, sub_theme=sub_theme
+        )
 
         # Then
         expected_log = f"Completed processing of geographies API for `{topic}` page"
@@ -127,7 +135,11 @@ class TestGeographiesAPICrawler:
         spy_hit_list_endpoint_for_topic.return_value = geography_type_data_models
 
         topic = "COVID-19"
-        mocked_page = mock.Mock(selected_topics={topic})
+        theme = "respiratory"
+        sub_theme = "viral_infections"
+        mocked_page = mock.Mock(
+            selected_topics={topic}, theme_name=theme, sub_theme_name=sub_theme
+        )
         geographies_api_crawler = GeographiesAPICrawler()
 
         # When
@@ -140,7 +152,9 @@ class TestGeographiesAPICrawler:
         # Then
         # Check the `GeographiesAPICrawler` is used correctly to
         # fetch the correct geographies for the given topic
-        spy_hit_list_endpoint_for_topic.assert_called_once_with(topic=topic)
+        spy_hit_list_endpoint_for_topic.assert_called_once_with(
+            topic=topic, theme=theme, sub_theme=sub_theme
+        )
 
         # Check the returned `GeographyData` models are correct
         assert len(geography_combinations) == 3
