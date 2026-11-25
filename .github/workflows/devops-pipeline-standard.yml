@@ -3,15 +3,16 @@
 # their logic live in that repository, not in this one.
 # Service-specific configuration is read from .github/pipeline-settings.yml.
 #
-# Runs on pull requests and can be triggered manually.
-# On pull requests the shared pipeline only runs Deploy/Verify for Development;
-# Pre-production and Production only run on pushes to `main`.
-# Do not add `push` to `main` until we have confirmed what Deploy does for this service.
+# Runs on pull requests, on pushes to `main`, and can be triggered manually.
+# Pull requests only run Check, Test and Scan; Build, Deploy and Verify run on `main`.
 name: DevOps Pipeline (Standard)
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:

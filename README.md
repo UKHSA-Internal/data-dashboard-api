@@ -364,9 +364,9 @@ The shared pipeline reads this service's settings from `.github/pipeline-setting
 
 ### How to run it
 
-The workflow runs automatically on every pull request, and appears in the PR's checks as
-**DevOps Pipeline (Standard)**. Pull requests run Check, Test and Scan only. Build, Deploy and Verify
-run only on `main`.
+The workflow runs automatically on every pull request and on every push to `main`. On pull requests it appears
+in the PR's checks as **DevOps Pipeline (Standard)** and runs Check, Test and Scan only.
+Build, Deploy and Verify run on pushes to `main`.
 
 It can also be triggered manually from the **Actions** tab in GitHub, by selecting
 **DevOps Pipeline (Standard)** and clicking **Run workflow**, or with the GitHub CLI:
@@ -374,8 +374,6 @@ It can also be triggered manually from the **Actions** tab in GitHub, by selecti
 ```bash
 gh workflow run "DevOps Pipeline (Standard)" --ref <branch>
 ```
-
-It does not run on pushes to `main` yet, until we have confirmed what the Deploy stage does for this service.
 
 ### Deployment configuration
 
