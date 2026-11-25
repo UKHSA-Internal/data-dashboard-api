@@ -830,8 +830,6 @@ class TestSingleCategoryChartSettings:
         )  # -80 / 82
         assert legend_config["legend"]["y"] == expected_y
 
-
-
     def test_get_line_multi_coloured_chart_config(
         self,
         fake_chart_settings: SingleCategoryChartSettings,
