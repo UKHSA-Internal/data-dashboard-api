@@ -17,7 +17,6 @@ def mock_dual_category_check():
         yield
 
 
-
 def _plot(topic: str, theme: str | None = None, sub_theme: str | None = None) -> dict:
     value: dict[str, any] = {"topic": topic, "metric": f"{topic}_metric"}
     if theme is not None:
@@ -155,7 +154,6 @@ def mock_dual_category_check():
         yield
 
 
-
 def _plot(topic: str, theme: str | None = None, sub_theme: str | None = None) -> dict:
     value: dict[str, any] = {"topic": topic, "metric": f"{topic}_metric"}
     if theme is not None:
@@ -215,8 +213,10 @@ class TestGetAllSelectedCombinationsFromSections:
         Then an empty set is returned
         """
         # Given / When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=[]
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=[]
+            )
         )
 
         # Then
@@ -242,8 +242,10 @@ class TestGetAllSelectedCombinationsFromSections:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -272,8 +274,10 @@ class TestGetAllSelectedCombinationsFromSections:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -302,8 +306,10 @@ class TestGetAllSelectedCombinationsFromSections:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -336,8 +342,10 @@ class TestGetAllSelectedCombinationsFromSections:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -362,14 +370,20 @@ class TestGetAllSelectedCombinationsFromSections:
             ),
             _section(
                 _chart_row_card(
-                    [_chart_block([_plot("ticks", "climate_and_environment", "vectors")])]
+                    [
+                        _chart_block(
+                            [_plot("ticks", "climate_and_environment", "vectors")]
+                        )
+                    ]
                 )
             ),
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -388,8 +402,10 @@ class TestGetAllSelectedCombinationsFromSections:
         sections = [_section(_chart_row_card([_chart_block([_plot("COVID-19")])]))]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -414,8 +430,10 @@ class TestGetAllSelectedCombinationsFromSections:
         sections = [_section(_chart_row_card([_chart_block([plot])]))]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -433,8 +451,10 @@ class TestHeadlineBlocksInCombinations:
         sections = [_section(_headline_row_card([_headline_block("ticks")]))]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -463,8 +483,10 @@ class TestHeadlineBlocksInCombinations:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -497,8 +519,10 @@ class TestHeadlineBlocksInCombinations:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
@@ -520,8 +544,10 @@ class TestHeadlineBlocksInCombinations:
         ]
 
         # When
-        combinations = CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
-            sections=sections
+        combinations = (
+            CMSSelectedFieldParser.get_all_selected_combinations_from_sections(
+                sections=sections
+            )
         )
 
         # Then
