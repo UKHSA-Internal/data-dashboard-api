@@ -9,21 +9,36 @@ from metrics.domain.charts.subplots.generation import generate_chart_figure
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
 from metrics.domain.charts.chart_settings.subplot_chart_settings import (
-    DEFAULT_CHART_BASE_Y,
-    DEFAULT_CHART_MULTIPLIER,
     THIRD_CHART_WIDTH,
-    THIRD_CHART_BASE_Y,
-    THIRD_CHART_MULTIPLIER,
     NARROW_CHART_WIDTH,
-    NARROW_CHART_BASE_Y,
-    NARROW_CHART_MULTIPLIER,
     HALF_CHART_WIDTH,
-    HALF_CHART_BASE_Y,
-    HALF_CHART_MULTIPLIER,
     WIDE_CHART_WIDTH,
-    WIDE_CHART_BASE_Y,
-    WIDE_CHART_MULTIPLIER,
 )
+
+# Layout constants mirrored from `SubplotChartSettings`
+SUBPLOT_X_AXIS_TITLE_ZONE_PX = 30
+SUBPLOT_LEGEND_BASE_OFFSET_WITH_X_AXIS_TITLE_PX = 40
+SUBPLOT_LEGEND_BASE_OFFSET_WITHOUT_X_AXIS_TITLE_PX = 50
+SUBPLOT_TOP_MARGIN_WITH_Y_AXIS_TITLE_PX = 30
+SUBPLOT_TOP_MARGIN_WITHOUT_Y_AXIS_TITLE_PX = 3
+SUBPLOT_NON_PLOT_HEIGHT_PX = 88
+
+
+def _expected_legend_y(
+    chart_height: int, has_x_axis_title: bool, has_y_axis_title: bool
+) -> float:
+    legend_top_offset = (
+        SUBPLOT_X_AXIS_TITLE_ZONE_PX + SUBPLOT_LEGEND_BASE_OFFSET_WITH_X_AXIS_TITLE_PX
+        if has_x_axis_title
+        else SUBPLOT_LEGEND_BASE_OFFSET_WITHOUT_X_AXIS_TITLE_PX
+    )
+    top_margin = (
+        SUBPLOT_TOP_MARGIN_WITH_Y_AXIS_TITLE_PX
+        if has_y_axis_title
+        else SUBPLOT_TOP_MARGIN_WITHOUT_Y_AXIS_TITLE_PX
+    )
+    plot_height = max(chart_height - top_margin - SUBPLOT_NON_PLOT_HEIGHT_PX, 50)
+    return -legend_top_offset / plot_height
 
 
 class TestSubplotGeneration:
@@ -166,27 +181,25 @@ class TestSubplotGeneration:
         assert expected_xaxis2_tickval in chart_image.layout.xaxis2.tickvals
 
     @pytest.mark.parametrize(
-        "chart_width, y_base, y_multiplier",
+        "chart_width",
         (
-            (THIRD_CHART_WIDTH, THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER),
-            (NARROW_CHART_WIDTH, NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER),
-            (HALF_CHART_WIDTH, HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER),
-            (WIDE_CHART_WIDTH, WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER),
-            (1101, DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER),
+            THIRD_CHART_WIDTH,
+            NARROW_CHART_WIDTH,
+            HALF_CHART_WIDTH,
+            WIDE_CHART_WIDTH,
+            1101,
         ),
     )
     def test_chart_renders_correct_legend_y_post_based_on_chart_width(
         self,
         example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],
         chart_width: int,
-        y_base: int,
-        y_multiplier: int,
     ):
         """
-        Given a valid payload for a `Subplot Chart`
-        When the `generate_chart_figure` method is called
-        Then the plotly `Figure` object's legend position is correct
-            based on the chart width request.
+        Given: A valid payload for a `Subplot Chart`
+        When: The `generate_chart_figure` method is called
+        Then: The plotly `Figure` object's legend position is correct
+            based on the chart width request
         """
         # Given
         valid_payload = self._setup_chart_plot_data(
@@ -196,7 +209,39 @@ class TestSubplotGeneration:
 
         # When
         chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
-        expected_y_position = -(y_base * y_multiplier)
+        expected_y_position = _expected_legend_y(
+            chart_height=900,
+            has_x_axis_title=True,
+            has_y_axis_title=True,
+        )
 
         # Then
-        assert expected_y_position == chart_image.layout.legend.y
+        assert chart_image.layout.legend.y == expected_y_position
+
+    def test_chart_places_x_axis_title_annotation_at_top_of_legend(
+        self,
+        example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],
+    ):
+        """
+        Given: A valid payload for a `Subplot Chart`
+        When: The `generate_chart_figure` method is called
+        Then: The x-axis title annotation's bottom edge
+            sits at the same y position as the top edge of the legend
+        """
+        # Given
+        valid_payload = self._setup_chart_plot_data(
+            example_subplot_chart_generation_payload=example_subplot_chart_generation_payload,
+        )
+
+        # When
+        chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
+        expected_y_position = _expected_legend_y(
+            chart_height=900,
+            has_x_axis_title=True,
+            has_y_axis_title=True,
+        )
+
+        # Then
+        x_axis_annotation = chart_image.layout.annotations[0]
+        assert x_axis_annotation.text == valid_payload.x_axis_title
+        assert x_axis_annotation.y == expected_y_position

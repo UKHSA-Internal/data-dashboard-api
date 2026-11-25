@@ -2,6 +2,7 @@ import datetime
 from typing import Any
 
 import plotly.graph_objects
+import pytest
 
 from metrics.domain.charts.chart_settings.single_category import COMPACT_X_AXIS_NTICKS
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
@@ -100,8 +101,8 @@ class TestLineMultiColouredCharts:
         # Check that the legend is placed in the centre and above the figure
         assert main_layout.legend.orientation == "h"
         assert main_layout.legend.xanchor == "center"
-        assert main_layout.legend.yanchor == "bottom"
-        assert main_layout.legend.y == 1.0
+        assert main_layout.legend.yanchor == "top"
+        assert main_layout.legend.y == pytest.approx(-50 / 142)
         assert main_layout.legend.x == 0.5
 
         # Check the chart sizes are as per the specified parameters

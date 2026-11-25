@@ -82,10 +82,10 @@ class TestDualCategoryChartSettings:
             "legend": {
                 "font": chart_settings._get_tick_font_config(),
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
                 "entrywidth": 80,
             },
         }
@@ -111,10 +111,10 @@ class TestDualCategoryChartSettings:
             "legend": {
                 "font": chart_settings._get_tick_font_config(),
                 "orientation": "h",
-                "y": 1.0,
+                "y": -0.5,
                 "x": 0.5,
                 "xanchor": "center",
-                "yanchor": "bottom",
+                "yanchor": "top",
                 "entrywidth": 80,
                 "title": {
                     "text": f"<b>{legend_title}</b>",
