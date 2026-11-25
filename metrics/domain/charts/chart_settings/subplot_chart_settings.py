@@ -82,24 +82,6 @@ class SubplotChartSettings(ChartSettings):
             "horizontal_spacing": 0.03,
         }
 
-    def _get_legend_size_config(self):
-        """Returns the `base y` and `legend size` used to position the legend
-            of a subplot chart based on the `width` of the chart being generated.
-
-        Returns: list of numbers (int|float) used to position the legend of a
-            subplot chart based on the `width` of the chart being generated.
-        """
-        if self.width <= THIRD_CHART_WIDTH:
-            return [THIRD_CHART_BASE_Y, THIRD_CHART_MULTIPLIER]
-        if self.width <= NARROW_CHART_WIDTH:
-            return [NARROW_CHART_BASE_Y, NARROW_CHART_MULTIPLIER]
-        if self.width <= HALF_CHART_WIDTH:
-            return [HALF_CHART_BASE_Y, HALF_CHART_MULTIPLIER]
-        if self.width <= WIDE_CHART_WIDTH:
-            return [WIDE_CHART_BASE_Y, WIDE_CHART_MULTIPLIER]
-
-        return [DEFAULT_CHART_BASE_Y, DEFAULT_CHART_MULTIPLIER]
-
     def _get_margin_top_px(self) -> int:
         return 30 if self._chart_generation_payload.y_axis_title else 3
 

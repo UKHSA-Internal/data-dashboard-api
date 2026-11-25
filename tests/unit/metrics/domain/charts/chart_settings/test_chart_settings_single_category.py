@@ -779,6 +779,59 @@ class TestSingleCategoryChartSettings:
         }
         assert legend_config == expected_legend_config
 
+    @mock.patch.object(SingleCategoryChartSettings, "_get_legend_labels")
+    def test_estimate_legend_rows_wraps_long_labels_onto_a_new_row(
+        self,
+        mocked_get_legend_labels: mock.MagicMock,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """
+        Given an instance of `SingleCategoryChartSettings`
+            with two legend labels which are too wide to share a row
+        When `_estimate_legend_rows()` is called
+        Then 2 rows are returned
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        mocked_get_legend_labels.return_value = ["a" * 60, "b" * 60]
+
+        # When
+        estimated_rows = chart_settings._estimate_legend_rows()
+
+        # Then
+        assert estimated_rows == 2
+
+    @mock.patch.object(SingleCategoryChartSettings, "_get_legend_labels")
+    def test_get_legend_config_when_legend_wraps_onto_two_rows(
+        self,
+        mocked_get_legend_labels: mock.MagicMock,
+        fake_chart_settings: SingleCategoryChartSettings,
+    ):
+        """
+        Given an instance of `SingleCategoryChartSettings`
+            with legend labels which wrap onto two rows
+        When `_get_legend_config()` is called
+        Then the legend is positioned further below the x-axis
+            to allow for the extra row
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        mocked_get_legend_labels.return_value = ["a" * 60, "b" * 60]
+
+        # When
+        legend_config = chart_settings._get_legend_config()
+
+        # Then
+        expected_y = _expected_legend_y(
+            chart_height=220,
+            legend_rows=2,
+            has_x_axis_title=True,
+            has_y_axis_title=True,
+        )  # -80 / 82
+        assert legend_config["legend"]["y"] == expected_y
+
+
+
     def test_get_line_multi_coloured_chart_config(
         self,
         fake_chart_settings: SingleCategoryChartSettings,
