@@ -134,15 +134,17 @@ class TestDualCategoryChartsInterface:
         # Then
         assert isinstance(charts_interface.core_model_manager, CoreTimeSeriesManager)
 
+    @mock.patch(f"{MODULE_PATH}.generate_butterfly")
     @mock.patch(f"{MODULE_PATH}.generate_stacked_bar")
     def test_build_chart_figure_delegates_call_to_generate_stacked_bar(
         self,
         mock_generate_stacked_bar: mock.MagicMock,
+        mock_generate_butterfly: mock.MagicMock,
         dual_category_chart_request_params: DualCategoryChartRequestParams,
         fake_plot_data,
     ):
         """
-        Given a valid `chart_generation_payload`
+        Given a valid `chart_generation_payload` with chart_type as stacked_bar
         When `_build_chart_figure()` is called
         Then a call is made to `generate_stacked_bar`
         """
@@ -150,6 +152,7 @@ class TestDualCategoryChartsInterface:
         charts_interface = DualCategoryChartsInterface(
             chart_request_params=dual_category_chart_request_params,
         )
+        fake_plot_data.parameters.chart_type = "stacked_bar"
         chart_generation_payload = ChartGenerationPayload(
             chart_width=320,
             chart_height=200,
@@ -168,6 +171,84 @@ class TestDualCategoryChartsInterface:
         mock_generate_stacked_bar.assert_called_once_with(
             chart_generation_payload=chart_generation_payload,
         )
+        mock_generate_butterfly.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}.generate_butterfly")
+    @mock.patch(f"{MODULE_PATH}.generate_stacked_bar")
+    def test_build_chart_figure_delegates_call_to_generate_butterfly(
+        self,
+        mock_generate_stacked_bar: mock.MagicMock,
+        mock_generate_butterfly: mock.MagicMock,
+        dual_category_chart_request_params: DualCategoryChartRequestParams,
+        fake_plot_data,
+    ):
+        """
+        Given a valid `chart_generation_payload` with chart_type as butterfly
+        When `_build_chart_figure()` is called
+        Then a call is made to `generate_butterfly`
+        """
+        # Given
+        charts_interface = DualCategoryChartsInterface(
+            chart_request_params=dual_category_chart_request_params,
+        )
+        fake_plot_data.parameters.chart_type = "butterfly"
+        chart_generation_payload = ChartGenerationPayload(
+            chart_width=320,
+            chart_height=200,
+            plots=[fake_plot_data],
+            x_axis_title="Date",
+            y_axis_title="Cases",
+            secondary_category="age",
+        )
+
+        # When
+        charts_interface._build_chart_figure(
+            chart_generation_payload=chart_generation_payload,
+        )
+
+        # Then
+        mock_generate_butterfly.assert_called_once_with(
+            chart_generation_payload=chart_generation_payload,
+        )
+        mock_generate_stacked_bar.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}.generate_butterfly")
+    @mock.patch(f"{MODULE_PATH}.generate_stacked_bar")
+    def test_raise_not_implemented_when_using_unknown_chart_type(
+        self,
+        mock_generate_stacked_bar: mock.MagicMock,
+        mock_generate_butterfly: mock.MagicMock,
+        dual_category_chart_request_params: DualCategoryChartRequestParams,
+        fake_plot_data,
+    ):
+        """
+        Given a valid `chart_generation_payload` with an unknown chart type
+        When `_build_chart_figure()` is called
+        Then neither generate_stacked_bar nor generate_butterfly is called
+        """
+        # Given
+        charts_interface = DualCategoryChartsInterface(
+            chart_request_params=dual_category_chart_request_params,
+        )
+        fake_plot_data.parameters.chart_type = "unknown_chart_type"
+        chart_generation_payload = ChartGenerationPayload(
+            chart_width=320,
+            chart_height=200,
+            plots=[fake_plot_data],
+            x_axis_title="Date",
+            y_axis_title="Cases",
+            secondary_category="age",
+        )
+
+        # When
+        with pytest.raises(NotImplementedError):
+            charts_interface._build_chart_figure(
+                chart_generation_payload=chart_generation_payload,
+            )
+
+        # Then
+        mock_generate_butterfly.assert_not_called()
+        mock_generate_stacked_bar.assert_not_called()
 
     @mock.patch.object(PlotsInterface, "build_plots_data")
     def test_build_chart_plots_data_delegates_call_to_plots_interface(
@@ -222,7 +303,7 @@ class TestDualCategoryChartsInterface:
 
     @mock.patch.object(DualCategoryChartsInterface, "_build_chart_generation_payload")
     @mock.patch.object(DualCategoryChartsInterface, "_build_chart_figure")
-    def test_generate_chart_output_returns_instance_of_chart_output(
+    def test_generate_stacked_bar_chart_output_returns_instance_of_chart_output(
         self,
         mock_build_chart_figure: mock.MagicMock,
         mock_build_chart_generation_payload: mock.MagicMock,

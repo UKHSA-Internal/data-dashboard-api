@@ -188,6 +188,8 @@ class TestDualCategoryDownloadsView:
         mocked_serializer.data = [{"age": "00-01", "sex": "f", "metric_value": 1.0}]
         view._get_serializer_class = mock.MagicMock(return_value=mocked_serializer)
 
+        dual_category_download_request_params.plots[0].chart_type = "stacked_bar"
+
         # When
         result = view._pivot_queryset_data(
             queryset=mock.MagicMock(),
@@ -249,6 +251,8 @@ class TestDualCategoryDownloadsView:
         csv_file = mock.MagicMock()
         mocked_write_csv.return_value = csv_file
         view = DualCategoryDownloadsView()
+
+        dual_category_download_request_params.plots[0].chart_type = "stacked_bar"
 
         # When
         response = view._handle_csv(
