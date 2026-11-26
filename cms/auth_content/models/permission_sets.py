@@ -1,3 +1,4 @@
+from collections.abc import Collection
 from itertools import starmap
 
 from django.core.exceptions import ValidationError
@@ -130,17 +131,38 @@ class PermissionSet(models.Model):
         FieldPanel("geography_type"),
         FieldPanel("geography"),
     ]
+    def field_combination_valid(self) -> bool:
+        """
+        Validate the selected permission fields against the wildcard hierarchy rules.
 
-    def field_combination_valid(self):
+        Checks that the theme, sub-theme, topic and metric fields form a valid
+        hierarchy, and that the geography type and geography fields follow
+        the existing wildcard rules.
+
+        Returns:
+            True if both permission hierarchies are valid, otherwise False.
+        """
         return _wildcard_chain_valid(
             self.theme, self.sub_theme, self.topic, self.metric
         ) and _wildcard_chain_valid(self.geography_type, self.geography)
 
-    def clean(self):
+    def clean(self) -> None:
+        """
+        Validate permission field combinations during model validation.
+
+        Ensures the selected permissions follow the existing wildcard
+        hierarchy rules before proceeding with Django's standard
+        model validation.
+
+        Raises:
+            ValidationError: If the selected permission fields form
+                an invalid combination.
+        """
         if not self.field_combination_valid():
             invalid_permission_set_message = "Invalid permission set"
             raise ValidationError(invalid_permission_set_message)
         return super().clean()
+
 
     class Meta:
         constraints = [
@@ -167,7 +189,25 @@ class PermissionSet(models.Model):
             ),
         ]
 
-    def validate_constraints(self, exclude=None):
+    def validate_constraints(
+        self, exclude: Collection[str] | None = None
+    ) -> None:
+        """
+        Validate model constraints and enhance duplicate permission set errors.
+
+        Uses Django's standard constraint validation to preserve the existing
+        uniqueness rules. When validation fails, recognised duplicate errors
+        are updated to include the name of the conflicting permission set.
+
+        Unrelated validation errors are preserved without modification.
+
+        Args:
+            exclude: Optional collection of field names to exclude
+                from constraint validation.
+
+        Raises:
+            ValidationError: If one or more model constraints are violated.
+        """
         try:
             super().validate_constraints(exclude=exclude)
         except ValidationError as exc:
@@ -175,13 +215,36 @@ class PermissionSet(models.Model):
                 raise
 
             enriched = {
-                field: [self._with_existing_set_name(error) for error in errors]
+                field: [
+                    self._with_existing_set_name(error)
+                    for error in errors
+                ]
                 for field, errors in exc.error_dict.items()
             }
 
             raise ValidationError(enriched) from exc
 
-    def _with_existing_set_name(self, error):
+    def _with_existing_set_name(
+        self, error: ValidationError
+    ) -> ValidationError:
+        """
+        Enhance recognised duplicate errors with the existing permission set name.
+
+        Identifies whether the error relates to a duplicate permission
+        combination or a duplicate display name, then delegates to the
+        existing permission set lookup.
+
+        Errors unrelated to these two uniqueness constraints are returned
+        unchanged.
+
+        Args:
+            error: The original Django constraint validation error.
+
+        Returns:
+            The enhanced validation error containing the existing
+            permission set name, or the original error if unrecognised
+            or if no matching record is found.
+        """
         if error.code == "unique_together":
             return self._error_naming_existing_set(
                 error,
@@ -198,7 +261,35 @@ class PermissionSet(models.Model):
 
         return error
 
-    def _error_naming_existing_set(self, error, fields, message):
+    def _error_naming_existing_set(
+        self,
+        error: ValidationError,
+        fields: tuple[str, ...],
+        message: str,
+    ) -> ValidationError:
+        """
+        Include the existing permission set's name in a validation error.
+
+        Searches for an existing permission set matching the supplied fields.
+        When validating an existing record, the current record is excluded
+        to prevent it from matching itself.
+
+        Uses the existing permission set's display name where available,
+        otherwise falling back to its automatically generated name.
+
+        If no matching permission set is found, the original validation
+        error is returned unchanged.
+
+        Args:
+            error: The original Django validation error.
+            fields: Field names used to identify the existing permission set.
+            message: Validation message template containing the
+                permission_set_name placeholder.
+
+        Returns:
+            A validation error containing the existing permission set's
+            name, or the original error if no match is found.
+        """
         matches = type(self).objects.filter(
             **{field: getattr(self, field) for field in fields}
         )
@@ -214,7 +305,11 @@ class PermissionSet(models.Model):
         return ValidationError(
             message,
             code=error.code,
-            params={"permission_set_name": (existing.display_name or existing.name)},
+            params={
+                "permission_set_name": (
+                    existing.display_name or existing.name
+                )
+            },
         )
 
     def save(self, *args, **kwargs):
