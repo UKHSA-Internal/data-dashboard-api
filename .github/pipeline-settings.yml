@@ -1,0 +1,92 @@
+# Settings for the shared standard pipeline from UKHSA-Internal/devops-pipeline.
+# Consumed by .github/workflows/devops-pipeline-standard.yml.
+version: "1.1"
+
+service:
+  name: data-dashboard-api
+  owner_team: data-dashboard-engineers
+  language: python
+  test:
+    # Runs at the start of each suite job and of the final step.
+    setup: ". ./uhd.sh && uhd venv create"
+    # Each suite runs as its own job, in parallel (10 is the limit).
+    suites:
+      # Tests. Unit, integration and system record coverage for the final step.
+      - name: unit
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.unit &&
+          uhd tests unit --cov --cov-fail-under=0 --junitxml=test-results/unit.xml
+      - name: integration
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.integration &&
+          uhd tests integration --cov --cov-fail-under=0 --junitxml=test-results/integration.xml
+      - name: system
+        command: >-
+          . ./uhd.sh && export COVERAGE_FILE=.coverage.system &&
+          uhd tests system --cov --cov-fail-under=0 --junitxml=test-results/system.xml
+      - name: migrations
+        command: ". ./uhd.sh && uhd tests migrations --junitxml=test-results/migrations.xml"
+      # Code checks.
+      - name: migration-checks
+        command: ". ./uhd.sh && uhd django checkmigrations"
+      - name: lint
+        command: ". ./uhd.sh && uhd quality format-check"
+      - name: architecture
+        command: ". ./uhd.sh && uhd quality architecture"
+      # Security checks: move to the pipeline's Scan stage once it's live.
+      - name: secret-scan
+        command: >-
+          docker run --rm -v "$PWD":/repo
+          ghcr.io/gitleaks/gitleaks:v8.24.3 dir /repo --redact --verbose
+      - name: dependencies
+        command: ". ./uhd.sh && python -m pip install uv && uhd security dependencies"
+      - name: vulnerabilities
+        command: ". ./uhd.sh && uhd security vulnerabilities"
+      - name: docker-build-check
+        command: >-
+          docker build -t be-main-test -f Dockerfile . &&
+          docker build -t be-ingestion-test -f Dockerfile-ingestion . &&
+          docker run -d --name be-main-test be-main-test &&
+          docker run -d --name be-ingestion-test be-ingestion-test &&
+          sleep 10 &&
+          test "$(docker inspect -f '{{.State.Running}}' be-main-test)" = "true" &&
+          test "$(docker inspect -f '{{.State.Running}}' be-ingestion-test)" = "true"
+          || { docker logs be-main-test; docker logs be-ingestion-test; exit 1; }
+    collect: [".coverage.*"]
+    # Combines the suites' coverage data and enforces the threshold, without re-running tests.
+    final:
+      name: coverage
+      command: >-
+        . ./uhd.sh && uhd tests coverage-report &&
+        uhd venv activate && coverage xml -o test-results/coverage.xml
+
+environments:
+  - name: dev
+    category: Development
+    account_id: "111111111111"
+    role_name: data-dashboard-api-dev-deploy-role
+    region: eu-west-2
+  - name: staging
+    category: Pre-production
+    account_id: "222222222222"
+    role_name: data-dashboard-api-preprod-deploy-role
+    region: eu-west-2
+  - name: prod
+    category: Production
+    account_id: "333333333333"
+    role_name: data-dashboard-api-prod-deploy-role
+    region: eu-west-2
+
+governance:
+  retention_days: 30
+  approvers:
+    - data-dashboard-engineers
+
+verification:
+  health_endpoint: /health
+  timeout_seconds: 60
+  db_check_required: false
+
+deploy:
+  production:
+    approval_mode: all-approvers
