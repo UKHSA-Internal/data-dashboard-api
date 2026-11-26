@@ -42,6 +42,16 @@ service:
         command: ". ./uhd.sh && python -m pip install uv && uhd security dependencies"
       - name: vulnerabilities
         command: ". ./uhd.sh && uhd security vulnerabilities"
+      - name: docker-build-check
+        command: >-
+          docker build -t be-main-test -f Dockerfile . &&
+          docker build -t be-ingestion-test -f Dockerfile-ingestion . &&
+          docker run -d --name be-main-test be-main-test &&
+          docker run -d --name be-ingestion-test be-ingestion-test &&
+          sleep 10 &&
+          test "$(docker inspect -f '{{.State.Running}}' be-main-test)" = "true" &&
+          test "$(docker inspect -f '{{.State.Running}}' be-ingestion-test)" = "true"
+          || { docker logs be-main-test; docker logs be-ingestion-test; exit 1; }
     collect: [".coverage.*"]
     # Combines the suites' coverage data and enforces the threshold, without re-running tests.
     final:
