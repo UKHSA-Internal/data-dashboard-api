@@ -88,6 +88,23 @@ The colour scheme can be overriden and modified by changing the `cms/dashboard/s
 This file is currently being injected into the wagtail app by virtue of the `global_admin_css` hook.
 This hook can be found at `cms/dashboard/wagtail_hooks.py`.
 
+### Dual category chart form
+
+The `DualCategoryChartCard` form behaves dynamically in the page editor.
+This behaviour is implemented in `cms/dashboard/static/js/dual_category_chart_form.js`,
+which is attached to the block by the `DualCategoryChartCardAdapter` telepath adapter.
+
+The selected `chart_type` decides which axis carries the primary category:
+
+- a `stacked_bar` chart carries it on the `x_axis`
+- a `butterfly` chart carries it on the `y_axis`, since its metric values are plotted along the `x_axis`
+
+The options offered in `primary_field_values` are taken from whichever axis that is.
+Changing the chart type therefore resets the axes, clears the selected primary field values
+and removes the existing segments, because they no longer apply to the new layout.
+A butterfly chart mirrors one segment against the other either side of a shared central axis,
+so its `add segment` controls are withdrawn once it holds 2 segments.
+
 ---
 
 ## Current restrictions

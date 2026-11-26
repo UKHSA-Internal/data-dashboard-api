@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail import blocks
 from wagtail.admin.telepath import register
@@ -46,6 +47,7 @@ MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
 
 MINIMUM_SEGMENTS_COUNT: int = 2
+BUTTERFLY_SEGMENTS_COUNT: int = 2
 
 POPULAR_TOPICS_SEGMENT_COUNT: int = 1
 POPULAR_TOPICS_RIGHT_COLUMN_BOTTOM_ROW_SEGMENT_COUNT: int = 2
@@ -501,23 +503,28 @@ class DualCategoryChartCard(blocks.StructBlock):
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
         label="Tag manager event ID",
     )
+    chart_type = blocks.ChoiceBlock(
+        required=False,
+        choices=get_dual_category_chart_types,
+        help_text=help_texts.DUAL_CATEGORY_CHART_TYPE_FIELD,
+    )
     x_axis = blocks.ChoiceBlock(
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_X_AXIS,
     )
-    x_axis_title = blocks.CharBlock(
-        required=False,
-        default="",
-        help_text=help_texts.CHART_X_AXIS_TITLE,
+    y_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_Y_AXIS,
     )
     primary_field_values = blocks.MultipleChoiceBlock(
         choices=get_all_subcategory_choices,
         required=False,
         help_text=help_texts.PRIMARY_FIELD_VALUES,
     )
-    y_axis = blocks.ChoiceBlock(
-        choices=get_possible_axis_choices,
-        help_text=help_texts.CHART_Y_AXIS,
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
     )
     y_axis_title = blocks.CharBlock(
         required=False,
@@ -532,11 +539,6 @@ class DualCategoryChartCard(blocks.StructBlock):
     y_axis_maximum_value = blocks.DecimalBlock(
         required=False,
         help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
-    )
-    chart_type = blocks.ChoiceBlock(
-        required=False,
-        choices=get_dual_category_chart_types,
-        help_text=help_texts.CHART_TYPE_FIELD,
     )
     show_timeseries_filter = blocks.BooleanBlock(
         help_text=help_texts.DUAL_CATEGORY_CHART_TIMESERIES_FILTER,
@@ -570,6 +572,35 @@ class DualCategoryChartCard(blocks.StructBlock):
         )
 
         return context
+
+    def clean(self, value: blocks.StructValue):
+        self._validate_butterfly_chart_segments_count(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_butterfly_chart_segments_count(
+        cls, *, value: blocks.StructValue
+    ) -> None:
+        """Validates that `butterfly` charts have exactly 2 segments
+
+        Notes:
+            This `clean()` override enforces the rule server-side,
+            so it also holds for data which bypasses the form,
+            e.g. the API or imported pages.
+        """
+        if value["chart_type"] != "butterfly":
+            return
+
+        segments_count = len(value["segments"])
+        if segments_count != BUTTERFLY_SEGMENTS_COUNT:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "segments": ValidationError(
+                        "A `butterfly` chart must have exactly "
+                        f"{BUTTERFLY_SEGMENTS_COUNT} segments"
+                    )
+                }
+            )
 
     class Meta:
         form_classname = "dual-category-chart-form"
