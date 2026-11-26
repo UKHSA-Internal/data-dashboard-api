@@ -131,6 +131,7 @@ class PermissionSet(models.Model):
         FieldPanel("geography_type"),
         FieldPanel("geography"),
     ]
+
     def field_combination_valid(self) -> bool:
         """
         Validate the selected permission fields against the wildcard hierarchy rules.
@@ -163,7 +164,6 @@ class PermissionSet(models.Model):
             raise ValidationError(invalid_permission_set_message)
         return super().clean()
 
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -189,9 +189,7 @@ class PermissionSet(models.Model):
             ),
         ]
 
-    def validate_constraints(
-        self, exclude: Collection[str] | None = None
-    ) -> None:
+    def validate_constraints(self, exclude: Collection[str] | None = None) -> None:
         """
         Validate model constraints and enhance duplicate permission set errors.
 
@@ -215,18 +213,13 @@ class PermissionSet(models.Model):
                 raise
 
             enriched = {
-                field: [
-                    self._with_existing_set_name(error)
-                    for error in errors
-                ]
+                field: [self._with_existing_set_name(error) for error in errors]
                 for field, errors in exc.error_dict.items()
             }
 
             raise ValidationError(enriched) from exc
 
-    def _with_existing_set_name(
-        self, error: ValidationError
-    ) -> ValidationError:
+    def _with_existing_set_name(self, error: ValidationError) -> ValidationError:
         """
         Enhance recognised duplicate errors with the existing permission set name.
 
@@ -305,11 +298,7 @@ class PermissionSet(models.Model):
         return ValidationError(
             message,
             code=error.code,
-            params={
-                "permission_set_name": (
-                    existing.display_name or existing.name
-                )
-            },
+            params={"permission_set_name": (existing.display_name or existing.name)},
         )
 
     def save(self, *args, **kwargs):
