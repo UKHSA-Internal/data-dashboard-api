@@ -21,4 +21,4 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: UKHSA-Internal/devops-pipeline/.github/workflows/standard-pipeline.yml@task/DP-282/sandbox-pinned
+    uses: UKHSA-Internal/devops-pipeline/.github/workflows/standard-pipeline.yml@v1
