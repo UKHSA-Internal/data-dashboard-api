@@ -174,16 +174,8 @@ class TestGenerateButterfly:
 
         figure = generate_butterfly(chart_generation_payload=chart_payload)
 
-        tickvals = list(
-            generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"][
-                "tickvals"
-            ]
-        )
-        ticktext = list(
-            generate_butterfly(chart_generation_payload=chart_payload).layout["xaxis"][
-                "ticktext"
-            ]
-        )
+        tickvals = list(figure.layout["xaxis"]["tickvals"])
+        ticktext = list(figure.layout["xaxis"]["ticktext"])
 
         expected_full_range_tick_vals = self.mirror_array(expected_tick_vals)
         expected_full_range_tick_text = self.format_axis_labels(
