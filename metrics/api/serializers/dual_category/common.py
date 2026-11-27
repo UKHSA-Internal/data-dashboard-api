@@ -39,16 +39,12 @@ def _validate_axes_for_chart_type(
 
     if is_stacked_bar and x_axis == ChartAxisFields.metric.name:
         raise serializers.ValidationError(
-            {
-                "x_axis": (f"For {chart_type} charts, 'x_axis' value cannot be 'metric'.")
-            }
+            {"x_axis": (f"For {chart_type} charts, 'x_axis' value cannot be 'metric'.")}
         )
 
     if is_butterfly and y_axis == ChartAxisFields.metric.name:
         raise serializers.ValidationError(
-            {
-                "y_axis": (f"For {chart_type} charts, 'y_axis' value cannot be 'metric'.")
-            }
+            {"y_axis": (f"For {chart_type} charts, 'y_axis' value cannot be 'metric'.")}
         )
 
 
