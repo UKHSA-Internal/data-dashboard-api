@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -264,8 +266,7 @@ class TestDualCategoryChartSerializer:
         Then no ValidationError is raised and the data is returned unchanged
         """
         # Given
-        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
-        valid_payload["static_fields"] = valid_payload["static_fields"].copy()
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         valid_payload["static_fields"]["metric"] = metric
         valid_payload["x_axis"] = x_axis
         valid_payload["primary_field_values"] = primary_field_values
@@ -287,7 +288,7 @@ class TestDualCategoryChartSerializer:
         Then a `ValidationError` is raised as primary_field_values should not be provided
         """
         # Given
-        invalid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        invalid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         invalid_payload["primary_field_values"] = ["m", "f"]
 
         serializer = DualCategoryChartSerializer()
@@ -308,7 +309,7 @@ class TestDualCategoryChartSerializer:
         Then a `ValidationError` is raised as x_axis must be date for timeseries data
         """
         # Given
-        invalid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        invalid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         invalid_payload["x_axis"] = "age"
 
         serializer = DualCategoryChartSerializer()
@@ -329,8 +330,7 @@ class TestDualCategoryChartSerializer:
         Then a `ValidationError` is raised as primary_field_values are required
         """
         # Given
-        invalid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
-        invalid_payload["static_fields"] = invalid_payload["static_fields"].copy()
+        invalid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         invalid_payload["static_fields"]["metric"] = HEADLINE_METRIC
         invalid_payload["x_axis"] = "age"
         invalid_payload.pop("primary_field_values", None)
@@ -357,7 +357,7 @@ class TestDualCategoryChartSerializer:
         plot_payload, metric_manager, topic_manager = (
             plot_serializer_payload_and_model_managers
         )
-        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         valid_payload["x_axis"] = ChartAxisFields.date.name
         valid_payload.pop("primary_field_values", None)
         valid_payload["static_fields"]["topic"] = plot_payload["topic"]
@@ -413,8 +413,7 @@ class TestDualCategoryChartSerializer:
         fake_topic = fake_metric.metric_group.topic
         metric_manager = FakeMetricManager([fake_metric])
         topic_manager = FakeTopicManager([fake_topic])
-        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
-        valid_payload["static_fields"] = valid_payload["static_fields"].copy()
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         valid_payload["static_fields"]["topic"] = fake_topic.name
         valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
         valid_payload["x_axis"] = ChartAxisFields.sex.name
@@ -471,9 +470,8 @@ class TestDualCategoryChartSerializer:
         fake_topic = fake_metric.metric_group.topic
         metric_manager = FakeMetricManager([fake_metric])
         topic_manager = FakeTopicManager([fake_topic])
-        valid_payload = EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD.copy()
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
         valid_payload["chart_type"] = "butterfly"
-        valid_payload["static_fields"] = valid_payload["static_fields"].copy()
         valid_payload["static_fields"]["topic"] = fake_topic.name
         valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
         valid_payload["primary_field_values"] = ["00-01", "01-04", "04-25"]
@@ -521,3 +519,94 @@ class TestDualCategoryChartSerializer:
             assert getattr(plot, secondary_category) == segment["secondary_field_value"]
             assert plot.line_colour == segment["colour"]
             assert plot.chart_type == valid_payload["chart_type"]
+
+    def test_validation_fails_for_stacked_bar_with_metric_x_axis(self):
+        """
+        Given a payload with stacked_bar chart and x_axis set to 'metric'
+            passed to a `DualCategoryChartSerializer` object
+        When `validate()` is called from the serializer
+        Then a `ValidationError` is raised as stacked_bar uses x_axis for grouping (not metric)
+        """
+        # Given
+        invalid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
+        invalid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        invalid_payload["primary_field_values"] = ["m", "f"]
+        invalid_payload["chart_type"] = "stacked_bar"
+        invalid_payload["x_axis"] = ChartAxisFields.metric.name
+
+        serializer = DualCategoryChartSerializer()
+
+        # When / Then
+        with pytest.raises(ValidationError) as exc_info:
+            serializer.validate(attrs=invalid_payload)
+
+        assert "x_axis" in exc_info.value.detail
+        assert "cannot be 'metric'" in exc_info.value.detail["x_axis"]
+
+    def test_validation_fails_for_butterfly_with_metric_y_axis(self):
+        """
+        Given a payload with butterfly chart and y_axis set to 'metric'
+            passed to a `DualCategoryChartSerializer` object
+        When `validate()` is called from the serializer
+        Then a `ValidationError` is raised as butterfly uses y_axis for grouping (not metric)
+        """
+        # Given
+        invalid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
+        invalid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        invalid_payload["primary_field_values"] = ["m", "f"]
+        invalid_payload["chart_type"] = "butterfly"
+        invalid_payload["y_axis"] = ChartAxisFields.metric.name
+
+        serializer = DualCategoryChartSerializer()
+
+        # When / Then
+        with pytest.raises(ValidationError) as exc_info:
+            serializer.validate(attrs=invalid_payload)
+
+        assert "y_axis" in exc_info.value.detail
+        assert "cannot be 'metric'" in exc_info.value.detail["y_axis"]
+
+    def test_validation_passes_for_stacked_bar_with_valid_x_axis(self):
+        """
+        Given a payload with stacked_bar chart and x_axis set to a valid grouping field (not metric)
+            passed to a `DualCategoryChartSerializer` object
+        When `validate()` is called from the serializer
+        Then no ValidationError is raised
+        """
+        # Given
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
+        valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        valid_payload["primary_field_values"] = ["m", "f"]
+        valid_payload["chart_type"] = "stacked_bar"
+        valid_payload["x_axis"] = ChartAxisFields.age.name
+
+        serializer = DualCategoryChartSerializer()
+
+        # When
+        result = serializer.validate(attrs=valid_payload)
+
+        # Then
+        assert result == valid_payload
+
+    def test_validation_passes_for_butterfly_with_valid_y_axis(self):
+        """
+        Given a payload with butterfly chart and y_axis set to a valid grouping field (not metric)
+            passed to a `DualCategoryChartSerializer` object
+        When `validate()` is called from the serializer
+        Then no ValidationError is raised
+        """
+        # Given
+        valid_payload = copy.deepcopy(EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD)
+        valid_payload["static_fields"]["metric"] = HEADLINE_METRIC
+        valid_payload["primary_field_values"] = ["m", "f"]
+        valid_payload["chart_type"] = "butterfly"
+        valid_payload["y_axis"] = ChartAxisFields.age.name
+        valid_payload["x_axis"] = ChartAxisFields.metric.name
+
+        serializer = DualCategoryChartSerializer()
+
+        # When
+        result = serializer.validate(attrs=valid_payload)
+
+        # Then
+        assert result == valid_payload

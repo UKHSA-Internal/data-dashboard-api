@@ -15,6 +15,39 @@ from metrics.domain.tables.dual_category import build_dual_category_plot_params
 VALID_BUTTERFLY_SEGEMENT_COUNT = 2
 
 
+def _validate_axes_for_chart_type(
+    chart_type: str,
+    x_axis: str,
+    y_axis: str,
+) -> None:
+    """
+    Validate that x_axis and y_axis are appropriate for the given chart type.
+
+    For X-dominant charts (stacked_bar): x_axis should not be 'metric' and must be a valid field.
+    For Y-dominant charts (butterfly): y_axis should not be 'metric' and must be a valid field.
+
+    Args:
+        chart_type: The chart type (e.g., 'stacked_bar', 'butterfly')
+        x_axis: The x_axis field name
+        y_axis: The y_axis field name
+
+    Raises:
+        serializers.ValidationError: If the axis configuration is invalid for the chart type
+    """
+    is_stacked_bar = chart_type == ChartTypes.stacked_bar.value
+    is_butterfly = chart_type == ChartTypes.butterfly.value
+
+    if is_stacked_bar and x_axis == ChartAxisFields.metric.name:
+        raise serializers.ValidationError(
+            {"x_axis": (f"For {chart_type} charts, 'x_axis' value cannot be 'metric'.")}
+        )
+
+    if is_butterfly and y_axis == ChartAxisFields.metric.name:
+        raise serializers.ValidationError(
+            {"y_axis": (f"For {chart_type} charts, 'y_axis' value cannot be 'metric'.")}
+        )
+
+
 def validate_dual_category_fields(attrs: dict) -> dict:
     """
     Validate the fields for a dual category request.
@@ -29,6 +62,7 @@ def validate_dual_category_fields(attrs: dict) -> dict:
         serializers.ValidationError: If the fields are invalid.
     """
     x_axis = attrs.get("x_axis") or DEFAULT_X_AXIS
+    y_axis = attrs.get("y_axis") or DEFAULT_Y_AXIS
     primary_field_values = attrs.get("primary_field_values") or []
     metric = attrs["static_fields"]["metric"]
     metric_group = extract_metric_group_from_metric(metric=metric)
@@ -59,6 +93,12 @@ def validate_dual_category_fields(attrs: dict) -> dict:
             raise serializers.ValidationError(
                 {"segments": "Exactly 2 segments required for Butterfly chart."}
             )
+
+    _validate_axes_for_chart_type(
+        chart_type=attrs["chart_type"],
+        x_axis=x_axis,
+        y_axis=y_axis,
+    )
 
     return attrs
 
